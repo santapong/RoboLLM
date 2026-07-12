@@ -20,12 +20,25 @@ ROS 2 robot, and separately drive FreeCAD to design parts / export URDF.
 ```
 
 ## What's here
-| File | Purpose |
+| Path | Purpose |
 |------|---------|
-| `ros2_mcp_server.py` | The bridge. Exposes ROS 2 as MCP tools (`list_topics`, `list_nodes`, `get_robot_pose`, `drive`, `stop`, `navigate_to`). **Edit this to add skills.** |
-| `run-server.sh` | Launch wrapper — sources ROS 2 + venv, runs the server. Registered with Claude Code as the `ros2` MCP server. |
-| `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (run in its own terminal). |
-| `.venv/` | Python venv with `--system-site-packages` (sees ROS `rclpy`) + the MCP SDK. |
+| `ros2_mcp_server.py` | The bridge. 8 MCP tools — see below. **Edit this to add skills.** |
+| `run-server.sh` | Launch wrapper — sources ROS 2 + venv, runs the server. Registered as the `ros2` MCP server. |
+| `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (own terminal). |
+| `assets/` | Outputs live here: `urdf/`, `cad/` (FreeCAD exports), `screenshots/`. |
+| `setup/dev-setup.sh` | Full machine provisioner (copy of the one that built this box). |
+| `docs/` | Notes as you learn. |
+| `.venv/` | venv with `--system-site-packages` (sees ROS `rclpy`) + MCP SDK. Git-ignored. |
+
+### MCP tools (in `ros2_mcp_server.py`)
+| Tool | What it does |
+|------|--------------|
+| `list_topics` / `list_nodes` | Introspect the ROS graph |
+| `get_robot_pose` | Robot x/y/orientation from `/odom` |
+| `get_laser_scan` | Nearest obstacle front/left/right/back from `/scan` |
+| `drive` / `stop` | Move via `/cmd_vel` (auto-stops, 10 s safety cap) |
+| `navigate_to` | Nav2 goal to (x, y, yaw) |
+| `run_ros2` | Run any `ros2` CLI command — the fast learn/introspect tool |
 
 ## Try the loop
 1. **Start the sim** (own terminal, needs a display):
@@ -61,3 +74,16 @@ laser scan reads, camera snapshots, MoveIt arm goals, behavior sequencing, etc.
 ```
 claude mcp add --scope user ros2 -- ~/Desktop/robot-llm-loop/run-server.sh
 ```
+
+## Version control & push to GitHub
+This folder is a git repo. To push it:
+```bash
+gh auth login                 # one-time: authenticate GitHub (interactive)
+gh repo create robot-llm-loop --private --source=. --remote=origin --push
+```
+After that, normal flow (or ask Claude to do it):
+```bash
+git add -A && git commit -m "..." && git push
+```
+`.venv/` and large binary assets are git-ignored; source, scripts, and small
+assets are tracked.
