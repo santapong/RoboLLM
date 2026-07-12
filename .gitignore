@@ -1,0 +1,22 @@
+# python / venv
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.uv/
+# ros build
+build/
+install/
+log/
+# editor / os
+.vscode/
+.idea/
+*.swp
+.DS_Store
+# large binary assets (keep small ones; comment out to version meshes)
+assets/**/*.stl
+assets/**/*.dae
+assets/**/*.stp
+assets/**/*.step
+assets/**/*.mp4
+!assets/**/.gitkeep
