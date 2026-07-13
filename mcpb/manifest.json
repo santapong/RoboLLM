@@ -1,0 +1,54 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/mcpb/main/schemas/mcpb-manifest-v0.4.schema.json",
+  "manifest_version": "0.4",
+  "name": "ros2-bridge",
+  "display_name": "ROS 2 Bridge",
+  "version": "0.1.0",
+  "description": "Introspect and drive a ROS 2 robot from Claude.",
+  "long_description": "A ROS 2 <-> MCP bridge. Exposes tools to list topics/nodes, read the robot pose and laser scan, drive via /cmd_vel, send Nav2 goals, and run any ros2 CLI command. Requires a ROS 2 (Jazzy) installation on the machine — its setup.bash is sourced before the server starts. Python deps (the mcp SDK) are bundled in server/lib; rclpy and message packages come from your ROS install.",
+  "author": {
+    "name": "santapong"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "server/ros2_mcp_server.py",
+    "mcp_config": {
+      "command": "bash",
+      "args": [
+        "-c",
+        "source \"${user_config.ros_setup}\" && export PYTHONPATH=\"${__dirname}/server/lib:${__dirname}/server:$PYTHONPATH\" && export TURTLEBOT3_MODEL=\"${user_config.turtlebot3_model}\" && exec python3 \"${__dirname}/server/ros2_mcp_server.py\""
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    { "name": "list_topics", "description": "List all active ROS 2 topics and their message types." },
+    { "name": "list_nodes", "description": "List all running ROS 2 nodes." },
+    { "name": "get_robot_pose", "description": "Robot x/y/yaw/velocity from /odom." },
+    { "name": "get_laser_scan", "description": "Nearest obstacle front/left/right/back from /scan." },
+    { "name": "drive", "description": "Drive via /cmd_vel (auto-stop, safety cap)." },
+    { "name": "stop", "description": "Immediately stop the robot." },
+    { "name": "navigate_to", "description": "Send a Nav2 goal to (x, y, yaw)." },
+    { "name": "run_ros2", "description": "Run any ros2 CLI command and return its output." }
+  ],
+  "user_config": {
+    "ros_setup": {
+      "type": "string",
+      "title": "ROS 2 setup.bash",
+      "description": "Absolute path to your ROS 2 setup.bash, sourced before the server starts.",
+      "default": "/opt/ros/jazzy/setup.bash",
+      "required": true
+    },
+    "turtlebot3_model": {
+      "type": "string",
+      "title": "TurtleBot3 model",
+      "description": "TURTLEBOT3_MODEL to export (burger / waffle / waffle_pi).",
+      "default": "burger",
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": ["linux"],
+    "runtimes": { "python": ">=3.10" }
+  }
+}

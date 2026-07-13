@@ -85,10 +85,15 @@ sees ROS `rclpy`):
 .venv/bin/python -m pip install -r requirements-extra.txt
 ```
 
-## MCP registration (already done)
-```bash
-claude mcp add --scope user ros2 -- ~/Desktop/robot-llm-loop/run-server.sh
-```
+## Install / distribute the MCP server
+| Client | Format | Where |
+|--------|--------|-------|
+| Claude Code (yours) | user scope (done) + `.mcp.json` (project scope, in repo) | `claude mcp add --scope user ros2 -- ~/Desktop/robot-llm-loop/run-server.sh` |
+| Claude Desktop | `.mcpb` bundle (drag-and-drop) | build with `mcpb/build_mcpb.sh` → `mcpb/dist/ros2-bridge.mcpb` |
+
+`.mcpb` is a **Claude Desktop** format; **Claude Code uses `.mcp.json`** (shipped
+in this repo — opening the folder registers `ros2` after one approval). Details
+and the bundle build in `mcpb/README.md`.
 
 ## Version control
 This folder is a git repo; `.venv/`, scan sessions, and large binaries are

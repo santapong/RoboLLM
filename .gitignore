@@ -13,6 +13,9 @@ log/
 .idea/
 *.swp
 .DS_Store
+# mcpb bundle build output (regenerate with mcpb/build_mcpb.sh)
+mcpb/build/
+mcpb/dist/
 # webcam scan sessions (images + meshes — large / personal)
 assets/scan/
 # large binary assets (keep small ones; comment out to version meshes)
