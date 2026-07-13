@@ -55,9 +55,14 @@ Start the sim (`sim/launch_turtlebot.sh`), then just ask:
 | `get_camera_image` | Capture the robot's camera to a JPEG — how Claude *sees* (waffle model) |
 | `set_safe_mode` | Toggle obstacle-safe teleop (block forward into close obstacles) |
 | `start_recording` / `stop_recording` | Record topics to a rosbag (build learning datasets) |
+| `list_bags` / `play_bag` | Browse and replay recorded datasets |
+| `get_transform` | TF2 lookup between any two frames (map→base_link→laser…) |
+| `get_joint_states` | Every joint's position — the layer under MoveIt/ros2_control |
+| `move_arm` | Plan + execute a MoveIt joint-space arm motion |
+| `get_map_status` | SLAM/map progress: size, resolution, % explored |
 | `run_ros2` | Run any `ros2` CLI command — the fast learn/introspect tool |
 
-Add a tool = add an `@mcp.tool()` function, then restart Claude Code. (12 tools.)
+Add a tool = add an `@mcp.tool()` function, then restart Claude Code. (18 tools.)
 
 ## 3 · Learn robot software (`examples/`)
 A guided path: ROS 2 nodes → pub/sub → open-loop drive → closed-loop obstacle

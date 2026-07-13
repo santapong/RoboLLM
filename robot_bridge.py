@@ -30,9 +30,13 @@ from rclpy.executors import SingleThreadedExecutor
 from rclpy.action import ActionClient
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Twist
-from nav_msgs.msg import Odometry
-from sensor_msgs.msg import LaserScan, Image
+from nav_msgs.msg import Odometry, OccupancyGrid
+from sensor_msgs.msg import LaserScan, Image, JointState
 from nav2_msgs.action import NavigateToPose
+from moveit_msgs.action import MoveGroup
+from moveit_msgs.msg import Constraints, JointConstraint
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
+from tf2_ros import Buffer, TransformListener
 
 
 class Bridge(Node):
@@ -42,13 +46,26 @@ class Bridge(Node):
         super().__init__(node_name)
         self.cmd_vel = self.create_publisher(Twist, "/cmd_vel", 10)
         self.nav = ActionClient(self, NavigateToPose, "navigate_to_pose")
+        self.arm = ActionClient(self, MoveGroup, "move_action")
         self._last_odom: Odometry | None = None
         self._last_scan: LaserScan | None = None
         self._last_image: Image | None = None
+        self._last_map: OccupancyGrid | None = None
+        self._last_joints: JointState | None = None
         self.create_subscription(Odometry, "/odom", self._on_odom, 10)
         self.create_subscription(LaserScan, "/scan", self._on_scan, qos_profile_sensor_data)
         # camera: waffle/waffle_pi publish here; burger has no camera (stays None)
         self.create_subscription(Image, "/camera/image_raw", self._on_image, qos_profile_sensor_data)
+        self.create_subscription(JointState, "/joint_states", self._on_joints, 10)
+        # /map is "latched": publishers keep the last map for late joiners,
+        # so we must subscribe with matching transient_local durability
+        map_qos = QoSProfile(depth=1,
+                             reliability=QoSReliabilityPolicy.RELIABLE,
+                             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
+        self.create_subscription(OccupancyGrid, "/map", self._on_map, map_qos)
+        # TF2: the listener fills the buffer from /tf and /tf_static
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
 
         # continuous-teleop state, guarded by the deadman watchdog
         self._deadman_s = deadman_s
@@ -69,6 +86,12 @@ class Bridge(Node):
 
     def _on_image(self, msg: Image) -> None:
         self._last_image = msg
+
+    def _on_map(self, msg: OccupancyGrid) -> None:
+        self._last_map = msg
+
+    def _on_joints(self, msg: JointState) -> None:
+        self._last_joints = msg
 
     # ---- continuous teleop (used by the web UI) ---------------------------
     def set_velocity(self, linear: float, angular: float) -> None:
@@ -213,6 +236,84 @@ class Bridge(Node):
             ang = (s.angle_min + i * s.angle_increment) % (2 * math.pi)
             buckets[int(ang / (2 * math.pi) * sectors) % sectors].append(r)
         return [round(min(b), 3) if b else None for b in buckets]
+
+    def get_transform(self, target: str, source: str) -> dict[str, Any]:
+        """Latest TF2 transform: where is `source` frame, expressed in `target`?"""
+        from rclpy.time import Time
+        try:
+            tf = self.tf_buffer.lookup_transform(target, source, Time())
+        except Exception as e:
+            return {"error": f"{type(e).__name__}: {e}"}
+        t, q = tf.transform.translation, tf.transform.rotation
+        yaw = math.degrees(math.atan2(2.0 * (q.w * q.z + q.x * q.y),
+                                      1.0 - 2.0 * (q.y * q.y + q.z * q.z)))
+        return {"target": target, "source": source,
+                "x": round(t.x, 4), "y": round(t.y, 4), "z": round(t.z, 4),
+                "yaw_deg": round(yaw, 2),
+                "qx": round(q.x, 4), "qy": round(q.y, 4),
+                "qz": round(q.z, 4), "qw": round(q.w, 4)}
+
+    def map_status(self) -> dict[str, Any]:
+        """Summary of the current /map (from SLAM or the map server)."""
+        m = self._last_map
+        if m is None:
+            return {"error": "no /map received — is SLAM or a map server running?"}
+        cells = m.data
+        n = len(cells)
+        free = sum(1 for c in cells if c == 0)
+        occupied = sum(1 for c in cells if c > 50)
+        unknown = sum(1 for c in cells if c < 0)
+        return {"width": m.info.width, "height": m.info.height,
+                "resolution_m": round(m.info.resolution, 4),
+                "size_m": [round(m.info.width * m.info.resolution, 2),
+                           round(m.info.height * m.info.resolution, 2)],
+                "origin": [round(m.info.origin.position.x, 2),
+                           round(m.info.origin.position.y, 2)],
+                "explored_pct": round(100.0 * (n - unknown) / n, 1) if n else 0.0,
+                "free_cells": free, "occupied_cells": occupied, "unknown_cells": unknown}
+
+    def joint_states(self) -> dict[str, Any]:
+        """Current joint positions (arms, grippers, wheels) from /joint_states."""
+        js = self._last_joints
+        if js is None:
+            return {"error": "no /joint_states — is a robot (sim or real) running?"}
+        return {"joints": {n: round(p, 4) for n, p in zip(js.name, js.position)}}
+
+    def move_arm_joints(self, joints: dict[str, float], group: str = "panda_arm",
+                        timeout_s: float = 60.0) -> str:
+        """Plan + execute a MoveIt joint-space goal (requires move_group running)."""
+        if not self.arm.wait_for_server(timeout_sec=3.0):
+            return "error: MoveIt 'move_action' server not available — is move_group running?"
+        constraints = Constraints()
+        for name, pos in joints.items():
+            jc = JointConstraint()
+            jc.joint_name = name
+            jc.position = float(pos)
+            jc.tolerance_above = jc.tolerance_below = 0.01
+            jc.weight = 1.0
+            constraints.joint_constraints.append(jc)
+        goal = MoveGroup.Goal()
+        goal.request.group_name = group
+        goal.request.goal_constraints.append(constraints)
+        goal.request.num_planning_attempts = 5
+        goal.request.allowed_planning_time = 5.0
+        goal.request.max_velocity_scaling_factor = 0.3
+        goal.request.max_acceleration_scaling_factor = 0.3
+        goal.planning_options.plan_only = False
+        send = self.arm.send_goal_async(goal)
+        deadline = time.time() + timeout_s
+        while not send.done() and time.time() < deadline:
+            time.sleep(0.1)
+        handle = send.result()
+        if handle is None or not handle.accepted:
+            return "error: arm goal rejected"
+        result_future = handle.get_result_async()
+        while not result_future.done() and time.time() < deadline:
+            time.sleep(0.2)
+        if not result_future.done():
+            return "error: arm motion timed out"
+        code = result_future.result().result.error_code.val
+        return f"arm motion finished (MoveItErrorCode {code}; 1 = SUCCESS)"
 
     def navigate_to(self, x: float, y: float, yaw_deg: float = 0.0,
                     timeout_s: float = 120.0) -> str:

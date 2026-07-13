@@ -33,6 +33,12 @@
     { "name": "set_safe_mode", "description": "Toggle obstacle-safe teleop." },
     { "name": "start_recording", "description": "Record topics to a rosbag dataset." },
     { "name": "stop_recording", "description": "Stop the active rosbag recording." },
+    { "name": "get_transform", "description": "Look up a TF2 transform between two frames." },
+    { "name": "get_joint_states", "description": "Current position of every joint from /joint_states." },
+    { "name": "move_arm", "description": "Plan+execute a MoveIt joint-space arm motion." },
+    { "name": "get_map_status", "description": "Size/resolution/explored%% of the current /map." },
+    { "name": "list_bags", "description": "List recorded rosbag datasets." },
+    { "name": "play_bag", "description": "Replay a recorded rosbag." },
     { "name": "run_ros2", "description": "Run any ros2 CLI command and return its output." }
   ],
   "user_config": {

@@ -103,6 +103,80 @@ def set_safe_mode(enabled: bool = True, min_obstacle_m: float = 0.35) -> str:
     return f"safe_mode={_node.safe_mode}, min_obstacle_m={_node.min_obstacle_m}"
 
 
+@mcp.tool()
+def get_transform(target_frame: str = "map", source_frame: str = "base_link") -> dict[str, Any]:
+    """Look up the TF2 transform between two frames — 'where is source_frame,
+    expressed in target_frame?'. The transform tree (map→odom→base_link→laser…)
+    is the backbone of all robot geometry. Try ('odom','base_link') without a map."""
+    return _node.get_transform(target_frame, source_frame)
+
+
+@mcp.tool()
+def get_joint_states() -> dict[str, Any]:
+    """Current position of every joint (wheels, arm joints, gripper) from
+    /joint_states — the raw feedback layer under MoveIt and ros2_control."""
+    return _node.joint_states()
+
+
+@mcp.tool()
+def move_arm(joints: str, group: str = "panda_arm", timeout_s: float = 60.0) -> str:
+    """Plan and execute an arm motion with MoveIt (requires move_group running,
+    e.g. sim/launch_moveit_panda.sh). `joints` = comma-separated name=radians:
+      'panda_joint1=0, panda_joint2=-0.785, panda_joint4=-2.356'
+    List every joint of the group for a full, unambiguous pose — MoveIt only
+    constrains the joints you list; the planner is free to choose the rest."""
+    try:
+        parsed = {}
+        for pair in joints.split(","):
+            name, val = pair.split("=")
+            parsed[name.strip()] = float(val)
+    except ValueError:
+        return "error: could not parse joints — use 'name=value, name=value'"
+    if not parsed:
+        return "error: no joints given"
+    return _node.move_arm_joints(parsed, group=group, timeout_s=timeout_s)
+
+
+@mcp.tool()
+def get_map_status() -> dict[str, Any]:
+    """Summary of the current /map from SLAM or the map server: size, resolution,
+    origin, and how much is explored — check mapping progress while driving."""
+    return _node.map_status()
+
+
+@mcp.tool()
+def list_bags() -> list[dict[str, Any]]:
+    """List recorded rosbag datasets in assets/bags."""
+    bags = os.path.join(ASSETS, "bags")
+    if not os.path.isdir(bags):
+        return []
+    out = []
+    for name in sorted(os.listdir(bags)):
+        meta = os.path.join(bags, name, "metadata.yaml")
+        if os.path.isfile(meta):
+            size = sum(os.path.getsize(os.path.join(r, f))
+                       for r, _, fs in os.walk(os.path.join(bags, name)) for f in fs)
+            out.append({"name": name, "size_kb": round(size / 1024, 1)})
+    return out
+
+
+@mcp.tool()
+def play_bag(name: str, rate: float = 1.0, timeout_s: float = 60.0) -> str:
+    """Replay a recorded rosbag from assets/bags — republish a captured session
+    (odom, scans, camera…) as if it were happening live. Blocks until done."""
+    bag = os.path.join(ASSETS, "bags", name)
+    if not os.path.isfile(os.path.join(bag, "metadata.yaml")):
+        return f"error: no bag named '{name}' — see list_bags()"
+    try:
+        out = subprocess.run(["ros2", "bag", "play", bag, "--rate", str(rate)],
+                             capture_output=True, text=True,
+                             timeout=min(float(timeout_s), 300.0))
+    except subprocess.TimeoutExpired:
+        return f"(playback still running after {timeout_s}s — stopped waiting)"
+    err = out.stderr.strip()
+    return "playback finished" + (f"\n[stderr] {err}" if err else "")
+
+
 _bag_proc: subprocess.Popen | None = None
 
 
