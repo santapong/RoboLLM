@@ -13,6 +13,8 @@ log/
 .idea/
 *.swp
 .DS_Store
+# webcam scan sessions (images + meshes — large / personal)
+assets/scan/
 # large binary assets (keep small ones; comment out to version meshes)
 assets/**/*.stl
 assets/**/*.dae

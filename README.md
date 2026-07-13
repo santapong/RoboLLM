@@ -1,89 +1,93 @@
 # robot-llm-loop
 
-Your first **LLM ↔ robotics loop**: Claude (via MCP) can introspect and drive a
-ROS 2 robot, and separately drive FreeCAD to design parts / export URDF.
+Your LLM ↔ robotics workbench. Claude (via MCP) can introspect and drive a ROS 2
+robot and design CAD/URDF in FreeCAD — **and** you get a browser dashboard to
+drive it yourself, a set of runnable examples to learn robot software, and a
+webcam 3D scanner that turns real objects into robot parts.
 
 ```
-        you (natural language)
-                │
-                ▼
-      ┌───────────────────┐      ros2 MCP        ┌──────────────────────┐
-      │   Claude Code      │ ─────────────────▶  │  ros2_mcp_server.py  │
-      │  (planner + coder) │                     │  (rclpy node)        │
-      └───────────────────┘  ◀─────────────────  └──────────┬───────────┘
-                │              tool results                  │ /cmd_vel, /odom,
-                │  freecad MCP                               │ navigate_to_pose
-                ▼                                            ▼
-      ┌───────────────────┐                     ┌──────────────────────┐
-      │  FreeCAD (CAD/URDF)│                     │ TurtleBot3 in Gazebo │
-      └───────────────────┘                     └──────────────────────┘
+        you ── natural language ──▶ Claude Code ──┬─ ros2 MCP ──▶ robot_bridge.py ──▶ TurtleBot3 / Gazebo
+        │                                         └─ freecad MCP ─▶ FreeCAD (CAD → URDF)
+        │
+        └── browser ──▶ web/ dashboard ──▶ robot_bridge.py ──▶ same robot
+                                              ▲
+                        webcam ─▶ scan3d/ ─▶ URDF part ─┘  (drop scanned objects into the world)
 ```
+
+`robot_bridge.py` is the single ROS 2 node; **both** Claude (MCP) and the web
+dashboard use it, so you and the LLM drive the exact same robot.
 
 ## What's here
 | Path | Purpose |
 |------|---------|
-| `ros2_mcp_server.py` | The bridge. 8 MCP tools — see below. **Edit this to add skills.** |
-| `run-server.sh` | Launch wrapper — sources ROS 2 + venv, runs the server. Registered as the `ros2` MCP server. |
+| `robot_bridge.py` | The shared ROS 2 node (pubs/subs + helpers, deadman teleop). |
+| `ros2_mcp_server.py` | MCP server — 8 tools Claude calls. **Edit to add robot skills.** |
+| `run-server.sh` | Launches the `ros2` MCP server. |
+| `web/` | Browser dashboard: live telemetry, lidar radar, WASD teleop, Nav2 goals. |
+| `examples/` | Runnable ROS 2 + PyBullet + MuJoCo learning path. |
+| `scan3d/` | Webcam → 3D mesh → URDF (CPU visual hull + COLMAP photogrammetry). |
 | `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (own terminal). |
-| `assets/` | Outputs live here: `urdf/`, `cad/` (FreeCAD exports), `screenshots/`. |
-| `setup/dev-setup.sh` | Full machine provisioner (copy of the one that built this box). |
-| `docs/` | Notes as you learn. |
-| `.venv/` | venv with `--system-site-packages` (sees ROS `rclpy`) + MCP SDK. Git-ignored. |
+| `assets/` | Outputs: `urdf/`, `cad/`, `screenshots/`, `scan/` (git-ignored). |
+| `setup/dev-setup.sh` | Full machine provisioner. |
+| `requirements-extra.txt` | Extra pip deps (numpy pinned to 1.26 for ROS). |
 
-### MCP tools (in `ros2_mcp_server.py`)
-| Tool | What it does |
-|------|--------------|
+## 1 · Browser dashboard (easy teleop)  🕹️
+```bash
+web/run-web.sh          # then open http://localhost:8080
+```
+Hold **WASD** or the on-screen arrows to drive (auto-stops on release via a
+deadman watchdog), watch live pose + a lidar radar, list topics, send Nav2 goals.
+Runs alongside the sim and the MCP server — all three share the robot.
+
+## 2 · Talk to Claude (the MCP loop)
+Start the sim (`sim/launch_turtlebot.sh`), then just ask:
+- "List the ROS 2 topics." · "Where is the robot?" · "Drive forward 3 s, then turn left."
+- "What's the nearest obstacle?" · "Navigate to x=1.5, y=0.5." (Nav2 running)
+
+### MCP tools (`ros2_mcp_server.py`)
+| Tool | Does |
+|------|------|
 | `list_topics` / `list_nodes` | Introspect the ROS graph |
-| `get_robot_pose` | Robot x/y/orientation from `/odom` |
+| `get_robot_pose` | x / y / yaw / velocity from `/odom` |
 | `get_laser_scan` | Nearest obstacle front/left/right/back from `/scan` |
-| `drive` / `stop` | Move via `/cmd_vel` (auto-stops, 10 s safety cap) |
+| `drive` / `stop` | Move via `/cmd_vel` (auto-stop, safety cap) |
 | `navigate_to` | Nav2 goal to (x, y, yaw) |
 | `run_ros2` | Run any `ros2` CLI command — the fast learn/introspect tool |
 
-## Try the loop
-1. **Start the sim** (own terminal, needs a display):
-   ```bash
-   ~/Desktop/robot-llm-loop/sim/launch_turtlebot.sh
-   ```
-2. **Restart Claude Code** (so it picks up the `ros2` MCP server), then just ask:
-   - "List the ROS 2 topics."
-   - "Where is the robot?"
-   - "Drive forward for 3 seconds, then turn left."
-   - (with Nav2 running) "Navigate to x=1.5, y=0.5."
+Add a tool = add an `@mcp.tool()` function, then restart Claude Code.
 
-Claude calls the MCP tools and the TurtleBot moves in Gazebo.
+## 3 · Learn robot software (`examples/`)
+A guided path: ROS 2 nodes → pub/sub → open-loop drive → closed-loop obstacle
+avoidance, plus CPU physics sims (PyBullet, MuJoCo). See `examples/README.md`.
 
-## CAD / URDF loop
-The `freecad` MCP is also registered. Open FreeCAD → **MCP Addon** workbench →
-**Start RPC Server**, then ask Claude things like:
+## 4 · Scan a real object with your webcam (`scan3d/`)
+```bash
+cd scan3d
+../.venv/bin/python capture.py --background
+../.venv/bin/python capture.py --turntable 36 --session mug
+../.venv/bin/python visual_hull.py --session mug --height-mm 95
+../.venv/bin/python mesh_to_urdf.py ../assets/scan/mug/mug_hull.obj --name mug
+```
+CPU-only visual hull runs on the laptop; a COLMAP photogrammetry path (dense step
+on your GPU cloud) is included. See `scan3d/README.md`.
+
+## 5 · CAD → URDF (the `freecad` MCP)
+Open FreeCAD → **MCP Addon** workbench → **Start RPC Server**, then ask:
 - "In FreeCAD, create a 2-link robot arm and export it as URDF."
 - "Make a 100×60×20 mm mounting bracket with four M4 holes."
 
-## Extending (the learning part)
-Add a new capability by adding a function to `ros2_mcp_server.py`:
-```python
-@mcp.tool()
-def get_battery() -> float:
-    """Read the latest battery percentage."""
-    ...
+## Setup
+Extra Python deps live in the venv (created with `--system-site-packages` so it
+sees ROS `rclpy`):
+```bash
+.venv/bin/python -m pip install -r requirements-extra.txt
 ```
-Restart Claude Code and the new tool is available. Grow this file as you learn:
-laser scan reads, camera snapshots, MoveIt arm goals, behavior sequencing, etc.
 
 ## MCP registration (already done)
-```
+```bash
 claude mcp add --scope user ros2 -- ~/Desktop/robot-llm-loop/run-server.sh
 ```
 
-## Version control & push to GitHub
-This folder is a git repo. To push it:
-```bash
-gh auth login                 # one-time: authenticate GitHub (interactive)
-gh repo create robot-llm-loop --private --source=. --remote=origin --push
-```
-After that, normal flow (or ask Claude to do it):
-```bash
-git add -A && git commit -m "..." && git push
-```
-`.venv/` and large binary assets are git-ignored; source, scripts, and small
-assets are tracked.
+## Version control
+This folder is a git repo; `.venv/`, scan sessions, and large binaries are
+git-ignored. Normal flow: `git add -A && git commit -m "…" && git push`.

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>robot-llm-loop · dashboard</title>
+<style>
+  :root { --bg:#0e1116; --panel:#161b22; --line:#2a313c; --fg:#e6edf3; --muted:#8b949e;
+          --accent:#3fb950; --accent2:#58a6ff; --danger:#f85149; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+  header { padding:14px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:12px; }
+  header h1 { font-size:16px; margin:0; font-weight:600; }
+  .dot { width:9px; height:9px; border-radius:50%; background:var(--danger); box-shadow:0 0 8px var(--danger); }
+  .dot.on { background:var(--accent); box-shadow:0 0 8px var(--accent); }
+  main { display:grid; grid-template-columns:320px 1fr; gap:16px; padding:16px; max-width:1100px; }
+  @media (max-width:820px){ main{ grid-template-columns:1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  .panel h2 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:0 0 12px; }
+  .kv { display:flex; justify-content:space-between; padding:3px 0; }
+  .kv b { font-variant-numeric:tabular-nums; font-weight:600; }
+  canvas { width:100%; aspect-ratio:1; background:#0b0e13; border-radius:8px; }
+  .pad { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:240px; margin:8px auto 0; }
+  button { font:inherit; color:var(--fg); background:#21262d; border:1px solid var(--line);
+           border-radius:8px; padding:12px; cursor:pointer; user-select:none; }
+  button:hover { border-color:var(--accent2); }
+  button:active,.held { background:var(--accent2); color:#04101f; border-color:var(--accent2); }
+  button.stop { grid-column:1/4; background:var(--danger); color:#2a0000; border:none; font-weight:700; }
+  .hint { color:var(--muted); font-size:12px; margin-top:8px; text-align:center; }
+  form { display:flex; gap:6px; flex-wrap:wrap; }
+  input { width:64px; background:#0b0e13; border:1px solid var(--line); color:var(--fg); border-radius:6px; padding:6px; }
+  .topics { max-height:260px; overflow:auto; font-family:ui-monospace,monospace; font-size:12px; }
+  .topics div { padding:2px 0; border-bottom:1px solid #1c222b; }
+  .topics .t { color:var(--accent2); }
+  .row { display:flex; gap:16px; flex-wrap:wrap; }
+  .row > * { flex:1; min-width:260px; }
+  label { color:var(--muted); font-size:12px; align-self:center; }
+</style>
+</head>
+<body>
+<header>
+  <span class="dot" id="conn"></span>
+  <h1>robot-llm-loop</h1>
+  <span style="color:var(--muted);font-size:12px">browser teleop &amp; telemetry · same robot Claude drives</span>
+</header>
+
+<main>
+  <section class="panel">
+    <h2>Telemetry</h2>
+    <div class="kv"><span>x</span><b id="x">–</b></div>
+    <div class="kv"><span>y</span><b id="y">–</b></div>
+    <div class="kv"><span>yaw°</span><b id="yaw">–</b></div>
+    <div class="kv"><span>vx (m/s)</span><b id="vx">–</b></div>
+    <div class="kv"><span>ωz (rad/s)</span><b id="wz">–</b></div>
+    <hr style="border-color:var(--line);margin:12px 0">
+    <div class="kv"><span>front</span><b id="front">–</b></div>
+    <div class="kv"><span>left</span><b id="left">–</b></div>
+    <div class="kv"><span>right</span><b id="right">–</b></div>
+    <div class="kv"><span>back</span><b id="back">–</b></div>
+  </section>
+
+  <section class="panel">
+    <div class="row">
+      <div>
+        <h2>Lidar radar</h2>
+        <canvas id="radar" width="300" height="300"></canvas>
+      </div>
+      <div>
+        <h2>Teleop <span style="color:var(--muted)">(WASD / hold buttons)</span></h2>
+        <div class="pad">
+          <span></span><button data-lin="1"  data-ang="0">▲</button><span></span>
+          <button data-lin="0" data-ang="1">◀</button>
+          <button data-lin="0" data-ang="0">■</button>
+          <button data-lin="0" data-ang="-1">▶</button>
+          <span></span><button data-lin="-1" data-ang="0">▼</button><span></span>
+          <button class="stop" id="estop">STOP</button>
+        </div>
+        <div class="hint">speed <input type="range" id="spd" min="0.05" max="0.8" step="0.05" value="0.2"> <span id="spdv">0.20</span> m/s</div>
+
+        <h2 style="margin-top:18px">Nav2 goal</h2>
+        <form id="navform">
+          <label>x</label><input id="gx" type="number" step="0.1" value="1.0">
+          <label>y</label><input id="gy" type="number" step="0.1" value="0.5">
+          <label>yaw°</label><input id="gyaw" type="number" step="15" value="0">
+          <button type="submit">Go</button>
+        </form>
+        <div class="hint" id="navmsg"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" style="grid-column:1/-1">
+    <h2>Topics <button style="float:right;padding:4px 10px" onclick="loadTopics()">refresh</button></h2>
+    <div class="topics" id="topics">loading…</div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let speed = 0.2;
+$('spd').oninput = e => { speed = +e.target.value; $('spdv').textContent = speed.toFixed(2); };
+
+// ---- teleop: hold to move (repeat POST keeps the deadman alive), release = stop
+let held = null, timer = null;
+function drive(lin, ang) {
+  fetch('/api/cmd', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({linear: lin*speed, angular: ang*Math.max(0.4,speed*3)})});
+}
+function startHold(lin, ang) {
+  if (lin===0 && ang===0) { stopHold(); return; }
+  held = {lin, ang}; drive(lin, ang);
+  clearInterval(timer); timer = setInterval(() => drive(lin, ang), 150); // refresh < deadman(0.6s)
+}
+function stopHold() { clearInterval(timer); timer=null; held=null;
+  fetch('/api/stop', {method:'POST'}); }
+
+document.querySelectorAll('.pad button[data-lin]').forEach(b => {
+  const lin = +b.dataset.lin, ang = +b.dataset.ang;
+  b.addEventListener('mousedown', () => startHold(lin, ang));
+  b.addEventListener('touchstart', e => { e.preventDefault(); startHold(lin, ang); });
+  b.addEventListener('mouseup', stopHold);
+  b.addEventListener('mouseleave', stopHold);
+  b.addEventListener('touchend', stopHold);
+});
+$('estop').onclick = stopHold;
+
+const KEYS = {w:[1,0], s:[-1,0], a:[0,1], d:[0,-1]};
+const active = new Set();
+addEventListener('keydown', e => {
+  const k = KEYS[e.key.toLowerCase()]; if (!k || active.has(e.key)) return;
+  active.add(e.key); startHold(k[0], k[1]);
+});
+addEventListener('keyup', e => {
+  const k = KEYS[e.key.toLowerCase()]; if (!k) return;
+  active.delete(e.key); if (active.size===0) stopHold();
+});
+
+// ---- Nav2 goal
+$('navform').onsubmit = async e => {
+  e.preventDefault();
+  const body = {x:+$('gx').value, y:+$('gy').value, yaw_deg:+$('gyaw').value};
+  $('navmsg').textContent = 'sending…';
+  const r = await fetch('/api/nav', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  $('navmsg').textContent = (await r.json()).result;
+};
+
+// ---- topics
+async function loadTopics() {
+  const r = await fetch('/api/topics'); const t = await r.json();
+  $('topics').innerHTML = t.map(x => `<div><span class="t">${x.topic}</span> — ${x.type}</div>`).join('');
+}
+loadTopics();
+
+// ---- telemetry websocket
+const radar = $('radar'), ctx = radar.getContext('2d');
+function drawRadar(vals) {
+  const w = radar.width, c = w/2, R = c-10;
+  ctx.clearRect(0,0,w,w);
+  ctx.strokeStyle = '#223'; ctx.fillStyle = '#7d8';
+  for (let i=1;i<=3;i++){ ctx.beginPath(); ctx.arc(c,c,R*i/3,0,7); ctx.stroke(); }
+  ctx.beginPath(); ctx.moveTo(c,0); ctx.lineTo(c,w); ctx.moveTo(0,c); ctx.lineTo(w,c); ctx.stroke();
+  const maxR = 3.5;
+  (vals||[]).forEach((d,i) => {
+    if (d==null) return;
+    const ang = i/(vals.length) * 2*Math.PI;      // 0 = front (+x), CCW
+    const rr = Math.min(d, maxR)/maxR * R;
+    const px = c + rr*Math.cos(ang), py = c - rr*Math.sin(ang);
+    ctx.beginPath(); ctx.arc(px, py, 2.5, 0, 7); ctx.fill();
+  });
+  ctx.fillStyle='#8b949e'; ctx.font='11px sans-serif'; ctx.fillText('front', c-14, 12);
+}
+function connect() {
+  const ws = new WebSocket(`ws://${location.host}/ws`);
+  ws.onopen = () => $('conn').classList.add('on');
+  ws.onclose = () => { $('conn').classList.remove('on'); setTimeout(connect, 1000); };
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data), p = m.pose||{}, l = m.laser||{};
+    $('x').textContent = p.x ?? '–'; $('y').textContent = p.y ?? '–';
+    $('yaw').textContent = p.yaw_deg ?? '–'; $('vx').textContent = p.vx ?? '–'; $('wz').textContent = p.wz ?? '–';
+    $('front').textContent = l.front ?? '–'; $('left').textContent = l.left ?? '–';
+    $('right').textContent = l.right ?? '–'; $('back').textContent = l.back ?? '–';
+    drawRadar(m.radar);
+  };
+}
+connect();
+</script>
+</body>
+</html>
