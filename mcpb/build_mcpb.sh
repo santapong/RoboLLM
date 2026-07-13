@@ -15,7 +15,7 @@ DIST="$HERE/dist"
 echo "[1/4] stage server code"
 rm -rf "$STAGE"; mkdir -p "$STAGE/server" "$DIST"
 cp "$HERE/manifest.json" "$STAGE/manifest.json"
-cp "$ROOT/ros2_mcp_server.py" "$ROOT/robot_bridge.py" "$STAGE/server/"
+cp "$ROOT/ros2_mcp_server.py" "$ROOT/robot_bridge.py" "$ROOT/gazebo_world.py" "$STAGE/server/"
 
 echo "[2/4] vendor the mcp SDK into server/lib (rclpy stays from ROS)"
 "$PY" -m pip install --quiet --target "$STAGE/server/lib" "mcp==1.28.1"

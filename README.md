@@ -60,9 +60,14 @@ Start the sim (`sim/launch_turtlebot.sh`), then just ask:
 | `get_joint_states` | Every joint's position — the layer under MoveIt/ros2_control |
 | `move_arm` | Plan + execute a MoveIt joint-space arm motion |
 | `get_map_status` | SLAM/map progress: size, resolution, % explored |
+| `spawn_object` / `delete_object` | Put boxes/spheres/cylinders into the Gazebo world ("red box in front of the robot") |
+| `reset_world` / `list_world_objects` | Reset or inspect the simulation world |
 | `run_ros2` | Run any `ros2` CLI command — the fast learn/introspect tool |
 
-Add a tool = add an `@mcp.tool()` function, then restart Claude Code. (18 tools.)
+Add a tool = add an `@mcp.tool()` function, then restart Claude Code. (22 tools.)
+
+**▶ Ready for the full demo?** Follow `docs/live-session.md` — a guided ~30 min
+session where Claude sees, spawns objects, drives, maps, navigates, and moves an arm.
 
 ## 3 · Learn robot software (`examples/`)
 A guided path: ROS 2 nodes → pub/sub → open-loop drive → closed-loop obstacle

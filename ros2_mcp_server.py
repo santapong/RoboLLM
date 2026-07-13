@@ -19,6 +19,7 @@ from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
+import gazebo_world
 from robot_bridge import get_bridge
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -208,6 +209,35 @@ def stop_recording() -> str:
     except subprocess.TimeoutExpired:
         _bag_proc.kill()
     return "recording stopped"
+
+
+@mcp.tool()
+def spawn_object(name: str, shape: str = "box", x: float = 0.5, y: float = 0.0,
+                 z: float = 0.25, size: float = 0.2, color: str = "red",
+                 static: bool = False) -> str:
+    """Spawn an object into the running Gazebo world — e.g. put a red box in
+    front of the robot for a vision test. shape: box/sphere/cylinder;
+    color: red/green/blue/yellow/orange/white/black/grey; size in meters.
+    The robot sits at the world origin facing +x when the sim starts."""
+    return gazebo_world.spawn(name, shape, x, y, z, size, color, static)
+
+
+@mcp.tool()
+def delete_object(name: str) -> str:
+    """Delete a model from the running Gazebo world by name (see list_world_objects)."""
+    return gazebo_world.delete(name)
+
+
+@mcp.tool()
+def reset_world() -> str:
+    """Reset the Gazebo world: robot and objects back to their start poses."""
+    return gazebo_world.reset()
+
+
+@mcp.tool()
+def list_world_objects() -> list[str] | str:
+    """List every model currently in the Gazebo world."""
+    return gazebo_world.list_models()
 
 
 @mcp.tool()

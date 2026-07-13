@@ -39,6 +39,10 @@
     { "name": "get_map_status", "description": "Size/resolution/explored%% of the current /map." },
     { "name": "list_bags", "description": "List recorded rosbag datasets." },
     { "name": "play_bag", "description": "Replay a recorded rosbag." },
+    { "name": "spawn_object", "description": "Spawn a box/sphere/cylinder into the Gazebo world." },
+    { "name": "delete_object", "description": "Delete a model from the Gazebo world." },
+    { "name": "reset_world", "description": "Reset the Gazebo world to its start state." },
+    { "name": "list_world_objects", "description": "List every model in the Gazebo world." },
     { "name": "run_ros2", "description": "Run any ros2 CLI command and return its output." }
   ],
   "user_config": {
