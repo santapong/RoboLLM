@@ -154,6 +154,8 @@ ok "zsh plugins present"
 if have atuin || [[ -x "$HOME/.atuin/bin/atuin" ]]; then skip "atuin"; else
   curl -fsSL https://setup.atuin.sh | sh >/dev/null 2>&1 && ok "atuin installed" || warn "atuin failed"
 fi
+# atuin installs to ~/.atuin/bin (not on PATH for sh/scripts) — link it into ~/.local/bin
+[[ -x "$HOME/.atuin/bin/atuin" ]] && ln -sf "$HOME/.atuin/bin/atuin" "$HOME/.local/bin/atuin"
 
 # ---------------------------------------------------------------------------
 log "8/12  Writing ~/.zshrc"
