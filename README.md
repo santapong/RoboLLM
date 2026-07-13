@@ -76,8 +76,15 @@ cd scan3d
 CPU-only visual hull runs on the laptop; a COLMAP photogrammetry path (dense step
 on your GPU cloud) is included. See `scan3d/README.md`.
 
-## 5 · CAD → URDF (the `freecad` MCP)
-Open FreeCAD → **MCP Addon** workbench → **Start RPC Server**, then ask:
+## 5 · CAD → URDF → sim (`cad/`, verified end-to-end)
+A worked **2-link arm** proves the pipeline, and it runs headless:
+```bash
+freecadcmd cad/build_two_link_arm.py        # FreeCAD builds + exports meshes
+.venv/bin/python cad/make_arm_urdf.py       # -> assets/urdf/two_link_arm/*.urdf
+.venv/bin/python cad/verify_arm_pybullet.py # PASS: 2 revolute joints, tip moves
+```
+See `cad/README.md`. Or interactively via the `freecad` MCP: open FreeCAD →
+**MCP Addon** workbench → **Start RPC Server**, then ask Claude:
 - "In FreeCAD, create a 2-link robot arm and export it as URDF."
 - "Make a 100×60×20 mm mounting bracket with four M4 holes."
 
