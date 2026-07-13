@@ -26,6 +26,7 @@ dashboard use it, so you and the LLM drive the exact same robot.
 | `web/` | Browser dashboard: live telemetry, lidar radar, WASD teleop, Nav2 goals. |
 | `examples/` | Runnable ROS 2 + PyBullet + MuJoCo learning path. |
 | `scan3d/` | Webcam → 3D mesh → URDF (CPU visual hull + COLMAP photogrammetry). |
+| `hardware/` | **Real DIY arm**: Uno R3 firmware + serial driver + ROS 2 bridge + Pi 5 setup + `check_arduino.sh` health check. |
 | `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (own terminal). |
 | `assets/` | Outputs: `urdf/`, `cad/`, `screenshots/`, `scan/` (git-ignored). |
 | `setup/dev-setup.sh` | Full machine provisioner. |
