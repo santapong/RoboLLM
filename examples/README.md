@@ -22,10 +22,32 @@ The concepts every ROS 2 robot is built from. No sim needed for 01–03.
 | `05_obstacle_stop.py` | **Closed loop**: read `/scan`, act on it — a real behavior |
 | `06_send_nav_goal.py` | The **action** pattern: send a Nav2 goal, stream feedback |
 | `07_moveit_joint_goal.py` | Plan+execute an **arm** motion via the MoveIt MoveGroup action |
+| `08_service_and_params.py` | **Services** (request→reply) + **parameters** — self-contained, verified |
+| `09_tf2_transforms.py` | **TF2**: broadcast a transform tree, convert points between frames — self-contained, verified |
+| `10_color_follow.py` | **Vision→action**: chase a red object via the camera. `--test` verifies the math without a sim; live needs `waffle_pi` |
 
-04–06 need the sim running: `sim/launch_turtlebot.sh` (own terminal).
-Introspect anything live with the MCP `run_ros2` tool or the CLI, e.g.
-`ros2 topic echo /scan --once`, `ros2 interface show sensor_msgs/msg/LaserScan`.
+04–06 and live-10 need the sim running: `sim/launch_turtlebot.sh` (own terminal;
+`TURTLEBOT3_MODEL=waffle_pi` for the camera). 01–03, 08, 09, and `10 --test` run
+with no sim at all. Introspect anything live with the MCP `run_ros2` tool or the
+CLI, e.g. `ros2 topic echo /scan --once`, `ros2 interface show sensor_msgs/msg/LaserScan`.
+
+### 1c · Your first real package (`colcon_pkg/patrol_bot/`)
+Everything above is standalone scripts; real ROS 2 work ships as **packages**.
+`patrol_bot` is example 04 grown up: an installed executable (`ros2 run`), ROS
+parameters, and a launch file. Build it into your workspace:
+```bash
+mkdir -p ~/ros2_ws/src
+cp -r ~/Desktop/robot-llm-loop/examples/colcon_pkg/patrol_bot ~/ros2_ws/src/
+cd ~/ros2_ws && colcon build --packages-select patrol_bot
+source install/setup.bash
+ros2 launch patrol_bot patrol.launch.py side_m:=0.6 laps:=2   # with the sim up
+```
+(Verified: builds with colcon, `ros2 run patrol_bot patrol` completes a lap.)
+
+### 1d · IK on your own CAD arm (`pybullet/arm_ik_control.py`)
+Closed-form 2-link inverse kinematics on the arm you built in FreeCAD (`../cad`):
+give an (x, z) target, the math finds the joint angles, PyBullet proves the tip
+lands there (<1 mm). Run `--gui` to watch it reach. Verified headless.
 
 ### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
