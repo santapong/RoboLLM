@@ -29,6 +29,10 @@
     { "name": "drive", "description": "Drive via /cmd_vel (auto-stop, safety cap)." },
     { "name": "stop", "description": "Immediately stop the robot." },
     { "name": "navigate_to", "description": "Send a Nav2 goal to (x, y, yaw)." },
+    { "name": "get_camera_image", "description": "Capture the robot camera to a JPEG (waffle model)." },
+    { "name": "set_safe_mode", "description": "Toggle obstacle-safe teleop." },
+    { "name": "start_recording", "description": "Record topics to a rosbag dataset." },
+    { "name": "stop_recording", "description": "Stop the active rosbag recording." },
     { "name": "run_ros2", "description": "Run any ros2 CLI command and return its output." }
   ],
   "user_config": {

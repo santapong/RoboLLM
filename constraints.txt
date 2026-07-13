@@ -1,0 +1,8 @@
+# Version constraints that MUST hold for ROS 2 Jazzy to keep working in the venv.
+# ROS 2 Jazzy is built against numpy 1.26.x; numpy 2.x breaks rclpy message
+# conversions. Always install with this constraints file so a transitive dep
+# can't silently upgrade numpy:
+#
+#     .venv/bin/python -m pip install -c constraints.txt <anything>
+#
+numpy==1.26.4

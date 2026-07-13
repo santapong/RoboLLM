@@ -18,6 +18,8 @@ mcpb/build/
 mcpb/dist/
 # webcam scan sessions (images + meshes — large / personal)
 assets/scan/
+# rosbag recordings (large)
+assets/bags/
 # large binary assets (keep small ones; comment out to version meshes)
 assets/**/*.stl
 assets/**/*.dae

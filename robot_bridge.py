@@ -31,7 +31,7 @@ from rclpy.action import ActionClient
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import LaserScan
+from sensor_msgs.msg import LaserScan, Image
 from nav2_msgs.action import NavigateToPose
 
 
@@ -44,14 +44,20 @@ class Bridge(Node):
         self.nav = ActionClient(self, NavigateToPose, "navigate_to_pose")
         self._last_odom: Odometry | None = None
         self._last_scan: LaserScan | None = None
+        self._last_image: Image | None = None
         self.create_subscription(Odometry, "/odom", self._on_odom, 10)
         self.create_subscription(LaserScan, "/scan", self._on_scan, qos_profile_sensor_data)
+        # camera: waffle/waffle_pi publish here; burger has no camera (stays None)
+        self.create_subscription(Image, "/camera/image_raw", self._on_image, qos_profile_sensor_data)
 
         # continuous-teleop state, guarded by the deadman watchdog
         self._deadman_s = deadman_s
         self._target = Twist()
         self._target_stamp = 0.0
         self._teleop_active = False
+        # obstacle-safe teleop: block forward motion when something's too close
+        self.safe_mode = True
+        self.min_obstacle_m = 0.35
         self.create_timer(1.0 / 20.0, self._teleop_tick)  # 20 Hz republish
 
     # ---- subscriptions ----------------------------------------------------
@@ -60,6 +66,9 @@ class Bridge(Node):
 
     def _on_scan(self, msg: LaserScan) -> None:
         self._last_scan = msg
+
+    def _on_image(self, msg: Image) -> None:
+        self._last_image = msg
 
     # ---- continuous teleop (used by the web UI) ---------------------------
     def set_velocity(self, linear: float, angular: float) -> None:
@@ -70,6 +79,20 @@ class Bridge(Node):
         self._target_stamp = time.monotonic()
         self._teleop_active = True
 
+    def _front_distance(self) -> float:
+        """Nearest obstacle within a ±15° forward cone (meters); inf if unknown."""
+        s = self._last_scan
+        if s is None:
+            return float("inf")
+        best = float("inf")
+        for i, r in enumerate(s.ranges):
+            if not math.isfinite(r) or r <= s.range_min:
+                continue
+            ang = math.degrees(s.angle_min + i * s.angle_increment) % 360.0
+            if ang <= 15 or ang >= 345:
+                best = min(best, r)
+        return best
+
     def _teleop_tick(self) -> None:
         if not self._teleop_active:
             return
@@ -77,7 +100,13 @@ class Bridge(Node):
             self.cmd_vel.publish(Twist())  # deadman: no fresh command -> stop
             self._teleop_active = False
             return
-        self.cmd_vel.publish(self._target)
+        out = Twist()
+        out.linear.x = self._target.linear.x
+        out.angular.z = self._target.angular.z
+        # safety: refuse to drive forward into a close obstacle (turning still allowed)
+        if self.safe_mode and out.linear.x > 0 and self._front_distance() < self.min_obstacle_m:
+            out.linear.x = 0.0
+        self.cmd_vel.publish(out)
 
     # ---- timed drive (used by the MCP `drive` tool) -----------------------
     def drive_for(self, linear: float, angular: float, seconds: float) -> None:
@@ -127,6 +156,50 @@ class Bridge(Node):
         return {"front": nearest(0), "left": nearest(90),
                 "back": nearest(180), "right": nearest(270),
                 "num_points": len(s.ranges)}
+
+    def _image_bgr(self):
+        """Convert the latest /camera/image_raw to a BGR numpy array, or None.
+        cv2/numpy are imported lazily so this module still loads in minimal
+        environments (e.g. the .mcpb bundle) that don't have them."""
+        msg = self._last_image
+        if msg is None:
+            return None, "no camera image — use a waffle model (burger has no camera) and check the sim"
+        try:
+            import numpy as np
+            import cv2
+        except ImportError:
+            return None, "opencv/numpy not available in this environment"
+        arr = np.frombuffer(bytes(msg.data), dtype=np.uint8)
+        enc = msg.encoding
+        try:
+            if enc in ("rgb8", "bgr8"):
+                img = arr.reshape(msg.height, msg.width, 3)
+                if enc == "rgb8":
+                    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            elif enc == "mono8":
+                img = arr.reshape(msg.height, msg.width)
+            else:
+                return None, f"unsupported image encoding '{enc}'"
+        except ValueError:
+            return None, "image buffer/size mismatch"
+        return img, None
+
+    def save_camera_jpeg(self, path: str) -> dict[str, Any]:
+        img, err = self._image_bgr()
+        if err:
+            return {"error": err}
+        import cv2
+        cv2.imwrite(path, img)
+        return {"path": path, "width": int(img.shape[1]), "height": int(img.shape[0])}
+
+    def camera_jpeg_bytes(self):
+        """Latest frame as JPEG bytes (for the dashboard), or None."""
+        img, err = self._image_bgr()
+        if err:
+            return None
+        import cv2
+        ok, buf = cv2.imencode(".jpg", img)
+        return buf.tobytes() if ok else None
 
     def laser_radar(self, sectors: int = 36) -> list[float | None]:
         """Nearest distance per angular sector (for a mini radar plot in the UI)."""

@@ -4,6 +4,8 @@
 set -e
 source /opt/ros/jazzy/setup.bash
 [[ -f "$HOME/ros2_ws/install/setup.bash" ]] && source "$HOME/ros2_ws/install/setup.bash"
+# burger = lidar only; use waffle_pi for a CAMERA (needed by get_camera_image):
+#   TURTLEBOT3_MODEL=waffle_pi sim/launch_turtlebot.sh
 export TURTLEBOT3_MODEL="${TURTLEBOT3_MODEL:-burger}"
 
 echo "Launching TurtleBot3 ($TURTLEBOT3_MODEL) in Gazebo..."

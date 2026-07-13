@@ -57,6 +57,13 @@
     <div class="kv"><span>left</span><b id="left">–</b></div>
     <div class="kv"><span>right</span><b id="right">–</b></div>
     <div class="kv"><span>back</span><b id="back">–</b></div>
+    <div class="kv" style="margin-top:8px"><span>safe mode</span>
+      <b id="safe" style="cursor:pointer" title="click to toggle">–</b></div>
+  </section>
+
+  <section class="panel">
+    <h2>Camera <span style="color:var(--muted)">(waffle model only)</span></h2>
+    <img id="cam" alt="no camera" style="width:100%;border-radius:8px;background:#0b0e13;min-height:120px;object-fit:contain">
   </section>
 
   <section class="panel">
@@ -97,13 +104,15 @@
 
 <script>
 const $ = id => document.getElementById(id);
+const TOKEN = "__TOKEN__";                         // injected by server (empty = no auth)
+const qs = TOKEN ? ("?token=" + encodeURIComponent(TOKEN)) : "";
 let speed = 0.2;
 $('spd').oninput = e => { speed = +e.target.value; $('spdv').textContent = speed.toFixed(2); };
 
 // ---- teleop: hold to move (repeat POST keeps the deadman alive), release = stop
 let held = null, timer = null;
 function drive(lin, ang) {
-  fetch('/api/cmd', {method:'POST', headers:{'Content-Type':'application/json'},
+  fetch('/api/cmd'+qs, {method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({linear: lin*speed, angular: ang*Math.max(0.4,speed*3)})});
 }
 function startHold(lin, ang) {
@@ -112,7 +121,7 @@ function startHold(lin, ang) {
   clearInterval(timer); timer = setInterval(() => drive(lin, ang), 150); // refresh < deadman(0.6s)
 }
 function stopHold() { clearInterval(timer); timer=null; held=null;
-  fetch('/api/stop', {method:'POST'}); }
+  fetch('/api/stop'+qs, {method:'POST'}); }
 
 document.querySelectorAll('.pad button[data-lin]').forEach(b => {
   const lin = +b.dataset.lin, ang = +b.dataset.ang;
@@ -140,7 +149,7 @@ $('navform').onsubmit = async e => {
   e.preventDefault();
   const body = {x:+$('gx').value, y:+$('gy').value, yaw_deg:+$('gyaw').value};
   $('navmsg').textContent = 'sending…';
-  const r = await fetch('/api/nav', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const r = await fetch('/api/nav'+qs, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
   $('navmsg').textContent = (await r.json()).result;
 };
 
@@ -150,6 +159,24 @@ async function loadTopics() {
   $('topics').innerHTML = t.map(x => `<div><span class="t">${x.topic}</span> — ${x.type}</div>`).join('');
 }
 loadTopics();
+
+// ---- safe-mode toggle
+let safeOn = true;
+$('safe').onclick = () => {
+  safeOn = !safeOn;
+  fetch('/api/safe'+qs, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({enabled: safeOn, min_obstacle_m: 0.35})});
+};
+
+// ---- camera: poll latest frame (204 = no camera -> keep placeholder)
+const cam = $('cam');
+async function pollCam() {
+  try {
+    const r = await fetch('/api/camera'+qs, {cache:'no-store'});
+    if (r.status === 200) { cam.src = URL.createObjectURL(await r.blob()); }
+  } catch (e) {}
+}
+setInterval(pollCam, 500); pollCam();
 
 // ---- telemetry websocket
 const radar = $('radar'), ctx = radar.getContext('2d');
@@ -179,6 +206,8 @@ function connect() {
     $('yaw').textContent = p.yaw_deg ?? '–'; $('vx').textContent = p.vx ?? '–'; $('wz').textContent = p.wz ?? '–';
     $('front').textContent = l.front ?? '–'; $('left').textContent = l.left ?? '–';
     $('right').textContent = l.right ?? '–'; $('back').textContent = l.back ?? '–';
+    if (m.safe) { safeOn = m.safe.on; $('safe').textContent = m.safe.on ? `on (${m.safe.min} m)` : 'off';
+      $('safe').style.color = m.safe.on ? 'var(--accent)' : 'var(--danger)'; }
     drawRadar(m.radar);
   };
 }

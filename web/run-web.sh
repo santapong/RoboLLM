@@ -11,5 +11,9 @@ source /opt/ros/jazzy/setup.bash
 export TURTLEBOT3_MODEL="${TURTLEBOT3_MODEL:-burger}"
 
 cd "$ROOT"
+# Localhost-only by default (safe). To expose on your LAN:
+#   HOST=0.0.0.0 ROBOT_TOKEN=somesecret web/run-web.sh
+HOST="${HOST:-127.0.0.1}"
 echo "Dashboard → http://localhost:8080   (Ctrl-C to stop)"
-exec "$ROOT/.venv/bin/python" -m uvicorn web.server:app --host 0.0.0.0 --port 8080
+[[ -n "$ROBOT_TOKEN" ]] && echo "auth token required (?token=…)" || echo "no auth (localhost only)"
+exec "$ROOT/.venv/bin/python" -m uvicorn web.server:app --host "$HOST" --port 8080
