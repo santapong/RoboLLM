@@ -17,18 +17,23 @@ monitor, and the Pi 5 easily runs the actual ROS 2 node.
 ## Files
 | File | What |
 |------|------|
-| `firmware/arm_firmware/` | Uno sketch + Makefile (apt toolchain, `make upload`) |
+| `firmware/arm_firmware/` | Uno sketch + Makefile (arduino-cli, `make upload`) |
 | `arm_serial.py` | Python driver + CLI (`ping`, `joints`, `set <ch> <deg>`, `led`) |
 | `arm_bridge_node.py` | ROS 2 node: `/arm/command` (deg) → servos, publishes `/arm/joint_states` |
 | `check_arduino.sh` | **One-command health check**: toolchain→port→perms→compile→flash→PING |
 | `pi5_setup.sh` | Run on the Pi 5: dialout, toolchain, ROS 2 Jazzy, udev rule |
 
-## First time on the laptop
-```bash
-# one-time (needs your password):
-sudo apt install -y gcc-avr avr-libc avrdude arduino-core-avr arduino-mk
-sudo usermod -aG dialout $USER    # then log out & back in once
+## Toolchain (already installed on the laptop, rootless)
+- **arduino-cli 1.5.1** at `~/.local/bin/arduino-cli`, AVR core 1.8.8 +
+  Servo 1.3.0 in `~/.arduino15` — compiles/flashes with **no sudo**.
+- **Arduino IDE 2.3.10** at `~/.local/opt/arduino-ide` — launch with
+  `arduino-ide` or from the app menu. (Wrapper passes `--no-sandbox`:
+  Ubuntu 24.04 AppArmor blocks Electron's sandbox outside apt/snap.)
+- Reinstall anywhere: `arduino-cli core install arduino:avr && arduino-cli lib install Servo`.
 
+```bash
+sudo usermod -aG dialout $USER    # ONE root step: serial-port permission,
+                                  # then log out & back in once
 # plug the Uno in over USB, then:
 hardware/check_arduino.sh         # answers "does the Arduino work fine?"
 ```

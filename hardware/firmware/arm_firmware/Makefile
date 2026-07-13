@@ -1,11 +1,18 @@
-# Build/upload arm_firmware.ino with the Ubuntu apt toolchain (arduino-mk).
+# Build/upload arm_firmware.ino with arduino-cli (rootless, ~/.local/bin).
 #   make            -> compile (no board needed)
-#   make upload     -> compile + flash over USB
-#   make monitor    -> serial monitor (screen, 115200)
-# Requires: sudo apt install gcc-avr avr-libc avrdude arduino-core-avr arduino-mk
-BOARD_TAG    = uno
-ARDUINO_LIBS = Servo
-ARDUINO_DIR  = /usr/share/arduino
-MONITOR_PORT ?= /dev/ttyACM0
-MONITOR_BAUDRATE = 115200
-include /usr/share/arduino/Arduino.mk
+#   make upload     -> compile + flash over USB (PORT=/dev/ttyACM0 by default)
+#   make monitor    -> serial monitor at 115200
+CLI  ?= $(HOME)/.local/bin/arduino-cli
+FQBN ?= arduino:avr:uno
+PORT ?= /dev/ttyACM0
+
+all:
+	$(CLI) compile --fqbn $(FQBN) .
+
+upload: all
+	$(CLI) upload -p $(PORT) --fqbn $(FQBN) .
+
+monitor:
+	$(CLI) monitor -p $(PORT) --config 115200
+
+.PHONY: all upload monitor

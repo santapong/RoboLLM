@@ -10,10 +10,21 @@ set -e
 echo "== [1/5] serial permissions =="
 sudo usermod -aG dialout "$USER"
 
-echo "== [2/5] base tools + AVR toolchain (flash the Uno from the Pi too) =="
+echo "== [2/5] base tools + arduino-cli (flash the Uno from the Pi too) =="
 sudo apt update
-sudo apt install -y python3-pip python3-serial git \
-  gcc-avr avr-libc avrdude arduino-core-avr arduino-mk
+sudo apt install -y python3-pip python3-serial git curl
+if ! [ -x "$HOME/.local/bin/arduino-cli" ]; then
+  ARCH=ARM64 # Pi 5
+  VER=$(curl -fsSL https://api.github.com/repos/arduino/arduino-cli/releases/latest | grep -F tag_name | awk -F'"' '{print $4}')
+  mkdir -p "$HOME/.local/bin" /tmp/acli && cd /tmp/acli
+  curl -fsSLO "https://github.com/arduino/arduino-cli/releases/download/${VER}/arduino-cli_${VER#v}_Linux_${ARCH}.tar.gz"
+  tar xzf "arduino-cli_${VER#v}_Linux_${ARCH}.tar.gz"
+  install -m755 arduino-cli "$HOME/.local/bin/"
+  cd -
+fi
+"$HOME/.local/bin/arduino-cli" core update-index
+"$HOME/.local/bin/arduino-cli" core install arduino:avr
+"$HOME/.local/bin/arduino-cli" lib install Servo
 
 echo "== [3/5] ROS 2 Jazzy (skip if already installed) =="
 if ! [ -f /opt/ros/jazzy/setup.bash ]; then
