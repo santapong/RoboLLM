@@ -20,10 +20,37 @@ The concepts every ROS 2 robot is built from. No sim needed for 01–03.
 | `03_subscriber.py` | Subscribing + the callback pattern (run 02 alongside) |
 | `04_drive_square.py` | Publishing `/cmd_vel` to move the robot (open loop) |
 | `05_obstacle_stop.py` | **Closed loop**: read `/scan`, act on it — a real behavior |
+| `06_send_nav_goal.py` | The **action** pattern: send a Nav2 goal, stream feedback |
+| `07_moveit_joint_goal.py` | Plan+execute an **arm** motion via the MoveIt MoveGroup action |
 
-04–05 need the sim running: `sim/launch_turtlebot.sh` (own terminal).
+04–06 need the sim running: `sim/launch_turtlebot.sh` (own terminal).
 Introspect anything live with the MCP `run_ros2` tool or the CLI, e.g.
 `ros2 topic echo /scan --once`, `ros2 interface show sensor_msgs/msg/LaserScan`.
+
+### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
+Build a map, navigate it, and move an arm — the three pillars beyond teleop.
+| Terminal command | What it does |
+|------------------|--------------|
+| `sim/launch_slam.sh` | **SLAM** (cartographer): drive around to build a map, then save it |
+| `sim/launch_nav2.sh [map.yaml]` | **Nav2**: load the map & plan paths (set 2D Pose Estimate first) |
+| `sim/launch_moveit_panda.sh` | **MoveIt**: Panda arm + RViz (self-contained, no Gazebo) |
+
+Typical flow:
+```bash
+# Terminal 1: sim   ·   Terminal 2: SLAM
+sim/launch_turtlebot.sh
+sim/launch_slam.sh
+# drive around (web dashboard :8080 / teleop / ask Claude) until the map is full, then:
+ros2 run nav2_map_server map_saver_cli -f ~/map
+# Terminal 2 now: navigation with your map
+sim/launch_nav2.sh ~/map.yaml
+# set "2D Pose Estimate" in RViz, then:
+.venv/bin/python examples/ros2_py/06_send_nav_goal.py --x 1.5 --y 0.5   # (or ask Claude, or "Nav2 Goal")
+
+# Manipulation (separate, no sim needed):
+sim/launch_moveit_panda.sh
+.venv/bin/python examples/ros2_py/07_moveit_joint_goal.py --pose ready
+```
 
 ### 2 · Physics simulators without a GPU
 Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.

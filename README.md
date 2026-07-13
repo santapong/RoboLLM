@@ -58,7 +58,9 @@ Add a tool = add an `@mcp.tool()` function, then restart Claude Code.
 
 ## 3 · Learn robot software (`examples/`)
 A guided path: ROS 2 nodes → pub/sub → open-loop drive → closed-loop obstacle
-avoidance, plus CPU physics sims (PyBullet, MuJoCo). See `examples/README.md`.
+avoidance → Nav2 goal (actions) → MoveIt arm, plus CPU physics sims (PyBullet,
+MuJoCo). Launch helpers for **SLAM** (map building), **Nav2** (navigation), and a
+**MoveIt Panda** arm live in `sim/`. See `examples/README.md`.
 
 ## 4 · Scan a real object with your webcam (`scan3d/`)
 ```bash
