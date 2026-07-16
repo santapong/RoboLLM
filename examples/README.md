@@ -49,6 +49,16 @@ Closed-form 2-link inverse kinematics on the arm you built in FreeCAD (`../cad`)
 give an (x, z) target, the math finds the joint angles, PyBullet proves the tip
 lands there (<1 mm). Run `--gui` to watch it reach. Verified headless.
 
+### 1e · The manipulation pipeline, end to end (`panda_arm/`)
+Five demos on the 7-DOF Panda that build the full chain: FK/IK with the math
+visible → pick & place streaming joint angles to a **virtual Arduino** →
+vision that **solves object positions from camera pixels** (pinhole model +
+OpenCV) → trapezoidal trajectories. Ends exactly where `../hardware` begins:
+servo commands over serial. See `panda_arm/README.md`.
+```bash
+ros2 launch examples/panda_arm/05_vision_sort.launch.py   # the whole pipeline
+```
+
 ### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
 | Terminal command | What it does |
