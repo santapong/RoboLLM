@@ -1,0 +1,65 @@
+# robot-llm-loop — project overview for Claude
+
+LLM ↔ robotics learning workbench (learn/research first, product later).
+Owner: santapong. GitHub: `santapong/RoboLLM` (**keep PRIVATE**). Laptop:
+Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic, **no NVIDIA GPU** (heavy sim/RL
+belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
+
+## Architecture
+- `robot_bridge.py` — THE single shared rclpy node (`get_bridge()` singleton,
+  background spin thread). Both the MCP server and the web dashboard use it.
+- `ros2_mcp_server.py` — FastMCP stdio server, 22 tools (drive, navigate_to,
+  camera, rosbag, TF2, MoveIt move_arm, Gazebo spawn/delete/reset via
+  `gazebo_world.py`, run_ros2, …). Registered in `.mcp.json` → `run-server.sh`.
+  **Editing MCP/bridge code requires restarting Claude Code to reload.**
+- `web/` — FastAPI dashboard, `web/run-web.sh` → http://localhost:8080
+  (127.0.0.1 by default; LAN: `HOST=0.0.0.0 ROBOT_TOKEN=secret`).
+- `examples/` — learning path: ros2_py 01–10, pybullet (IK on the CAD arm),
+  mujoco, colcon_pkg/patrol_bot (real ament_python package).
+- `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
+- `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
+- `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);
+  root `launch_all.sh`. `docs/live-session.md` = guided 30-min demo playbook.
+- `hardware/` — the REAL arm: Uno firmware (serial protocol @115200),
+  `arm_serial.py` driver, `arm_bridge_node.py` ROS 2 node, `sim_uno.py` fake
+  Uno on a pty (develop with no hardware), `check_arduino.sh` 6-step health
+  check, `pi5_setup.sh` for the Pi. Uno R3 can't run micro-ROS (2 KB RAM) —
+  text serial is intentional.
+
+## Environment gotchas (learned the hard way — do not rediscover)
+- **numpy MUST stay 1.26.4** (ROS Jazzy ABI; 2.x breaks rclpy). Always
+  `pip install -c constraints.txt`. Venv is `--system-site-packages`.
+- User shell is zsh but ROS `setup.bash` is bash-only → run verification as
+  `bash -c 'source /opt/ros/jazzy/setup.bash && …'`.
+- `TURTLEBOT3_MODEL=waffle_pi` for a camera (default burger = lidar only).
+- Opening the Uno's serial port DTR-resets it → wait ~2.5 s (ArmSerial does).
+- Servo power = external 5–6 V, common GND, NEVER the Uno's 5V pin.
+- Never name an rclpy Node method `handle` (shadows Node.handle).
+- `pkill -f <pattern>` in a compound command can match your own shell — use
+  `pkill -f '[p]attern'` in a separate command.
+- /map topic needs TRANSIENT_LOCAL QoS (latched); MoveIt demo runs headless
+  with `demo.launch.py use_rviz:=false`.
+- Arduino toolchain is ROOTLESS: `~/.local/bin/arduino-cli`, core in
+  `~/.arduino15`; Arduino IDE 2.x at `~/.local/opt/arduino-ide` (launcher adds
+  `--no-sandbox` for Ubuntu 24.04 AppArmor). Do NOT `apt install arduino`.
+- `.mcpb` bundle (mcpb/) is for Claude DESKTOP; Claude CODE uses `.mcp.json`.
+  build_mcpb.sh must copy gazebo_world.py and keep `*.dist-info`.
+
+## Verify / run
+- Quick MCP smoke test: ask Claude `list_topics` (needs a sim running).
+- Sim: `sim/launch_turtlebot.sh` (own terminal, display needed).
+- Arm with no hardware: `python3 hardware/sim_uno.py` then
+  `ARM_PORT=/dev/pts/N python3 hardware/arm_serial.py ping`.
+- Real Uno health check: `hardware/check_arduino.sh` (needs user in `dialout`).
+- Examples self-test with no sim: 08, 09, 10 (`--test`).
+
+## Status (2026-07-14)
+Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +
+patrol_bot, CAD arm, scan3d, .mcpb, hardware stack vs sim_uno. PENDING user:
+`sudo usermod -aG dialout santapong` + plug the real Uno in → run
+check_arduino.sh. Open gaps: cloud-GPU workflow, tests/CI, RL example,
+live desktop demo (docs/live-session.md).
+
+## Conventions
+- Commit style: short imperative subject; push to `origin main` (repo private).
+- Keep examples runnable on this laptop (CPU-only, GPU-free).
