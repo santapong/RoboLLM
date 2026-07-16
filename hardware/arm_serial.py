@@ -15,6 +15,7 @@ CLI:  python3 arm_serial.py ping | joints | set <ch> <deg> | led <0|1>
 """
 from __future__ import annotations
 
+import os
 import sys
 import time
 
@@ -42,7 +43,8 @@ def find_arduino_port() -> str | None:
 class ArmSerial:
     def __init__(self, port: str | None = None, baud: int = 115200,
                  boot_wait_s: float = 2.5):
-        port = port or find_arduino_port()
+        # ARM_PORT env overrides auto-detect (e.g. a sim_uno.py /dev/pts/N)
+        port = port or os.environ.get("ARM_PORT") or find_arduino_port()
         if port is None:
             raise RuntimeError(
                 "No Arduino found. Plug the Uno in via USB and check "

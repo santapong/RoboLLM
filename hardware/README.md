@@ -21,6 +21,7 @@ monitor, and the Pi 5 easily runs the actual ROS 2 node.
 | `arm_serial.py` | Python driver + CLI (`ping`, `joints`, `set <ch> <deg>`, `led`) |
 | `arm_bridge_node.py` | ROS 2 node: `/arm/command` (deg) → servos, publishes `/arm/joint_states` |
 | `check_arduino.sh` | **One-command health check**: toolchain→port→perms→compile→flash→PING |
+| `sim_uno.py` | **Fake Uno** on a virtual port — develop/demo the whole stack with no hardware: `python3 sim_uno.py`, then `ARM_PORT=/dev/pts/N …` |
 | `pi5_setup.sh` | Run on the Pi 5: dialout, toolchain, ROS 2 Jazzy, udev rule |
 
 ## Toolchain (already installed on the laptop, rootless)
