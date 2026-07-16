@@ -200,6 +200,17 @@ class SerialLink:
         return [l for l in data.split('\n') if l.strip()]
 
 
+def make_link():
+    """Serial link factory: the educational streaming protocol by default,
+    or the project's REAL hardware protocol (../../hardware, request-reply
+    via ArmSerial) when PANDA_PROTOCOL=uno — see uno_link.py."""
+    if os.environ.get('PANDA_PROTOCOL', '').lower() == 'uno':
+        from uno_link import UnoLink
+        return UnoLink()
+    return SerialLink(SERIAL_PORT)
+
+
+
 class SortWindow(QtWidgets.QWidget):
     def __init__(self, ros, kin):
         super().__init__()
@@ -209,7 +220,7 @@ class SortWindow(QtWidgets.QWidget):
         self.yaw = 0.0                              # current wrist yaw offset
         self.finger = GRIP_OPEN
         self.finger_target = GRIP_OPEN
-        self.serial = SerialLink(SERIAL_PORT)
+        self.serial = make_link()
 
         self.round_no = 1
         self.objects = spawn_cubes()

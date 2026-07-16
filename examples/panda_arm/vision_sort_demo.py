@@ -36,7 +36,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from panda_kinematics import PandaKinematics, rot_axis, rpy_from_matrix
 from sort_demo import (BINS, CUBE_SIZE, CUBE_Z, FINGER_LEN, GRASP_Z, GRIP_CLOSED,
                        GRIP_OPEN, HOVER_Z, READY_POSE, SERIAL_PORT, TICK_HZ,
-                       RosBackend, SerialLink, spawn_cubes)
+                       RosBackend, SerialLink, make_link, spawn_cubes)
 from table_camera import TableCamera
 
 V_MAX = 0.25      # m/s  cruise speed
@@ -56,7 +56,7 @@ class VisionSortWindow(QtWidgets.QWidget):
         self.v = 0.0                       # current Cartesian speed (trapezoid)
         self.finger = GRIP_OPEN
         self.finger_target = GRIP_OPEN
-        self.serial = SerialLink(SERIAL_PORT)
+        self.serial = make_link()
 
         self.round_no = 0
         self.objects = []
