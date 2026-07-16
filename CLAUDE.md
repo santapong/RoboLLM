@@ -15,7 +15,9 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - `web/` — FastAPI dashboard, `web/run-web.sh` → http://localhost:8080
   (127.0.0.1 by default; LAN: `HOST=0.0.0.0 ROBOT_TOKEN=secret`).
 - `examples/` — learning path: ros2_py 01–10, pybullet (IK on the CAD arm),
-  mujoco, colcon_pkg/patrol_bot (real ament_python package).
+  mujoco, colcon_pkg/patrol_bot (real ament_python package), panda_arm
+  (7-DOF pipeline: FK/IK math GUI → serial→virtual Arduino → camera
+  pixel-solving pick & place; RViz-based, no Gazebo needed).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);
@@ -61,5 +63,9 @@ check_arduino.sh. Open gaps: cloud-GPU workflow, tests/CI, RL example,
 live desktop demo (docs/live-session.md).
 
 ## Conventions
-- Commit style: short imperative subject; push to `origin main` (repo private).
+- Commit style: short imperative subject.
+- Branching (`docs/branching.md`): day-to-day work on `develop`;
+  learning/testing on `experiment/<topic>` (branch off develop, delete when
+  done); merge `develop` → `main` only after the touched demos actually run.
+  Never commit directly to `main`.
 - Keep examples runnable on this laptop (CPU-only, GPU-free).
