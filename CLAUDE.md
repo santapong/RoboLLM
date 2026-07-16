@@ -1,7 +1,8 @@
 # robot-llm-loop — project overview for Claude
 
 LLM ↔ robotics learning workbench (learn/research first, product later).
-Owner: santapong. GitHub: `santapong/RoboLLM` (**keep PRIVATE**). Laptop:
+Owner: santapong. GitHub: `santapong/RoboLLM` (**PUBLIC** — everything
+pushed here is visible to the world; keep secrets/tokens out). Laptop:
 Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic, **no NVIDIA GPU** (heavy sim/RL
 belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 
