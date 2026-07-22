@@ -18,7 +18,11 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - `examples/` — learning path: ros2_py 01–10, pybullet (IK on the CAD arm),
   mujoco, colcon_pkg/patrol_bot (real ament_python package), panda_arm
   (7-DOF pipeline: FK/IK math GUI → serial→virtual Arduino → camera
-  pixel-solving pick & place; RViz-based, no Gazebo needed).
+  pixel-solving pick & place; RViz-based, no Gazebo needed), hand_follow
+  (webcam LEFT-hand teleop of a vendored 6-DOF arm: MediaPipe → One-Euro →
+  warm-start IK → 20 Hz JointTrajectory; RViz-based, CPU-only; NOTE its
+  mediapipe install must keep the numpy 1.26.4 pin — verified variant in
+  its README; Docker route ships its own image).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);

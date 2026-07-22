@@ -59,6 +59,18 @@ servo commands over serial. See `panda_arm/README.md`.
 ros2 launch examples/panda_arm/05_vision_sort.launch.py   # the whole pipeline
 ```
 
+### 1f · Teleop by hand-tracking (`hand_follow/`)
+Wave your **LEFT hand** at the webcam and a 6-DOF arm follows it live in RViz
+at 20 Hz — MediaPipe hand landmarks → One-Euro smoothing → warm-start IK →
+JointTrajectory streaming, CPU-only, no Gazebo. Self-contained (vendors its
+own arm URDF + MoveIt config) with a verified Docker route and a
+`synthetic:=true` no-camera smoke test. The researched ROS2×LLM theory
+(LLM strictly *supervisory*, never in the control loop) lives in
+`hand_follow/docs/`. See `hand_follow/README.md`.
+```bash
+ros2 launch robot_arm_moveit_config handfollow.launch.py preview:=true
+```
+
 ### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
 | Terminal command | What it does |
