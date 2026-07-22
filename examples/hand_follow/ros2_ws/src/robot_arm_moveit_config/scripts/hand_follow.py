@@ -80,7 +80,17 @@ from sensor_msgs.msg import JointState
 from std_srvs.srv import SetBool
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
-sys.path.insert(0, "/ros2_ws/tools")
+# arm_ik lives at <ws>/tools in the dev workspace; after a colcon build it is
+# also installed right next to this script (see CMakeLists). Try, in order:
+# this script's own dir, the source-tree tools dir relative to it, and the
+# fixed Docker dev path.
+_here = os.path.dirname(os.path.abspath(__file__))
+for _cand in (_here,
+              os.path.normpath(os.path.join(_here, "..", "..", "..", "tools")),
+              "/ros2_ws/tools"):
+    if os.path.isfile(os.path.join(_cand, "arm_ik.py")):
+        sys.path.insert(0, _cand)
+        break
 import arm_ik
 
 JOINTS = ["joint1", "joint2", "joint3", "joint4", "joint5", "joint6"]

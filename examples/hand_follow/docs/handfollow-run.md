@@ -10,7 +10,7 @@ axis-mapping and behavior spec this guide summarizes.
 
 ## Prerequisites
 
-- `ros2-arm:jazzy` image built (`docker build -t ros2-arm:jazzy ~/ros2_ws/.docker-arm/`)
+- `ros2-arm:jazzy` image built (`docker build -t ros2-arm:jazzy <dir with the Dockerfile> (dev ws: ~/ros2_ws/.docker-arm/, RoboLLM example: examples/hand_follow/docker/)`)
   — it bakes the `/opt/mpvenv` mediapipe venv and
   `/opt/models/hand_landmarker.task` (7.8 MB) at build time, so no network
   is needed at run time.
@@ -21,7 +21,7 @@ axis-mapping and behavior spec this guide summarizes.
   or `docker ps` + `docker rm -f <name>` to clear old ones first.
 - Nothing else on the 4-core host is CPU-bound (RViz + move_group + mediapipe
   inference together want real cores). Stop other demo containers
-  (`armloop`, `cellloop`, `fullsys`, `mtcdemo`, `arduino`) if the box is
+  (`armloop`, `armmoveit`, `armdemo`, `armview` — the ones this launcher manages) if the box is
   loaded.
 
 ## One-command start
@@ -177,7 +177,7 @@ GCS bucket
 ```
 The image wasn't built with the current Dockerfile, or was built before the
 model-bake step was added. Rebuild:
-`docker build -t ros2-arm:jazzy ~/ros2_ws/.docker-arm/`. To sanity-check an
+`docker build -t ros2-arm:jazzy <dir with the Dockerfile> (dev ws: ~/ros2_ws/.docker-arm/, RoboLLM example: examples/hand_follow/docker/)`. To sanity-check an
 existing image without a full run: `docker run --rm ros2-arm:jazzy sha256sum
 /opt/models/hand_landmarker.task` and compare against
 `/opt/models/hand_landmarker.task.sha256` baked alongside it.

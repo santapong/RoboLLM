@@ -30,23 +30,39 @@ supervisory layer is this repo's natural next step via `ros2_mcp_server.py`.
 ## Run — native (this laptop, ROS 2 Jazzy)
 
 ```bash
+cd examples/hand_follow
+
 # deps — NOTE the numpy pin, per this repo's constraints law (verified working):
 pip install --break-system-packages -c ../../constraints.txt mediapipe==0.10.35 numpy==1.26.4
 # model file (7.8 MB):
 curl -Lo hand_landmarker.task https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task
 
-# build the two packages into a ws, then:
+# build the vendored workspace (installs hand_follow.py AND arm_ik.py into the
+# package share, so no PYTHONPATH is needed):
+cd ros2_ws
+source /opt/ros/jazzy/setup.bash
+colcon build --packages-select robot_arm_description robot_arm_moveit_config
+source install/setup.bash
+
+# no camera attached? smoke-test first:  ... handfollow.launch.py synthetic:=true
 ros2 launch robot_arm_moveit_config handfollow.launch.py \
-    model_path:=$PWD/hand_landmarker.task preview:=true
+    model_path:=$PWD/../hand_landmarker.task preview:=true
 ```
+
+The launch file picks `python3` automatically when the Docker venv
+(`/opt/mpvenv/bin/python`) is absent.
 
 ## Run — Docker (as originally verified end-to-end)
 
 ```bash
-docker build -t ros2-arm:jazzy docker/            # bakes mediapipe venv + model
-./docker/ros2-arm handfollow preview:=true        # demo + follower + webcam window
-./docker/ros2-arm handfollow synthetic            # no-camera smoke test
+cd examples/hand_follow
+docker build -t ros2-arm:jazzy docker/     # bakes mediapipe venv + model file
+./docker/ros2-arm handfollow synthetic     # no-camera smoke test
+./docker/ros2-arm handfollow preview:=true # live: demo + follower + webcam window
 ```
+
+The launcher auto-detects this example's vendored `ros2_ws/` (override with
+`WS=/path`), and colcon-builds it inside the container on first run (~1 min).
 
 ## Knobs (all launch args — see `docs/handfollow-run.md`)
 

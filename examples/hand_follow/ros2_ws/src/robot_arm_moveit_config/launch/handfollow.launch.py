@@ -23,8 +23,19 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from ament_index_python.packages import get_package_share_directory
 
-HAND_FOLLOW_PY = "/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py"
-MPVENV_PYTHON = "/opt/mpvenv/bin/python"
+# Resolve the follower script and interpreter portably:
+#  - Docker dev route (this repo's image): the live source tree at /ros2_ws is
+#    preferred so edits take effect without a rebuild, and the mediapipe venv
+#    interpreter exists at /opt/mpvenv/bin/python.
+#  - Native route (fresh clone, colcon build): fall back to the script
+#    installed into the package share (CMakeLists installs scripts/ AND
+#    ../../tools/arm_ik.py next to it) and plain python3.
+_SRC_PY = "/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py"
+HAND_FOLLOW_PY = _SRC_PY if os.path.exists(_SRC_PY) else os.path.join(
+    get_package_share_directory("robot_arm_moveit_config"),
+    "scripts", "hand_follow.py")
+_MPVENV = "/opt/mpvenv/bin/python"
+MPVENV_PYTHON = _MPVENV if os.path.exists(_MPVENV) else "python3"
 
 
 def generate_launch_description():

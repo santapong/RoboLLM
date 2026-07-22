@@ -9,19 +9,34 @@
 #   ros2-arm handfollow            arm demo + webcam hand-following (camera)
 #   ros2-arm handfollow synthetic  arm demo + sine-sweep test target (no cam)
 #   ros2-arm handfollow [synthetic] latency_probe:=true   + per-stage timing
-#                        see ~/ros2_ws/docs/handfollow-run.md
+#                        docs: handfollow-run.md (ros2_ws/docs/ in the dev ws,
+#                        docs/ next to this script in the RoboLLM example)
 # GUI (RViz/MoveIt) works via X passthrough + hardware GL; ~/ros2_ws mounts.
 if [ "$1" = stop ]; then
     docker rm -f armloop armmoveit armdemo armview 2>/dev/null
     echo "stopped all arm containers"; exit 0
 fi
-WS="$HOME/ros2_ws"
+# Workspace: prefer a vendored ros2_ws next to this script (RoboLLM
+# examples/hand_follow/docker/ros2-arm layout, works for a fresh cloner),
+# else the dev workspace at $HOME/ros2_ws. WS env var overrides both.
+_SELFDIR=$(CDPATH= cd "$(dirname "$0")" && pwd)
+if [ -z "$WS" ]; then
+    if [ -d "$_SELFDIR/../ros2_ws/src/robot_arm_moveit_config" ]; then
+        WS=$(CDPATH= cd "$_SELFDIR/../ros2_ws" && pwd)
+    else
+        WS="$HOME/ros2_ws"
+    fi
+fi
 mkdir -p "$WS/src"
 command -v xhost >/dev/null && xhost +local:root >/dev/null 2>&1
 
 if ! docker image inspect ros2-arm:jazzy >/dev/null 2>&1; then
     echo "ros2-arm:jazzy isn't built yet. Build it with:"
-    echo "  docker build -t ros2-arm:jazzy ~/ros2_ws/.docker-arm/"
+    if [ -f "$_SELFDIR/Dockerfile" ]; then
+        echo "  docker build -t ros2-arm:jazzy $_SELFDIR/"
+    else
+        echo "  docker build -t ros2-arm:jazzy ~/ros2_ws/.docker-arm/"
+    fi
     exit 1
 fi
 
@@ -46,7 +61,7 @@ CAMDEV=""
 
 exec docker run -it --rm \
     --net=host --ipc=host --pid=host \
-    -e DISPLAY="${DISPLAY:-:1}" \
+    -e DISPLAY="${DISPLAY:-:0}" \
     -e QT_X11_NO_MITSHM=1 \
     -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}" \
     -e RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}" \
@@ -62,5 +77,9 @@ exec docker run -it --rm \
     -w /ros2_ws \
     ros2-arm:jazzy \
     bash -c 'source /opt/ros/jazzy/setup.bash 2>/dev/null;
+             if [ ! -f install/setup.bash ] && [ -d src/robot_arm_moveit_config ]; then
+                 echo "first run: building the workspace (colcon, ~1 min)...";
+                 colcon build --packages-select robot_arm_description robot_arm_moveit_config;
+             fi;
              [ -f install/setup.bash ] && source install/setup.bash;
              exec "${@:-bash}"' -- $CMD
