@@ -3,7 +3,7 @@
   <name>robot_arm_moveit_config</name>
   <version>0.1.0</version>
   <description>MoveIt2 configuration for the starter 6-DOF robot arm</description>
-  <maintainer email="santapongsondhi@gmail.com">santapong</maintainer>
+  <maintainer email="santapong@users.noreply.github.com">santapong</maintainer>
   <license>MIT</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>moveit_ros_move_group</exec_depend>

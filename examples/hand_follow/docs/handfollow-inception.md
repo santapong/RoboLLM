@@ -110,9 +110,9 @@ Hygiene fixes also adopted: call `HandLandmarker.close()` explicitly (harmless `
 
 | Existing asset | Location | Role in this design |
 |---|---|---|
-| `ros2-arm` launcher | `/home/santapong/hyprland-dots/bin/ros2-arm` | Container bring-up; gains one `--device /dev/video0` flag (line ~36, next to `--device /dev/dri`) |
-| ros2-arm:jazzy image + Dockerfile | `/home/santapong/ros2_ws/.docker-arm/Dockerfile` | Rebuilt once with pip/venv/mediapipe + model file baked in (launcher runs `--rm`, so live installs don't persist) |
-| `arm_ik.py` | `/home/santapong/ros2_ws/tools/arm_ik.py` | FK + IK engine; gains a tracking-mode solve variant (warm-start, de-welded cost). FK doubles as the TF-validation oracle |
+| `ros2-arm` launcher | `~/hyprland-dots/bin/ros2-arm` | Container bring-up; gains one `--device /dev/video0` flag (line ~36, next to `--device /dev/dri`) |
+| ros2-arm:jazzy image + Dockerfile | `~/ros2_ws/.docker-arm/Dockerfile` | Rebuilt once with pip/venv/mediapipe + model file baked in (launcher runs `--rm`, so live installs don't persist) |
+| `arm_ik.py` | `~/ros2_ws/tools/arm_ik.py` | FK + IK engine; gains a tracking-mode solve variant (warm-start, de-welded cost). FK doubles as the TF-validation oracle |
 | `robot_arm_description` URDF | `~/ros2_ws/src/robot_arm_description/urdf/` | Robot model, unchanged; CHAIN geometry already verified to match |
 | `robot_arm_moveit_config` (demo.launch.py, ros2_controllers.yaml) | `~/ros2_ws/src/robot_arm_moveit_config/` | Spawns arm_controller + RViz, unchanged |
 | `weld_replay.py` | `~/ros2_ws/src/robot_arm_moveit_config/scripts/weld_replay.py` | Reference for JointTrajectory message construction and joint naming (NOT the topic-streaming template — it uses the action interface) |
@@ -133,42 +133,42 @@ Hygiene fixes also adopted: call `HandLandmarker.close()` explicitly (harmless `
 ## U1-camera-passthrough
 **Scope:** Add --device /dev/video0 (or --device-cgroup-rule='c 81:* rmw') to the docker run in the ros2-arm launcher so V4L2 (major 81) clears the container's device-cgroup filter; leave /dev/video1 (metadata node) alone.
 
-**Files:** /home/santapong/hyprland-dots/bin/ros2-arm
+**Files:** ~/hyprland-dots/bin/ros2-arm
 
 **Acceptance:** Inside a launcher-started container, cv2.VideoCapture(0, CAP_V4L2) opens and delivers 640x480 BGR frames at ~25 fps.
 
 ## U2-image-bake
 **Scope:** Bake the verified install into the image: apt python3-pip python3-venv; python3 -m venv --system-site-packages /opt/mpvenv; /opt/mpvenv/bin/pip install --ignore-installed mediapipe; wget hand_landmarker.task (7.8 MB float16) to a fixed path. Rebuild ros2-arm:jazzy.
 
-**Files:** /home/santapong/ros2_ws/.docker-arm/Dockerfile
+**Files:** ~/ros2_ws/.docker-arm/Dockerfile
 
 **Acceptance:** /opt/mpvenv/bin/python imports mediapipe 0.10.35, rclpy, and trajectory_msgs together, and instantiates HandLandmarker from the baked model file with no network access.
 
 ## U3-tracking-ik
 **Scope:** Add a tracking-mode solve to arm_ik.py: warm-start single _descend from the previous frame's solution (small initial step ~0.05, capped iterations), drop the torch-down orientation term and TORCH=0.16 offset, target tool0/wrist position directly; add reachability clamp and branch-consistency guard; validate FK against robot_state_publisher TF at sample poses.
 
-**Files:** /home/santapong/ros2_ws/tools/arm_ik.py
+**Files:** ~/ros2_ws/tools/arm_ik.py
 
 **Acceptance:** Warm-start solve median <15 ms with position error <5 mm on a continuous target sweep, and FK matches TF within 1 mm at 5+ sampled poses.
 
 ## U4-hand-follow-node
 **Scope:** New rclpy node under /opt/mpvenv/bin/python: threaded capture (BUFFERSIZE=1), HandLandmarker VIDEO mode, LEFT-hand filter with mirror-flip handling, per-axis One-Euro filter on wrist world landmarks, scaled+clamped workspace map to base_link, U3 IK, publish single-point JointTrajectory @ 15-25 Hz to /arm_controller/joint_trajectory; hold-position on hand loss; explicit landmarker.close() on shutdown.
 
-**Files:** /home/santapong/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py
+**Files:** ~/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py
 
 **Acceptance:** With demo.launch.py running, the RViz arm tracks the user's left hand at >=15 Hz command rate and does not respond to the right hand.
 
 ## U5-integration-calibration
 **Scope:** One-command bring-up (launcher arg or wrapper script that starts demo.launch.py + hand_follow.py), tune workspace box scale/offsets and One-Euro parameters (min_cutoff/beta) against real hand motion, verify end-to-end latency budget, document run steps in the repo.
 
-**Files:** /home/santapong/hyprland-dots/bin/ros2-arm, /home/santapong/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py
+**Files:** ~/hyprland-dots/bin/ros2-arm, ~/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py
 
 **Acceptance:** Single command from cold start to a live-following arm; motion is smooth (no visible jitter at rest, no overshoot on fast moves) with glass-to-RViz latency ~100-150 ms.
 
 ## U6-llm-supervisor (optional)
 **Scope:** Supervisory LLM layer per the ROSA/MCP pattern: expose /follow_enable service, motion-scale parameter, home pose, and follower diagnostics as tools (jpl-rosa custom toolset or a minimal MCP-ROS2 server) so natural-language commands gate the follower at seconds-scale cadence; LLM never enters the 25 Hz loop. Defer unless the user asks — API cost vs. recorded cost-conscious preference.
 
-**Files:** /home/santapong/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py, /home/santapong/ros2_ws/tools/
+**Files:** ~/ros2_ws/src/robot_arm_moveit_config/scripts/hand_follow.py, ~/ros2_ws/tools/
 
 **Acceptance:** A natural-language 'stop following' / 'follow at half speed' round-trips through the LLM toolset and visibly changes follower behavior without perturbing control-loop timing.
 
@@ -204,6 +204,6 @@ Hygiene fixes also adopted: call `HandLandmarker.close()` explicitly (harmless `
 - The /joint_states staleness health check is named in the risks as the mitigation for silent controller death but is assigned to no unit and appears in no acceptance criterion — it will not get built.
 - Detection-policy details unspecified: num_hands setting, min detection/tracking confidence thresholds, and the selection rule when two left hands (two people) or a false-positive left hand appear — no tie-break policy and no acceptance on detection reliability.
 - Lighting robustness unverified: UVC webcams halve frame rate under auto-exposure in dim light and MediaPipe detection degrades; all measurements were done at one (unstated) lighting condition, and Z-clamp bounds plus the workspace box are given no concrete numbers anywhere.
-- U1 has no non-regression acceptance: the launcher edit touches the shared /home/santapong/hyprland-dots/bin/ros2-arm used for existing workflows (serial majors 166/188, weld demo) — nothing checks those still work after adding the video device rule.
+- U1 has no non-regression acceptance: the launcher edit touches the shared ~/hyprland-dots/bin/ros2-arm used for existing workflows (serial majors 166/188, weld demo) — nothing checks those still work after adding the video device rule.
 - One-Euro filter is underspecified: no source decided (hand-rolled vs dependency — nothing in the venv provides it), and the filter's operating space is ambiguous (normalized image coords, mapped meters, or joint space), which interacts with the world-vs-image landmark gap; filtering in the wrong space changes the meaning of the min_cutoff/beta tuning U5 depends on.
 - Shutdown/exit behavior beyond landmarker.close() is unspecified: whether the arm parks/homes or freezes mid-pose on node exit, and what the one-command bring-up (U5) does on partial failure (camera busy, model file missing, controller not up) — no startup preflight checks are scoped.
