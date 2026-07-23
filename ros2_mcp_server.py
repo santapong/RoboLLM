@@ -139,6 +139,43 @@ def move_arm(joints: str, group: str = "panda_arm", timeout_s: float = 60.0) -> 
 
 
 @mcp.tool()
+def command_arm(angles: str) -> dict[str, Any]:
+    """Drive the REAL DIY arm (Raspberry Pi 5 + Arduino Uno) by publishing target
+    servo angles in DEGREES to /arm/command. `angles` = comma/space-separated
+    degrees, up to 6 (joint0..joint5), each clamped to [0,180]:
+      '90, 45, 120, 90, 90, 90'
+    This is the PHYSICAL arm — distinct from move_arm, which plans the SIM Panda
+    in MoveIt. Requires hardware/arm_bridge_node.py running (a real Uno, or
+    hardware/sim_uno.py for a no-hardware test)."""
+    try:
+        vals = [float(a) for a in angles.replace(",", " ").split()]
+    except ValueError:
+        return {"error": "could not parse angles — comma/space-separated degrees, e.g. '90, 45, 120'"}
+    return _node.command_arm(vals)
+
+
+@mcp.tool()
+def get_arm_state() -> dict[str, Any]:
+    """Latest angles (DEGREES) of the REAL DIY arm from /arm/joint_states. These
+    are the firmware's commanded/slew-interpolated angles (open-loop servos, no
+    encoders) — not measured feedback. Distinct from get_joint_states (sim/MoveIt)."""
+    return _node.arm_joint_states()
+
+
+@mcp.tool()
+def arm_home() -> dict[str, Any]:
+    """Send the REAL DIY arm to its home pose (all joints 90 deg)."""
+    return _node.arm_home()
+
+
+@mcp.tool()
+def arm_enable(on: bool = True) -> dict[str, Any]:
+    """Torque the REAL DIY arm on (hold position) or OFF (limp — the arm's
+    e-stop). Publishes /arm/enable. Torque-off before handling the arm."""
+    return _node.arm_enable(on)
+
+
+@mcp.tool()
 def get_map_status() -> dict[str, Any]:
     """Summary of the current /map from SLAM or the map server: size, resolution,
     origin, and how much is explored — check mapping progress while driving."""

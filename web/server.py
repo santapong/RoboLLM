@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+from typing import Any
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query
 from fastapi.responses import HTMLResponse, Response
@@ -53,6 +54,14 @@ class Goal(BaseModel):
 class Safe(BaseModel):
     enabled: bool = True
     min_obstacle_m: float = 0.35
+
+
+class ArmCmd(BaseModel):
+    angles: list[float]
+
+
+class ArmEnable(BaseModel):
+    on: bool = True
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -97,6 +106,31 @@ def safe(s: Safe, token: str = Query("")) -> dict[str, str]:
     return {"safe_mode": str(bridge.safe_mode), "min_obstacle_m": str(bridge.min_obstacle_m)}
 
 
+@app.post("/api/arm")
+def arm(cmd: ArmCmd, token: str = Query("")) -> dict[str, Any]:
+    """Send target angles (degrees) to the real DIY arm."""
+    check(token)
+    return bridge.command_arm(cmd.angles)
+
+
+@app.post("/api/arm/home")
+def arm_home(token: str = Query("")) -> dict[str, Any]:
+    check(token)
+    return bridge.arm_home()
+
+
+@app.post("/api/arm/enable")
+def arm_enable(e: ArmEnable, token: str = Query("")) -> dict[str, Any]:
+    """Torque the arm on/off — off is the arm's e-stop (servos go limp)."""
+    check(token)
+    return bridge.arm_enable(e.on)
+
+
+@app.get("/api/joints")
+def joints() -> dict[str, Any]:
+    return bridge.arm_joint_states()
+
+
 @app.get("/api/camera")
 def camera() -> Response:
     """Latest camera frame as JPEG (204 if no camera / no image yet)."""
@@ -115,6 +149,8 @@ async def telemetry(ws: WebSocket) -> None:
             await ws.send_json({"pose": bridge.pose(),
                                 "laser": bridge.laser_summary(),
                                 "radar": bridge.laser_radar(36),
+                                "arm": bridge.arm_joint_states(),
+                                "cam_age": bridge.camera_age_s(),
                                 "safe": {"on": bridge.safe_mode, "min": bridge.min_obstacle_m}})
             await asyncio.sleep(0.1)
     except WebSocketDisconnect:

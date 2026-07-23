@@ -40,6 +40,13 @@ else
   echo "ROS 2 Jazzy already present"
 fi
 
+echo "== [3b/5] webcam publisher (v4l2_camera -> /camera/image_raw) =="
+# lets run_camera.sh stream the real arm into the same dashboard/MCP camera path
+if [ -f /opt/ros/jazzy/setup.bash ]; then
+  sudo apt install -y ros-jazzy-v4l2-camera \
+    || echo "  (install later: sudo apt install ros-jazzy-v4l2-camera)"
+fi
+
 echo "== [4/5] udev rule: Uno always shows up as /dev/arm_uno =="
 sudo tee /etc/udev/rules.d/99-arm-uno.rules >/dev/null <<'EOF'
 SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="arm_uno", MODE="0666"
@@ -51,3 +58,4 @@ echo "== [5/5] done =="
 echo "Log out/in for the dialout group, plug in the Uno, then:"
 echo "  bash ~/arm/check_arduino.sh"
 echo "  source /opt/ros/jazzy/setup.bash && python3 ~/arm/arm_bridge_node.py"
+echo "  bash ~/arm/run_camera.sh          # optional: stream the webcam"

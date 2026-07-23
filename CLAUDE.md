@@ -9,9 +9,10 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 ## Architecture
 - `robot_bridge.py` — THE single shared rclpy node (`get_bridge()` singleton,
   background spin thread). Both the MCP server and the web dashboard use it.
-- `ros2_mcp_server.py` — FastMCP stdio server, 22 tools (drive, navigate_to,
-  camera, rosbag, TF2, MoveIt move_arm, Gazebo spawn/delete/reset via
-  `gazebo_world.py`, run_ros2, …). Registered in `.mcp.json` → `run-server.sh`.
+- `ros2_mcp_server.py` — FastMCP stdio server, 27 tools (drive, navigate_to,
+  camera, rosbag, TF2, MoveIt move_arm, real DIY-arm command_arm/get_arm_state/
+  arm_home/arm_enable, Gazebo spawn/delete/reset via `gazebo_world.py`,
+  run_ros2, …). Registered in `.mcp.json` → `run-server.sh`.
   **Editing MCP/bridge code requires restarting Claude Code to reload.**
 - `web/` — FastAPI dashboard, `web/run-web.sh` → http://localhost:8080
   (127.0.0.1 by default; LAN: `HOST=0.0.0.0 ROBOT_TOKEN=secret`).

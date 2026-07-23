@@ -32,6 +32,7 @@ from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry, OccupancyGrid
 from sensor_msgs.msg import LaserScan, Image, JointState
+from std_msgs.msg import Bool, Float64MultiArray
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import Constraints, JointConstraint
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
@@ -57,13 +58,23 @@ class Bridge(Node):
         self._last_odom: Odometry | None = None
         self._last_scan: LaserScan | None = None
         self._last_image: Image | None = None
+        self._last_image_t: float = 0.0
         self._last_map: OccupancyGrid | None = None
         self._last_joints: JointState | None = None
+        # real DIY arm (hardware/arm_bridge_node.py) — separate topics from the
+        # sim/MoveIt /joint_states below; arm state lives on ROS topics, not in
+        # Python memory, so the MCP and web processes stay in agreement.
+        self._last_arm_joints: JointState | None = None
         self.create_subscription(Odometry, "/odom", self._on_odom, 10)
         self.create_subscription(LaserScan, "/scan", self._on_scan, qos_profile_sensor_data)
         # camera: waffle/waffle_pi publish here; burger has no camera (stays None)
         self.create_subscription(Image, "/camera/image_raw", self._on_image, qos_profile_sensor_data)
         self.create_subscription(JointState, "/joint_states", self._on_joints, 10)
+        # DIY arm command + feedback (the Uno via arm_bridge_node.py). Publishing
+        # to /arm/command reaches the real servos; /arm/enable toggles torque.
+        self.arm_cmd = self.create_publisher(Float64MultiArray, "/arm/command", 10)
+        self.arm_enable_pub = self.create_publisher(Bool, "/arm/enable", 10)
+        self.create_subscription(JointState, "/arm/joint_states", self._on_arm_joints, 10)
         # /map is "latched": publishers keep the last map for late joiners,
         # so we must subscribe with matching transient_local durability
         map_qos = QoSProfile(depth=1,
@@ -101,12 +112,16 @@ class Bridge(Node):
 
     def _on_image(self, msg: Image) -> None:
         self._last_image = msg
+        self._last_image_t = self._now()
 
     def _on_map(self, msg: OccupancyGrid) -> None:
         self._last_map = msg
 
     def _on_joints(self, msg: JointState) -> None:
         self._last_joints = msg
+
+    def _on_arm_joints(self, msg: JointState) -> None:
+        self._last_arm_joints = msg
 
     # ---- continuous teleop (used by the web UI) ---------------------------
     def set_velocity(self, linear: float, angular: float) -> None:
@@ -239,6 +254,14 @@ class Bridge(Node):
         ok, buf = cv2.imencode(".jpg", img)
         return buf.tobytes() if ok else None
 
+    def camera_age_s(self) -> float | None:
+        """Seconds since the last /camera/image_raw frame, or None if none yet.
+        The UI uses this to flag a frozen feed — a stopped camera is otherwise
+        silent (the last frame just stays on screen)."""
+        if self._last_image is None:
+            return None
+        return round(self._now() - self._last_image_t, 2)
+
     def laser_radar(self, sectors: int = 36) -> list[float | None]:
         """Nearest distance per angular sector (for a mini radar plot in the UI)."""
         s = self._last_scan
@@ -293,6 +316,42 @@ class Bridge(Node):
         if js is None:
             return {"error": "no /joint_states — is a robot (sim or real) running?"}
         return {"joints": {n: round(p, 4) for n, p in zip(js.name, js.position)}}
+
+    # ---- real DIY arm over serial (hardware/arm_bridge_node.py + the Uno) ----
+    def command_arm(self, angles_deg: list[float]) -> dict[str, Any]:
+        """Publish target angles (DEGREES) to /arm/command -> the Uno servos.
+        Takes up to 6 values (joint0..joint5); each is clamped to [0, 180].
+        Returns the clamped angles actually sent. Same path for MCP and web."""
+        if not angles_deg:
+            return {"error": "no angles given"}
+        sent = [max(0.0, min(180.0, float(a))) for a in angles_deg[:6]]
+        msg = Float64MultiArray()
+        msg.data = sent
+        self.arm_cmd.publish(msg)
+        return {"sent_deg": [round(a, 1) for a in sent]}
+
+    def arm_home(self) -> dict[str, Any]:
+        """Send every arm joint to the firmware home pose (90 deg)."""
+        return self.command_arm([90.0] * 6)
+
+    def arm_enable(self, on: bool) -> dict[str, Any]:
+        """Torque the arm on (servos hold position) or OFF (limp) via /arm/enable.
+        Torque-off is the arm's e-stop: the servos stop holding position."""
+        msg = Bool()
+        msg.data = bool(on)
+        self.arm_enable_pub.publish(msg)
+        return {"arm_enabled": bool(on)}
+
+    def arm_joint_states(self) -> dict[str, Any]:
+        """Latest /arm/joint_states from the real arm, in degrees.
+        NOTE: these are the firmware's COMMANDED (slew-interpolated) angles
+        echoed back — open-loop hobby servos have no encoders, so this cannot
+        report a stalled or blocked joint. Read as 'where the arm should be'."""
+        js = self._last_arm_joints
+        if js is None:
+            return {"error": "no /arm/joint_states yet — is hardware/arm_bridge_node.py running?"}
+        return {"joints_deg": {n: round(math.degrees(p), 1)
+                               for n, p in zip(js.name, js.position)}}
 
     def move_arm_joints(self, joints: dict[str, float], group: str = "panda_arm",
                         timeout_s: float = 60.0) -> str:

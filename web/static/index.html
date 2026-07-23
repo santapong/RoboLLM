@@ -62,7 +62,8 @@
   </section>
 
   <section class="panel">
-    <h2>Camera <span style="color:var(--muted)">(waffle model only)</span></h2>
+    <h2>Camera <span style="color:var(--muted)">(sim waffle / real Pi webcam)</span>
+      <span id="camstale" style="float:right;display:none;color:var(--danger);font-weight:700">● STALE</span></h2>
     <img id="cam" alt="no camera" style="width:100%;border-radius:8px;background:#0b0e13;min-height:120px;object-fit:contain">
   </section>
 
@@ -94,6 +95,16 @@
         <div class="hint" id="navmsg"></div>
       </div>
     </div>
+  </section>
+
+  <section class="panel" style="grid-column:1/-1">
+    <h2>DIY arm <span style="color:var(--muted)">(real Uno via /arm/command · sliders = degrees)</span></h2>
+    <div id="armrows"></div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button id="armhome" style="flex:1;min-width:120px">HOME (90°)</button>
+      <button id="armtorque" class="stop" style="grid-column:auto;flex:1;min-width:120px">TORQUE OFF</button>
+    </div>
+    <div class="hint" id="armmsg">drag a slider to command a joint · right column = live /arm/joint_states · torque off = e-stop (servos limp)</div>
   </section>
 
   <section class="panel" style="grid-column:1/-1">
@@ -178,6 +189,50 @@ async function pollCam() {
 }
 setInterval(pollCam, 500); pollCam();
 
+// ---- DIY arm: sliders command /arm/command (rate-limited), live state via ws
+const ARM_N = 6;
+const armrows = $('armrows');
+const armSliders = [], armCmdOut = [], armLive = [];
+for (let i=0;i<ARM_N;i++){
+  const row = document.createElement('div');
+  row.className = 'kv'; row.style.alignItems = 'center'; row.style.gap = '10px';
+  row.innerHTML = `<span style="width:52px">joint${i}</span>`
+    + `<input type="range" min="0" max="180" step="1" value="90" style="flex:1;width:auto">`
+    + `<b style="width:42px;text-align:right">90°</b>`
+    + `<span class="live" style="width:60px;text-align:right;color:var(--muted)" title="live /arm/joint_states">–</span>`;
+  const sl = row.querySelector('input'), out = row.querySelector('b'), live = row.querySelector('.live');
+  armSliders.push(sl); armCmdOut.push(out); armLive.push(live);
+  sl.addEventListener('input', () => { out.textContent = sl.value+'°'; queueArm(); });
+  armrows.appendChild(row);
+}
+let armTimer = null, armDirty = false;
+function sendArm(){
+  armDirty = false;
+  fetch('/api/arm'+qs, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({angles: armSliders.map(s => +s.value)})});
+}
+function queueArm(){                                 // coalesce slider drags to ~8 Hz
+  armDirty = true;
+  if (armTimer) return;
+  sendArm();
+  armTimer = setInterval(() => { if (armDirty) sendArm();
+    else { clearInterval(armTimer); armTimer = null; } }, 120);
+}
+$('armhome').onclick = () => {
+  armSliders.forEach((s,i) => { s.value = 90; armCmdOut[i].textContent = '90°'; });
+  fetch('/api/arm/home'+qs, {method:'POST'});
+};
+let torque = true;
+$('armtorque').onclick = () => {
+  torque = !torque;
+  fetch('/api/arm/enable'+qs, {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({on: torque})});
+  const b = $('armtorque');
+  b.textContent = torque ? 'TORQUE OFF' : 'TORQUE ON';
+  b.style.background = torque ? '' : 'var(--accent)';
+  b.style.color = torque ? '' : '#04101f';
+};
+
 // ---- telemetry websocket
 const radar = $('radar'), ctx = radar.getContext('2d');
 function drawRadar(vals) {
@@ -208,6 +263,13 @@ function connect() {
     $('right').textContent = l.right ?? '–'; $('back').textContent = l.back ?? '–';
     if (m.safe) { safeOn = m.safe.on; $('safe').textContent = m.safe.on ? `on (${m.safe.min} m)` : 'off';
       $('safe').style.color = m.safe.on ? 'var(--accent)' : 'var(--danger)'; }
+    if (m.arm && m.arm.joints_deg) {
+      for (let i=0;i<ARM_N;i++){ const v = m.arm.joints_deg['joint'+i];
+        if (v != null && armLive[i]) armLive[i].textContent = v+'°'; }
+    }
+    const age = m.cam_age, cs = $('camstale');
+    if (age != null && age > 2) { cs.style.display=''; cs.textContent = `● STALE ${age}s`; }
+    else { cs.style.display='none'; }
     drawRadar(m.radar);
   };
 }

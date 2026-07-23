@@ -17,7 +17,7 @@ import math
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Bool, Float64MultiArray
 
 from arm_serial import ArmSerial
 
@@ -39,12 +39,17 @@ class ArmBridge(Node):
 
         self.create_subscription(Float64MultiArray, "/arm/command",
                                  self.on_command, 10)
+        # /arm/enable (Bool): torque on/off — the arm's e-stop from UI or MCP.
+        self.create_subscription(Bool, "/arm/enable", self.on_enable, 10)
         self.pub = self.create_publisher(JointState, "/arm/joint_states", 10)
         self.create_timer(0.1, self.publish_states)
 
     def on_command(self, msg: Float64MultiArray):
         for ch, deg in enumerate(msg.data[:6]):
             self.arm.set_joint(ch, deg)
+
+    def on_enable(self, msg: Bool):
+        self.arm.enable(bool(msg.data))
 
     def publish_states(self):
         js = JointState()
