@@ -120,6 +120,7 @@ Technical: [`cad/TECHNICAL.md`](cad/TECHNICAL.md) — headless build, joint-fram
 | Doc | What |
 |-----|------|
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The C4 tour: context → containers → components diagrams + narrative. |
+| [`CHANGELOG.md`](CHANGELOG.md) | What changed, when — grouped by date on `develop`. |
 | [`docs/live-session.md`](docs/live-session.md) | Guided ~30 min LLM ↔ robot demo playbook. |
 | [`docs/branching.md`](docs/branching.md) | Branch tiers: `main` / `develop` / `experiment/*`. |
 | [`docs/README.md`](docs/README.md) | Index of every doc in the repo. |

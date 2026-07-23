@@ -112,7 +112,7 @@ it; `/box_reset` respawns it.
   (grasp orientation + gesture design rationale); runbooks sit next to each.
 - [`../examples/README.md`](../examples/README.md) — the whole learning path,
   from `01_hello_node.py` up.
-- Technical deep-dives: each example ships a `TECHNICAL.md` next to its code —
+- Technical deep-dives: each example (incl. `examples/wall_weld/`) ships a `TECHNICAL.md` next to its code —
   [`ros2_py`](../examples/ros2_py/TECHNICAL.md),
   [`patrol_bot`](../examples/colcon_pkg/patrol_bot/TECHNICAL.md),
   [`pybullet`](../examples/pybullet/TECHNICAL.md),

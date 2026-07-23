@@ -91,6 +91,18 @@ See `gen3_pick_place/README.md`.
 ```
 Technical: [`gen3_pick_place/TECHNICAL.md`](gen3_pick_place/TECHNICAL.md) — gesture state machine, IK streaming, scene attach/detach.
 
+### 1h · Gesture-triggered automation: weld a wall (`wall_weld/`)
+The teleop examples put your hand in the loop; this one puts it **at the
+trigger**: show the webcam an ArUco marker to place (or live-move, with
+`wall_track:=true`) a wall in the MoveIt scene, then **fist** — the weld arm
+autonomously rasters the whole wall (serpentine coverage path, growing bead,
+sparks), **palm aborts** mid-weld. Collision-checked against the wall
+(101/101 states valid), adversarially reviewed. See `wall_weld/README.md`.
+```bash
+./wall_weld/docker/ros2-arm wallweld synthetic   # scripted full weld, no camera
+```
+Technical: [`wall_weld/TECHNICAL.md`](wall_weld/TECHNICAL.md) — state machine, raster planner, tracking, diagram.
+
 ### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
 | Terminal command | What it does |

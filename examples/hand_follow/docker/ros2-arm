@@ -17,9 +17,15 @@
 #                        (no camera); both accept key:=value overrides and
 #                        rviz:=false — docs: pickplace-run.md (ros2_ws/docs/ dev ws;
 #                        docs/ next to this script in RoboLLM)
+#   ros2-arm wallweld              arm demo + wall CollisionObject; held
+#                        CLOSED FIST autonomously welds the wall (serpentine
+#                        raster + bead/spark markers), OPEN PALM aborts;
+#                        wall_mode:=marker maps an ArUco marker to the wall
+#   ros2-arm wallweld synthetic    scripted wall + auto-triggered weld (no
+#                        camera); both accept key:=value overrides
 # GUI (RViz/MoveIt) works via X passthrough + hardware GL; ~/ros2_ws mounts.
 if [ "$1" = stop ]; then
-    docker rm -f armloop armmoveit armdemo armview armpickplace armhandfollow 2>/dev/null
+    docker rm -f armloop armmoveit armdemo armview armpickplace armhandfollow armwallweld 2>/dev/null
     echo "stopped all arm containers"; exit 0
 fi
 # Workspace: prefer a vendored ros2_ws next to this script (RoboLLM
@@ -70,6 +76,16 @@ if [ "$1" = pickplace ]; then
         CMD="ros2 launch /ros2_ws/src/gen3_pick_place/launch/pickplace.launch.py synthetic:=true $*"
     else
         CMD="ros2 launch /ros2_ws/src/gen3_pick_place/launch/pickplace.launch.py $*"
+    fi
+fi
+if [ "$1" = wallweld ]; then
+    shift
+    DOCKNAME="--name armwallweld"
+    if [ "$1" = synthetic ]; then
+        shift
+        CMD="ros2 launch /ros2_ws/src/robot_arm_moveit_config/launch/wallweld.launch.py synthetic:=true $*"
+    else
+        CMD="ros2 launch /ros2_ws/src/robot_arm_moveit_config/launch/wallweld.launch.py $*"
     fi
 fi
 

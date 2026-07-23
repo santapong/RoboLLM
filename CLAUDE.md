@@ -26,7 +26,11 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
   pick-and-place on a Kinova Gen3 lite: fist=grip, palm=release, box
   attach/detach in the MoveIt scene; GestureRecognizer + /compute_ik;
   shares the hand_follow Docker image/launcher — Kinova pkgs + SHA-pinned
-  xacro fix baked in; same numpy law applies natively).
+  xacro fix baked in; same numpy law applies natively), wall_weld
+  (gesture-triggered automation: ArUco marker places/live-tracks a wall in
+  the MoveIt scene, fist = autonomous serpentine weld of the whole wall
+  with bead+spark markers, palm = abort; same weld-arm package + Docker
+  image; 15 mm standoff is collision-verified, 5 mm is not).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);

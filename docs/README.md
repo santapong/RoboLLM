@@ -1,5 +1,6 @@
 # docs — index
 
+| [`../CHANGELOG.md`](../CHANGELOG.md) | Project changelog — notable changes by date. |
 | Doc | One line |
 |-----|----------|
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The C4 tour of the workbench: context → containers → components, diagrams + narrative. |
@@ -33,6 +34,7 @@
 | [`../examples/panda_arm/TECHNICAL.md`](../examples/panda_arm/TECHNICAL.md) | The five Panda demos layer by layer: FK/IK → serial → vision sort. |
 | [`../examples/hand_follow/TECHNICAL.md`](../examples/hand_follow/TECHNICAL.md) | hand_follow node internals: MediaPipe → One-Euro → IK → 20 Hz stream. |
 | [`../examples/gen3_pick_place/TECHNICAL.md`](../examples/gen3_pick_place/TECHNICAL.md) | Gesture state machine, `/compute_ik` streaming, planning-scene attach/detach. |
+| [`../examples/wall_weld/TECHNICAL.md`](../examples/wall_weld/TECHNICAL.md) | Fist-triggered autonomous wall welding: raster planner, marker tracking, weld state machine. |
 | [`../hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) | The real Uno arm stack: firmware, serial protocol, driver, ROS 2 bridge. |
 | [`../web/TECHNICAL.md`](../web/TECHNICAL.md) | The dashboard internals: FastAPI + WebSocket over the shared bridge, endpoint tables. |
 | [`../scan3d/TECHNICAL.md`](../scan3d/TECHNICAL.md) | Webcam scanner internals: visual hull vs COLMAP routes, mesh → URDF tail. |
