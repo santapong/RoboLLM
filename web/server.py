@@ -18,10 +18,11 @@ from __future__ import annotations
 
 import asyncio
 import os
+import threading
 from typing import Any
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -33,6 +34,75 @@ TOKEN = os.environ.get("ROBOT_TOKEN", "")   # empty = no auth (fine for localhos
 
 app = FastAPI(title="robot-llm-loop dashboard")
 bridge = get_bridge("claude_web_bridge")
+
+# Camera: prefer the ROS /camera/image_raw feed (Gazebo sim or the Pi's
+# run_camera.sh); fall back to a directly-attached USB webcam so the dashboard
+# shows something live even with no ROS camera. WEBCAM=0 disables the fallback.
+WEBCAM_ENABLED = os.environ.get("WEBCAM", "1") != "0"
+WEBCAM_DEVICE = os.environ.get("WEBCAM_DEVICE", "/dev/video0")
+
+
+class Webcam:
+    """Lazy, thread-safe USB webcam grabber. Opens the device only on the first
+    frame request and degrades to None (never raises) if it can't."""
+
+    def __init__(self, device: str) -> None:
+        self.device = device
+        self._cap = None
+        self._lock = threading.Lock()
+        self.failed = False
+
+    def _index(self):
+        d = self.device
+        if d.startswith("/dev/video"):
+            try:
+                return int(d.replace("/dev/video", ""))
+            except ValueError:
+                return d
+        return int(d) if d.isdigit() else d
+
+    def jpeg(self):
+        if self.failed:
+            return None
+        with self._lock:
+            import cv2
+            if self._cap is None:
+                cap = cv2.VideoCapture(self._index(), cv2.CAP_V4L2)
+                if not cap.isOpened():
+                    cap.release()
+                    self.failed = True
+                    return None
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                self._cap = cap
+            ok, frame = self._cap.read()
+            if not ok:
+                return None
+            ok, buf = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            return buf.tobytes() if ok else None
+
+
+_webcam = Webcam(WEBCAM_DEVICE) if WEBCAM_ENABLED else None
+
+
+def _camera_frame():
+    """Latest frame as (jpeg_bytes, source). ROS camera wins; USB webcam is the
+    fallback; (None, 'none') if neither has a frame."""
+    jpg = bridge.camera_jpeg_bytes()
+    if jpg is not None:
+        return jpg, "ros"
+    if _webcam is not None:
+        jpg = _webcam.jpeg()
+        if jpg is not None:
+            return jpg, "webcam"
+    return None, "none"
+
+
+def _camera_source() -> str:
+    """Cheap source label (no frame grab) for telemetry."""
+    if bridge.camera_age_s() is not None:
+        return "ros"
+    return "webcam" if _webcam is not None and not _webcam.failed else "none"
 
 
 def check(token: str) -> None:
@@ -73,9 +143,9 @@ def index() -> HTMLResponse:
 
 
 @app.get("/api/topics")
-def topics() -> list[dict[str, str]]:
-    return [{"topic": n, "type": ",".join(t)}
-            for n, t in bridge.get_topic_names_and_types()]
+def topics() -> list[dict[str, Any]]:
+    """Every topic with its type and live publisher/subscriber counts."""
+    return bridge.topics_detail()
 
 
 @app.post("/api/cmd")
@@ -131,13 +201,35 @@ def joints() -> dict[str, Any]:
     return bridge.arm_joint_states()
 
 
+@app.get("/api/arm/status")
+def arm_status() -> dict[str, Any]:
+    """Arm connection detail: serial port, firmware, baud, torque state."""
+    return bridge.arm_status()
+
+
 @app.get("/api/camera")
 def camera() -> Response:
     """Latest camera frame as JPEG (204 if no camera / no image yet)."""
-    jpg = bridge.camera_jpeg_bytes()
+    jpg, source = _camera_frame()
     if jpg is None:
         return Response(status_code=204)
-    return Response(content=jpg, media_type="image/jpeg")
+    return Response(content=jpg, media_type="image/jpeg",
+                    headers={"X-Camera-Source": source})
+
+
+@app.get("/api/camera/stream")
+async def camera_stream() -> StreamingResponse:
+    """Live MJPEG stream (multipart/x-mixed-replace) — a smooth feed instead of
+    per-frame polling. Sourced from the ROS camera or the USB webcam fallback."""
+    async def frames():
+        loop = asyncio.get_event_loop()
+        while True:
+            jpg, _ = await loop.run_in_executor(None, _camera_frame)
+            if jpg:
+                yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpg + b"\r\n"
+            await asyncio.sleep(0.066)   # ~15 fps
+    return StreamingResponse(frames(),
+                             media_type="multipart/x-mixed-replace; boundary=frame")
 
 
 @app.websocket("/ws")
@@ -150,7 +242,8 @@ async def telemetry(ws: WebSocket) -> None:
                                 "laser": bridge.laser_summary(),
                                 "radar": bridge.laser_radar(36),
                                 "arm": bridge.arm_joint_states(),
-                                "cam_age": bridge.camera_age_s(),
+                                "arm_status": bridge.arm_status(),
+                                "cam": {"source": _camera_source(), "age": bridge.camera_age_s()},
                                 "safe": {"on": bridge.safe_mode, "min": bridge.min_obstacle_m}})
             await asyncio.sleep(0.1)
     except WebSocketDisconnect:

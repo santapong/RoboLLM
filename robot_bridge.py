@@ -32,7 +32,7 @@ from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry, OccupancyGrid
 from sensor_msgs.msg import LaserScan, Image, JointState
-from std_msgs.msg import Bool, Float64MultiArray
+from std_msgs.msg import Bool, Float64MultiArray, String
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import Constraints, JointConstraint
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
@@ -65,6 +65,7 @@ class Bridge(Node):
         # sim/MoveIt /joint_states below; arm state lives on ROS topics, not in
         # Python memory, so the MCP and web processes stay in agreement.
         self._last_arm_joints: JointState | None = None
+        self._last_arm_status: str | None = None
         self.create_subscription(Odometry, "/odom", self._on_odom, 10)
         self.create_subscription(LaserScan, "/scan", self._on_scan, qos_profile_sensor_data)
         # camera: waffle/waffle_pi publish here; burger has no camera (stays None)
@@ -75,6 +76,11 @@ class Bridge(Node):
         self.arm_cmd = self.create_publisher(Float64MultiArray, "/arm/command", 10)
         self.arm_enable_pub = self.create_publisher(Bool, "/arm/enable", 10)
         self.create_subscription(JointState, "/arm/joint_states", self._on_arm_joints, 10)
+        # /arm/status is latched JSON (port, firmware, torque) from arm_bridge_node
+        arm_status_qos = QoSProfile(depth=1,
+                                    reliability=QoSReliabilityPolicy.RELIABLE,
+                                    durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
+        self.create_subscription(String, "/arm/status", self._on_arm_status, arm_status_qos)
         # /map is "latched": publishers keep the last map for late joiners,
         # so we must subscribe with matching transient_local durability
         map_qos = QoSProfile(depth=1,
@@ -122,6 +128,9 @@ class Bridge(Node):
 
     def _on_arm_joints(self, msg: JointState) -> None:
         self._last_arm_joints = msg
+
+    def _on_arm_status(self, msg: String) -> None:
+        self._last_arm_status = msg.data
 
     # ---- continuous teleop (used by the web UI) ---------------------------
     def set_velocity(self, linear: float, angular: float) -> None:
@@ -310,6 +319,16 @@ class Bridge(Node):
                 "explored_pct": round(100.0 * (n - unknown) / n, 1) if n else 0.0,
                 "free_cells": free, "occupied_cells": occupied, "unknown_cells": unknown}
 
+    def topics_detail(self) -> list[dict[str, Any]]:
+        """Every topic with its type and live publisher/subscriber counts —
+        the pub/sub wiring behind the robot, for the dashboard's ROS panel."""
+        out = []
+        for name, types in self.get_topic_names_and_types():
+            out.append({"topic": name, "type": ",".join(types),
+                        "pubs": self.count_publishers(name),
+                        "subs": self.count_subscribers(name)})
+        return sorted(out, key=lambda d: d["topic"])
+
     def joint_states(self) -> dict[str, Any]:
         """Current joint positions (arms, grippers, wheels) from /joint_states."""
         js = self._last_joints
@@ -352,6 +371,20 @@ class Bridge(Node):
             return {"error": "no /arm/joint_states yet — is hardware/arm_bridge_node.py running?"}
         return {"joints_deg": {n: round(math.degrees(p), 1)
                                for n, p in zip(js.name, js.position)}}
+
+    def arm_status(self) -> dict[str, Any]:
+        """Connection/status of the real arm from /arm/status (latched JSON):
+        serial port, firmware string, baud, torque-enabled. Published by
+        arm_bridge_node.py so the UI can show what it's connected to."""
+        import json
+        raw = self._last_arm_status
+        if not raw:
+            return {"connected": False,
+                    "error": "no /arm/status — is hardware/arm_bridge_node.py running?"}
+        try:
+            return json.loads(raw)
+        except Exception:
+            return {"connected": True, "raw": raw}
 
     def move_arm_joints(self, joints: dict[str, float], group: str = "panda_arm",
                         timeout_s: float = 60.0) -> str:
