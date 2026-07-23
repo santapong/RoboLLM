@@ -1,0 +1,109 @@
+# scan3d/ — Technical notes: webcam → 3D mesh → URDF
+
+This directory turns a cheap laptop webcam into a 3D scanner whose output is a
+simulation-ready robot part. Two reconstruction routes feed one common tail:
+**Route A** (`visual_hull.py`) is CPU-only shape-from-silhouette — each
+turntable frame is a shadow, and the mesh is the intersection of all shadows —
+so it runs on this GPU-free laptop today; **Route B** (`reconstruct.sh`) is
+COLMAP photogrammetry, whose sparse Structure-from-Motion step runs locally on
+CPU while the dense surface needs CUDA on a cloud GPU box. Either route's mesh
+goes through `mesh_to_urdf.py`, which wraps it into a URDF link with visual
+mesh, convex-hull collision mesh, and computed inertia for PyBullet or a
+ROS 2 / Gazebo world.
+
+![scan3d architecture](docs/scan3d-architecture.svg)
+
+## Component walkthrough
+
+- **`capture.py`** — OpenCV webcam capture at 1280×720. Three uses:
+  `--background` saves one empty-scene `background.jpg` (after 10 warm-up reads
+  to settle exposure); default snapshot mode shows a preview and saves a frame
+  per SPACE press; `--turntable N` auto-saves N frames every `--interval`
+  (default 0.7 s) while you rotate the object a full 360° on a plate.
+  Frames land in `../assets/scan/<session>/images/frame_NNN.jpg`.
+- **`visual_hull.py`** — Route A, CPU-only, no camera calibration. Per frame it
+  computes a silhouette mask: `absdiff` against `background.jpg` + Otsu
+  threshold (fallback: Otsu on HSV saturation), morphological open/close, keep
+  the largest contour. It estimates the rotation-axis column (median centroid),
+  base row, and half-width/height (95th percentiles), then carves a voxel grid
+  (`--res`, default 128) with every mask assuming even 360° rotation
+  (orthographic hull). Marching cubes (`skimage`) extracts the surface, scaled
+  to metres via `--height-mm`. Needs ≥8 usable frames; aborts with a hint if
+  the silhouettes carve the grid to nothing.
+- **`reconstruct.sh`** — Route B. Runs `colmap feature_extractor`
+  (`--ImageReader.single_camera 1`), `exhaustive_matcher`, and `mapper` (sparse
+  SfM) locally, writing `colmap.db` + `sparse/` into the session folder, then
+  prints the CUDA-only continuation for the GPU box: `image_undistorter` →
+  `patch_match_stereo` → `stereo_fusion` (→ `dense/fused.ply`) →
+  `poisson_mesher` (→ `<session>_photo.ply`).
+- **`mesh_to_urdf.py`** — common tail. Loads any `.obj/.ply/.stl` with trimesh,
+  exports `<name>_visual.stl` (original surface) and `<name>_collision.stl`
+  (convex hull — fast for physics), and writes `<name>.urdf` with an
+  `<inertial>` block (mass, COM, inertia tensor) at `--density` kg/m³
+  (default 400; water = 1000). Non-watertight input falls back to the convex
+  hull for the mass properties.
+
+## Key files
+
+| File | Role |
+|------|------|
+| `capture.py` | Webcam capture: snapshots, `--turntable N`, `--background` cutout reference |
+| `visual_hull.py` | CPU silhouette carving → watertight `.obj`/`.ply` mesh |
+| `reconstruct.sh` | COLMAP photogrammetry: sparse locally, prints GPU dense steps |
+| `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
+
+## CLI flags
+
+| Script | Flag | Default | Meaning |
+|--------|------|---------|---------|
+| `capture.py` | `--camera` | 0 | `/dev/videoN` index |
+| `capture.py` | `--session` | `object` | scan name → `assets/scan/<session>/` |
+| `capture.py` | `--turntable N` / `--interval` | — / 0.7 s | auto-capture N frames |
+| `capture.py` | `--background` | off | save `background.jpg` and exit |
+| `visual_hull.py` | `--res` | 128 | voxel grid resolution |
+| `visual_hull.py` | `--height-mm` | 100 | real object height, sets scale |
+| `mesh_to_urdf.py` | `--name` / `--density` | mesh name / 400 | link name; kg/m³ for inertia |
+
+## Artifacts on disk
+
+| Path | Producer | Notes |
+|------|----------|-------|
+| `assets/scan/<s>/images/frame_NNN.jpg`, `background.jpg` | `capture.py` | git-ignored (`assets/scan/`) |
+| `assets/scan/<s>/<s>_hull.obj` + `.ply` | `visual_hull.py` | Route A mesh, metres |
+| `assets/scan/<s>/colmap.db`, `sparse/`, `dense/`, `<s>_photo.ply` | `reconstruct.sh` (+ GPU box) | Route B |
+| `assets/urdf/<name>/<name>.urdf` + `meshes/*.stl` | `mesh_to_urdf.py` | URDF tracked; STLs git-ignored (`assets/**/*.stl`) |
+
+## Run + verify (Route A, this laptop)
+
+```bash
+cd scan3d
+../.venv/bin/python capture.py --background                 # 1) empty scene
+../.venv/bin/python capture.py --turntable 36 --session mug # 2) rotate object 360°
+../.venv/bin/python visual_hull.py --session mug --height-mm 95
+../.venv/bin/python mesh_to_urdf.py ../assets/scan/mug/mug_hull.obj --name mug
+```
+
+`visual_hull.py` prints frame/voxel/mesh stats; `mesh_to_urdf.py` prints
+dimensions, mass, and `watertight=True/False`. Try the part with
+`examples/pybullet/load_robot.py` (point its `loadURDF` at the new URDF).
+Route B: `sudo apt install colmap`, capture 30–60 overlapping snapshots
+(snapshot mode, ~70% overlap), then `./reconstruct.sh mug`.
+
+## Gotchas
+
+- A visual hull cannot see concavities — a cup scans as a filled cylinder. Use
+  Route B for fidelity.
+- Lighting/background beat resolution: bright diffuse light, plain contrasting
+  backdrop, matte textured object; always shoot `--background` first.
+- `visual_hull.py` assumes the camera stayed put and the rotation was a full,
+  even 360° — uneven hand-turning warps the hull.
+- COLMAP dense (`patch_match_stereo`) hard-requires CUDA; only sparse runs on
+  this laptop. The script prints the exact GPU commands — don't retype them.
+- The MCP `spawn_object` tool spawns primitive shapes only (box/sphere/
+  cylinder via `gazebo_world.py`); a scanned URDF part goes into a sim by
+  loading it in PyBullet or including it in a Gazebo/ROS 2 world yourself.
+- `mesh.convex_hull` does **not** inherit density — `mesh_to_urdf.py` re-sets
+  it before computing hull mass; keep that if you edit the script.
+- Scans are git-ignored (large/personal), and `assets/**/*.stl` in `.gitignore`
+  also catches the URDF part's STL meshes — only the `.urdf` itself gets
+  committed; re-run `mesh_to_urdf.py` to regenerate the meshes after a clone.

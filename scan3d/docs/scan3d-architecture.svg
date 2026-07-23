@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — scan3d: Webcam → 3D Mesh → URDF Pipeline</text>
+  <text x="24" y="58" font-size="12" fill="#555555">Two routes from webcam photos to a mesh — CPU visual hull locally, COLMAP photogrammetry with dense on a GPU box — both wrapped into a URDF part by mesh_to_urdf.py</text>
+
+  <!-- Pipeline boundary -->
+  <rect x="210" y="90" width="780" height="620" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="226" y="112" font-size="12" font-style="italic" fill="#444444">scan3d pipeline — scan3d/ scripts + assets/ outputs  [assets/scan/ sessions are git-ignored]</text>
+
+  <!-- ============ Relationships ============ -->
+  <!-- Webcam -> capture.py -->
+  <line x1="190" y1="172" x2="220" y2="172" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="230,172 220,167 220,177" fill="#707070"/>
+  <rect x="192" y="149" width="34" height="14" fill="#FFFFFF"/>
+  <text x="209" y="160" font-size="11" fill="#333333" text-anchor="middle">V4L2</text>
+
+  <!-- capture.py -> session images -->
+  <line x1="480" y1="175" x2="600" y2="175" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="610,175 600,170 600,180" fill="#707070"/>
+  <text x="545" y="163" font-size="11" fill="#333333" text-anchor="middle">JPG frames</text>
+
+  <!-- session images -> visual_hull.py (Route A) -->
+  <line x1="630" y1="230" x2="439" y2="281" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="430,283 438.4,285.2 441,275.6" fill="#707070"/>
+  <rect x="487" y="241" width="150" height="14" fill="#FFFFFF"/>
+  <text x="562" y="252" font-size="11" fill="#333333" text-anchor="middle">frames + background.jpg</text>
+
+  <!-- session images -> reconstruct.sh (Route B) -->
+  <line x1="735" y1="230" x2="735" y2="275" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="735,285 730,275 740,275" fill="#707070"/>
+  <text x="745" y="255" font-size="11" fill="#333333">30–60 overlapping photos</text>
+
+  <!-- reconstruct.sh -> GPU cloud -->
+  <line x1="860" y1="347" x2="1000" y2="347" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1010,347 1000,342 1000,352" fill="#707070"/>
+  <text x="935" y="335" font-size="11" fill="#333333" text-anchor="middle">sparse/ model</text>
+
+  <!-- visual_hull.py -> hull mesh -->
+  <line x1="355" y1="410" x2="355" y2="450" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="355,460 350,450 360,450" fill="#707070"/>
+  <text x="365" y="438" font-size="11" fill="#333333">marching cubes</text>
+
+  <!-- GPU cloud -> photo mesh -->
+  <line x1="1060" y1="410" x2="825" y2="455" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="815,457 823.9,460.1 825.7,450.3" fill="#707070"/>
+  <rect x="872" y="413" width="160" height="14" fill="#FFFFFF"/>
+  <text x="952" y="424" font-size="11" fill="#333333" text-anchor="middle">fused.ply → poisson mesh</text>
+
+  <!-- hull mesh -> mesh_to_urdf.py -->
+  <line x1="390" y1="545" x2="464" y2="570" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="473,573 461.9,574.5 465.1,565.1" fill="#707070"/>
+
+  <!-- photo mesh -> mesh_to_urdf.py -->
+  <line x1="700" y1="545" x2="617" y2="570" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="607,573 615.2,574.9 618,565.3" fill="#707070"/>
+  <text x="540" y="562" font-size="11" fill="#333333" text-anchor="middle">.obj / .ply / .stl</text>
+
+  <!-- mesh_to_urdf.py -> URDF part -->
+  <line x1="680" y1="632" x2="720" y2="632" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="730,632 720,627 720,637" fill="#707070"/>
+  <text x="705" y="620" font-size="11" fill="#333333" text-anchor="middle">writes</text>
+
+  <!-- URDF part -> examples/pybullet -->
+  <line x1="940" y1="575" x2="1009" y2="555" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1018,552 1009.8,559.6 1007,550" fill="#707070"/>
+  <rect x="936" y="533" width="72" height="13" fill="#FFFFFF"/>
+  <text x="972" y="543" font-size="11" fill="#333333" text-anchor="middle">p.loadURDF</text>
+
+  <!-- URDF part -> ROS 2 / Gazebo sim -->
+  <line x1="970" y1="632" x2="1000" y2="632" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1010,632 1000,627 1000,637" fill="#707070"/>
+  <text x="989" y="624" font-size="11" fill="#333333" text-anchor="middle">load</text>
+
+  <!-- ============ External: Webcam ============ -->
+  <g>
+    <rect x="30" y="125" width="160" height="95" rx="6" fill="#999999"/>
+    <text x="110" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Webcam</text>
+    <text x="110" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[V4L2 · /dev/videoN]</text>
+    <text x="110" y="184" font-size="12" fill="#FFFFFF" text-anchor="middle">1280×720 frames;</text>
+    <text x="110" y="199" font-size="12" fill="#FFFFFF" text-anchor="middle">object on turntable</text>
+  </g>
+
+  <!-- ============ Pipeline scripts ============ -->
+  <!-- capture.py -->
+  <g>
+    <rect x="230" y="120" width="250" height="110" rx="6" fill="#1168BD"/>
+    <text x="355" y="144" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">capture.py</text>
+    <text x="355" y="163" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / OpenCV · 1280×720]</text>
+    <text x="355" y="182" font-size="12" fill="#FFFFFF" text-anchor="middle">--background empty-scene shot;</text>
+    <text x="355" y="197" font-size="12" fill="#FFFFFF" text-anchor="middle">SPACE snapshots or --turntable</text>
+    <text x="355" y="212" font-size="12" fill="#FFFFFF" text-anchor="middle">N frames every 0.7 s</text>
+  </g>
+
+  <!-- session images artifact -->
+  <g>
+    <rect x="610" y="120" width="250" height="110" rx="6" fill="#85BBF0"/>
+    <text x="735" y="144" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">session images</text>
+    <text x="735" y="163" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[assets/scan/&lt;session&gt;/]</text>
+    <text x="735" y="182" font-size="12" fill="#000000" text-anchor="middle">images/frame_NNN.jpg (≥8</text>
+    <text x="735" y="197" font-size="12" fill="#000000" text-anchor="middle">turntable / 30–60 overlapping)</text>
+    <text x="735" y="212" font-size="12" fill="#000000" text-anchor="middle">+ background.jpg cutout ref</text>
+  </g>
+
+  <!-- visual_hull.py -->
+  <g>
+    <rect x="230" y="285" width="250" height="125" rx="6" fill="#1168BD"/>
+    <text x="355" y="309" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">visual_hull.py</text>
+    <text x="355" y="328" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python · OpenCV/skimage · CPU]</text>
+    <text x="355" y="347" font-size="12" fill="#FFFFFF" text-anchor="middle">Route A: background-diff + Otsu</text>
+    <text x="355" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">silhouettes carve a voxel grid;</text>
+    <text x="355" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">marching cubes surface scaled</text>
+    <text x="355" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">by --height-mm (metres out)</text>
+  </g>
+
+  <!-- reconstruct.sh -->
+  <g>
+    <rect x="610" y="285" width="250" height="125" rx="6" fill="#1168BD"/>
+    <text x="735" y="309" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">reconstruct.sh</text>
+    <text x="735" y="328" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[bash · COLMAP · sparse on CPU]</text>
+    <text x="735" y="347" font-size="12" fill="#FFFFFF" text-anchor="middle">Route B: feature_extractor →</text>
+    <text x="735" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">exhaustive_matcher → mapper</text>
+    <text x="735" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">(SfM); prints the CUDA dense</text>
+    <text x="735" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">steps for the GPU box</text>
+  </g>
+
+  <!-- ============ External: GPU cloud ============ -->
+  <g>
+    <rect x="1010" y="285" width="250" height="125" rx="6" fill="#999999"/>
+    <text x="1135" y="309" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">GPU cloud (CUDA)</text>
+    <text x="1135" y="328" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[COLMAP dense · GCP/AWS]</text>
+    <text x="1135" y="347" font-size="12" fill="#FFFFFF" text-anchor="middle">image_undistorter →</text>
+    <text x="1135" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">patch_match_stereo →</text>
+    <text x="1135" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">stereo_fusion → fused.ply →</text>
+    <text x="1135" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">poisson_mesher</text>
+  </g>
+
+  <!-- hull mesh artifact -->
+  <g>
+    <rect x="230" y="460" width="250" height="85" rx="6" fill="#85BBF0"/>
+    <text x="355" y="484" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">&lt;session&gt;_hull.obj/.ply</text>
+    <text x="355" y="503" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[watertight hull · metres]</text>
+    <text x="355" y="522" font-size="12" fill="#000000" text-anchor="middle">no concavities — cup scans full</text>
+  </g>
+
+  <!-- photo mesh artifact -->
+  <g>
+    <rect x="610" y="460" width="250" height="85" rx="6" fill="#85BBF0"/>
+    <text x="735" y="484" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">&lt;session&gt;_photo.ply</text>
+    <text x="735" y="503" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[Poisson surface · metres]</text>
+    <text x="735" y="522" font-size="12" fill="#000000" text-anchor="middle">higher fidelity; needs GPU step</text>
+  </g>
+
+  <!-- mesh_to_urdf.py -->
+  <g>
+    <rect x="420" y="575" width="260" height="115" rx="6" fill="#1168BD"/>
+    <text x="550" y="599" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">mesh_to_urdf.py</text>
+    <text x="550" y="618" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / trimesh]</text>
+    <text x="550" y="637" font-size="12" fill="#FFFFFF" text-anchor="middle">visual STL + convex-hull</text>
+    <text x="550" y="652" font-size="12" fill="#FFFFFF" text-anchor="middle">collision STL + &lt;inertial&gt; at</text>
+    <text x="550" y="667" font-size="12" fill="#FFFFFF" text-anchor="middle">--density (default 400 kg/m³)</text>
+  </g>
+
+  <!-- URDF part artifact -->
+  <g>
+    <rect x="730" y="575" width="240" height="115" rx="6" fill="#85BBF0"/>
+    <text x="850" y="599" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">URDF part</text>
+    <text x="850" y="618" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[assets/urdf/&lt;name&gt;/]</text>
+    <text x="850" y="637" font-size="12" fill="#000000" text-anchor="middle">&lt;name&gt;.urdf + meshes/</text>
+    <text x="850" y="652" font-size="12" fill="#000000" text-anchor="middle">&lt;name&gt;_visual.stl +</text>
+    <text x="850" y="667" font-size="12" fill="#000000" text-anchor="middle">&lt;name&gt;_collision.stl</text>
+  </g>
+
+  <!-- examples/pybullet consumer -->
+  <g>
+    <rect x="1010" y="455" width="250" height="95" rx="6" fill="#1168BD"/>
+    <text x="1135" y="477" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">examples/pybullet</text>
+    <text x="1135" y="494" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[PyBullet · p.loadURDF]</text>
+    <text x="1135" y="512" font-size="12" fill="#FFFFFF" text-anchor="middle">load_robot.py — point its</text>
+    <text x="1135" y="527" font-size="12" fill="#FFFFFF" text-anchor="middle">loadURDF at the new part</text>
+  </g>
+
+  <!-- ROS 2 / Gazebo sim consumer -->
+  <g>
+    <rect x="1010" y="590" width="250" height="95" rx="6" fill="#999999"/>
+    <text x="1135" y="612" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ROS 2 / Gazebo sim</text>
+    <text x="1135" y="629" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Jazzy · Harmonic]</text>
+    <text x="1135" y="647" font-size="12" fill="#FFFFFF" text-anchor="middle">scanned part in a sim world;</text>
+    <text x="1135" y="662" font-size="12" fill="#FFFFFF" text-anchor="middle">MCP spawn_object does</text>
+    <text x="1135" y="677" font-size="12" fill="#FFFFFF" text-anchor="middle">primitives only</text>
+  </g>
+
+  <!-- ============ Legend ============ -->
+  <line x1="24" y1="730" x2="210" y2="730" stroke="#DDDDDD" stroke-width="1"/>
+  <text x="24" y="752" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <g>
+    <rect x="24" y="766" width="18" height="18" rx="3" fill="#1168BD"/>
+    <text x="50" y="780" font-size="12" fill="#333333">Pipeline script (this repo)</text>
+
+    <rect x="240" y="766" width="18" height="18" rx="3" fill="#85BBF0"/>
+    <text x="266" y="780" font-size="12" fill="#333333">Artifact on disk (assets/)</text>
+
+    <rect x="460" y="766" width="18" height="18" rx="3" fill="#999999"/>
+    <text x="486" y="780" font-size="12" fill="#333333">External device / system</text>
+
+    <rect x="680" y="766" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="714" y="780" font-size="12" fill="#333333">Pipeline boundary</text>
+
+    <line x1="860" y1="775" x2="900" y2="775" stroke="#707070" stroke-width="1.5"/>
+    <polygon points="910,775 900,770 900,780" fill="#707070"/>
+    <text x="920" y="780" font-size="12" fill="#333333">Data flow [artifact]</text>
+  </g>
+  <text x="24" y="816" font-size="11" fill="#777777">C4 model (component view) · generated from repository sources: scan3d/capture.py, visual_hull.py, reconstruct.sh, mesh_to_urdf.py, README.md, .gitignore</text>
+</svg>

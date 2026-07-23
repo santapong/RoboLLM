@@ -120,8 +120,11 @@ it; `/box_reset` respawns it.
   [`panda_arm`](../examples/panda_arm/TECHNICAL.md),
   [`hand_follow`](../examples/hand_follow/TECHNICAL.md),
   [`gen3_pick_place`](../examples/gen3_pick_place/TECHNICAL.md) — plus
-  [`hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) for the real arm stack;
-  internals, topic/param tables, and per-example architecture diagrams.
+  [`hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) for the real arm stack,
+  [`web/TECHNICAL.md`](../web/TECHNICAL.md) for the dashboard,
+  [`scan3d/TECHNICAL.md`](../scan3d/TECHNICAL.md) for the webcam scanner, and
+  [`cad/TECHNICAL.md`](../cad/TECHNICAL.md) for the FreeCAD → URDF pipeline;
+  internals, topic/param tables, and per-module architecture diagrams.
 - [`live-session.md`](live-session.md) — the guided ~30 min LLM ↔ robot demo:
   Claude sees, spawns objects, drives, maps, navigates, and moves an arm.
 - [`branching.md`](branching.md) — how `main` / `develop` / `experiment/*` are used.

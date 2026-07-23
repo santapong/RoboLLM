@@ -38,6 +38,8 @@ Hold **WASD** or the on-screen arrows to drive (auto-stops on release via a
 deadman watchdog), watch live pose + a lidar radar, list topics, send Nav2 goals.
 Runs alongside the sim and the MCP server — all three share the robot.
 
+Technical: [`web/TECHNICAL.md`](web/TECHNICAL.md) — server internals, HTTP/WS endpoint tables, diagram.
+
 ## 2 · Talk to Claude (the MCP loop)
 Start the sim (`sim/launch_turtlebot.sh`), then just ask:
 - "List the ROS 2 topics." · "Where is the robot?" · "Drive forward 3 s, then turn left."
@@ -98,6 +100,8 @@ cd scan3d
 CPU-only visual hull runs on the laptop; a COLMAP photogrammetry path (dense step
 on your GPU cloud) is included. See `scan3d/README.md`.
 
+Technical: [`scan3d/TECHNICAL.md`](scan3d/TECHNICAL.md) — both reconstruction routes, script internals, diagram.
+
 ## 5 · CAD → URDF → sim (`cad/`, verified end-to-end)
 A worked **2-link arm** proves the pipeline, and it runs headless:
 ```bash
@@ -109,6 +113,8 @@ See `cad/README.md`. Or interactively via the `freecad` MCP: open FreeCAD →
 **MCP Addon** workbench → **Start RPC Server**, then ask Claude:
 - "In FreeCAD, create a 2-link robot arm and export it as URDF."
 - "Make a 100×60×20 mm mounting bracket with four M4 holes."
+
+Technical: [`cad/TECHNICAL.md`](cad/TECHNICAL.md) — headless build, joint-frame discipline, PyBullet verify, diagram.
 
 ## Documentation map
 | Doc | What |
