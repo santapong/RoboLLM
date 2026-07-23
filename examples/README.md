@@ -71,6 +71,17 @@ own arm URDF + MoveIt config) with a verified Docker route and a
 ros2 launch robot_arm_moveit_config handfollow.launch.py preview:=true
 ```
 
+### 1g · Gesture pick-and-place on a real arm model (`gen3_pick_place/`)
+The hand_follow idea grown up: a **Kinova Gen3 lite** (6-DOF + gripper) follows
+your LEFT hand with palm-derived gripper orientation; **fist = grip, open palm
+= release** — pick the planning-scene box up and place it wherever your hand
+carries it. MediaPipe GestureRecognizer + `/compute_ik` streaming + planning-
+scene attach/detach; CPU-only, self-contained, scripted synthetic acceptance.
+See `gen3_pick_place/README.md`.
+```bash
+./gen3_pick_place/docker/ros2-arm pickplace synthetic   # no camera needed
+```
+
 ### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
 | Terminal command | What it does |

@@ -22,7 +22,11 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
   (webcam LEFT-hand teleop of a vendored 6-DOF arm: MediaPipe → One-Euro →
   warm-start IK → 20 Hz JointTrajectory; RViz-based, CPU-only; NOTE its
   mediapipe install must keep the numpy 1.26.4 pin — verified variant in
-  its README; Docker route ships its own image).
+  its README; Docker route ships its own image), gen3_pick_place (gesture
+  pick-and-place on a Kinova Gen3 lite: fist=grip, palm=release, box
+  attach/detach in the MoveIt scene; GestureRecognizer + /compute_ik;
+  shares the hand_follow Docker image/launcher — Kinova pkgs + SHA-pinned
+  xacro fix baked in; same numpy law applies natively).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);

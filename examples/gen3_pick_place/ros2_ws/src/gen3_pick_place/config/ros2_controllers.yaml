@@ -1,0 +1,59 @@
+# Controller stack for the Gen3 lite mock-hardware bring-up.
+#
+# NOTE: the stock kinova_gen3_lite_moveit_config uses
+# position_controllers/GripperActionController for the gripper, which
+# SILENTLY IGNORES topic streams. We replace it with a second
+# joint_trajectory_controller (gripper_controller) driving
+# right_finger_bottom_joint so single-point JointTrajectory streaming works
+# for both the arm and the gripper.
+controller_manager:
+  ros__parameters:
+    update_rate: 250  # Hz (mock hardware; keep the i3-9100 cool)
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    gripper_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - joint_1
+      - joint_2
+      - joint_3
+      - joint_4
+      - joint_5
+      - joint_6
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+gripper_controller:
+  ros__parameters:
+    joints:
+      - right_finger_bottom_joint   # URDF range: -0.1 (open) .. 0.96 rad
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
