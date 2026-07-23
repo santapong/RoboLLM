@@ -1,0 +1,135 @@
+name: ci-container
+
+# Container-bound CI for the robot-arm examples (research units U4+U5).
+# The selftests and scenario meters need the ros2-arm image, an in-container
+# ROS 2 graph and DDS (ROS_LOCALHOST_ONLY=1 — Fast DDS silently drops traffic
+# on this host otherwise), and the scenario jobs additionally drive the
+# example launchers (which passthrough --net/--ipc host and /dev/dri). None of
+# that exists on a GitHub-hosted runner, so these jobs run on a self-hosted
+# runner that has the image and devices.
+#
+# TRIGGER = workflow_dispatch ONLY (deliberately NOT pull_request):
+#   * Security (this is a PUBLIC repo): GitHub explicitly recommends never
+#     wiring self-hosted runners to pull_request in a public repo — a PR runs
+#     attacker-controlled code, and here that code is maximally privileged
+#     (ci/run_scenario.sh drives the PR's own launcher, which starts containers
+#     with --net=host --pid=host -v /dev:/dev as root == host compromise).
+#   * A pull_request trigger would also queue these jobs against a runner that
+#     may not be attached, blocking every PR that touches examples/** or ci/**.
+# The maintainer runs this by hand (Actions -> ci-container -> Run workflow)
+# from a trusted checkout, after ensuring a self-hosted runner is online.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  IMAGE: ghcr.io/santapong/robollm/ros2-arm:jazzy
+  ROS_DOMAIN_ID: "72"
+  ROS_LOCALHOST_ONLY: "1"
+
+concurrency:
+  group: ci-container-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selftests:
+    runs-on: self-hosted
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull ros2-arm image
+        run: |
+          docker pull "$IMAGE"
+          docker tag "$IMAGE" ros2-arm:jazzy
+      - name: wall_weld offline selftest (30 checks, in-container)
+        run: |
+          docker run --rm --ipc=host --ulimit core=0 \
+            -e ROS_DOMAIN_ID -e ROS_LOCALHOST_ONLY -e PYTHONDONTWRITEBYTECODE=1 \
+            -v "$PWD/examples/wall_weld/ros2_ws:/ros2_ws" -w /ros2_ws \
+            "$IMAGE" \
+            bash -lc 'source /opt/ros/jazzy/setup.bash;
+                      /opt/mpvenv/bin/python /ros2_ws/tools/wallweld_selftest.py'
+      - name: gen3_pick_place rclpy tests (test_hand_pick_place, in-container)
+        run: |
+          docker run --rm --ipc=host --ulimit core=0 \
+            -e ROS_DOMAIN_ID -e ROS_LOCALHOST_ONLY -e PYTHONDONTWRITEBYTECODE=1 \
+            -v "$PWD/examples/gen3_pick_place/ros2_ws:/ros2_ws" -w /ros2_ws \
+            "$IMAGE" \
+            bash -lc 'source /opt/ros/jazzy/setup.bash;
+                      python3 -m pytest -q -p no:cacheprovider \
+                        src/gen3_pick_place/test/test_hand_pick_place.py'
+      - name: robot_bridge in-process rclpy tests (tests_ros, in-container)
+        run: |
+          docker run --rm --net=host --ipc=host --ulimit core=0 \
+            -e ROS_DOMAIN_ID -e ROS_LOCALHOST_ONLY -e PYTHONDONTWRITEBYTECODE=1 \
+            -v "$PWD:/repo" -w /repo \
+            "$IMAGE" \
+            bash -lc 'source /opt/ros/jazzy/setup.bash;
+                      python3 -m pytest -q -p no:cacheprovider tests_ros/'
+      - name: Restore checkout ownership (root-owned build/caches -> runner)
+        if: always()
+        run: |
+          # The steps above run as root inside the image and drop root-owned
+          # build/install/log and __pycache__ into the mounted checkout; the
+          # runner's next `git clean -ffdx` would then fail EPERM. Chown the
+          # whole tree back to the runner user so the next checkout is clean.
+          docker run --rm -e _U="$(id -u)" -e _G="$(id -g)" \
+            -v "$PWD:/repo" "$IMAGE" \
+            bash -lc 'chown -R "$_U":"$_G" /repo 2>/dev/null; true'
+
+  scenarios:
+    runs-on: self-hosted
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - wallweld-full
+          - wallweld-abort
+          - wallweld-idle
+          - pickplace-synthetic
+          - handfollow-synthetic
+    env:
+      ROS_DOMAIN_ID: "72"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull ros2-arm image
+        run: |
+          docker pull "$IMAGE"
+          docker tag "$IMAGE" ros2-arm:jazzy
+      - name: Run scenario ${{ matrix.scenario }}
+        run: ci/run_scenario.sh ${{ matrix.scenario }}
+      - name: Upload RESULT JSON + logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.scenario }}
+          path: |
+            ci/results/${{ matrix.scenario }}.json
+            ci/results/${{ matrix.scenario }}.meter.log
+            ci/results/${{ matrix.scenario }}.stack.log
+          if-no-files-found: warn
+      - name: Restore checkout ownership (root-owned build artifacts -> runner)
+        if: always()
+        run: |
+          # run_scenario.sh already chowns on its own EXIT trap; this is the
+          # belt-and-suspenders net for a hard job cancel (SIGKILL skips traps).
+          docker run --rm -e _U="$(id -u)" -e _G="$(id -g)" \
+            -v "$PWD:/repo" "$IMAGE" \
+            bash -lc 'chown -R "$_U":"$_G" /repo 2>/dev/null; true'

@@ -1,0 +1,34 @@
+name: ci-fast
+
+# Native (no-ROS) fast gate: pure-python tests + errors-only lint.
+# Blocking, target < 3 min. Heavier ROS 2 / container work lives elsewhere.
+
+on:
+  push:
+    branches: [develop, main]   # PR branches are covered by pull_request —
+  pull_request:                 # no double-run per commit
+
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test deps (numpy stays 1.26.4-pinned; not needed here)
+        run: |
+          python -m pip install --upgrade pip
+          # constraints.txt guards the numpy 1.26.4 ABI law even though these
+          # pure-python tests don't import numpy.
+          pip install -c constraints.txt pytest hypothesis ruff
+
+      - name: Ruff (errors only — E9, F)
+        run: ruff check --select E9,F robot_bridge.py ros2_mcp_server.py web/server.py
+
+      - name: Pytest (native fast suite)
+        run: pytest tests/ -q

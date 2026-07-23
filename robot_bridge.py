@@ -22,7 +22,7 @@ from __future__ import annotations
 import math
 import threading
 import time
-from typing import Any
+from typing import Any, Callable
 
 import rclpy
 from rclpy.node import Node
@@ -32,7 +32,6 @@ from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry, OccupancyGrid
 from sensor_msgs.msg import LaserScan, Image, JointState
-from nav2_msgs.action import NavigateToPose
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import Constraints, JointConstraint
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
@@ -42,10 +41,18 @@ from tf2_ros import Buffer, TransformListener
 class Bridge(Node):
     """One long-lived ROS 2 node. Publishers/subscribers + small helper methods."""
 
-    def __init__(self, node_name: str = "claude_ros2_bridge", deadman_s: float = 0.6) -> None:
+    def __init__(self, node_name: str = "claude_ros2_bridge", deadman_s: float = 0.6,
+                 time_source: Callable[[], float] | None = None) -> None:
         super().__init__(node_name)
+        # Injectable monotonic clock for the deadman/teleop watchdog. Defaults to
+        # time.monotonic (unchanged behaviour); tests pass a fake clock so the
+        # deadman timeout can be exercised without real sleeping.
+        self._now: Callable[[], float] = time_source if time_source is not None else time.monotonic
         self.cmd_vel = self.create_publisher(Twist, "/cmd_vel", 10)
-        self.nav = ActionClient(self, NavigateToPose, "navigate_to_pose")
+        # Nav2 messages are an optional dependency: navigate_to needs Nav2 running
+        # anyway, and nav2_msgs is absent from some minimal images. Build the
+        # action client lazily so the module still imports where it's missing.
+        self.nav = self._make_nav_client()
         self.arm = ActionClient(self, MoveGroup, "move_action")
         self._last_odom: Odometry | None = None
         self._last_scan: LaserScan | None = None
@@ -77,6 +84,14 @@ class Bridge(Node):
         self.min_obstacle_m = 0.35
         self.create_timer(1.0 / 20.0, self._teleop_tick)  # 20 Hz republish
 
+    def _make_nav_client(self) -> ActionClient | None:
+        """Create the NavigateToPose action client if nav2_msgs is installed."""
+        try:
+            from nav2_msgs.action import NavigateToPose
+        except ImportError:
+            return None
+        return ActionClient(self, NavigateToPose, "navigate_to_pose")
+
     # ---- subscriptions ----------------------------------------------------
     def _on_odom(self, msg: Odometry) -> None:
         self._last_odom = msg
@@ -99,7 +114,7 @@ class Bridge(Node):
         newer command arrives or the deadman timeout stops the robot."""
         self._target.linear.x = float(linear)
         self._target.angular.z = float(angular)
-        self._target_stamp = time.monotonic()
+        self._target_stamp = self._now()
         self._teleop_active = True
 
     def _front_distance(self) -> float:
@@ -119,7 +134,7 @@ class Bridge(Node):
     def _teleop_tick(self) -> None:
         if not self._teleop_active:
             return
-        if time.monotonic() - self._target_stamp > self._deadman_s:
+        if self._now() - self._target_stamp > self._deadman_s:
             self.cmd_vel.publish(Twist())  # deadman: no fresh command -> stop
             self._teleop_active = False
             return
@@ -317,8 +332,11 @@ class Bridge(Node):
 
     def navigate_to(self, x: float, y: float, yaw_deg: float = 0.0,
                     timeout_s: float = 120.0) -> str:
+        if self.nav is None:
+            return "error: nav2_msgs not available — install Nav2 to use navigate_to"
         if not self.nav.wait_for_server(timeout_sec=3.0):
             return "error: Nav2 action server not available — is Nav2 running?"
+        from nav2_msgs.action import NavigateToPose
         goal = NavigateToPose.Goal()
         goal.pose.header.frame_id = "map"
         goal.pose.header.stamp = self.get_clock().now().to_msg()

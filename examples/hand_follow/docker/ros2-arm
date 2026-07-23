@@ -104,6 +104,7 @@ exec docker run $DOCKTTY --rm $DOCKNAME \
     -e DISPLAY="${DISPLAY:-:1}" \
     -e QT_X11_NO_MITSHM=1 \
     -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}" \
+    -e ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}" \
     -e RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}" \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
     -v "$WS:/ros2_ws" \

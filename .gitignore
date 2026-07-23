@@ -8,6 +8,11 @@ __pycache__/
 build/
 install/
 log/
+# CI scenario outputs (stack logs embed the local user/host name — keep out of
+# this PUBLIC repo; regenerate with ci/run_scenario.sh)
+ci/results/
+# hypothesis example DB (self-ignores via its own .gitignore; belt-and-suspenders)
+.hypothesis/
 # editor / os
 .vscode/
 .idea/

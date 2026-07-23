@@ -32,11 +32,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && /opt/mpvenv/bin/pip install --no-cache-dir --ignore-installed mediapipe==0.10.35
 
 # Bake the hand landmarker model at build time so runtime needs no network.
+# Pinned to the versioned float16/1 URL (NOT the mutable /latest/ path) and
+# sha256-verified with `sha256sum -c` at build time — exactly like the gesture
+# model layer — so a silent upstream rewrite fails the build loud. The expected
+# hash is written to the .sha256 file first, so the recorded pin doubles as the
+# build-time check and stays in the image for runtime re-verification.
 RUN mkdir -p /opt/models \
     && curl -fL -o /opt/models/hand_landmarker.task \
-       https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task \
-    && sha256sum /opt/models/hand_landmarker.task > /opt/models/hand_landmarker.task.sha256 \
-    && cat /opt/models/hand_landmarker.task.sha256
+       https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task \
+    && echo "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1  /opt/models/hand_landmarker.task" > /opt/models/hand_landmarker.task.sha256 \
+    && sha256sum -c /opt/models/hand_landmarker.task.sha256
 
 # ---- Gen3-lite pick-and-place (gen3_pick_place) ----------------------------
 # This network blocks plain-HTTP to archive/security.ubuntu.com (port 80

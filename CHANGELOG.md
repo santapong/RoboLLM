@@ -5,6 +5,47 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-07-23 — tests + CI: the testing pyramid
+
+### Added
+- **First CI**: `.github/workflows/ci-fast.yml` — native no-ROS gate on
+  every push/PR (<3 min, blocking): the 14 gesture-SM tests (collected
+  from the vendored source via a re-export shim, never copied), a new
+  hypothesis property suite over the shared `arm_ik.py` (FK agreement,
+  clamp invariants, sub-mm solve_track accuracy in its operating regime,
+  jump-flag consistency), a byte-identity guard for the duplicated
+  `arm_ik` copies, an executable numpy==1.26.4 law check, and
+  errors-only ruff over the root glue.
+- `.github/workflows/build-image.yml` — builds `ros2-arm:jazzy` and
+  publishes to `ghcr.io/santapong/robollm/ros2-arm:jazzy` on develop
+  pushes touching a Dockerfile (registry-cache; 90 min timeout).
+- `.github/workflows/ci-container.yml` + `ci/run_scenario.sh` — container
+  tier: wallweld selftest (30 checks) + the 16 rclpy gen3 tests + a
+  5-scenario acceptance matrix (wallweld full/abort/idle, pickplace +
+  handfollow synthetic), all verified green locally. **Manual dispatch
+  only for now** — it targets a self-hosted runner that is not yet
+  registered (see Security below).
+- `tests_ros/test_robot_bridge.py` — deadman via injected clock (wall
+  sleeps not required), 20 Hz teleop tick, safe-mode forward block,
+  singleton identity; `robot_bridge.py` gained an injectable time source
+  (behavior-preserving).
+- `hand_accept.py` now emits a machine-readable `RESULT:{json}` line
+  (parity with `wallweld_accept.py`).
+
+### Fixed
+- Supply chain: `hand_landmarker.task` was fetched from a mutable
+  `/latest/` URL and its sha256 recorded but never checked — now pinned
+  to the versioned URL and `sha256sum -c`-verified at build time, in all
+  four Dockerfile copies.
+- One real lint error (unused import in `web/server.py`).
+
+### Security
+- The Fable audit caught `ci-container.yml` triggering on pull_request
+  against a self-hosted runner in a public repo (arbitrary code
+  execution on the runner box) and hanging forever with no runner
+  registered — switched to `workflow_dispatch` until a runner strategy
+  (self-hosted vs GHCR-pull on hosted runners) is decided.
+
 ## 2026-07-23 — wall_weld: gesture-triggered automation
 
 ### Added
