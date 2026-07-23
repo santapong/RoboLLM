@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">patrol_bot — ament_python package anatomy &amp; runtime</text>
+  <text x="24" y="58" font-size="12" fill="#555555">examples/colcon_pkg/patrol_bot — example 04 (drive a square) grown into a real colcon package: installed executable, parameters, launch file</text>
+
+  <!-- ============ Boundaries ============ -->
+  <!-- Source package boundary -->
+  <rect x="24" y="90" width="300" height="560" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="40" y="112" font-size="12" font-style="italic" fill="#444444">source package</text>
+
+  <!-- Install space boundary -->
+  <rect x="430" y="90" width="300" height="300" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="446" y="112" font-size="12" font-style="italic" fill="#444444">install space — ros2_ws/install</text>
+  <text x="446" y="127" font-size="11" font-style="italic" fill="#444444">colcon build --packages-select patrol_bot</text>
+
+  <!-- Runtime boundary -->
+  <rect x="815" y="90" width="320" height="360" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="831" y="112" font-size="12" font-style="italic" fill="#444444">runtime — ROS 2 Jazzy</text>
+
+  <!-- ============ Relationships ============ -->
+  <!-- setup.py -> patrol executable (entry_points) -->
+  <line x1="299" y1="310" x2="440" y2="315" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="450,315 440,310 440,320" fill="#707070"/>
+  <rect x="335" y="292" width="80" height="14" fill="#FFFFFF"/>
+  <text x="375" y="303" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">entry_points</text>
+
+  <!-- launch source -> installed share (data_files) -->
+  <line x1="299" y1="545" x2="443" y2="222" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="447,213 448,224 440,220" fill="#707070"/>
+  <rect x="337" y="373" width="70" height="14" fill="#FFFFFF"/>
+  <text x="372" y="384" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">data_files</text>
+
+  <!-- installed share -> ros2 launch -->
+  <line x1="705" y1="192" x2="835" y2="192" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="845,192 835,187 835,197" fill="#707070"/>
+  <rect x="737" y="172" width="76" height="14" fill="#FFFFFF"/>
+  <text x="775" y="183" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">ament index</text>
+
+  <!-- patrol executable -> /patrol node (ros2 run) -->
+  <line x1="705" y1="317" x2="835" y2="348" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="845,350 834,352 836,343" fill="#707070"/>
+  <rect x="722" y="322" width="106" height="14" fill="#FFFFFF"/>
+  <text x="775" y="333" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">ros2 run (direct)</text>
+
+  <!-- ros2 launch -> /patrol node -->
+  <line x1="972" y1="245" x2="972" y2="290" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="972,300 967,290 977,290" fill="#707070"/>
+  <text x="980" y="275" font-size="11" font-style="italic" fill="#333333">parameters: side_m, laps</text>
+
+  <!-- /patrol -> TurtleBot3 (/cmd_vel) -->
+  <line x1="930" y1="420" x2="930" y2="520" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="930,530 925,520 935,520" fill="#707070"/>
+  <text x="922" y="470" font-size="11" fill="#333333" text-anchor="end">/cmd_vel @ 10 Hz</text>
+  <text x="922" y="485" font-size="11" font-style="italic" fill="#333333" text-anchor="end">[geometry_msgs/Twist]</text>
+
+  <!-- TurtleBot3 -> (nothing) /scan note -->
+  <line x1="1030" y1="530" x2="1030" y2="430" stroke="#707070" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <polygon points="1030,420 1025,430 1035,430" fill="#707070"/>
+  <text x="1038" y="470" font-size="11" fill="#333333">/scan, /odom published</text>
+  <text x="1038" y="485" font-size="11" font-style="italic" fill="#333333">but NOT consumed —</text>
+  <text x="1038" y="500" font-size="11" font-style="italic" fill="#333333">open-loop timed patrol</text>
+
+  <!-- ============ Source package components (#85BBF0) ============ -->
+  <g>
+    <rect x="44" y="130" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="172" y="154" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">package.xml</text>
+    <text x="172" y="173" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[format 3 manifest]</text>
+    <text x="172" y="192" font-size="12" fill="#000000" text-anchor="middle">build_type: ament_python</text>
+    <text x="172" y="207" font-size="12" fill="#000000" text-anchor="middle">depend: rclpy, geometry_msgs</text>
+    <text x="172" y="222" font-size="12" fill="#000000" text-anchor="middle">v0.1.0 · MIT</text>
+  </g>
+  <g>
+    <rect x="44" y="255" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="172" y="279" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">setup.py · setup.cfg</text>
+    <text x="172" y="298" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[setuptools]</text>
+    <text x="172" y="317" font-size="12" fill="#000000" text-anchor="middle">console_scripts: patrol =</text>
+    <text x="172" y="332" font-size="12" fill="#000000" text-anchor="middle">patrol_bot.patrol:main;</text>
+    <text x="172" y="347" font-size="12" fill="#000000" text-anchor="middle">data_files: launch/, marker</text>
+  </g>
+  <g>
+    <rect x="44" y="380" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="172" y="404" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">patrol_bot/patrol.py</text>
+    <text x="172" y="423" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[rclpy · class Patrol(Node)]</text>
+    <text x="172" y="442" font-size="12" fill="#000000" text-anchor="middle">10 Hz timer state machine</text>
+    <text x="172" y="457" font-size="12" fill="#000000" text-anchor="middle">FORWARD &lt;-&gt; TURN; params</text>
+    <text x="172" y="472" font-size="12" fill="#000000" text-anchor="middle">side_m, speed, laps</text>
+  </g>
+  <g>
+    <rect x="44" y="505" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="172" y="529" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">launch/patrol.launch.py</text>
+    <text x="172" y="548" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[launch_ros]</text>
+    <text x="172" y="567" font-size="12" fill="#000000" text-anchor="middle">DeclareLaunchArgument side_m</text>
+    <text x="172" y="582" font-size="12" fill="#000000" text-anchor="middle">(0.45), laps (1); passes them</text>
+    <text x="172" y="597" font-size="12" fill="#000000" text-anchor="middle">as node parameters</text>
+  </g>
+  <text x="44" y="634" font-size="11" font-style="italic" fill="#444444">resource/patrol_bot — empty ament index marker</text>
+
+  <!-- ============ Install space (#1168BD) ============ -->
+  <g>
+    <rect x="450" y="140" width="255" height="105" rx="6" fill="#1168BD"/>
+    <text x="577" y="164" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">share/patrol_bot/launch/</text>
+    <text x="577" y="183" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[installed by data_files]</text>
+    <text x="577" y="202" font-size="12" fill="#FFFFFF" text-anchor="middle">patrol.launch.py registered</text>
+    <text x="577" y="217" font-size="12" fill="#FFFFFF" text-anchor="middle">in the ament index</text>
+  </g>
+  <g>
+    <rect x="450" y="265" width="255" height="105" rx="6" fill="#1168BD"/>
+    <text x="577" y="289" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">patrol</text>
+    <text x="577" y="308" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[console-script executable]</text>
+    <text x="577" y="327" font-size="12" fill="#FFFFFF" text-anchor="middle">lib/patrol_bot/patrol runs</text>
+    <text x="577" y="342" font-size="12" fill="#FFFFFF" text-anchor="middle">patrol_bot.patrol:main()</text>
+    <text x="577" y="357" font-size="12" fill="#FFFFFF" text-anchor="middle">(rclpy.init + spin)</text>
+  </g>
+
+  <!-- Build & run commands -->
+  <text x="440" y="440" font-size="12" font-weight="bold" fill="#000000">Build &amp; run (from repo root):</text>
+  <text x="440" y="460" font-size="10" fill="#333333">cp -r examples/colcon_pkg/patrol_bot ~/ros2_ws/src/</text>
+  <text x="440" y="476" font-size="10" fill="#333333">cd ~/ros2_ws &amp;&amp; colcon build --packages-select patrol_bot</text>
+  <text x="440" y="492" font-size="10" fill="#333333">source install/setup.bash</text>
+  <text x="440" y="508" font-size="10" fill="#333333">ros2 launch patrol_bot patrol.launch.py side_m:=0.6 laps:=2</text>
+
+  <!-- ============ Runtime (#1168BD) ============ -->
+  <g>
+    <rect x="845" y="140" width="255" height="105" rx="6" fill="#1168BD"/>
+    <text x="972" y="164" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ros2 launch</text>
+    <text x="972" y="183" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[patrol_bot patrol.launch.py]</text>
+    <text x="972" y="202" font-size="12" fill="#FFFFFF" text-anchor="middle">side_m:=0.6 laps:=2 overrides;</text>
+    <text x="972" y="217" font-size="12" fill="#FFFFFF" text-anchor="middle">starts the patrol executable</text>
+    <text x="972" y="232" font-size="12" fill="#FFFFFF" text-anchor="middle">with output='screen'</text>
+  </g>
+  <g>
+    <rect x="845" y="300" width="255" height="120" rx="6" fill="#1168BD"/>
+    <text x="972" y="324" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">/patrol</text>
+    <text x="972" y="343" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[rclpy node]</text>
+    <text x="972" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">publishes Twist on /cmd_vel;</text>
+    <text x="972" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">legs timed as side_m / speed,</text>
+    <text x="972" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">turns 90° at 0.5 rad/s;</text>
+    <text x="972" y="407" font-size="12" fill="#FFFFFF" text-anchor="middle">SystemExit after 4 x laps legs</text>
+  </g>
+
+  <!-- TurtleBot3 sim (external) -->
+  <g>
+    <rect x="845" y="530" width="255" height="95" rx="6" fill="#999999"/>
+    <text x="972" y="554" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">TurtleBot3 sim</text>
+    <text x="972" y="571" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Gazebo Harmonic]</text>
+    <text x="972" y="590" font-size="12" fill="#FFFFFF" text-anchor="middle">diff-drive base consumes</text>
+    <text x="972" y="605" font-size="12" fill="#FFFFFF" text-anchor="middle">/cmd_vel; lidar publishes /scan</text>
+  </g>
+
+  <!-- ============ Legend ============ -->
+  <line x1="24" y1="700" x2="210" y2="700" stroke="#DDDDDD" stroke-width="1"/>
+  <text x="24" y="724" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <g>
+    <rect x="24" y="738" width="18" height="18" rx="3" fill="#85BBF0"/>
+    <text x="50" y="752" font-size="12" fill="#333333">Package file (component)</text>
+
+    <rect x="230" y="738" width="18" height="18" rx="3" fill="#1168BD"/>
+    <text x="256" y="752" font-size="12" fill="#333333">Installed artifact / process</text>
+
+    <rect x="450" y="738" width="18" height="18" rx="3" fill="#999999"/>
+    <text x="476" y="752" font-size="12" fill="#333333">External system</text>
+
+    <rect x="620" y="738" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="654" y="752" font-size="12" fill="#333333">Boundary</text>
+
+    <line x1="750" y1="747" x2="790" y2="747" stroke="#707070" stroke-width="1.5"/>
+    <polygon points="800,747 790,742 790,752" fill="#707070"/>
+    <text x="810" y="752" font-size="12" fill="#333333">Relationship [label]</text>
+  </g>
+  <text x="24" y="796" font-size="11" fill="#777777">C4-style component view · generated from package.xml, setup.py, setup.cfg, patrol_bot/patrol.py, launch/patrol.launch.py</text>
+</svg>

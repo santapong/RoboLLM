@@ -31,6 +31,8 @@ The concepts every ROS 2 robot is built from. No sim needed for 01–03.
 with no sim at all. Introspect anything live with the MCP `run_ros2` tool or the
 CLI, e.g. `ros2 topic echo /scan --once`, `ros2 interface show sensor_msgs/msg/LaserScan`.
 
+Technical: [`ros2_py/TECHNICAL.md`](ros2_py/TECHNICAL.md) — per-script internals, topic tables, diagram.
+
 ### 1c · Your first real package (`colcon_pkg/patrol_bot/`)
 Everything above is standalone scripts; real ROS 2 work ships as **packages**.
 `patrol_bot` is example 04 grown up: an installed executable (`ros2 run`), ROS
@@ -44,10 +46,14 @@ ros2 launch patrol_bot patrol.launch.py side_m:=0.6 laps:=2   # with the sim up
 ```
 (Verified: builds with colcon, `ros2 run patrol_bot patrol` completes a lap.)
 
+Technical: [`colcon_pkg/patrol_bot/TECHNICAL.md`](colcon_pkg/patrol_bot/TECHNICAL.md) — package anatomy, params, launch plumbing.
+
 ### 1d · IK on your own CAD arm (`pybullet/arm_ik_control.py`)
 Closed-form 2-link inverse kinematics on the arm you built in FreeCAD (`../cad`):
 give an (x, z) target, the math finds the joint angles, PyBullet proves the tip
 lands there (<1 mm). Run `--gui` to watch it reach. Verified headless.
+
+Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) — the IK math, both scripts, diagram.
 
 ### 1e · The manipulation pipeline, end to end (`panda_arm/`)
 Five demos on the 7-DOF Panda that build the full chain: FK/IK with the math
@@ -58,6 +64,7 @@ servo commands over serial. See `panda_arm/README.md`.
 ```bash
 ros2 launch examples/panda_arm/05_vision_sort.launch.py   # the whole pipeline
 ```
+Technical: [`panda_arm/TECHNICAL.md`](panda_arm/TECHNICAL.md) — the five demos layer by layer, topics, diagram.
 
 ### 1f · Teleop by hand-tracking (`hand_follow/`)
 Wave your **LEFT hand** at the webcam and a 6-DOF arm follows it live in RViz
@@ -70,6 +77,7 @@ own arm URDF + MoveIt config) with a verified Docker route and a
 ```bash
 ros2 launch robot_arm_moveit_config handfollow.launch.py preview:=true
 ```
+Technical: [`hand_follow/TECHNICAL.md`](hand_follow/TECHNICAL.md) — node internals, topic/param tables, verified latencies.
 
 ### 1g · Gesture pick-and-place on a real arm model (`gen3_pick_place/`)
 The hand_follow idea grown up: a **Kinova Gen3 lite** (6-DOF + gripper) follows
@@ -81,6 +89,7 @@ See `gen3_pick_place/README.md`.
 ```bash
 ./gen3_pick_place/docker/ros2-arm pickplace synthetic   # no camera needed
 ```
+Technical: [`gen3_pick_place/TECHNICAL.md`](gen3_pick_place/TECHNICAL.md) — gesture state machine, IK streaming, scene attach/detach.
 
 ### 1b · Navigation, mapping & manipulation (launch helpers in `sim/`)
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
@@ -120,6 +129,7 @@ Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.
 .venv/bin/python examples/mujoco/hello_mujoco.py            # prints the swing
 .venv/bin/python examples/mujoco/hello_mujoco.py --view     # 3D viewer
 ```
+Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) · [`mujoco/TECHNICAL.md`](mujoco/TECHNICAL.md) — engine internals, MJCF vs URDF, diagrams.
 
 ## The whole map of robot software (where each piece fits)
 - **Middleware**: ROS 2 (Jazzy) — you have it. The nervous system: topics/services/actions.

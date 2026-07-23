@@ -23,7 +23,7 @@ picture — C4 context → containers → components diagrams with narrative —
 | `examples/hand_follow/` | **Webcam hand teleop**: a 6-DOF arm follows your LEFT hand in RViz (MediaPipe → IK, Docker or native). |
 | `examples/gen3_pick_place/` | **Gesture pick-and-place** on a Kinova Gen3 lite: fist = grip, open palm = release. |
 | `scan3d/` | Webcam → 3D mesh → URDF (CPU visual hull + COLMAP photogrammetry). |
-| `hardware/` | **Real DIY arm**: Uno R3 firmware + serial driver + ROS 2 bridge + Pi 5 setup + `check_arduino.sh` health check. |
+| `hardware/` | **Real DIY arm**: Uno R3 firmware + serial driver + ROS 2 bridge + Pi 5 setup + `check_arduino.sh` health check — technical doc: [`hardware/TECHNICAL.md`](hardware/TECHNICAL.md). |
 | `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (own terminal). |
 | `docs/` | Architecture (C4), live-session playbook, branching — index in `docs/README.md`. |
 | `assets/` | Outputs: `urdf/`, `cad/`, `screenshots/`, `scan/` (git-ignored). |

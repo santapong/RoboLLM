@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">examples/mujoco — hello_mujoco.py pipeline</text>
+  <text x="24" y="58" font-size="12" fill="#555555">MJCF pendulum quickstart: define a model in XML, compile it, step the physics — headless printout or interactive 3-D viewer</text>
+
+  <!-- Process boundary -->
+  <rect x="250" y="90" width="780" height="600" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="266" y="112" font-size="12" font-style="italic" fill="#444444">hello_mujoco.py — one Python process, no ROS  [examples/mujoco/hello_mujoco.py]</text>
+
+  <!-- ============ Relationships (lines first) ============ -->
+  <!-- Developer -> MODEL_XML -->
+  <line x1="205" y1="190" x2="290" y2="190" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="300,190 290,185 290,195" fill="#707070"/>
+  <rect x="228" y="165" width="50" height="14" fill="#FFFFFF"/>
+  <text x="253" y="176" font-size="11" fill="#333333" text-anchor="middle">python3</text>
+  <rect x="222" y="199" width="62" height="14" fill="#FFFFFF"/>
+  <text x="253" y="210" font-size="11" fill="#333333" text-anchor="middle">[--view]</text>
+
+  <!-- MODEL_XML -> MjModel -->
+  <line x1="555" y1="192" x2="715" y2="192" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="725,192 715,187 715,197" fill="#707070"/>
+  <text x="640" y="182" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">MjModel.from_xml_string()</text>
+
+  <!-- MjModel -> MjData -->
+  <line x1="852" y1="245" x2="852" y2="290" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="852,300 847,290 857,290" fill="#707070"/>
+  <text x="862" y="277" font-size="11" font-style="italic" fill="#333333">MjData(model)</text>
+
+  <!-- MjData -> headless loop (diagonal) -->
+  <line x1="725" y1="375" x2="509" y2="464" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="500,468 507,460 511,469" fill="#707070"/>
+  <rect x="547" y="405" width="118" height="14" fill="#FFFFFF"/>
+  <text x="606" y="416" font-size="11" fill="#333333" text-anchor="middle">default (no --view)</text>
+
+  <!-- MjData -> viewer loop -->
+  <line x1="852" y1="405" x2="852" y2="460" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="852,470 847,460 857,460" fill="#707070"/>
+  <text x="862" y="440" font-size="11" fill="#333333">--view</text>
+
+  <!-- headless loop -> Terminal -->
+  <line x1="300" y1="517" x2="215" y2="517" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="205,517 215,512 215,522" fill="#707070"/>
+  <rect x="232" y="493" width="42" height="14" fill="#FFFFFF"/>
+  <text x="253" y="504" font-size="11" fill="#333333" text-anchor="middle">print()</text>
+
+  <!-- viewer loop -> MuJoCo viewer -->
+  <line x1="980" y1="517" x2="1070" y2="517" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1080,517 1070,512 1070,522" fill="#707070"/>
+  <rect x="1005" y="493" width="44" height="14" fill="#FFFFFF"/>
+  <text x="1027" y="504" font-size="11" fill="#333333" text-anchor="middle">sync()</text>
+
+  <!-- ============ External actors ============ -->
+  <!-- Developer -->
+  <g>
+    <rect x="25" y="140" width="180" height="95" rx="6" fill="#08427B"/>
+    <text x="115" y="164" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Developer</text>
+    <text x="115" y="181" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[terminal]</text>
+    <text x="115" y="199" font-size="12" fill="#FFFFFF" text-anchor="middle">runs the quickstart,</text>
+    <text x="115" y="214" font-size="12" fill="#FFFFFF" text-anchor="middle">optionally with --view</text>
+  </g>
+
+  <!-- Terminal -->
+  <g>
+    <rect x="25" y="470" width="180" height="95" rx="6" fill="#999999"/>
+    <text x="115" y="494" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Terminal</text>
+    <text x="115" y="511" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[stdout]</text>
+    <text x="115" y="529" font-size="12" fill="#FFFFFF" text-anchor="middle">swing printout every</text>
+    <text x="115" y="544" font-size="12" fill="#FFFFFF" text-anchor="middle">0.2 s of sim time</text>
+  </g>
+
+  <!-- MuJoCo viewer window -->
+  <g>
+    <rect x="1080" y="470" width="176" height="95" rx="6" fill="#999999"/>
+    <text x="1168" y="494" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">MuJoCo viewer</text>
+    <text x="1168" y="511" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[GLFW window]</text>
+    <text x="1168" y="529" font-size="12" fill="#FFFFFF" text-anchor="middle">interactive 3-D render;</text>
+    <text x="1168" y="544" font-size="12" fill="#FFFFFF" text-anchor="middle">needs a display</text>
+  </g>
+
+  <!-- ============ Components inside the process ============ -->
+  <!-- MODEL_XML -->
+  <g>
+    <rect x="300" y="140" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="427" y="164" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">MODEL_XML</text>
+    <text x="427" y="183" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[MJCF · inline XML string]</text>
+    <text x="427" y="202" font-size="12" fill="#000000" text-anchor="middle">plane + 1-DOF pendulum: body</text>
+    <text x="427" y="217" font-size="12" fill="#000000" text-anchor="middle">'arm' with hinge joint + capsule</text>
+    <text x="427" y="232" font-size="12" fill="#000000" text-anchor="middle">geom, gravity 0 0 -9.81</text>
+  </g>
+
+  <!-- MjModel -->
+  <g>
+    <rect x="725" y="140" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="852" y="164" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">model — mujoco.MjModel</text>
+    <text x="852" y="183" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[compiled physics model]</text>
+    <text x="852" y="202" font-size="12" fill="#000000" text-anchor="middle">compiled from the MJCF string;</text>
+    <text x="852" y="217" font-size="12" fill="#000000" text-anchor="middle">geoms, joints, masses —</text>
+    <text x="852" y="232" font-size="12" fill="#000000" text-anchor="middle">immutable during simulation</text>
+  </g>
+
+  <!-- MjData -->
+  <g>
+    <rect x="725" y="300" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="852" y="324" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">data — mujoco.MjData</text>
+    <text x="852" y="343" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[time-varying state]</text>
+    <text x="852" y="362" font-size="12" fill="#000000" text-anchor="middle">qpos, qvel, time for the model;</text>
+    <text x="852" y="377" font-size="12" fill="#000000" text-anchor="middle">start raised: data.qpos[0]=1.2</text>
+    <text x="852" y="392" font-size="12" fill="#000000" text-anchor="middle">rad on the hinge</text>
+  </g>
+
+  <!-- headless loop -->
+  <g>
+    <rect x="300" y="470" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="427" y="494" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">headless loop (default)</text>
+    <text x="427" y="513" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[mujoco.mj_step]</text>
+    <text x="427" y="532" font-size="12" fill="#000000" text-anchor="middle">1000 x mj_step (2 ms steps =</text>
+    <text x="427" y="547" font-size="12" fill="#000000" text-anchor="middle">2 s sim); prints t + hinge angle</text>
+    <text x="427" y="562" font-size="12" fill="#000000" text-anchor="middle">every 100 steps, then 'done.'</text>
+  </g>
+
+  <!-- viewer loop -->
+  <g>
+    <rect x="725" y="470" width="255" height="105" rx="6" fill="#85BBF0"/>
+    <text x="852" y="494" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">viewer loop (--view)</text>
+    <text x="852" y="513" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[mujoco.viewer.launch_passive]</text>
+    <text x="852" y="532" font-size="12" fill="#000000" text-anchor="middle">while viewer.is_running():</text>
+    <text x="852" y="547" font-size="12" fill="#000000" text-anchor="middle">mj_step(model, data) then</text>
+    <text x="852" y="562" font-size="12" fill="#000000" text-anchor="middle">viewer.sync() each frame</text>
+  </g>
+
+  <!-- ============ Legend ============ -->
+  <line x1="24" y1="712" x2="210" y2="712" stroke="#DDDDDD" stroke-width="1"/>
+  <text x="24" y="738" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <g>
+    <rect x="24" y="752" width="18" height="18" rx="3" fill="#08427B"/>
+    <text x="50" y="766" font-size="12" fill="#333333">Person</text>
+
+    <rect x="140" y="752" width="18" height="18" rx="3" fill="#85BBF0"/>
+    <text x="166" y="766" font-size="12" fill="#333333">Component (inside the process)</text>
+
+    <rect x="400" y="752" width="18" height="18" rx="3" fill="#999999"/>
+    <text x="426" y="766" font-size="12" fill="#333333">External device / output</text>
+
+    <rect x="610" y="752" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="644" y="766" font-size="12" fill="#333333">Process boundary</text>
+
+    <line x1="790" y1="761" x2="830" y2="761" stroke="#707070" stroke-width="1.5"/>
+    <polygon points="840,761 830,756 830,766" fill="#707070"/>
+    <text x="850" y="766" font-size="12" fill="#333333">Relationship [label]</text>
+  </g>
+  <text x="24" y="800" font-size="11" fill="#777777">C4-style component view · generated from examples/mujoco/hello_mujoco.py · MuJoCo installed into the project venv via requirements-extra.txt (pip package: mujoco)</text>
+</svg>

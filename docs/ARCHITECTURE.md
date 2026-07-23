@@ -112,6 +112,16 @@ it; `/box_reset` respawns it.
   (grasp orientation + gesture design rationale); runbooks sit next to each.
 - [`../examples/README.md`](../examples/README.md) — the whole learning path,
   from `01_hello_node.py` up.
+- Technical deep-dives: each example ships a `TECHNICAL.md` next to its code —
+  [`ros2_py`](../examples/ros2_py/TECHNICAL.md),
+  [`patrol_bot`](../examples/colcon_pkg/patrol_bot/TECHNICAL.md),
+  [`pybullet`](../examples/pybullet/TECHNICAL.md),
+  [`mujoco`](../examples/mujoco/TECHNICAL.md),
+  [`panda_arm`](../examples/panda_arm/TECHNICAL.md),
+  [`hand_follow`](../examples/hand_follow/TECHNICAL.md),
+  [`gen3_pick_place`](../examples/gen3_pick_place/TECHNICAL.md) — plus
+  [`hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) for the real arm stack;
+  internals, topic/param tables, and per-example architecture diagrams.
 - [`live-session.md`](live-session.md) — the guided ~30 min LLM ↔ robot demo:
   Claude sees, spawns objects, drives, maps, navigates, and moves an arm.
 - [`branching.md`](branching.md) — how `main` / `develop` / `experiment/*` are used.

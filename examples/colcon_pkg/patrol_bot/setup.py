@@ -16,7 +16,7 @@ setup(
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="santapong",
-    maintainer_email="santapongsondhi@gmail.com",
+    maintainer_email="santapong@users.noreply.github.com",
     description="First real ROS 2 package: a parameterized square-patrol node.",
     license="MIT",
     entry_points={

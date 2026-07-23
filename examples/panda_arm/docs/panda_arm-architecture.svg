@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">panda_arm — C4 Component Diagram</text>
+  <text x="24" y="58" font-size="12" fill="#555555">Five-demo Franka Panda manipulation series — each demo builds on the previous, ending at joint angles over serial (where hardware/ starts)</text>
+
+  <!-- System boundary -->
+  <rect x="30" y="80" width="1220" height="545" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="46" y="102" font-size="12" font-style="italic" fill="#444444">examples/panda_arm — RViz2 + virtual Arduino, no Gazebo, no MoveIt, no hardware needed</text>
+
+  <!-- ============ Relationships (lines first) ============ -->
+  <!-- chain arrows 01->02->03->04->05 -->
+  <line x1="275" y1="182" x2="286" y2="182" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="296,182 286,177 286,187" fill="#707070"/>
+  <line x1="511" y1="182" x2="522" y2="182" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="532,182 522,177 522,187" fill="#707070"/>
+  <line x1="747" y1="182" x2="758" y2="182" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="768,182 758,177 758,187" fill="#707070"/>
+  <line x1="983" y1="182" x2="994" y2="182" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1004,182 994,177 994,187" fill="#707070"/>
+
+  <!-- 02 -> panda_kinematics -->
+  <line x1="370" y1="240" x2="212" y2="383" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="205,390 209,380 216,387" fill="#707070"/>
+  <rect x="215" y="300" width="152" height="14" fill="#FFFFFF"/>
+  <text x="291" y="311" font-size="11" fill="#333333" text-anchor="middle">FK + DLS IK (02–05)</text>
+
+  <!-- 03 -> arduino_sim -->
+  <line x1="610" y1="240" x2="514" y2="380" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="508,388 510,377 518,383" fill="#707070"/>
+  <rect x="460" y="303" width="212" height="14" fill="#FFFFFF"/>
+  <text x="566" y="314" font-size="11" fill="#333333" text-anchor="middle">S,&lt;j1..j7&gt;,&lt;grip&gt; @115200 (03–05)</text>
+
+  <!-- 05 -> table_camera -->
+  <line x1="1111" y1="240" x2="1091" y2="381" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1090,390 1086,379 1096,381" fill="#707070"/>
+  <rect x="1100" y="300" width="128" height="14" fill="#FFFFFF"/>
+  <text x="1106" y="311" font-size="11" fill="#333333">render + detect (05)</text>
+
+  <!-- arduino_sim -> .ino (same protocol, routed below) -->
+  <path d="M 490,500 L 490,528 L 790,528 L 790,508" fill="none" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="790,502 785,512 795,512" fill="#707070"/>
+  <rect x="560" y="521" width="160" height="14" fill="#FFFFFF"/>
+  <text x="640" y="532" font-size="11" fill="#333333" text-anchor="middle">identical serial protocol</text>
+
+  <!-- .ino -> real Uno -->
+  <line x1="850" y1="500" x2="1043" y2="649" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1050,655 1039,653 1045,645" fill="#707070"/>
+  <rect x="845" y="570" width="212" height="14" fill="#FFFFFF"/>
+  <text x="951" y="581" font-size="11" fill="#333333" text-anchor="middle">flash + PANDA_SERIAL=/dev/ttyUSB0</text>
+
+  <!-- demos -> RViz2 -->
+  <line x1="200" y1="626" x2="200" y2="646" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="200,655 195,645 205,645" fill="#707070"/>
+  <text x="212" y="638" font-size="11" fill="#333333">/joint_states · /pick_scene</text>
+  <text x="212" y="651" font-size="11" fill="#333333">/table_camera/image_raw</text>
+
+  <!-- URDF pkg -> boundary -->
+  <line x1="610" y1="652" x2="610" y2="635" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="610,626 605,636 615,636" fill="#707070"/>
+  <text x="620" y="645" font-size="11" fill="#333333">panda.urdf</text>
+
+  <!-- ============ Demo chain (containers) ============ -->
+  <g>
+    <rect x="60" y="125" width="215" height="115" rx="6" fill="#1168BD"/>
+    <text x="167" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">01 sliders</text>
+    <text x="167" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[01_sliders.launch.py]</text>
+    <text x="167" y="185" font-size="12" fill="#FFFFFF" text-anchor="middle">URDF in RViz2:</text>
+    <text x="167" y="200" font-size="12" fill="#FFFFFF" text-anchor="middle">rsp + joint_state_</text>
+    <text x="167" y="215" font-size="12" fill="#FFFFFF" text-anchor="middle">publisher_gui sliders</text>
+  </g>
+  <g>
+    <rect x="296" y="125" width="215" height="115" rx="6" fill="#1168BD"/>
+    <text x="403" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">02 kinematics</text>
+    <text x="403" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[02_kinematics.launch.py]</text>
+    <text x="403" y="185" font-size="12" fill="#FFFFFF" text-anchor="middle">kinematics_gui.py: FK 4×4</text>
+    <text x="403" y="200" font-size="12" fill="#FFFFFF" text-anchor="middle">chain, DLS IK conv. log,</text>
+    <text x="403" y="215" font-size="12" fill="#FFFFFF" text-anchor="middle">TF check, circle traj</text>
+  </g>
+  <g>
+    <rect x="532" y="125" width="215" height="115" rx="6" fill="#1168BD"/>
+    <text x="639" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">03 pick &amp; place</text>
+    <text x="639" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[03_pick_place.launch.py]</text>
+    <text x="639" y="185" font-size="12" fill="#FFFFFF" text-anchor="middle">pick_place.py: 11-step</text>
+    <text x="639" y="200" font-size="12" fill="#FFFFFF" text-anchor="middle">sequence, 50 Hz IK stream</text>
+    <text x="639" y="215" font-size="12" fill="#FFFFFF" text-anchor="middle">to virtual Arduino serial</text>
+  </g>
+  <g>
+    <rect x="768" y="125" width="215" height="115" rx="6" fill="#1168BD"/>
+    <text x="875" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">04 sort</text>
+    <text x="875" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[04_sort.launch.py]</text>
+    <text x="875" y="185" font-size="12" fill="#FFFFFF" text-anchor="middle">sort_demo.py: grasp poses</text>
+    <text x="875" y="200" font-size="12" fill="#FFFFFF" text-anchor="middle">from noisy detections,</text>
+    <text x="875" y="215" font-size="12" fill="#FFFFFF" text-anchor="middle">color bins + stacking</text>
+  </g>
+  <g>
+    <rect x="1004" y="125" width="215" height="115" rx="6" fill="#1168BD"/>
+    <text x="1111" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">05 vision sort</text>
+    <text x="1111" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[05_vision_sort.launch.py]</text>
+    <text x="1111" y="185" font-size="12" fill="#FFFFFF" text-anchor="middle">vision_sort_demo.py: pixel</text>
+    <text x="1111" y="200" font-size="12" fill="#FFFFFF" text-anchor="middle">→ ray → plane solve, trape-</text>
+    <text x="1111" y="215" font-size="12" fill="#FFFFFF" text-anchor="middle">zoidal velocity profile</text>
+  </g>
+
+  <!-- ============ Shared components ============ -->
+  <g>
+    <rect x="60" y="390" width="260" height="110" rx="6" fill="#85BBF0"/>
+    <text x="190" y="414" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">panda_kinematics.py</text>
+    <text x="190" y="431" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[Python · URDF-parsed FK/IK]</text>
+    <text x="190" y="450" font-size="12" fill="#000000" text-anchor="middle">chain-product FK, geometric</text>
+    <text x="190" y="465" font-size="12" fill="#000000" text-anchor="middle">6×7 Jacobian, damped-least-</text>
+    <text x="190" y="480" font-size="12" fill="#000000" text-anchor="middle">squares IK; python3 self-test</text>
+  </g>
+  <g>
+    <rect x="360" y="390" width="260" height="110" rx="6" fill="#85BBF0"/>
+    <text x="490" y="414" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">arduino_sim.py</text>
+    <text x="490" y="431" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[pty virtual Arduino]</text>
+    <text x="490" y="450" font-size="12" fill="#000000" text-anchor="middle">emulates firmware on</text>
+    <text x="490" y="465" font-size="12" fill="#000000" text-anchor="middle">/tmp/ttyPANDA: parses S…,</text>
+    <text x="490" y="480" font-size="12" fill="#000000" text-anchor="middle">replies ACK, 2°/20 ms slew</text>
+  </g>
+  <g>
+    <rect x="660" y="390" width="260" height="110" rx="6" fill="#85BBF0"/>
+    <text x="790" y="414" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">panda_arm_servo.ino</text>
+    <text x="790" y="431" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[arduino/ · C++ firmware]</text>
+    <text x="790" y="450" font-size="12" fill="#000000" text-anchor="middle">no kinematics on board —</text>
+    <text x="790" y="465" font-size="12" fill="#000000" text-anchor="middle">maps 8 angles to servo PWM,</text>
+    <text x="790" y="480" font-size="12" fill="#000000" text-anchor="middle">pins 3,5,6,9,10,11,12 + 13</text>
+  </g>
+  <g>
+    <rect x="960" y="390" width="260" height="110" rx="6" fill="#85BBF0"/>
+    <text x="1090" y="414" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">table_camera.py</text>
+    <text x="1090" y="431" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[pinhole model + OpenCV]</text>
+    <text x="1090" y="450" font-size="12" fill="#000000" text-anchor="middle">renders from camera POV;</text>
+    <text x="1090" y="465" font-size="12" fill="#000000" text-anchor="middle">HSV → contours → minAreaRect;</text>
+    <text x="1090" y="480" font-size="12" fill="#000000" text-anchor="middle">pixel → ray ∩ table plane</text>
+  </g>
+
+  <!-- ============ External systems ============ -->
+  <g>
+    <rect x="60" y="655" width="280" height="90" rx="6" fill="#999999"/>
+    <text x="200" y="678" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">RViz2 + rsp</text>
+    <text x="200" y="694" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[ROS 2 Jazzy host]</text>
+    <text x="200" y="712" font-size="12" fill="#FFFFFF" text-anchor="middle">robot_state_publisher, RViz2</text>
+    <text x="200" y="727" font-size="12" fill="#FFFFFF" text-anchor="middle">(panda.rviz); 01 also runs</text>
+    <text x="200" y="742" font-size="12" fill="#FFFFFF" text-anchor="middle">joint_state_publisher_gui</text>
+  </g>
+  <g>
+    <rect x="460" y="655" width="300" height="90" rx="6" fill="#999999"/>
+    <text x="610" y="678" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">panda.urdf</text>
+    <text x="610" y="694" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[moveit_resources_panda_description]</text>
+    <text x="610" y="712" font-size="12" fill="#FFFFFF" text-anchor="middle">installed via apt with the</text>
+    <text x="610" y="727" font-size="12" fill="#FFFFFF" text-anchor="middle">ros-jazzy-moveit-resources</text>
+    <text x="610" y="742" font-size="12" fill="#FFFFFF" text-anchor="middle">family; read by every launch</text>
+  </g>
+  <g>
+    <rect x="940" y="655" width="280" height="90" rx="6" fill="#999999"/>
+    <text x="1080" y="678" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Real Arduino Uno</text>
+    <text x="1080" y="694" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[optional hardware]</text>
+    <text x="1080" y="712" font-size="12" fill="#FFFFFF" text-anchor="middle">flash panda_arm_servo.ino,</text>
+    <text x="1080" y="727" font-size="12" fill="#FFFFFF" text-anchor="middle">servos on pins 3–13, then</text>
+    <text x="1080" y="742" font-size="12" fill="#FFFFFF" text-anchor="middle">PANDA_SERIAL=/dev/ttyUSB0</text>
+  </g>
+
+  <!-- ============ Legend ============ -->
+  <line x1="24" y1="768" x2="1256" y2="768" stroke="#DDDDDD" stroke-width="1"/>
+  <g>
+    <text x="24" y="793" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+
+    <rect x="100" y="779" width="18" height="18" rx="3" fill="#1168BD"/>
+    <text x="126" y="793" font-size="12" fill="#333333">Demo (launch + GUI process)</text>
+
+    <rect x="330" y="779" width="18" height="18" rx="3" fill="#85BBF0"/>
+    <text x="356" y="793" font-size="12" fill="#333333">Shared component / firmware</text>
+
+    <rect x="570" y="779" width="18" height="18" rx="3" fill="#999999"/>
+    <text x="596" y="793" font-size="12" fill="#333333">External system / device</text>
+
+    <rect x="790" y="779" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="824" y="793" font-size="12" fill="#333333">System boundary</text>
+
+    <line x1="970" y1="788" x2="1010" y2="788" stroke="#707070" stroke-width="1.5"/>
+    <polygon points="1020,788 1010,783 1010,793" fill="#707070"/>
+    <text x="1030" y="793" font-size="12" fill="#333333">Relationship [label]</text>
+  </g>
+  <text x="24" y="826" font-size="11" fill="#777777">C4 component view · examples/panda_arm · generated from 01–05 launch files, panda_kinematics.py, table_camera.py, arduino_sim.py, arduino/panda_arm_servo.ino</text>
+</svg>
