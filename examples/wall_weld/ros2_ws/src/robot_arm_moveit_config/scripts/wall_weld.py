@@ -472,6 +472,10 @@ class WallWeld(Node):
         p = self.declare_parameter
         # -- mode / io
         self.synthetic = p("synthetic", False).value
+        # service mode: no camera / no gesture / no auto-fire — the weld is
+        # driven purely by the /weld_start & /weld_abort services (e.g. the web
+        # dashboard). Uses the fixed-param wall. Mutually exclusive w/ synthetic.
+        self.service = p("service", False).value and not self.synthetic
         self.preview = p("preview", False).value
         self.camera = p("camera", "/dev/video0").value
         self.model_path = p("model_path",
@@ -560,6 +564,14 @@ class WallWeld(Node):
                                                self._on_js, 10)
         self.srv_reset = self.create_service(Trigger, "/wall_reset",
                                              self._on_wall_reset,
+                                             callback_group=self._cbg)
+        # On-demand start/abort seam (web/CLI) — same request path the fist and
+        # palm gestures use; _tick honours them identically to a gesture.
+        self.srv_start = self.create_service(Trigger, "/weld_start",
+                                             self._on_weld_start,
+                                             callback_group=self._cbg)
+        self.srv_abort = self.create_service(Trigger, "/weld_abort",
+                                             self._on_weld_abort,
                                              callback_group=self._cbg)
         self.planner = RasterPlanner(self)
         self.wallmgr = WallManager(self)
@@ -737,7 +749,7 @@ class WallWeld(Node):
                     self.margin, small_w, small_h,
                     self.wall_min_w, self.wall_min_h))
             return False
-        if not self.synthetic:
+        if not self.synthetic and not self.service:
             if not os.path.isfile(self.model_path):
                 log.fatal("model file missing: {} — the ros2-arm:jazzy image "
                           "bakes it at /opt/models/gesture_recognizer.task"
@@ -806,6 +818,11 @@ class WallWeld(Node):
                         ", palm inject at progress>={:.2f}".format(
                             self.synth_abort_frac)
                         if self.synth_abort_frac >= 0 else ""))
+        elif self.service:
+            self.vision_thread = None
+            self.get_logger().info(
+                "SERVICE mode: no camera/gesture — weld waits for the "
+                "/weld_start service (abort via /weld_abort), fixed wall")
         else:
             base = mp_python.BaseOptions(model_asset_path=self.model_path)
             self.recognizer = mp_vision.GestureRecognizer.create_from_options(
@@ -826,7 +843,8 @@ class WallWeld(Node):
                 "ABORT, wall_mode={}".format(self.hand, self.hand_conf,
                                              self.n_fist, self.n_palm,
                                              self.wall_mode))
-        self.vision_thread.start()
+        if self.vision_thread is not None:
+            self.vision_thread.start()
 
     def _request_start(self, why):
         with self.lock:
@@ -835,6 +853,36 @@ class WallWeld(Node):
     def _request_abort(self, why):
         with self.lock:
             self.req_abort = why
+
+    def _on_weld_start(self, req, resp):
+        """Service seam (/weld_start): request a weld on demand — same path as
+        the fist gesture. Honoured by _tick only from IDLE with a wall present."""
+        with self.lock:
+            st = self.state
+            have_wall = self.wall is not None
+        if st != "IDLE":
+            resp.success = False
+            resp.message = "busy: state {} — start only from IDLE".format(st)
+            return resp
+        if not have_wall:
+            resp.success = False
+            resp.message = "no wall accepted yet (marker not seen / no wall param)"
+            return resp
+        self._request_start("service:/weld_start")
+        resp.success = True
+        resp.message = "weld requested"
+        return resp
+
+    def _on_weld_abort(self, req, resp):
+        """Service seam (/weld_abort): abort an in-progress weld — same path as
+        the open-palm gesture."""
+        with self.lock:
+            st = self.state
+        self._request_abort("service:/weld_abort")
+        resp.success = st in ("APPROACH", "WELD")
+        resp.message = ("abort requested" if resp.success
+                        else "not welding (state {})".format(st))
+        return resp
 
     # ------------------------------------------------------------- synthetic
     def _synth_loop(self):

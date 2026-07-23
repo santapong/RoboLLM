@@ -159,6 +159,42 @@
     <div class="hint">ROS <span class="mono">/camera/image_raw</span> if present (Gazebo / Pi <span class="mono">run_camera.sh</span>), else a local USB webcam.</div>
   </section>
 
+  <!-- MOVEIT ARM -->
+  <section class="panel col-6">
+    <h2>MoveIt arm <span class="tag">plan + execute · move_group</span></h2>
+    <div class="strip" style="margin-bottom:12px">
+      <div class="item"><small>Group</small>
+        <select id="mgroup" class="num" style="width:auto;padding:7px 8px">
+          <option value="panda_arm">panda_arm · 7-DOF Panda</option>
+          <option value="arm">arm · 6-DOF weld arm</option>
+        </select></div>
+      <div class="item" style="flex:1"><small>Presets</small>
+        <div id="mpresets" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+    </div>
+    <label style="color:var(--muted);font-size:12px">joints — <span class="mono">name=radians</span>, comma-separated</label>
+    <input class="filter mono" id="mjoints" style="margin:6px 0 10px" placeholder="">
+    <button class="primary" id="mgo" style="width:100%">▶ Plan + Execute</button>
+    <div class="hint" id="mmsg">needs <span class="mono">move_group</span> running — <span class="mono">sim/launch_moveit_panda.sh</span> (panda), or the wall_weld stack (arm).</div>
+  </section>
+
+  <!-- WELDING -->
+  <section class="panel col-6">
+    <h2>Wall welding <span class="tag" id="weldTag">sim · MoveIt scene</span></h2>
+    <div class="kv"><span>state</span><span class="badge dim" id="weldState">no node</span></div>
+    <div style="margin:10px 0 4px;height:13px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);overflow:hidden">
+      <div id="weldBar" style="height:100%;width:0%;background:linear-gradient(90deg,#e3b341,#f85149);transition:width .25s"></div>
+    </div>
+    <div class="kv"><span>progress</span><b id="weldPct">0%</b></div>
+    <div style="display:flex;gap:8px;margin:14px 0;flex-wrap:wrap">
+      <button id="weldReset" style="flex:1;min-width:96px">⟳ Reset wall</button>
+      <button class="primary" id="weldStart" style="flex:1;min-width:96px">▶ START</button>
+      <button class="stop" id="weldAbort" style="flex:1;min-width:96px">⛔ ABORT</button>
+    </div>
+    <label style="color:var(--muted);font-size:12px">event log · <span class="mono">/weld_event</span></label>
+    <div id="weldLog" class="topics mono" style="max-height:130px;font-size:12px;margin-top:6px;padding:8px 10px;background:#0a0f18;border:1px solid var(--line);border-radius:9px">waiting for the wall_weld node…</div>
+    <div class="hint">3D bead/spark view stays in RViz · wall prediction + collision-safe standoff run on the robot side.</div>
+  </section>
+
   <!-- TELEMETRY -->
   <section class="panel col-4">
     <h2>Telemetry <span class="tag">/odom · /scan</span></h2>
@@ -306,6 +342,57 @@ async function loadTopics(){ const r=await fetch('/api/topics'+qs); allTopics=aw
 $('topfilter').oninput = renderTopics;
 loadTopics();
 
+// ---------- MoveIt arm ----------
+const PRESETS = {
+  panda_arm: {
+    ready: "panda_joint1=0, panda_joint2=-0.785, panda_joint3=0, panda_joint4=-2.356, panda_joint5=0, panda_joint6=1.571, panda_joint7=0.785",
+    up:    "panda_joint1=0, panda_joint2=-1.2, panda_joint4=-1.8, panda_joint6=1.0, panda_joint7=0.785",
+    pick:  "panda_joint1=0.3, panda_joint2=0.3, panda_joint4=-2.0, panda_joint6=2.2, panda_joint7=0.785",
+  },
+  arm: {
+    home:  "joint1=0, joint2=0, joint3=0, joint4=0, joint5=0, joint6=0",
+    ready: "joint1=0, joint2=-0.6, joint3=0.6, joint4=0, joint5=0.6, joint6=0",
+  },
+};
+function renderPresets(){
+  const g = $('mgroup').value, box = $('mpresets'); box.innerHTML='';
+  const names = Object.keys(PRESETS[g]);
+  $('mjoints').placeholder = PRESETS[g][names[0]];
+  names.forEach(n => { const b=document.createElement('button');
+    b.textContent=n; b.style.padding='6px 12px'; b.style.fontSize='12px';
+    b.onclick=()=>{ $('mjoints').value = PRESETS[g][n]; }; box.appendChild(b); });
+}
+$('mgroup').onchange = renderPresets; renderPresets();
+function parseJoints(s){ const o={};
+  s.split(',').forEach(p=>{ const [k,v]=p.split('='); if(k&&v!==undefined) o[k.trim()]=+v; }); return o; }
+$('mgo').onclick = async () => {
+  const group=$('mgroup').value, joints=parseJoints($('mjoints').value || $('mjoints').placeholder);
+  if(!Object.keys(joints).length){ $('mmsg').textContent='enter joints as name=radians'; return; }
+  $('mmsg').textContent='planning…';
+  const r = await POST('/api/moveit/move', {group, joints});
+  $('mmsg').textContent = (await r.json()).result;
+};
+
+// ---------- welding ----------
+$('weldStart').onclick = async ()=>{ const r=await POST('/api/weld/start'); flashWeld((await r.json())); };
+$('weldAbort').onclick = async ()=>{ const r=await POST('/api/weld/abort'); flashWeld((await r.json())); };
+$('weldReset').onclick = async ()=>{ const r=await POST('/api/weld/reset'); flashWeld((await r.json())); };
+function flashWeld(res){ const log=$('weldLog');
+  const line=`» ${res.ok?'ok':'✗'} ${res.message||res.error||''}`;
+  log.textContent = line + "\n" + log.textContent; }
+const WELD_COLORS = {IDLE:'info', HOMING:'info', APPROACH:'ok', WELD:'ok', DONE:'ok', ABORT:'off', ABORTING:'off', INIT:'dim'};
+function updateWeld(w){
+  if(!w) return;
+  const st=$('weldState');
+  if(!w.connected){ st.textContent='no node'; st.className='badge dim';
+    $('weldTag').textContent='sim · wall_weld not running'; return; }
+  $('weldTag').textContent='sim · MoveIt scene';
+  const s=w.state||'—'; st.textContent=s; st.className='badge '+(WELD_COLORS[s]||'info');
+  const pct=Math.round((w.progress||0)*100);
+  $('weldBar').style.width=pct+'%'; $('weldPct').textContent=pct+'%';
+  if(w.events&&w.events.length) $('weldLog').textContent = w.events.slice().reverse().join('\n');
+}
+
 // ---------- radar ----------
 const radar=$('radar'), rx=radar.getContext('2d');
 function drawRadar(vals){ const w=radar.width,c=w/2,R=c-12;
@@ -354,6 +441,7 @@ function connect(){
     $('camTag').textContent = src==='ros'?'ROS /camera/image_raw':src==='webcam'?'USB webcam':'no source';
     const cs=$('camSrc'); if(src!=='none'){ cs.style.display=''; cs.textContent=src.toUpperCase(); } else cs.style.display='none';
     const st=$('camStale'); if(src==='ros'&&cm.age!=null&&cm.age>2){ st.style.display=''; st.textContent=`● STALE ${cm.age}s`; } else st.style.display='none';
+    updateWeld(m.weld);
     drawRadar(m.radar);
   };
 }

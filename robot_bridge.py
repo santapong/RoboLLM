@@ -32,7 +32,8 @@ from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry, OccupancyGrid
 from sensor_msgs.msg import LaserScan, Image, JointState
-from std_msgs.msg import Bool, Float64MultiArray, String
+from std_msgs.msg import Bool, Float32, Float64MultiArray, String
+from std_srvs.srv import Trigger
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import Constraints, JointConstraint
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy
@@ -81,6 +82,16 @@ class Bridge(Node):
                                     reliability=QoSReliabilityPolicy.RELIABLE,
                                     durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
         self.create_subscription(String, "/arm/status", self._on_arm_status, arm_status_qos)
+        # wall-welding demo (examples/wall_weld): read status, drive start/abort.
+        self._weld_state: str | None = None
+        self._weld_progress: float | None = None
+        self._weld_events: list[str] = []
+        self.create_subscription(String, "/weld_state", self._on_weld_state, 10)
+        self.create_subscription(Float32, "/weld_progress", self._on_weld_progress, 10)
+        self.create_subscription(String, "/weld_event", self._on_weld_event, 10)
+        self.weld_start_cli = self.create_client(Trigger, "/weld_start")
+        self.weld_abort_cli = self.create_client(Trigger, "/weld_abort")
+        self.wall_reset_cli = self.create_client(Trigger, "/wall_reset")
         # /map is "latched": publishers keep the last map for late joiners,
         # so we must subscribe with matching transient_local durability
         map_qos = QoSProfile(depth=1,
@@ -131,6 +142,16 @@ class Bridge(Node):
 
     def _on_arm_status(self, msg: String) -> None:
         self._last_arm_status = msg.data
+
+    def _on_weld_state(self, msg: String) -> None:
+        self._weld_state = msg.data
+
+    def _on_weld_progress(self, msg: Float32) -> None:
+        self._weld_progress = float(msg.data)
+
+    def _on_weld_event(self, msg: String) -> None:
+        self._weld_events.append(msg.data)
+        self._weld_events = self._weld_events[-25:]
 
     # ---- continuous teleop (used by the web UI) ---------------------------
     def set_velocity(self, linear: float, angular: float) -> None:
@@ -385,6 +406,41 @@ class Bridge(Node):
             return json.loads(raw)
         except Exception:
             return {"connected": True, "raw": raw}
+
+    # ---- wall-welding demo (examples/wall_weld) ---------------------------
+    def _call_trigger(self, client, timeout_s: float = 6.0) -> dict[str, Any]:
+        """Call a std_srvs/Trigger service; poll the future (the bridge's own
+        background executor drives it) so we never block that executor."""
+        if not client.wait_for_service(timeout_sec=2.0):
+            return {"ok": False, "error": "service unavailable — is the wall_weld stack running?"}
+        future = client.call_async(Trigger.Request())
+        deadline = time.time() + timeout_s
+        while not future.done() and time.time() < deadline:
+            time.sleep(0.05)
+        if not future.done():
+            return {"ok": False, "error": "service call timed out"}
+        r = future.result()
+        return {"ok": bool(r.success), "message": r.message}
+
+    def weld_start(self) -> dict[str, Any]:
+        """Start a weld on demand (calls /weld_start on the wall_weld node)."""
+        return self._call_trigger(self.weld_start_cli)
+
+    def weld_abort(self) -> dict[str, Any]:
+        """Abort an in-progress weld (calls /weld_abort)."""
+        return self._call_trigger(self.weld_abort_cli)
+
+    def wall_reset(self) -> dict[str, Any]:
+        """Respawn the weld wall / clear the bead (calls /wall_reset, IDLE only)."""
+        return self._call_trigger(self.wall_reset_cli)
+
+    def weld_status(self) -> dict[str, Any]:
+        """Live welding status from /weld_state, /weld_progress, /weld_event."""
+        return {"connected": self._weld_state is not None,
+                "state": self._weld_state,
+                "progress": (round(self._weld_progress, 3)
+                             if self._weld_progress is not None else None),
+                "events": list(self._weld_events)}
 
     def move_arm_joints(self, joints: dict[str, float], group: str = "panda_arm",
                         timeout_s: float = 60.0) -> str:

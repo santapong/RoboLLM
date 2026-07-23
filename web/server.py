@@ -134,6 +134,12 @@ class ArmEnable(BaseModel):
     on: bool = True
 
 
+class MoveitGoal(BaseModel):
+    group: str = "panda_arm"
+    joints: dict[str, float]
+    timeout_s: float = 60.0
+
+
 @app.get("/", response_class=HTMLResponse)
 def index() -> HTMLResponse:
     # inject the token so the page's fetches authenticate automatically
@@ -207,6 +213,40 @@ def arm_status() -> dict[str, Any]:
     return bridge.arm_status()
 
 
+@app.post("/api/moveit/move")
+def moveit_move(g: MoveitGoal, token: str = Query("")) -> dict[str, Any]:
+    """Plan + execute a MoveIt joint goal for `group` (panda_arm, or the weld
+    arm 'arm'). Requires that group's move_group running."""
+    check(token)
+    return {"result": bridge.move_arm_joints(g.joints, group=g.group, timeout_s=g.timeout_s)}
+
+
+@app.post("/api/weld/start")
+def weld_start(token: str = Query("")) -> dict[str, Any]:
+    """Start a weld on demand (wall_weld /weld_start)."""
+    check(token)
+    return bridge.weld_start()
+
+
+@app.post("/api/weld/abort")
+def weld_abort(token: str = Query("")) -> dict[str, Any]:
+    """Abort an in-progress weld (wall_weld /weld_abort)."""
+    check(token)
+    return bridge.weld_abort()
+
+
+@app.post("/api/weld/reset")
+def weld_reset(token: str = Query("")) -> dict[str, Any]:
+    """Respawn the weld wall / clear the bead (wall_weld /wall_reset)."""
+    check(token)
+    return bridge.wall_reset()
+
+
+@app.get("/api/weld/status")
+def weld_status() -> dict[str, Any]:
+    return bridge.weld_status()
+
+
 @app.get("/api/camera")
 def camera() -> Response:
     """Latest camera frame as JPEG (204 if no camera / no image yet)."""
@@ -243,6 +283,7 @@ async def telemetry(ws: WebSocket) -> None:
                                 "radar": bridge.laser_radar(36),
                                 "arm": bridge.arm_joint_states(),
                                 "arm_status": bridge.arm_status(),
+                                "weld": bridge.weld_status(),
                                 "cam": {"source": _camera_source(), "age": bridge.camera_age_s()},
                                 "safe": {"on": bridge.safe_mode, "min": bridge.min_obstacle_m}})
             await asyncio.sleep(0.1)

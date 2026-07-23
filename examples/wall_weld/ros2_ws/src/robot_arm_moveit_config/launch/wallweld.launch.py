@@ -41,6 +41,7 @@ MPVENV_PYTHON = _MPVENV if os.path.exists(_MPVENV) else "python3"
 # as a launch argument so `ros2-arm wallweld key:=value` overrides work.
 ARGS = [
     ("synthetic", "false", "true: scripted wall + auto-triggered weld, no camera"),
+    ("service", "false", "true: no camera/gesture — weld via /weld_start service (web)"),
     ("preview", "false", "true: annotated webcam window (camera mode, X11)"),
     ("camera", "/dev/video0", "video capture device"),
     ("model_path", "/opt/models/gesture_recognizer.task",

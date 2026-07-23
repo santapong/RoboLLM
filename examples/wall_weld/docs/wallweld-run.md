@@ -14,8 +14,32 @@ ros2-arm wallweld preview:=true        # + annotated webcam window
 ros2-arm wallweld wall_mode:=marker    # ArUco marker places the wall
 ros2-arm wallweld synthetic            # no camera: scripted wall + auto weld
 ros2-arm wallweld synthetic synthetic_abort_frac:=0.4   # + scripted abort
+ros2-arm wallweld service:=true        # no camera/gesture: weld from the WEB
 ros2-arm stop                          # tear down (armwallweld is in the list)
 ```
+
+## Web control (no camera / no gesture)
+
+Launch with **`service:=true`** — the node skips the camera and MediaPipe and
+waits for two services instead of a fist/palm:
+
+- `/weld_start` (`std_srvs/Trigger`) — start a weld on the fixed-param wall
+- `/weld_abort` (`std_srvs/Trigger`) — abort mid-weld (same path as open-palm)
+- `/wall_reset` (`std_srvs/Trigger`) — respawn the wall / clear the bead (IDLE)
+
+The web dashboard (`web/run-web.sh`) wires these to its **Wall welding** panel
+(START / ABORT / Reset + live state, progress bar, and `/weld_event` log via
+`/weld_state`, `/weld_progress`). So the full flow — wall prediction,
+collision-safe standoff pre-check, serpentine trajectory — runs on the robot
+side and is triggered/watched from the browser. Trigger from the CLI too:
+
+```bash
+ros2 service call /weld_start std_srvs/srv/Trigger {}
+ros2 service call /weld_abort std_srvs/srv/Trigger {}
+```
+
+(The same `/weld_start`/`/weld_abort` services also exist in camera and
+synthetic modes — the gesture is just one more source of the same request.)
 
 RViz opens with the wall-weld view (`rviz/wallweld.rviz`): RobotModel +
 PlanningScene (the wall) + the bead/spark markers. `rviz:=false` for headless.
