@@ -30,7 +30,8 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);
-  root `launch_all.sh`. `docs/live-session.md` = guided 30-min demo playbook.
+  root `launch_all.sh`. `docs/live-session.md` = guided 30-min demo playbook;
+  `docs/ARCHITECTURE.md` = C4 diagrams + narrative; `docs/README.md` = doc index.
 - `hardware/` — the REAL arm: Uno firmware (serial protocol @115200),
   `arm_serial.py` driver, `arm_bridge_node.py` ROS 2 node, `sim_uno.py` fake
   Uno on a pty (develop with no hardware), `check_arduino.sh` 6-step health

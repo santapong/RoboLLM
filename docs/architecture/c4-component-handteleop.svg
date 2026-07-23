@@ -1,0 +1,241 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840">
+  <title>C4 Component — Hand-Teleop Pipeline (hand_follow / gen3_pick_place)</title>
+  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+  <g font-family="Helvetica, Arial, sans-serif">
+
+    <!-- Title -->
+    <text x="40" y="40" font-size="18" font-weight="bold" fill="#000000">C4 — Level 3 · Components: Hand-Teleop Pipeline</text>
+    <text x="40" y="60" font-size="12" fill="#555555">examples/gen3_pick_place · examples/hand_follow — webcam &#8594; MediaPipe &#8594; IK &#8594; 20 Hz JointTrajectory (CPU-only, Docker ros2-arm:jazzy)</text>
+
+    <!-- Person: Operator -->
+    <circle cx="150" cy="141" r="15" fill="#08427B"/>
+    <rect x="55" y="150" width="190" height="110" rx="6" fill="#08427B" stroke="#052E56"/>
+    <text x="150" y="187" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Operator</text>
+    <text x="150" y="203" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Person]</text>
+    <text x="150" y="221" font-size="12" fill="#FFFFFF" text-anchor="middle">drives the arm with LEFT-</text>
+    <text x="150" y="235" font-size="12" fill="#FFFFFF" text-anchor="middle">hand gestures in front of</text>
+    <text x="150" y="249" font-size="12" fill="#FFFFFF" text-anchor="middle">a webcam (mirror view)</text>
+
+    <!-- Node boundary -->
+    <rect x="300" y="96" width="940" height="384" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8 5"/>
+    <text x="312" y="118" font-size="12" font-style="italic" fill="#444444">hand_pick_place / hand_follow — teleop control node  [Python 3 · /opt/mpvenv · Docker ros2-arm:jazzy · CPU-only]</text>
+
+    <!-- Row 1 components -->
+    <!-- ThreadedCapture -->
+    <rect x="320" y="128" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="405" y="152" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">ThreadedCapture</text>
+    <text x="405" y="170" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[thread · cv2/V4L2]</text>
+    <text x="405" y="190" font-size="12" fill="#000000" text-anchor="middle">holds latest frame;</text>
+    <text x="405" y="204" font-size="12" fill="#000000" text-anchor="middle">~40 ms read overlaps</text>
+    <text x="405" y="218" font-size="12" fill="#000000" text-anchor="middle">MediaPipe inference</text>
+
+    <!-- MediaPipe inference -->
+    <rect x="566" y="128" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="651" y="150" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">MediaPipe</text>
+    <text x="651" y="168" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">inference</text>
+    <text x="651" y="184" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[GestureRecognizer* |</text>
+    <text x="651" y="197" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">HandLandmarker]</text>
+    <text x="651" y="214" font-size="12" fill="#000000" text-anchor="middle">one call per frame,</text>
+    <text x="651" y="228" font-size="12" fill="#000000" text-anchor="middle">VIDEO mode, CPU,</text>
+    <text x="651" y="242" font-size="12" fill="#000000" text-anchor="middle">21 landmarks / hand</text>
+
+    <!-- LEFT-hand filter + gesture SM -->
+    <rect x="812" y="128" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="897" y="150" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">LEFT-hand filter</text>
+    <text x="897" y="168" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">+ gesture SM*</text>
+    <text x="897" y="184" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[select_left_hand ·</text>
+    <text x="897" y="197" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">gesture_sm.py*]</text>
+    <text x="897" y="214" font-size="12" fill="#000000" text-anchor="middle">LEFT &#8805; 0.6, larger</text>
+    <text x="897" y="228" font-size="12" fill="#000000" text-anchor="middle">hand wins; fist=grip,</text>
+    <text x="897" y="242" font-size="12" fill="#000000" text-anchor="middle">palm=release + latch*</text>
+
+    <!-- workspace + palm-orientation map -->
+    <rect x="1058" y="128" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="1143" y="150" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">workspace + palm-</text>
+    <text x="1143" y="168" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">orientation map</text>
+    <text x="1143" y="184" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[map_to_workspace ·</text>
+    <text x="1143" y="197" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">palm_orientation*]</text>
+    <text x="1143" y="216" font-size="12" fill="#000000" text-anchor="middle">u&#8594;+Y  v&#8594;+Z  scale&#8594;+X</text>
+    <text x="1143" y="230" font-size="12" fill="#000000" text-anchor="middle">into a tuned reach box</text>
+
+    <!-- Row 2 components -->
+    <!-- SceneBoxManager -->
+    <rect x="320" y="330" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="405" y="356" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">SceneBoxManager*</text>
+    <text x="405" y="374" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[scene_box.py, own exec]</text>
+    <text x="405" y="394" font-size="12" fill="#000000" text-anchor="middle">spawns the 4 cm box;</text>
+    <text x="405" y="408" font-size="12" fill="#000000" text-anchor="middle">proximity-gated attach</text>
+    <text x="405" y="422" font-size="12" fill="#000000" text-anchor="middle">+ detach; /box_reset</text>
+
+    <!-- JointTrajectory publisher -->
+    <rect x="566" y="330" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="651" y="352" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">JointTrajectory</text>
+    <text x="651" y="370" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">publisher · 20 Hz</text>
+    <text x="651" y="386" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[manual spin-loop tick]</text>
+    <text x="651" y="404" font-size="12" fill="#000000" text-anchor="middle">target slew + 0.10 rad</text>
+    <text x="651" y="418" font-size="12" fill="#000000" text-anchor="middle">joint clamp per tick;</text>
+    <text x="651" y="432" font-size="12" fill="#000000" text-anchor="middle">1 point, tfs 0.12 s</text>
+
+    <!-- IK solver -->
+    <rect x="812" y="330" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="897" y="354" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">IK solver</text>
+    <text x="897" y="370" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[/compute_ik* client |</text>
+    <text x="897" y="383" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">arm_ik warm-start]</text>
+    <text x="897" y="402" font-size="12" fill="#000000" text-anchor="middle">oriented&#8594;fixed-down&#8594;</text>
+    <text x="897" y="416" font-size="12" fill="#000000" text-anchor="middle">hold*; seed = last q;</text>
+    <text x="897" y="430" font-size="12" fill="#000000" text-anchor="middle">branch-flip jump guard</text>
+
+    <!-- One-Euro filter -->
+    <rect x="1058" y="330" width="170" height="120" rx="6" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="1143" y="356" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">One-Euro filter</text>
+    <text x="1143" y="374" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[Casiez et al. CHI 2012]</text>
+    <text x="1143" y="394" font-size="12" fill="#000000" text-anchor="middle">per-axis adaptive</text>
+    <text x="1143" y="408" font-size="12" fill="#000000" text-anchor="middle">target smoothing;</text>
+    <text x="1143" y="422" font-size="12" fill="#000000" text-anchor="middle">reset on re-acquire</text>
+
+    <!-- External containers -->
+    <!-- RViz -->
+    <rect x="80" y="545" width="160" height="100" rx="6" fill="#438DD5" stroke="#0B4884"/>
+    <text x="160" y="572" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">RViz</text>
+    <text x="160" y="589" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[visualization]</text>
+    <text x="160" y="608" font-size="12" fill="#FFFFFF" text-anchor="middle">RobotModel, TF,</text>
+    <text x="160" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">planning-scene box*</text>
+
+    <!-- robot_state_publisher -->
+    <rect x="300" y="545" width="180" height="100" rx="6" fill="#438DD5" stroke="#0B4884"/>
+    <text x="390" y="568" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">robot_state_</text>
+    <text x="390" y="586" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">publisher</text>
+    <text x="390" y="602" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[ROS 2]</text>
+    <text x="390" y="620" font-size="12" fill="#FFFFFF" text-anchor="middle">URDF + /joint_states</text>
+    <text x="390" y="634" font-size="12" fill="#FFFFFF" text-anchor="middle">&#8594; /tf</text>
+
+    <!-- ros2_control -->
+    <rect x="560" y="545" width="180" height="100" rx="6" fill="#438DD5" stroke="#0B4884"/>
+    <text x="650" y="572" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ros2_control</text>
+    <text x="650" y="589" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[mock hardware]</text>
+    <text x="650" y="608" font-size="12" fill="#FFFFFF" text-anchor="middle">arm JTC + gripper JTC*;</text>
+    <text x="650" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">joint_state_broadcaster</text>
+
+    <!-- move_group -->
+    <rect x="800" y="545" width="220" height="100" rx="6" fill="#438DD5" stroke="#0B4884"/>
+    <text x="910" y="572" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">move_group</text>
+    <text x="910" y="589" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[MoveIt 2]</text>
+    <text x="910" y="608" font-size="12" fill="#FFFFFF" text-anchor="middle">/compute_ik · /compute_fk;</text>
+    <text x="910" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">planning scene (box ACO*)</text>
+
+    <!-- ================= relationships ================= -->
+    <g stroke="#707070" stroke-width="1.6">
+      <!-- Operator -> ThreadedCapture -->
+      <line x1="245" y1="200" x2="316" y2="200"/>
+      <polygon points="316,200 306,195 306,205" fill="#707070" stroke="none"/>
+      <!-- ThreadedCapture -> MediaPipe -->
+      <line x1="490" y1="190" x2="562" y2="190"/>
+      <polygon points="562,190 552,185 552,195" fill="#707070" stroke="none"/>
+      <!-- MediaPipe -> LEFT-hand filter -->
+      <line x1="736" y1="190" x2="808" y2="190"/>
+      <polygon points="808,190 798,185 798,195" fill="#707070" stroke="none"/>
+      <!-- filter -> workspace map -->
+      <line x1="982" y1="190" x2="1054" y2="190"/>
+      <polygon points="1054,190 1044,185 1044,195" fill="#707070" stroke="none"/>
+      <!-- map -> One-Euro (down) -->
+      <line x1="1143" y1="248" x2="1143" y2="326"/>
+      <polygon points="1143,326 1138,316 1148,316" fill="#707070" stroke="none"/>
+      <!-- palm quat: map -> IK (dashed diagonal, bypasses filter) -->
+      <line x1="1080" y1="248" x2="950" y2="326" stroke-dasharray="5 4"/>
+      <polygon points="950,326 956.5,317.4 960.6,324.3" fill="#707070" stroke="none"/>
+      <!-- One-Euro -> IK -->
+      <line x1="1058" y1="392" x2="986" y2="392"/>
+      <polygon points="986,392 996,387 996,397" fill="#707070" stroke="none"/>
+      <!-- IK -> publisher -->
+      <line x1="812" y1="392" x2="740" y2="392"/>
+      <polygon points="740,392 750,387 750,397" fill="#707070" stroke="none"/>
+      <!-- gesture SM -> SceneBoxManager -->
+      <line x1="850" y1="248" x2="850" y2="288"/>
+      <line x1="850" y1="288" x2="405" y2="288"/>
+      <line x1="405" y1="288" x2="405" y2="326"/>
+      <polygon points="405,326 400,316 410,316" fill="#707070" stroke="none"/>
+      <!-- publisher -> ros2_control -->
+      <line x1="640" y1="450" x2="640" y2="541"/>
+      <polygon points="640,541 635,531 645,531" fill="#707070" stroke="none"/>
+      <!-- ros2_control -> node (/joint_states, dashed up) -->
+      <line x1="714" y1="545" x2="714" y2="454" stroke-dasharray="5 4"/>
+      <polygon points="714,454 709,464 719,464" fill="#707070" stroke="none"/>
+      <!-- IK -> move_group -->
+      <line x1="900" y1="450" x2="900" y2="541"/>
+      <polygon points="900,541 895,531 905,531" fill="#707070" stroke="none"/>
+      <!-- SceneBoxManager -> move_group (hops over the two verticals) -->
+      <line x1="405" y1="450" x2="405" y2="518"/>
+      <line x1="405" y1="518" x2="632" y2="518"/>
+      <path d="M632,518 A8,8 0 0 1 648,518" fill="none"/>
+      <line x1="648" y1="518" x2="706" y2="518"/>
+      <path d="M706,518 A8,8 0 0 1 722,518" fill="none"/>
+      <line x1="722" y1="518" x2="866" y2="518"/>
+      <line x1="866" y1="518" x2="866" y2="541"/>
+      <polygon points="866,541 861,531 871,531" fill="#707070" stroke="none"/>
+      <!-- ros2_control -> robot_state_publisher -->
+      <line x1="560" y1="595" x2="484" y2="595"/>
+      <polygon points="484,595 494,590 494,600" fill="#707070" stroke="none"/>
+      <!-- robot_state_publisher -> RViz -->
+      <line x1="300" y1="595" x2="244" y2="595"/>
+      <polygon points="244,595 254,590 254,600" fill="#707070" stroke="none"/>
+      <!-- RViz -> Operator (visual feedback, closes the loop) -->
+      <line x1="155" y1="545" x2="155" y2="264" stroke-dasharray="6 4"/>
+      <polygon points="155,264 150,274 160,274" fill="#707070" stroke="none"/>
+    </g>
+
+    <!-- relationship labels -->
+    <g font-size="10" fill="#555555">
+      <text x="281" y="182" text-anchor="middle">webcam</text>
+      <text x="281" y="194" text-anchor="middle">~25 fps</text>
+      <text x="526" y="168" text-anchor="middle">latest frame</text>
+      <text x="526" y="180" text-anchor="middle">(mirror flip)</text>
+      <text x="772" y="156" text-anchor="middle">21 landmarks</text>
+      <text x="772" y="168" text-anchor="middle">+ gestures*</text>
+      <text x="772" y="180" text-anchor="middle">~27 ms / frame</text>
+      <text x="1018" y="168" text-anchor="middle">wrist u,v,s +</text>
+      <text x="1018" y="180" text-anchor="middle">world lms</text>
+      <text x="1133" y="280" text-anchor="end">raw target</text>
+      <text x="1133" y="293" text-anchor="end">(x,y,z) m</text>
+      <text x="985" y="310">palm quat*</text>
+      <text x="1022" y="372" text-anchor="middle">filtered</text>
+      <text x="1022" y="384" text-anchor="middle">target</text>
+      <text x="776" y="372" text-anchor="middle">q · 6</text>
+      <text x="776" y="384" text-anchor="middle">joints</text>
+      <text x="628" y="282" text-anchor="middle">grip / release events · position_hold &#8594; frozen target*</text>
+      <text x="596" y="496" text-anchor="end">arm+gripper* JT</text>
+      <text x="596" y="508" text-anchor="end">20 Hz, 1 point</text>
+      <text x="728" y="496">/joint_states</text>
+      <text x="728" y="508">seed / reseed</text>
+      <text x="908" y="496">/compute_ik +</text>
+      <text x="908" y="508">/compute_fk*</text>
+      <text x="420" y="532">/apply_planning_scene · /box_reset*</text>
+      <text x="522" y="583" text-anchor="middle">/joint_states</text>
+      <text x="272" y="588" text-anchor="middle">/tf</text>
+    </g>
+    <g font-size="11" font-style="italic" fill="#555555">
+      <text x="163" y="380">operator watches</text>
+      <text x="163" y="395">the arm respond,</text>
+      <text x="163" y="410">moves their hand —</text>
+      <text x="163" y="425">closes the loop</text>
+    </g>
+
+    <!-- ================= legend ================= -->
+    <line x1="40" y1="700" x2="1240" y2="700" stroke="#DDDDDD" stroke-width="1"/>
+    <rect x="40" y="708" width="16" height="16" rx="3" fill="#08427B"/>
+    <text x="62" y="721" font-size="12" fill="#000000">Person</text>
+    <rect x="130" y="708" width="16" height="16" rx="3" fill="#85BBF0" stroke="#5A87B5"/>
+    <text x="152" y="721" font-size="12" fill="#000000">Component (in-node)</text>
+    <rect x="300" y="708" width="16" height="16" rx="3" fill="#438DD5" stroke="#0B4884"/>
+    <text x="322" y="721" font-size="12" fill="#000000">Container (ROS 2 process)</text>
+    <rect x="510" y="708" width="16" height="16" rx="3" fill="none" stroke="#444444" stroke-dasharray="4 3"/>
+    <text x="532" y="721" font-size="12" fill="#000000">node boundary</text>
+    <line x1="650" y1="716" x2="688" y2="716" stroke="#707070" stroke-width="1.6"/>
+    <polygon points="698,716 688,711 688,721" fill="#707070"/>
+    <text x="708" y="721" font-size="12" fill="#000000">data flow</text>
+    <line x1="790" y1="716" x2="828" y2="716" stroke="#707070" stroke-width="1.6" stroke-dasharray="5 4"/>
+    <polygon points="838,716 828,711 828,721" fill="#707070"/>
+    <text x="848" y="721" font-size="12" fill="#000000">feedback / subscription</text>
+    <text x="40" y="756" font-size="11" fill="#333333">*  gen3_pick_place only — hand_follow runs the same pipeline with HandLandmarker and in-process arm_ik warm-start IK; no gesture SM, palm orientation,</text>
+    <text x="40" y="772" font-size="11" fill="#333333">gripper JTC, or planning-scene box.  Rates: camera ~25 fps &#8594; MediaPipe ~27 ms/frame &#8594; 20 Hz single-point JointTrajectory (time_from_start 0.12 s).</text>
+  </g>
+</svg>

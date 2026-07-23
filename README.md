@@ -5,29 +5,27 @@ robot and design CAD/URDF in FreeCAD — **and** you get a browser dashboard to
 drive it yourself, a set of runnable examples to learn robot software, and a
 webcam 3D scanner that turns real objects into robot parts.
 
-```
-        you ── natural language ──▶ Claude Code ──┬─ ros2 MCP ──▶ robot_bridge.py ──▶ TurtleBot3 / Gazebo
-        │                                         └─ freecad MCP ─▶ FreeCAD (CAD → URDF)
-        │
-        └── browser ──▶ web/ dashboard ──▶ robot_bridge.py ──▶ same robot
-                                              ▲
-                        webcam ─▶ scan3d/ ─▶ URDF part ─┘  (drop scanned objects into the world)
-```
+![System context — you and Claude are peers, driving the same robot](docs/architecture/c4-context.svg)
 
 `robot_bridge.py` is the single ROS 2 node; **both** Claude (MCP) and the web
-dashboard use it, so you and the LLM drive the exact same robot.
+dashboard use it, so you and the LLM drive the exact same robot. The full
+picture — C4 context → containers → components diagrams with narrative — is in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## What's here
 | Path | Purpose |
 |------|---------|
 | `robot_bridge.py` | The shared ROS 2 node (pubs/subs + helpers, deadman teleop). |
-| `ros2_mcp_server.py` | MCP server — 8 tools Claude calls. **Edit to add robot skills.** |
+| `ros2_mcp_server.py` | MCP server — 22 tools Claude calls. **Edit to add robot skills.** |
 | `run-server.sh` | Launches the `ros2` MCP server. |
 | `web/` | Browser dashboard: live telemetry, lidar radar, WASD teleop, Nav2 goals. |
 | `examples/` | Runnable ROS 2 + PyBullet + MuJoCo learning path. |
+| `examples/hand_follow/` | **Webcam hand teleop**: a 6-DOF arm follows your LEFT hand in RViz (MediaPipe → IK, Docker or native). |
+| `examples/gen3_pick_place/` | **Gesture pick-and-place** on a Kinova Gen3 lite: fist = grip, open palm = release. |
 | `scan3d/` | Webcam → 3D mesh → URDF (CPU visual hull + COLMAP photogrammetry). |
 | `hardware/` | **Real DIY arm**: Uno R3 firmware + serial driver + ROS 2 bridge + Pi 5 setup + `check_arduino.sh` health check. |
 | `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (own terminal). |
+| `docs/` | Architecture (C4), live-session playbook, branching — index in `docs/README.md`. |
 | `assets/` | Outputs: `urdf/`, `cad/`, `screenshots/`, `scan/` (git-ignored). |
 | `setup/dev-setup.sh` | Full machine provisioner. |
 | `requirements-extra.txt` | Extra pip deps (numpy pinned to 1.26 for ROS). |
@@ -73,8 +71,21 @@ session where Claude sees, spawns objects, drives, maps, navigates, and moves an
 ## 3 · Learn robot software (`examples/`)
 A guided path: ROS 2 nodes → pub/sub → open-loop drive → closed-loop obstacle
 avoidance → Nav2 goal (actions) → MoveIt arm, plus CPU physics sims (PyBullet,
-MuJoCo). Launch helpers for **SLAM** (map building), **Nav2** (navigation), and a
-**MoveIt Panda** arm live in `sim/`. See `examples/README.md`.
+MuJoCo) and two webcam **hand-teleop** arm examples (below). Launch helpers for
+**SLAM** (map building), **Nav2** (navigation), and a **MoveIt Panda** arm live
+in `sim/`. See `examples/README.md`.
+
+### Drive an arm with your hand (webcam, CPU-only)
+Two containerized examples turn the webcam into a robot controller — no GPU, no
+Gazebo, no hardware. Build the shared image once
+(`docker build -t ros2-arm:jazzy examples/hand_follow/docker/`), then:
+```bash
+examples/hand_follow/docker/ros2-arm handfollow preview:=true  # 6-DOF arm follows your LEFT hand in RViz
+examples/gen3_pick_place/docker/ros2-arm pickplace synthetic   # Kinova Gen3 lite pick-and-place (fist=grip, palm=release), no camera needed
+```
+Details, native (non-Docker) routes, and verified numbers:
+`examples/hand_follow/README.md` and `examples/gen3_pick_place/README.md`; the
+pipeline walkthrough is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## 4 · Scan a real object with your webcam (`scan3d/`)
 ```bash
@@ -98,6 +109,16 @@ See `cad/README.md`. Or interactively via the `freecad` MCP: open FreeCAD →
 **MCP Addon** workbench → **Start RPC Server**, then ask Claude:
 - "In FreeCAD, create a 2-link robot arm and export it as URDF."
 - "Make a 100×60×20 mm mounting bracket with four M4 holes."
+
+## Documentation map
+| Doc | What |
+|-----|------|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The C4 tour: context → containers → components diagrams + narrative. |
+| [`docs/live-session.md`](docs/live-session.md) | Guided ~30 min LLM ↔ robot demo playbook. |
+| [`docs/branching.md`](docs/branching.md) | Branch tiers: `main` / `develop` / `experiment/*`. |
+| [`docs/README.md`](docs/README.md) | Index of every doc in the repo. |
+| `examples/*/README.md` | Per-example run instructions (`examples/README.md` = the learning path). |
+| `examples/hand_follow/docs/` · `examples/gen3_pick_place/docs/` | Researched theory (ROS 2 × LLM, teleop, grasping) + runbooks. |
 
 ## Setup
 Extra Python deps live in the venv (created with `--system-site-packages` so it
