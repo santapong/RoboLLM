@@ -1,21 +1,22 @@
 """mirror_node — drives the FFW semi-humanoid's arms, head and lift.
 
-M2 scope: SYNTHETIC ONLY. `synthetic:=true` runs a scripted whole-body sweep
-with no camera and, importantly, **no MediaPipe imported anywhere in the
-process** (the vision imports are lazy, inside _make_source, exactly as
-hand_follow does it). This is the milestone that proves the entire publish
-path — four JTCs over disjoint joint sets, controller names, limit clamps,
-slew limits, RViz — before any vision risk exists.
+Three modes, selected by parameter:
+  synthetic:=true   scripted whole-body sweep, no camera, mediapipe never
+                    imported (the vision imports are lazy, in _make_tracker).
+  track_only:=true  vision runs and publishes TF/markers; the robot is PARKED.
+  (default)         LIVE MIRRORING: your arms and head drive the robot.
 
-Camera mode arrives in M4 and plugs in behind the same PoseSource interface;
-the control tick below does not change.
+ARCHITECTURE NOTE — input rate and command rate are DECOUPLED. hand_follow
+ticks at 20 Hz because that is what MediaPipe sustains. Here vision runs on its
+own thread (~30 Hz measured) while the control timer runs at 50 Hz and
+One-Euro-interpolates toward the latest observation, so motion stays smooth
+between frames instead of stepping at the camera rate.
 
-ARCHITECTURE NOTE — the one real upgrade over hand_follow: the input rate and
-the command rate are DECOUPLED. hand_follow ticks at 20 Hz because that is
-what MediaPipe can sustain. Here the control timer runs at 50 Hz and
-One-Euro-interpolates toward whatever the source last said, so when M4 adds
-PoseLandmarker (24.8 ms, ~13 Hz) the robot still moves at 50 Hz. That buys
-visibly smoother motion for zero extra vision CPU.
+RUNNING UNDER THE RIGHT PYTHON MATTERS: mediapipe lives in /opt/mpvenv, not in
+the system python that ament console-scripts are shebanged to. mirror.launch.py
+sets prefix=/opt/mpvenv/bin/python. Without it, tracking dies with
+ModuleNotFoundError *while synthetic mode keeps working* — which reads as a
+camera fault. _make_tracker() catches that and says so.
 """
 
 import threading
@@ -98,6 +99,11 @@ class MirrorNode(Node):
         p("min_visibility", 0.5)
         p("preview", False)
         p("body_frame_id", "camera_link")
+        # --- M4: live mirroring ---
+        p("mirror_mode", "mirror")   # "mirror" (facing you) or "direct"
+        p("head_gain_yaw", 0.33)     # human yaw +-60 deg -> robot +-20 deg
+        p("head_gain_pitch", 0.6)
+        p("max_retarget_err_deg", 25.0)
 
         g = self.get_parameter
         self.synthetic = g("synthetic").value
@@ -110,6 +116,12 @@ class MirrorNode(Node):
         self.track_only = bool(g("track_only").value)
         self.body_frame_id = g("body_frame_id").value
         self.preview = bool(g("preview").value)
+        self.mirror_mode = str(g("mirror_mode").value).lower() != "direct"
+        self.min_visibility = float(g("min_visibility").value)
+        self.head_gain_yaw = float(g("head_gain_yaw").value)
+        self.head_gain_pitch = float(g("head_gain_pitch").value)
+        self.max_retarget_err_deg = float(g("max_retarget_err_deg").value)
+        self.retarget_info = {}
 
         self.max_step = max_step_for(self.rate_hz, float(g("max_joint_speed").value))
         self.decay_step = max_step_for(self.rate_hz, float(g("decay_speed").value))
@@ -214,12 +226,9 @@ class MirrorNode(Node):
             )
         if self.track_only:
             return None  # M3: tracking is published, but nothing commands joints
-        raise NotImplementedError(
-            "live mirroring (camera -> joints) lands in M4. Today: run with "
-            "synthetic:=true for the sweep, or track_only:=true to see your "
-            "body tracked in RViz with the robot parked. See "
-            "examples/humanoid_mirror/README.md for the build plan."
-        )
+        from humanoid_mirror.retarget import MirrorPoseSource
+
+        return MirrorPoseSource(self)
 
     def _make_tracker(self):
         """Build the camera tracker, or None in synthetic mode."""
@@ -538,6 +547,12 @@ class MirrorNode(Node):
                 line += f", frame={obs.frame_source}"
             elif obs is not None:
                 line += f", lost({obs.reason})"
+        ri = self.retarget_info
+        if ri:
+            arms = ",".join(ri.get("arms", [])) or "none"
+            line += f" | arms={arms} err={ri.get('err_deg', {})}"
+            if ri.get("skipped"):
+                line += f" skipped={ri['skipped']}"
         self.get_logger().info(line)
 
     def shutdown(self):

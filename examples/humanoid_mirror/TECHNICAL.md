@@ -7,10 +7,8 @@ Gazebo, no GPU, no hardware). Unlike [hand_follow](../hand_follow/) it does
 [gen3_pick_place](../gen3_pick_place/): a single `ament_python` package that
 consumes an external description.
 
-**Implemented so far: M0 (image), M1 (bring-up + acceptance), M2 (the humanoid
-moves).** The tracking and retargeting layers below are designed and measured
-but not yet written; they are documented here so M3–M5 has a spec to build
-against, and each is marked.
+**Implemented: M0 (image), M1 (bring-up), M2 (the humanoid moves), M3 (body
+tracking), M4 (live mirroring).**
 
 ## Why FFW and not something from MoveIt
 
@@ -113,15 +111,18 @@ Three consequences worth internalising:
 | `/lift_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish | `lift_joint`, gated on `use_lift` |
 | `/joint_states` | `sensor_msgs/JointState` | subscribe | 100 Hz; seed / re-seed |
 | `/mirror_enable` | `std_srvs/SetBool` | service | deadman; `false` freezes, `true` re-seeds — no jump |
-| `/body/markers` | `visualization_msgs/MarkerArray` | publish *(M3)* | 35-connection skeleton |
-| `/body/tracked` | `std_msgs/Bool` | publish *(M3)* | visibility-gated |
+| `/body/markers` | `visualization_msgs/MarkerArray` | publish | 35-connection skeleton |
+| `/body/tracked` | `std_msgs/Bool` | publish | visibility-gated |
 | `/compute_ik` | `moveit_msgs/GetPositionIK` | client | M1 check only; not in the control path |
 
 ## Node parameters (all also launch args of `mirror.launch.py`)
 
 | Parameter | Default | Meaning |
 |---|---|---|
-| `synthetic` | `false` | scripted whole-body sweep instead of the camera. **M2 requires `true`** — camera mode raises `NotImplementedError` |
+| `synthetic` | `false` | scripted whole-body sweep instead of the camera |
+| `mirror_mode` | `mirror` | `mirror` (robot faces you; your LEFT → its RIGHT) or `direct` |
+| `track_only` | `false` | vision + TF/markers with the robot PARKED (M3) |
+| `head_gain_yaw` / `head_gain_pitch` | `0.33` / `0.6` | must be << 1; human yaw ±60° vs neck ±20° |
 | `rate_hz` | `50.0` | control tick / command rate |
 | `time_from_start` | `0.06` | seconds-ahead stamp on each trajectory point |
 | `max_joint_speed` | `2.0` | rad/s slew ceiling (FFW's URDF limit is 4.8) |
@@ -300,7 +301,114 @@ tutorials online will not run on the pinned version — use
 `mediapipe.tasks.python.vision` exclusively. Drawing connections live at
 `PoseLandmarksConnections.POSE_LANDMARKS` (35 connections).
 
-## Planned retargeting (M4+): direct joint angles, not IK
+## Retargeting (M4) — as built
+
+See `ffw_arm.py` and `retarget.py`. The original research sketch is kept
+below the measured section, since it is where the sign conventions came from.
+
+### The arm geometry, measured from the expanded xacro
+
+```
+joint1 (0, +-0.1045, 0)      axis Y   shoulder pitch
+joint2 (0, +-0.123,  0)      axis X   shoulder roll
+joint3 (0, 0, -0.165)        axis Z   humeral yaw
+joint4 (+0.041004, 0, -0.135) axis Y  ELBOW
+```
+
+**Both arms are geometrically IDENTICAL** — same axes, same offsets. Only the
+base y-offset and the joint2/joint7 *limits* mirror (`arm_l_joint2` is
+`[0, 3.14]`, `arm_r_joint2` is `[-3.14, 0]`). So one formula serves both arms.
+The research had guessed the right arm needed `roll_r = asin(-a_y)` because its
+axis was "almost certainly mirrored"; it is not, and that guess would have
+driven right-arm roll positive into a limit it can never satisfy, clamping to
+~0 — a right arm that simply never lifts, looking like a tracking fault.
+
+**The ±0.041 m elbow offset is not ignorable.** shoulder→elbow is
+`(0.041, 0, -0.300)`: a 7.8° forward tilt, not straight down. elbow→wrist is
+`(-0.041, 0, -0.3415)`, 6.9° the other way. At q=0 the joint centres zigzag
+**14.6°** even though net shoulder→wrist is exactly `(0, 0, -0.6415)`.
+
+### Why the solver looks the way it does
+
+`q3` (humeral yaw) sits *below* the shoulder gimbal, so it swings the 41 mm
+elbow offset around a 7.78° cone — meaning **q3 moves the upper-arm direction
+by up to 15.6°**. Two solvers were written and discarded before that was clear:
+
+| Attempt | Result |
+|---|---|
+| Damped gradient descent on a numeric Jacobian | 20° round-trip error, 3 rad discontinuities |
+| Alternating closed-form blocks (shoulder ↔ forearm) | settles on spurious fixed points worth exactly 15.6° |
+| **1-D search over q3** (shipped) | **0.27° worst, 0.019 rad continuity, 0.87 ms** |
+
+The shipped solve exploits that for *any* q3 the shoulder has an exact closed
+form, so the upper arm — the visually dominant segment — is never approximated.
+`_elbow_for()` then puts the forearm on its reachable great circle, leaving one
+scalar residual (its out-of-plane component) that is bracketed and bisected.
+Each shoulder branch is swept **separately**: letting a helper switch branches
+mid-sweep makes the residual jump, manufacturing fake roots and hiding real ones.
+
+### Traps found by testing, not by reading
+
+1. **`acos` branches are only correct modulo 2π.** The true elbow solution for
+   a straight arm arrives as `+6.028 rad`, whose wrapped value `-0.255` is the
+   one inside `[-2.94, 1.08]`. Range-checking *before* wrapping silently
+   discards it and returns the far branch — worth 15–80° of error in a pose
+   that still looks plausible.
+2. **The shoulder cannot reach every direction at a given q3.** `a_y` is
+   bounded by `sqrt(1 - w_x²) ≈ 0.9908`, so at `q3=0` the arm cannot point
+   exactly sideways. But `w_x → 0` at `q3 = ±π/2`, so the bound is
+   q3-dependent and a T-pose *is* reachable. Bailing out instead of clamping
+   collapsed the arm to its seed pose: 87° of error.
+3. **Straight-arm degeneracy.** When the forearm is collinear with the upper
+   arm, humeral yaw is unobservable: the residual is ~0 for every q3 and
+   root-finding returns arbitrary answers. Measured 0.79 rad steps between
+   adjacent frames *at 0.0000° error* — the humerus spinning on a straight
+   arm. Below `STRAIGHT_EPS` (0.06 rad) the previous yaw is held. Setting that
+   threshold at 14° instead cost 12° of round-trip error: at 14° of bend the
+   yaw is still perfectly observable.
+4. **Accuracy first, continuity as a tie-break.** Folding drift into a single
+   weighted score lets a 3°-worse pose win on proximity, because near a
+   solution the error term is tiny and the drift term is not.
+
+### Verification (`ros2-arm retarget-bench`)
+
+| Check | Result |
+|---|---|
+| `fk_arm()` vs MoveIt `/compute_fk`, both arms, directions + lengths | **0.0000°** |
+| Round-trip over 240 reachable poses | worst **0.27°** |
+| vs independent brute force (random + hill climb) on 5 named poses | matches or beats, both arms |
+| Largest frame-to-frame joint step | **0.019 rad** |
+| Solve cost | **0.87 ms** per arm |
+| Live: both arms commanded, limit violations | 763 msgs, **0** violations |
+
+The FK check is the one that matters: the solver was internally consistent to
+0.27° *while* my first FK-comparison harness reported a 31° disagreement with
+MoveIt — which turned out to be the harness comparing `link3→link4` against
+`link1→link4`. A self-consistent solver cannot detect a wrong model.
+
+### Mirror semantics
+
+Robot at the origin facing +x, human in front facing back. The human's forward
+is −x_world and their LEFT is −y_world, so a vector `(hx, hy, hz)` in the
+human's torso frame is `(-hx, -hy, hz)` in the robot's. Feed that to the
+**opposite** arm and you get a true mirror: raise your left arm and the robot
+raises its right, on the same side of the room. `mirror_mode:=direct` skips
+both flips ("the robot is you, seen from behind").
+
+Head: mirror flips **yaw only**, never pitch.
+
+### Per-arm gating
+
+Each arm is gated independently on its own shoulder/elbow/wrist. An arm below
+the gate is simply absent from the targets and the node holds those joints.
+This is not a nicety: measured elbow visibility at a desk is **0.02–0.09** with
+arms at rest, so whole-body gating would mean either constant dropout or the
+robot chasing invented limbs. **Raise your arms into frame to mirror.**
+
+Wrist joints (5–7) are parked at 0: MediaPipe Pose carries no hand
+orientation, and inventing one would be a lie the robot acts on.
+
+## Original research sketch (superseded by the measured section above)
 
 Link-length invariant by construction, no singularities, no unreachable
 targets, no branch flips, microseconds to evaluate, and human-looking elbows

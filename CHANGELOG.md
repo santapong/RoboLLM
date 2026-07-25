@@ -5,6 +5,75 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-07-25 — humanoid_mirror M4: it mirrors you
+
+### Added
+- `ffw_arm.py` — exact FK for one FFW arm plus the retargeting solve, pure
+  math. **Verified against MoveIt's own `/compute_fk` to 0.0000 deg** on
+  both arms, directions AND link lengths.
+- `retarget.py` — body observation -> joint targets, mirror/direct modes,
+  per-arm visibility gating, head yaw/pitch with sub-unity gains.
+- `tools/retarget_bench.py` (`ros2-arm retarget-bench`) — FK-vs-MoveIt
+  tier (`--fk`), pure-math tier (round-trip, mirror semantics, gating,
+  continuity, speed, and comparison against an INDEPENDENT brute-force
+  optimum), and a live tier (`--ros`).
+- `ros2-arm mirror` now does live mirroring; `mirror synthetic` unchanged.
+
+### Measured
+- FK vs MoveIt `/compute_fk`: **0.0000 deg**, both arms.
+- Retarget round-trip: worst **0.27 deg** over 240 reachable poses.
+- Continuity: largest frame-to-frame joint step **0.019 rad**.
+- Speed: **0.87 ms** per arm (2 arms = 8.7% of a 20 ms tick).
+- Live: both arms commanded, **0** limit violations.
+
+### Geometry findings that contradicted the researched design
+- **Both arms are GEOMETRICALLY IDENTICAL** — same axes, same offsets;
+  only the base y-offset and the joint2/joint7 LIMITS mirror. One formula
+  serves both. The design guessed the right arm needed `asin(-a_y)`; that
+  would have driven right-arm roll positive into a limit it can never
+  satisfy, clamping to ~0 — a right arm that never lifts, looking like a
+  tracking fault.
+- The **+-0.041 m elbow offset** is not ignorable: shoulder->elbow tilts
+  7.8 deg forward, elbow->wrist 6.9 deg back, and the joint centres
+  zigzag **14.6 deg** at q=0 despite a dead-straight net arm.
+- `q3` sits BELOW the shoulder gimbal, so it swings that offset around a
+  7.78 deg cone and moves the upper-arm direction by up to **15.6 deg**.
+  The coupling is NOT weak. Two solvers were written and discarded:
+  damped gradient descent (20 deg error, 3 rad jumps) and alternating
+  closed-form blocks (spurious fixed points worth exactly 15.6 deg). The
+  shipped solve is a 1-D search over q3 with the shoulder exact for any
+  q3, each branch swept separately.
+
+### Traps found by testing, not by reading
+- **`acos` branches are only correct modulo 2*pi.** The straight-arm elbow
+  solution arrives as +6.028 rad, whose wrapped value -0.255 is the one in
+  range. Range-checking before wrapping discards it and returns the far
+  branch — 15-80 deg of error in a pose that still looks plausible.
+- **The shoulder cannot reach every direction at a given q3** (|a_y| <=
+  0.9908), but the bound is q3-DEPENDENT, so a T-pose is reachable after
+  all. Bailing out instead of clamping collapsed the arm to its seed
+  pose: 87 deg of error.
+- **Straight-arm degeneracy**: humeral yaw is unobservable when the
+  forearm is collinear with the upper arm — measured 0.79 rad steps
+  between adjacent frames at 0.0000 deg error (the humerus spinning on a
+  straight arm). Hold the previous yaw below 0.06 rad of bend; setting
+  that threshold at 14 deg instead cost 12 deg of round-trip error.
+- **A self-consistent solver cannot detect a wrong model.** The solver was
+  internally exact while the first FK-vs-MoveIt harness reported 31 deg
+  disagreement — the harness was comparing link3->link4 against
+  link1->link4. In URDF a child link's frame IS its joint's origin.
+
+### Notes
+- **Raise your arms into frame to mirror.** Measured elbow visibility at a
+  desk is 0.02-0.09 with arms at rest, so gating is PER-ARM: an unseen arm
+  is held, never guessed. Whole-body gating would mean constant dropout or
+  chasing invented limbs.
+- Wrist joints 5-7 are parked at 0 — MediaPipe Pose carries no hand
+  orientation, and inventing one would be a lie the robot acts on.
+- Mirror derivation: human forward is -x_world and human LEFT is -y_world,
+  so `(hx, hy, hz)` in the human torso frame is `(-hx, -hy, hz)` in the
+  robot's; feed it to the OPPOSITE arm. Head mirroring flips YAW only.
+
 ## 2026-07-25 — humanoid_mirror M3: body tracking (robot parked)
 
 ### Added

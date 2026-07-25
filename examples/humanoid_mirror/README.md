@@ -3,10 +3,11 @@
 Your **left arm**, **right arm** and **head** drive a humanoid robot in MoveIt,
 live from one USB webcam. CPU-only, no GPU, no Gazebo, no hardware.
 
-> **Status: M0–M3 complete and verified.** The humanoid moves
-> (`ros2-arm mirror synthetic`), and your body is tracked live from the webcam
-> into RViz with the robot parked (`ros2-arm track`). Wiring tracking to the
-> arms is M4; see [Build plan](#build-plan).
+> **Status: M0–M4 complete and verified. It mirrors you.**
+> `ros2-arm mirror` — your arms and head drive the humanoid live from one
+> webcam. **Raise your arms into frame**: at rest your elbows fall below the
+> visibility gate and each arm is held rather than guessed (measured, see
+> below). See [Build plan](#build-plan).
 
 ---
 
@@ -61,7 +62,12 @@ disqualifying for a public repo.
 ## Run it
 
 ```bash
-./docker/ros2-arm mirror synthetic         # 🎬 the humanoid MOVES in RViz
+./docker/ros2-arm mirror                   # 🪞 LIVE — the humanoid mirrors you
+./docker/ros2-arm mirror preview:=true     #   + the mirrored webcam window
+./docker/ros2-arm retarget-bench           # M4 verification, no camera needed
+./docker/ros2-arm retarget-bench --fk      #   + our FK vs MoveIt /compute_fk
+
+./docker/ros2-arm mirror synthetic         # 🎬 scripted sweep, no camera
 ./docker/ros2-arm mirror-accept            # M2 acceptance (needs the above running)
 
 ./docker/ros2-arm track                    # 👁 YOUR BODY tracked in RViz, robot parked
@@ -160,8 +166,8 @@ the SG2 variant. Harmless. Do not "fix" them by switching to SG2.
 | **M1** | humanoid loads, renders, plans; 4 controllers active; dual-arm IK | **done, verified** |
 | **M2** | 🎬 humanoid *moving* in RViz — scripted sweep, no camera | **done, verified** |
 | **M3** | 👁 body tracking: TF + skeleton markers, robot parked | **done, verified** |
-| M4 | arms mirror live | next |
-| M5 | head + lift gains tuned against a real body | |
+| **M4** | 🪞 arms + head mirror live | **done, verified** |
+| M5 | gains tuned against a real body over a long session | next |
 | M6 | *(optional)* Cartesian hands via a `pink` QP | |
 
 `/mirror_enable` (planned for M5) landed early in M2 — the control loop needed
@@ -171,6 +177,13 @@ resume re-seeds from `/joint_states` so there is no jump.
 **M2 measured** (`mirror-accept`, 10 s window): 50.8 Hz on all four controller
 topics, 0 joint-limit violations, 0 per-tick slew violations, 11/11 swept
 joints moved, and the mock hardware tracked every command.
+
+**M4 measured** (`retarget-bench`): our FK matches MoveIt's `/compute_fk` to
+**0.0000°** on both arms (directions *and* link lengths); retarget round-trip
+worst **0.27°** over 240 reachable poses; largest frame-to-frame joint step
+**0.019 rad**; **0.87 ms** per arm; live run commanded both arms with **0**
+limit violations. The solver also matches or beats an independent brute-force
+optimum on every named pose.
 
 **M3 measured** (`body-accept`): 26 synthetic geometry checks green; live
 inference **28–31 ms median (~28–32 Hz), 100% detection**; `/body/tracked` and
