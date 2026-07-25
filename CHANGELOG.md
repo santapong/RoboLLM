@@ -5,6 +5,32 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-07-25 — humanoid_mirror: mirror direction + preview window (both user-reported)
+
+### Fixed
+- **The mirror map negated X as well as Y, so reaching FORWARD drove the
+  robot's arm BACKWARD.** A mirror reflects through the plane BETWEEN you
+  and the robot, which negates only the world axis joining you; in the
+  robot's own frame that leaves forward alone. Correct map is
+  `(hx, hy, hz) -> (hx, -hy, hz)` — negate Y only.
+  **The existing test could not have caught this**: a sideways raise
+  `(0,1,0)` maps to `(0,-1,0)` whether or not x is flipped, so the one
+  case I tested was the one case that does not discriminate. Found by the
+  user watching the robot, not by the suite. `retarget-bench` now checks
+  a forward reach and an overhead raise, and those checks were themselves
+  verified to FAIL against the old formula before being accepted.
+  Head retargeting now applies the same `mirror_vec()` and reads angles
+  off the result instead of negating yaw separately, so the arms and the
+  head cannot drift apart on this convention again.
+- **The webcam preview was a black rectangle with a working toolbar.**
+  `cv2.imshow` was being called from the vision thread; OpenCV HighGUI is
+  main-thread only, and on the Qt backend it creates the window but never
+  paints. The vision thread now only renders the annotated frame and a
+  20 Hz rclpy timer (which runs on the executor = the spin thread) does
+  the imshow/waitKey. Also `namedWindow` + `resizeWindow` on first draw:
+  left alone the Qt backend opens at ~370x127 and squashes a 640x480
+  frame into an unreadable thumbnail.
+
 ## 2026-07-25 — humanoid_mirror M4: it mirrors you
 
 ### Added

@@ -60,6 +60,8 @@ GROUPS = {
 # it is rather than dropping.
 HOME = {j: 0.0 for j in ARM_L_JOINTS + ARM_R_JOINTS + HEAD_JOINTS}
 
+PREVIEW_WINDOW = "humanoid_mirror - body (mirrored preview)"
+
 # TF frames published per tracked body landmark: index -> child frame id.
 TF_LANDMARKS = {
     11: "human/l_shoulder",
@@ -174,6 +176,8 @@ class MirrorNode(Node):
         self.tracked_pub = self.create_publisher(Bool, "/body/tracked", 10)
         self.tf_broadcaster = TransformBroadcaster(self)
         self.observation = None
+        self._preview_canvas = None
+        self._preview_ready = False
         self._vision_thread = None
         self._vision_stop = threading.Event()
         self._vision_ms = []
@@ -188,6 +192,10 @@ class MirrorNode(Node):
         self.create_timer(1.0 / self.rate_hz, self._tick)
         if self.latency_probe:
             self.create_timer(3.0, self._report)
+        if self.preview:
+            # 20 Hz is plenty for a human to watch and keeps waitKey() off the
+            # 50 Hz control path.
+            self.create_timer(0.05, self._draw_preview)
 
         if self.tracker is not None:
             # Vision runs on its OWN thread at its own rate (~32 Hz measured
@@ -291,19 +299,48 @@ class MirrorNode(Node):
 
             self._publish_tracking(obs)
             if self.preview:
-                self._show_preview(obs)
+                # Render here, but DISPLAY on the main thread — see _draw_preview.
+                try:
+                    canvas = self.tracker.annotate(obs)
+                except Exception as exc:  # noqa: BLE001
+                    self.get_logger().warn(f"annotate failed: {exc}",
+                                           throttle_duration_sec=10.0)
+                    canvas = None
+                with self._lock:
+                    self._preview_canvas = canvas
 
-    def _show_preview(self, obs):
+    def _draw_preview(self):
+        """Paint the preview window. MUST run on the main thread.
+
+        OpenCV's HighGUI is not thread-safe and on the Qt backend imshow() from
+        a worker thread creates the window and its toolbar but never paints the
+        image — you get a black rectangle with working buttons, which looks
+        like a camera fault rather than a threading one. rclpy timer callbacks
+        run on the executor, i.e. the thread that called spin(), so this is the
+        main thread. The vision thread only stashes the rendered frame.
+        """
+        with self._lock:
+            canvas = self._preview_canvas
+            self._preview_canvas = None
+        if canvas is None:
+            return
         try:
             import cv2
 
-            canvas = self.tracker.annotate(obs)
-            if canvas is not None:
-                cv2.imshow("humanoid_mirror — body (mirrored preview)", canvas)
-                cv2.waitKey(1)
+            if not self._preview_ready:
+                # Create and size the window ONCE. Left to itself the Qt
+                # backend opens at a default ~370x127 and scales a 640x480
+                # frame down into a thumbnail — legible enough to prove the
+                # pipeline works, useless for actually watching yourself.
+                h, w = canvas.shape[:2]
+                cv2.namedWindow(PREVIEW_WINDOW, cv2.WINDOW_NORMAL)
+                cv2.resizeWindow(PREVIEW_WINDOW, w, h)
+                self._preview_ready = True
+            cv2.imshow(PREVIEW_WINDOW, canvas)
+            cv2.waitKey(1)
         except Exception as exc:  # noqa: BLE001 — no X11 must not kill tracking
             self.get_logger().warn(
-                f"preview unavailable: {exc}", throttle_duration_sec=10.0
+                f"preview unavailable, disabling: {exc}", throttle_duration_sec=10.0
             )
             self.preview = False
 
@@ -568,6 +605,10 @@ class MirrorNode(Node):
                 self.source.stop()
             if self.tracker is not None:
                 self.tracker.stop()
+            if self.preview:
+                import cv2
+
+                cv2.destroyAllWindows()
         except Exception:  # noqa: BLE001 — best effort during teardown
             pass
 

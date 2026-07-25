@@ -2,16 +2,29 @@
 
 Pure math (no ROS, no numpy, no mediapipe) so it is unit-testable offline.
 
-MIRROR MODE (the default, and what the user asked for): the robot behaves like
-a mirror facing you — you raise your LEFT arm, the robot raises its RIGHT, and
-the raised arm stays on the same side of the room.
+MIRROR MODE (the default): the robot behaves like a mirror facing you — you
+raise your LEFT arm, the robot raises its RIGHT, and the arm stays on the same
+side of the room.
 
-Derivation, because sign errors here are invisible until someone waves:
-put the robot at the origin facing +x with up +z, and the human in front of it
-facing back. The human's forward is -x_world and, for a right-handed
-(x fwd, y left, z up) body frame, the human's LEFT is -y_world. So a vector
-(hx, hy, hz) in the human's torso frame is (-hx, -hy, hz) in the robot's.
-Feed that to the OPPOSITE arm and the result is a true mirror.
+DERIVATION. Put the robot at the origin facing +x with up +z, and the human in
+front of it facing back. The human's forward is -x_world; for a right-handed
+(x fwd, y left, z up) body frame the human's LEFT is -y_world. So a human-frame
+vector (hx, hy, hz) is (-hx, -hy, hz) in WORLD.
+
+A mirror is a REFLECTION through the vertical plane between the two of you,
+which negates the world axis joining you (x) and leaves y and z alone:
+    world (-hx, -hy, hz)  ->  reflected (hx, -hy, hz)
+The robot's torso axes coincide with world, so the robot-frame target is
+
+    (hx, hy, hz)  ->  (hx, -hy, hz)      NEGATE Y ONLY
+
+fed to the OPPOSITE arm.
+
+The x component must NOT be negated, and getting that wrong is invisible in
+the obvious test: a sideways raise (0, 1, 0) maps to (0, -1, 0) either way.
+It only shows up when you reach FORWARD — (1, 0, 0) must stay (1, 0, 0), and
+an extra x flip sends the robot's arm BACKWARD while you reach toward it.
+That shipped once. `retarget-bench` now checks a forward reach specifically.
 
 DIRECT MODE is "the robot is you, seen from behind": same-side arm, and the
 torso-frame components pass through untouched.
@@ -51,6 +64,17 @@ def _clip(v, lo, hi):
     return min(max(v, lo), hi)
 
 
+def mirror_vec(v):
+    """Human torso-frame direction -> robot torso-frame direction, mirrored.
+
+    Negates Y ONLY. See the module docstring for the derivation; the short
+    version is that a mirror reflects through the plane BETWEEN you and the
+    robot, and in the robot's own frame that reflection leaves forward alone.
+    One function so the arms and the head can never disagree about it.
+    """
+    return (v[0], -v[1], v[2])
+
+
 def retarget(
     obs,
     mirror=True,
@@ -86,8 +110,7 @@ def retarget(
 
         a, b = obs.limb_dirs(human_side)
         if mirror:
-            a = (-a[0], -a[1], a[2])
-            b = (-b[0], -b[1], b[2])
+            a, b = mirror_vec(a), mirror_vec(b)
             robot_side = "right" if human_side == "left" else "left"
         else:
             robot_side = human_side
@@ -125,10 +148,13 @@ def _retarget_head(obs, mirror, gain_yaw, gain_pitch, margin):
     h = obs.head_dir()
     if h == (0.0, 0.0, 0.0):
         return {}
+    # Apply the SAME mapping the arms use, then read the angles off the result.
+    # Deriving yaw first and negating it separately happens to be equivalent,
+    # but it is a second place for the convention to drift.
+    if mirror:
+        h = mirror_vec(h)
     yaw = math.atan2(h[1], h[0])                       # + = looking to own left
     pitch_down = -math.asin(max(-1.0, min(1.0, h[2])))  # + = looking down
-    if mirror:
-        yaw = -yaw
     lo_p, hi_p = HEAD_PITCH_LIMITS
     lo_y, hi_y = HEAD_YAW_LIMITS
     return {

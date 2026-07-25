@@ -386,16 +386,45 @@ The FK check is the one that matters: the solver was internally consistent to
 MoveIt — which turned out to be the harness comparing `link3→link4` against
 `link1→link4`. A self-consistent solver cannot detect a wrong model.
 
-### Mirror semantics
+### Mirror semantics — and the sign that shipped wrong
 
 Robot at the origin facing +x, human in front facing back. The human's forward
-is −x_world and their LEFT is −y_world, so a vector `(hx, hy, hz)` in the
-human's torso frame is `(-hx, -hy, hz)` in the robot's. Feed that to the
-**opposite** arm and you get a true mirror: raise your left arm and the robot
-raises its right, on the same side of the room. `mirror_mode:=direct` skips
-both flips ("the robot is you, seen from behind").
+is −x_world and their LEFT is −y_world, so a human-frame vector `(hx, hy, hz)`
+is `(-hx, -hy, hz)` in **world**. A mirror is a reflection through the vertical
+plane *between* the two of you, which negates the world axis joining you (x)
+and leaves y and z alone. The robot's torso axes coincide with world, so:
 
-Head: mirror flips **yaw only**, never pitch.
+```
+(hx, hy, hz)  ->  (hx, -hy, hz)      NEGATE Y ONLY
+```
+
+fed to the **opposite** arm. `mirror_mode:=direct` skips both ("the robot is
+you, seen from behind").
+
+⚠️ **The first version negated x as well, and the tests did not catch it.** A
+sideways raise `(0,1,0)` maps to `(0,-1,0)` whether or not x is flipped, so the
+obvious test passes either way. The discriminating case is reaching *forward*:
+`(1,0,0)` must stay `(1,0,0)`, and the extra flip sent the robot's arm
+**backward while the user reached toward it** — which is exactly how it was
+found, by watching it rather than by testing it. `retarget-bench` now checks a
+forward reach and an overhead raise, and that test was itself verified to fail
+against the old formula.
+
+Head: mirror applies the *same* `mirror_vec()` and reads the angles off the
+result, rather than deriving yaw and negating it separately — one function, so
+arms and head cannot drift apart. Net effect is still yaw-only.
+
+### Preview window: HighGUI is main-thread only
+
+`cv2.imshow` from the vision thread creates the window **and its toolbar** but
+never paints the image: you get a black rectangle with working buttons, which
+reads as a camera fault rather than a threading one. The vision thread now only
+*renders* the annotated frame; a 20 Hz rclpy timer — which runs on the executor,
+i.e. the thread that called `spin()` — does the `imshow`/`waitKey`.
+
+The window is also explicitly `namedWindow` + `resizeWindow`'d on first draw.
+Left alone, the Qt backend opens at ~370×127 and scales a 640×480 frame into an
+unreadable thumbnail.
 
 ### Per-arm gating
 

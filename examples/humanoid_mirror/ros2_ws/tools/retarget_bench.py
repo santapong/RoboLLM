@@ -275,6 +275,38 @@ def run_math(samples):
     check(len(im["arms"]) == 2 and len(idr["arms"]) == 2,
           "both arms retarget when both are visible", f"{im['arms']}")
 
+    # THE DISCRIMINATING CASE. A sideways raise maps to the same answer whether
+    # or not the x component is negated, so it cannot catch an extra flip. A
+    # FORWARD reach can: reaching toward the robot must make the robot reach
+    # toward you (+x in its own frame), not away. Shipping the extra flip made
+    # the robot's arm travel backwards while the user reached forward.
+    fwd = body()
+    fwd.points_body[BA.LEFT_ELBOW] = BA.to_body((0.20, -0.50, -0.28))
+    fwd.points_body[BA.LEFT_WRIST] = BA.to_body((0.20, -0.50, -0.55))
+    a_f, _ = fwd.limb_dirs("left")
+    check(a_f[0] > 0.99, "synthetic human reaches FORWARD (+x in their frame)",
+          f"{tuple(round(v, 3) for v in a_f)}")
+    tf_, if_ = retarget(fwd, mirror=True)
+    ua_fwd, _ = arm_dirs([tf_[f"arm_r_joint{k}"] for k in range(1, 5)], "right")
+    check(ua_fwd[0] > 0.9,
+          "mirror: reaching FORWARD moves the robot's arm forward, toward you",
+          f"robot arm -> {tuple(round(v, 3) for v in ua_fwd)} (+x = toward you); "
+          f"an extra x-flip would give x < 0 here")
+    check(abs(ua_fwd[1]) < 0.2,
+          "a pure forward reach stays out of the sideways axis",
+          f"y={ua_fwd[1]:+.3f}")
+
+    # And UP must stay up under mirroring (z is never negated).
+    up = body()
+    up.points_body[BA.LEFT_ELBOW] = BA.to_body((0.20, -0.78, 0.0))
+    up.points_body[BA.LEFT_WRIST] = BA.to_body((0.20, -1.05, 0.0))
+    a_u, _ = up.limb_dirs("left")
+    tu, _iu = retarget(up, mirror=True)
+    ua_up, _ = arm_dirs([tu[f"arm_r_joint{k}"] for k in range(1, 5)], "right")
+    check(a_u[2] > 0.9 and ua_up[2] > 0.9,
+          "mirror: raising your arm UP raises the robot's arm UP",
+          f"human z={a_u[2]:+.3f} -> robot z={ua_up[2]:+.3f}")
+
     # PER-ARM GATING — the behaviour the desk measurements demand.
     one = body(raise_left=True, vis={BA.RIGHT_ELBOW: 0.02, BA.RIGHT_WRIST: 0.01})
     t1, i1 = retarget(one, mirror=True)
