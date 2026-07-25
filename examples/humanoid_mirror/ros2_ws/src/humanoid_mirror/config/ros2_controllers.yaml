@@ -1,0 +1,121 @@
+# Controller stack for the FFW semi-humanoid mock-hardware bring-up.
+#
+# Four JointTrajectoryControllers over DISJOINT joint sets — the standard
+# dual-arm layout. Two controllers claiming the same joint makes the resource
+# manager refuse to activate the second one, silently leaving that limb dead.
+#
+# The names are NOT ours to choose: ffw_moveit_config/config/moveit_controllers.yaml
+# already declares arm_l_controller / arm_r_controller / head_controller /
+# lift_controller, so MoveIt's simple controller manager only finds our
+# controllers if we match it exactly. Joint lists are copied from that file.
+#
+# gripper_l_joint1 / gripper_r_joint1 are exposed as command interfaces by the
+# mock hardware but are deliberately left unclaimed — mirroring drives arms and
+# head only. Unclaimed command interfaces are fine; joint_state_broadcaster
+# still publishes their state so RViz renders the grippers.
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz — 2x the node's 50 Hz command rate, CPU-cheap on the i3-9100
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    arm_l_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    arm_r_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    head_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    lift_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+# Shared settings, repeated per controller because ros2_control has no anchors.
+# allow_nonzero_velocity_at_trajectory_end: true is REQUIRED for teleop — we
+# stream single-point trajectories continuously and never "arrive" at a goal.
+arm_l_controller:
+  ros__parameters:
+    joints:
+      - arm_l_joint1   # axis Y  shoulder pitch   -3.14  .. 3.14
+      - arm_l_joint2   # axis X  shoulder roll      0.0  .. 3.14  (ONE-SIDED)
+      - arm_l_joint3   # axis Z  humeral yaw      -3.14  .. 3.14
+      - arm_l_joint4   # axis Y  elbow           -2.9361 .. 1.0786 (flexes NEGATIVE)
+      - arm_l_joint5   # axis Z  wrist roll      -3.14  .. 3.14
+      - arm_l_joint6   # axis Y  wrist pitch     -1.57  .. 1.57
+      - arm_l_joint7   # axis X  wrist yaw       -1.8201 .. 1.5804
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+arm_r_controller:
+  ros__parameters:
+    joints:
+      - arm_r_joint1   # axis Y  shoulder pitch   -3.14  .. 3.14
+      - arm_r_joint2   # axis X  shoulder roll    -3.14  .. 0.0   (MIRRORS arm_l)
+      - arm_r_joint3   # axis Z  humeral yaw      -3.14  .. 3.14
+      - arm_r_joint4   # axis Y  elbow           -2.9361 .. 1.0786
+      - arm_r_joint5   # axis Z  wrist roll      -3.14  .. 3.14
+      - arm_r_joint6   # axis Y  wrist pitch     -1.57  .. 1.57
+      - arm_r_joint7   # axis X  wrist yaw       -1.5804 .. 1.8201 (MIRRORS arm_l)
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+head_controller:
+  ros__parameters:
+    joints:
+      # NOTE the axes: ROBOTIS's own docs say "pan/tilt", but the URDF says the
+      # OPPOSITE of the obvious reading. Measured from the expanded xacro:
+      - head_joint1   # axis Y = PITCH (nod). -0.2317 .. 0.6951 rad (-13 deg .. +40 deg).
+                      # Positive = looking DOWN. Asymmetric on purpose: a
+                      # workbench robot looks at its own hands.
+      - head_joint2   # axis Z = YAW (pan).   -0.35 .. 0.35 rad (+/- 20 deg only).
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+lift_controller:
+  ros__parameters:
+    joints:
+      - lift_joint    # prismatic, -0.5 .. 0.0 m (0 = fully raised)
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 50.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0

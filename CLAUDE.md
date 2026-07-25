@@ -30,7 +30,15 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
   (gesture-triggered automation: ArUco marker places/live-tracks a wall in
   the MoveIt scene, fist = autonomous serpentine weld of the whole wall
   with bead+spark markers, palm = abort; same weld-arm package + Docker
-  image; 15 mm standoff is collision-verified, 5 mm is not).
+  image; 15 mm standoff is collision-verified, 5 mm is not),
+  humanoid_mirror (webcam whole-upper-body teleop — left arm + right arm
+  + head — of a HUMANOID. MoveIt ships none: moveit_resources is
+  Panda/Fanuc + a description-only PR2 whose SRDF is a 75-line stub with
+  no head group. We use ROBOTIS FFW `ffw_bg2_rev4_follower`, apt-installed,
+  the only Jazzy robot with arm_l/arm_r/HEAD groups ready. M0+M1 done:
+  `ros2-arm humanoid` + `humanoid-check` (19 checks green, dual-arm IK).
+  M2-M5 = tracking/retargeting, specced in its TECHNICAL.md. NOTE
+  ffw_moveit_config's own launch file CRASHES — use ours).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);
@@ -45,6 +53,13 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 ## Environment gotchas (learned the hard way — do not rediscover)
 - **numpy MUST stay 1.26.4** (ROS Jazzy ABI; 2.x breaks rclpy). Always
   `pip install -c constraints.txt`. Venv is `--system-site-packages`.
+  The sneaky path in: mediapipe declares BOTH numpy and
+  opencv-contrib-python unpinned, and pip resolves opencv to 5.x, which
+  hard-requires numpy>=2 — so pinning numpy alone is NOT enough. Pin
+  `opencv-contrib-python<5` too (it's in constraints.txt). Symptom when it
+  slips: `cv_bridge` raises `KeyError: 16`. Must be fixed in the Docker
+  BUILD LAYER — downgrading numpy inside a populated venv corrupts it
+  ("numpy._core.multiarray failed to import").
 - User shell is zsh but ROS `setup.bash` is bash-only → run verification as
   `bash -c 'source /opt/ros/jazzy/setup.bash && …'`.
 - `TURTLEBOT3_MODEL=waffle_pi` for a camera (default burger = lidar only).

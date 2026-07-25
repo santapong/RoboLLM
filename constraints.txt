@@ -6,3 +6,10 @@
 #     .venv/bin/python -m pip install -c constraints.txt <anything>
 #
 numpy==1.26.4
+
+# opencv-contrib-python 5.x hard-requires numpy>=2, so an unpinned install
+# (mediapipe declares BOTH numpy and opencv-contrib-python unpinned) drags
+# numpy 2.x in through the back door even when numpy itself is pinned here.
+# Symptom when it slips: cv_bridge raises `KeyError: 16` at first use, because
+# its C extension was compiled against numpy 1.x.
+opencv-contrib-python<5

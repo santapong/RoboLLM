@@ -5,6 +5,62 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-07-25 — examples/humanoid_mirror: a humanoid in MoveIt (M0 + M1)
+
+### Added
+- **`examples/humanoid_mirror/`** — the start of webcam whole-upper-body
+  teleop (left arm + right arm + head) of a humanoid. **MoveIt ships no
+  humanoid**: `moveit_resources` is Panda + Fanuc + a PR2 that is
+  description-only, whose SRDF is a 75-line stub with one
+  `disable_collisions` pair, no head group, and `<test_depend>` status.
+  We use **ROBOTIS FFW "AI Worker"** (`ffw_bg2_rev4_follower`,
+  Apache-2.0) — the only apt-installable ROS 2 Jazzy robot whose MoveIt
+  config already defines `arm_l` / `arm_r` / **`head`** (+ `lift`), with
+  418 real `disable_collisions` pairs. 2×7-DOF arms, 2-DOF neck,
+  prismatic lift; 25 meshes, 26.8 MB. It is a *semi-humanoid* — torso +
+  arms + head on a lift column, **no legs**.
+- `humanoid_mirror/ffw_config.py` — corrected `MoveItConfigsBuilder`
+  chain. `ffw_moveit_config`'s own `moveit.launch.py` **crashes**: it
+  calls `.robot_description_semantic()` but never `.robot_description()`
+  and declares no dependency on `ffw_description`, so it dies
+  `XML_ERROR_EMPTY_DOCUMENT` → `[FATAL] Unable to configure planning
+  scene monitor` → SIGABRT. Bug is in jazzy-branch HEAD too.
+- `launch/mock_bringup.launch.py` (`ros2-arm humanoid`) — RSP +
+  `mock_components/GenericSystem` + `move_group` + RViz, with
+  `joint_state_broadcaster` and four JTCs chained on `OnProcessExit`.
+- `ffw_check.py` (`ros2-arm humanoid-check`) — M1 acceptance, no camera:
+  19 checks covering descriptions, all four SRDF groups, 19 mock joints,
+  four active controllers over disjoint joint sets, and `/compute_ik`
+  success for **both** 7-DOF arms. All green.
+- `pose_landmarker_full.task` baked into the image (sha256-pinned,
+  versioned URL) for M3+, plus `ros-jazzy-pick-ik`.
+
+### Fixed
+- **The numpy law was being violated in the image.** `/opt/mpvenv` held
+  numpy **2.5.1** and opencv-contrib-python **5.0.0**, shadowing the
+  system 1.26.4 — and since `handfollow.launch.py` runs its node under
+  `/opt/mpvenv/bin/python`, `hand_follow` and `gen3_pick_place` were
+  already running on numpy 2.x. Root cause: mediapipe 0.10.35 declares
+  *both* numpy and opencv-contrib-python unpinned, and pip resolves the
+  latter to 5.x, which hard-requires numpy≥2. Measured symptom:
+  `cv_bridge`'s numpy-1.x C extension raises `KeyError: 16`, so no node
+  could publish an annotated `sensor_msgs/Image`. Both are now pinned in
+  all four Dockerfile copies **and verified at build time** (version
+  assert + a real `cv_bridge` roundtrip); `constraints.txt` gained
+  `opencv-contrib-python<5` so the native route can't regress.
+
+### Notes
+- FFW's head axes are the **opposite** of the "pan/tilt" reading its own
+  docs suggest: `head_joint1` is axis Y = **pitch** (−13°…+40°, positive
+  = looking down), `head_joint2` is axis Z = **yaw** (**±20° only**).
+  Head mirroring will be a nod and a glance, not a look-around.
+- `arm_l_joint2` is one-sided `0…3.14` and `arm_r_joint2` mirrors it at
+  `−3.14…0` — a symmetric seed pose is out of range on one side.
+- `ffw-bringup` and `realsense2-description` are mandatory but **not
+  declared** as dependencies; without them xacro dies `PackageNotFoundError`.
+- Use `bg2_rev4`, not `sg2_rev1`: the latter's `<robot name>` mismatches
+  the SRDF and it has 3 broken `${swerve_meshes_dir}` meshes.
+
 ## 2026-07-23 — tests + CI: the testing pyramid
 
 ### Added
