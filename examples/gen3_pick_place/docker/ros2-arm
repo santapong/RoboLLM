@@ -39,9 +39,16 @@
 #   ros2-arm mirror-accept         M2 acceptance: publish rates, joint limits,
 #                        slew limits, did-it-actually-move, and whether the
 #                        mock hardware follows. Needs `mirror synthetic` up.
+#   ros2-arm track                 M3: webcam BODY tracking — your skeleton in
+#                        RViz (TF human/* + /body/markers) with the robot
+#                        PARKED. add preview:=true for the mirrored webcam
+#                        window. Pose runs on the RAW frame (see TECHNICAL.md).
+#   ros2-arm body-accept           M3 acceptance, synthetic tier (no camera).
+#                        add --live for the camera tier incl. the flip/label
+#                        regression guard, --ros for the topic tier.
 # GUI (RViz/MoveIt) works via X passthrough + hardware GL; ~/ros2_ws mounts.
 if [ "$1" = stop ]; then
-    docker rm -f armloop armmoveit armdemo armview armpickplace armhandfollow armwallweld armmirror armhumanoid 2>/dev/null
+    docker rm -f armloop armmoveit armdemo armview armpickplace armhandfollow armwallweld armmirror armhumanoid armtrack 2>/dev/null
     echo "stopped all arm containers"; exit 0
 fi
 # Workspace: prefer a vendored ros2_ws next to this script (RoboLLM
@@ -113,6 +120,17 @@ fi
 if [ "$1" = mirror-accept ]; then
     shift
     CMD="python3 /ros2_ws/tools/mirror_accept.py $*"
+fi
+if [ "$1" = track ]; then
+    shift
+    DOCKNAME="--name armtrack"
+    CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mirror.launch.py track_only:=true $*"
+fi
+if [ "$1" = body-accept ]; then
+    shift
+    # mpvenv python: mediapipe for --live, and --system-site-packages keeps
+    # rclpy importable for --ros. Plain python3 has no mediapipe.
+    CMD="/opt/mpvenv/bin/python /ros2_ws/tools/body_accept.py $*"
 fi
 if [ "$1" = humanoid-check ]; then
     shift

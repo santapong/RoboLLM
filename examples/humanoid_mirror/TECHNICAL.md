@@ -166,7 +166,113 @@ The `slew_hits` counter settling at a constant (141 on this box) and never
 growing is the expected signature: the clamp fires only during the start-up
 transient from the seed pose into the sweep, then the sweep stays under it.
 
-## Planned tracking layer (M3+)
+## Tracking layer (M3) — as built, with what measurement changed
+
+Implemented in `body_track.py`. **Four facts were measured on this box against
+a live camera, and two of them contradict the design that was written from
+research.** They are reproduced by `tools/body_accept.py --live`.
+
+### 1. Axis convention (measured, not read from docs)
+
+With a person facing the camera, `pose_world_landmarks` give:
+
+```
+LEFT_SHOULDER - RIGHT_SHOULDER  ->  x +0.304   => +x is the subject's LEFT
+SHOULDERmid   - HIPmid          ->  y -0.485   => +y is DOWN
+NOSE          - EARmid          ->  z -0.112   => -z is FORWARD (toward camera)
+```
+
+So the map into a REP-103 body frame (x forward, y left, z up) is
+`body_x = -world_z`, `body_y = +world_x`, `body_z = -world_y` — implemented as
+`to_body()` and asserted in the synthetic tier.
+
+### 2. ⚠️ Hips are NOT visible in the real use case
+
+Measured visibility, seated at a desk:
+
+| Landmark | Visibility |
+|---|---|
+| shoulders | 0.99 – 1.00 |
+| nose, ears | 1.00 |
+| **hips** | **0.00 – 0.01** |
+| elbows | 0.09 – 1.00 (depends on whether they're raised) |
+| wrists | 0.01 – 0.26 |
+
+The design specified a torso "up" vector from shoulder-midpoint to
+hip-midpoint. **That vector is unavailable in practice**, so `torso_frame()`
+has two paths and the *fallback is the primary one*:
+
+- `"hips"` — up = shoulder-mid → hip-mid. Captures torso lean. Rarely available.
+- `"camera_up"` — up = +z (camera vertical). What you actually get. Cannot see
+  torso lean, so a leaning user reads as upright — acceptable, because the arm
+  angles are measured *relative* to this frame and a seated torso is near-vertical.
+
+Live runs log `frame=camera_up`. That is **not** a degraded warning state.
+The synthetic tier asserts the two paths agree exactly for an upright subject.
+
+**Consequence for M4:** arms must be *raised into frame* to mirror. At rest on
+a desk the elbows and wrists fall below the visibility gate, and the robot will
+correctly hold rather than chase hallucinated limbs. Per-arm gating, not
+whole-body gating, is the right granularity.
+
+### 3. ⚠️ `cv2.flip` swaps POSE left/right labels — measured, 20–38× separation
+
+The decisive test, run on a real frame:
+
+```
+|flip.LEFT - (1 - raw.RIGHT)| = 0.0177 … 0.0223   <- content-following
+|flip.LEFT - (1 - raw.LEFT)|  = 0.4453 … 0.6697   <- side-following
+```
+
+The labels follow **anatomy**, inferred from body cues — so mirroring the image
+moves the LEFT label onto the other physical arm. **Pose runs on the RAW
+frame**; `BodyTracker.annotate()` is the only place a flip happens, and it
+flips the finished preview picture only.
+
+This is the *opposite* of the hand API, where handedness explicitly assumes a
+mirrored image — which is why `hand_follow`'s flip is correct and mandatory.
+Two models, two conventions, one frame. `body_accept.py --live` runs this exact
+discriminator as a regression guard.
+
+### 4. MediaPipe hallucinates occluded limbs
+
+The wrists above were reported at ordinary-looking coordinates with visibility
+0.01. Nothing about the position values themselves says "I made this up".
+Everything is gated on `visibility >= min_visibility` (default 0.5), and TF is
+never published for a landmark below the gate.
+
+### Measured performance
+
+`pose_landmarker_full`, 640×480, VIDEO mode, on this box: **median 28–31 ms
+(~28–32 Hz), p95 47 ms, 100% detection rate.** Inside the repo's 70 ms U5 gate.
+(The design's 24.8 ms figure came from the i3-9100 laptop.) Vision runs on its
+own thread, so the 50 Hz control tick is never blocked by a 31 ms inference.
+
+### M3 topics
+
+`/body/tracked` (Bool), `/body/markers` (MarkerArray — skeleton `LINE_LIST` +
+`SPHERE_LIST`, visibility-gated), and TF `camera_link → human/{l,r}_{shoulder,
+elbow,wrist}`, `human/head`, plus **`human/torso` carrying the torso frame's
+full orientation**. That last one is the debugging aid that matters for M4: if
+retargeted angles come out wrong, check that `human/torso`'s axes point where
+the body does before suspecting the trigonometry.
+
+On tracking loss the node publishes `DELETEALL` rather than leaving a stale
+skeleton on screen — verified: 173/173 `tracked=false` and 171/171 `DELETEALL`
+when run with an impossible visibility gate.
+
+### ⚠️ The node must run under `/opt/mpvenv/bin/python`
+
+mediapipe lives in the image's venv, not in the system python that ament
+console-scripts are shebanged to. `mirror.launch.py` sets
+`prefix=/opt/mpvenv/bin/python`. Without it the node dies
+`ModuleNotFoundError: No module named 'mediapipe'` the moment tracking is
+switched on — *while synthetic mode keeps working*, which makes it read as a
+camera fault. `_make_tracker()` now catches this and says so explicitly. The
+venv is `--system-site-packages`, so rclpy imports fine from it and that
+interpreter is correct for both modes.
+
+## Original research notes on the tracking layer (superseded where measured)
 
 No new dependencies beyond a model file — `PoseLandmarker` ships in the same
 mediapipe wheel `hand_follow` already uses.

@@ -5,6 +5,54 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-07-25 — humanoid_mirror M3: body tracking (robot parked)
+
+### Added
+- `body_track.py` — MediaPipe PoseLandmarker on the **RAW** frame ->
+  torso-relative body frame. Pure-math top half (no cv2/mediapipe/ROS/
+  numpy) so the geometry is unit-testable with no camera; camera classes
+  import vision libs lazily.
+- `mirror_node track_only:=true` (`ros2-arm track`) — vision on its own
+  thread publishing `/body/tracked`, `/body/markers` (visibility-gated
+  skeleton) and TF `camera_link -> human/{l,r}_{shoulder,elbow,wrist}`,
+  `human/head`, plus **`human/torso` with the torso frame's full
+  orientation** — the debugging aid that matters for M4. Robot parked:
+  verified 0 messages on all four controller topics.
+- `tools/body_accept.py` (`ros2-arm body-accept`) — three tiers:
+  synthetic (26 known-answer geometry checks, no camera, CI-able),
+  `--live` (camera, incl. the flip regression guard), `--ros` (topics).
+
+### Measured — and two findings CONTRADICT the researched design
+- **Axis convention, measured not read**: `body_x=-world_z`,
+  `body_y=+world_x`, `body_z=-world_y` (from
+  LEFT-RIGHT_SHOULDER x +0.304, SHOULDER-HIP y -0.485, NOSE-EAR z -0.112).
+- **HIPS ARE INVISIBLE at a desk** — measured visibility 0.00-0.01 vs
+  1.00 for shoulders. The designed shoulder-to-hip torso "up" vector does
+  not exist in practice, so the camera-up fallback is the PRIMARY path.
+  Live runs log `frame=camera_up`; that is not a warning state. For M4:
+  arms must be RAISED INTO FRAME to mirror (elbow visibility drops to
+  0.09 at rest), so gating must be per-arm, not whole-body.
+- **The flip trap is real**: `|flip.LEFT-(1-raw.RIGHT)| = 0.018-0.022`
+  vs `|flip.LEFT-(1-raw.LEFT)| = 0.445-0.670`, a 20-38x separation.
+  POSE labels follow ANATOMY, so cv2.flip swaps them — the OPPOSITE of
+  the hand API, where handedness assumes a mirrored image. Pose runs on
+  the RAW frame; only the preview is flipped. Permanently guarded by
+  `body-accept --live`.
+- `pose_landmarker_full` on this box: **median 28-31 ms (~28-32 Hz),
+  p95 47 ms, 100% detection** — inside the 70 ms U5 gate. (The design's
+  24.8 ms was the i3-9100 laptop.)
+- Tracking loss publishes `DELETEALL`, never a stale skeleton: verified
+  173/173 `tracked=false`, 171/171 `DELETEALL`.
+
+### Fixed
+- **The node must run under `/opt/mpvenv/bin/python`.** mediapipe is not
+  in the system python that ament console-scripts are shebanged to, so
+  tracking died with `ModuleNotFoundError: No module named 'mediapipe'`
+  *while synthetic mode kept working* — which reads as a camera fault.
+  `mirror.launch.py` now sets `prefix=/opt/mpvenv/bin/python` (the same
+  fix hand_follow uses), and `_make_tracker()` catches the error and
+  explains it. Caught by the M3 ROS-tier check, not by inspection.
+
 ## 2026-07-25 — humanoid_mirror M2: the humanoid moves
 
 ### Added

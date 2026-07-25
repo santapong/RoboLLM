@@ -3,10 +3,10 @@
 Your **left arm**, **right arm** and **head** drive a humanoid robot in MoveIt,
 live from one USB webcam. CPU-only, no GPU, no Gazebo, no hardware.
 
-> **Status: M0–M2 complete and verified. The humanoid moves.**
-> `ros2-arm mirror synthetic` drives both arms, the head and the lift through a
-> scripted whole-body sweep in RViz — no camera, and MediaPipe is never even
-> imported. Camera tracking (M3–M4) is next; see [Build plan](#build-plan).
+> **Status: M0–M3 complete and verified.** The humanoid moves
+> (`ros2-arm mirror synthetic`), and your body is tracked live from the webcam
+> into RViz with the robot parked (`ros2-arm track`). Wiring tracking to the
+> arms is M4; see [Build plan](#build-plan).
 
 ---
 
@@ -64,9 +64,19 @@ disqualifying for a public repo.
 ./docker/ros2-arm mirror synthetic         # 🎬 the humanoid MOVES in RViz
 ./docker/ros2-arm mirror-accept            # M2 acceptance (needs the above running)
 
+./docker/ros2-arm track                    # 👁 YOUR BODY tracked in RViz, robot parked
+./docker/ros2-arm track preview:=true      #   + the mirrored webcam window
+./docker/ros2-arm body-accept              # M3 acceptance, no camera needed
+./docker/ros2-arm body-accept --live       #   + camera tier (stand in frame)
+./docker/ros2-arm body-accept --ros        #   + topic tier (needs `track` running)
+
 ./docker/ros2-arm humanoid                 # the robot alone, no motion
 ./docker/ros2-arm humanoid-check           # M1 acceptance (needs the above running)
 ```
+
+In RViz, add a **MarkerArray** on `/body/markers` and a **TF** display to see
+your skeleton and the `human/*` frames — including `human/torso`, which carries
+the torso frame's orientation.
 
 `mirror synthetic` accepts every node parameter as `key:=value` — e.g.
 `rviz:=false`, `latency_probe:=true`, `sweep_period_s:=8.0`, `use_lift:=false`.
@@ -149,8 +159,8 @@ the SG2 variant. Harmless. Do not "fix" them by switching to SG2.
 | **M0** | numpy law fix + FFW and pose model baked into the image | **done, verified** |
 | **M1** | humanoid loads, renders, plans; 4 controllers active; dual-arm IK | **done, verified** |
 | **M2** | 🎬 humanoid *moving* in RViz — scripted sweep, no camera | **done, verified** |
-| M3 | body tracking: TF + skeleton markers, robot parked | next |
-| M4 | arms mirror live | |
+| **M3** | 👁 body tracking: TF + skeleton markers, robot parked | **done, verified** |
+| M4 | arms mirror live | next |
 | M5 | head + lift gains tuned against a real body | |
 | M6 | *(optional)* Cartesian hands via a `pink` QP | |
 
@@ -161,6 +171,28 @@ resume re-seeds from `/joint_states` so there is no jump.
 **M2 measured** (`mirror-accept`, 10 s window): 50.8 Hz on all four controller
 topics, 0 joint-limit violations, 0 per-tick slew violations, 11/11 swept
 joints moved, and the mock hardware tracked every command.
+
+**M3 measured** (`body-accept`): 26 synthetic geometry checks green; live
+inference **28–31 ms median (~28–32 Hz), 100% detection**; `/body/tracked` and
+`/body/markers` publishing with all 4 `human/*` TF frames; **0 messages on all
+four controller topics** — the robot really is parked. On tracking loss:
+173/173 `tracked=false` and 171/171 `DELETEALL`, so no stale skeleton can
+masquerade as live tracking.
+
+### Two M3 findings that contradicted the plan
+
+**Your hips are invisible.** Seated at a desk, hip visibility measures
+**0.00–0.01** while shoulders read 1.00. The designed shoulder-to-hip torso
+"up" vector doesn't exist in practice, so the camera-up fallback is the
+*primary* path, not the edge case. Consequence for M4: **arms must be raised
+into frame to mirror** — at rest, elbows and wrists fall below the gate and the
+robot will correctly hold rather than chase limbs MediaPipe invented.
+
+**The flip trap is real, and measured.** `|flip.LEFT − (1−raw.RIGHT)| = 0.022`
+against `|flip.LEFT − (1−raw.LEFT)| = 0.445` — a 20× separation proving POSE
+labels follow anatomy, so `cv2.flip` swaps them. Pose runs on the **raw** frame;
+only the preview is flipped. `body-accept --live` runs this as a permanent
+regression guard.
 
 Every milestone has a no-camera synthetic test, per house convention.
 

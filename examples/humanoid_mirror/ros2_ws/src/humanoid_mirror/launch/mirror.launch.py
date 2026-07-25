@@ -42,6 +42,14 @@ NODE_ARGS = [
     ("decay_speed", "0.5", "rad/s while decaying home"),
     ("sweep_period_s", "14.0", "synthetic sweep period"),
     ("latency_probe", "false", "log tick rate and clamp/slew hits every 3 s"),
+    # --- M3 body tracking ---
+    ("track_only", "false", "run vision + TF/markers with the robot PARKED (M3)"),
+    ("camera", "/dev/video0", "video capture device"),
+    ("pose_model_path", "/opt/models/pose_landmarker_full.task",
+     "mediapipe pose_landmarker .task model file"),
+    ("min_visibility", "0.5", "per-landmark visibility gate"),
+    ("preview", "false", "annotated webcam window, MIRRORED for the human (X11)"),
+    ("body_frame_id", "camera_link", "TF parent for the human/* frames"),
 ]
 
 
@@ -59,12 +67,40 @@ def generate_launch_description():
     for name, _, _ in NODE_ARGS:
         ros_args += ["-p", [name, ":=", LaunchConfiguration(name)]]
 
+    # mediapipe lives in the Docker image's /opt/mpvenv, NOT in the system
+    # python that ament console_scripts get shebanged to. Without this prefix
+    # the node dies with ModuleNotFoundError: No module named 'mediapipe' the
+    # moment tracking is switched on — while synthetic mode works fine, which
+    # makes it look like a camera problem. Same fix hand_follow uses
+    # (it runs its script through MPVENV_PYTHON explicitly).
+    # The venv is --system-site-packages, so rclpy still imports from it and
+    # this interpreter is correct for BOTH synthetic and camera modes.
+    mpvenv = "/opt/mpvenv/bin/python"
+    prefix = mpvenv if os.path.exists(mpvenv) else None
+
     mirror = Node(
         package="humanoid_mirror",
         executable="mirror_node",
         name="mirror_node",
         output="screen",
+        prefix=prefix,
         ros_arguments=ros_args,
+    )
+
+    # Where the webcam sits relative to the robot. A placeholder: 1.2 m in
+    # front of base_link at eye height, looking back at the robot. Only the
+    # human/* markers live in this frame, and M4's retargeting is frame-
+    # invariant (it copies ANGLES in the torso frame, not positions), so this
+    # transform is for visual placement in RViz — not a calibration you must
+    # get right before the demo works.
+    camera_tf = Node(
+        package="tf2_ros",
+        executable="static_transform_publisher",
+        name="camera_link_tf",
+        arguments=["--x", "1.2", "--y", "0.0", "--z", "1.2",
+                   "--yaw", "3.14159", "--pitch", "0.0", "--roll", "0.0",
+                   "--frame-id", "base_link", "--child-frame-id", "camera_link"],
+        output="log",
     )
 
     return LaunchDescription(
@@ -85,6 +121,7 @@ def generate_launch_description():
                 for name, default, desc in NODE_ARGS
             ],
             bringup,
+            camera_tf,
             TimerAction(
                 period=LaunchConfiguration("start_delay"), actions=[mirror]
             ),

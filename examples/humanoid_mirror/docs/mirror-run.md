@@ -103,6 +103,22 @@ plus 3 broken `${swerve_meshes_dir}` meshes. Leave it alone.
 | `NotImplementedError: camera mode lands in M4` | You ran `mirror` without `synthetic`. Intentional — see the build plan. |
 | Robot never moves, node logs nothing | The node is waiting on `/joint_states`. It refuses to publish before seeding, because guessing the start pose is how you get a jump. Check the controllers spawned. |
 | `mirror-accept` reports phantom speed violations | You are on an old copy that timed by callback arrival. DDS bursts make that read ~3× high — see TECHNICAL.md. |
+| `ModuleNotFoundError: No module named 'mediapipe'` | The node is under the system python. Launch via `mirror.launch.py` / `ros2-arm track`, which set `prefix=/opt/mpvenv/bin/python`. Synthetic mode works without it, so this looks like a camera fault but isn't. |
+| Tracking works but the robot never moves | Expected in `track_only` — that IS M3. Live mirroring is M4. |
+| `/body/tracked` is always false | Your shoulders or nose are below `min_visibility`. Sit back so your upper body is in frame; check with `preview:=true`. |
+| Skeleton in RViz but no `human/*` TF | Set the RViz **Fixed Frame** to `base_link` and add a TF display. The frames hang off `camera_link`, which `mirror.launch.py` static-publishes from `base_link`. |
+
+### ⚠️ Run one stack per container
+
+Two launches in the same container collide: the second `move_group` and
+`controller_manager` fight the first over node names and the DDS graph, and
+acceptance tools then report failures that have nothing to do with the code.
+This bit during M3 verification and looked exactly like an M1/M2 regression.
+
+Each `ros2-arm <verb>` gets its own container (`--name armhumanoid`,
+`armmirror`, `armtrack`), so the launcher is already safe. Only hand-rolled
+`docker run ... bash -lc '<two launches>'` invocations hit it. `ros2-arm stop`
+clears everything.
 
 ## RViz performance
 
