@@ -3,9 +3,10 @@
 Your **left arm**, **right arm** and **head** drive a humanoid robot in MoveIt,
 live from one USB webcam. CPU-only, no GPU, no Gazebo, no hardware.
 
-> **Status: M0 + M1 complete and verified.** The humanoid loads, renders and
-> plans, and the image is built. Body tracking (M2–M5) is not wired up yet —
-> see [Build plan](#build-plan). `ros2-arm humanoid` works today.
+> **Status: M0–M2 complete and verified. The humanoid moves.**
+> `ros2-arm mirror synthetic` drives both arms, the head and the lift through a
+> scripted whole-body sweep in RViz — no camera, and MediaPipe is never even
+> imported. Camera tracking (M3–M4) is next; see [Build plan](#build-plan).
 
 ---
 
@@ -60,9 +61,21 @@ disqualifying for a public repo.
 ## Run it
 
 ```bash
-./docker/ros2-arm humanoid                 # FFW in RViz on mock hardware
-./docker/ros2-arm humanoid rviz:=false     # headless
+./docker/ros2-arm mirror synthetic         # 🎬 the humanoid MOVES in RViz
+./docker/ros2-arm mirror-accept            # M2 acceptance (needs the above running)
+
+./docker/ros2-arm humanoid                 # the robot alone, no motion
 ./docker/ros2-arm humanoid-check           # M1 acceptance (needs the above running)
+```
+
+`mirror synthetic` accepts every node parameter as `key:=value` — e.g.
+`rviz:=false`, `latency_probe:=true`, `sweep_period_s:=8.0`, `use_lift:=false`.
+
+Freeze and resume it live (the deadman — no jump on resume, verified):
+
+```bash
+ros2 service call /mirror_enable std_srvs/srv/SetBool "{data: false}"   # hold
+ros2 service call /mirror_enable std_srvs/srv/SetBool "{data: true}"    # go
 ```
 
 Native (Ubuntu 24.04 + ROS 2 Jazzy):
@@ -78,7 +91,7 @@ ros2 launch humanoid_mirror mock_bringup.launch.py
 > as dependencies** of `ffw-description`. Without them, `xacro` on every
 > follower `.urdf.xacro` dies with `PackageNotFoundError`.
 
-`humanoid-check` output on a healthy stack — all 19 checks pass:
+`humanoid-check` output on a healthy stack — all 18 checks pass:
 
 ```
 descriptions
@@ -135,11 +148,19 @@ the SG2 variant. Harmless. Do not "fix" them by switching to SG2.
 |---|---|---|
 | **M0** | numpy law fix + FFW and pose model baked into the image | **done, verified** |
 | **M1** | humanoid loads, renders, plans; 4 controllers active; dual-arm IK | **done, verified** |
-| M2 | 🎬 first humanoid *moving* in RViz — scripted sweep, no camera | next |
-| M3 | body tracking: TF + skeleton markers, robot parked | |
+| **M2** | 🎬 humanoid *moving* in RViz — scripted sweep, no camera | **done, verified** |
+| M3 | body tracking: TF + skeleton markers, robot parked | next |
 | M4 | arms mirror live | |
-| M5 | head + lift + `/mirror_enable` deadman + docs | |
+| M5 | head + lift gains tuned against a real body | |
 | M6 | *(optional)* Cartesian hands via a `pink` QP | |
+
+`/mirror_enable` (planned for M5) landed early in M2 — the control loop needed
+a freeze path anyway, and it is verified: frozen publishes **nothing**, and
+resume re-seeds from `/joint_states` so there is no jump.
+
+**M2 measured** (`mirror-accept`, 10 s window): 50.8 Hz on all four controller
+topics, 0 joint-limit violations, 0 per-tick slew violations, 11/11 swept
+joints moved, and the mock hardware tracked every command.
 
 Every milestone has a no-camera synthetic test, per house convention.
 

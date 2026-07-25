@@ -23,8 +23,7 @@ setup(
     license="Apache-2.0",
     entry_points={
         "console_scripts": [
-            # mirror_node lands in M2 — no entry point until the file exists,
-            # so a broken build can never masquerade as a missing camera.
+            "mirror_node = humanoid_mirror.mirror_node:main",
             "ffw_check = humanoid_mirror.ffw_check:main",
         ],
     },

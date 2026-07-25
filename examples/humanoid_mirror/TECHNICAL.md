@@ -7,9 +7,10 @@ Gazebo, no GPU, no hardware). Unlike [hand_follow](../hand_follow/) it does
 [gen3_pick_place](../gen3_pick_place/): a single `ament_python` package that
 consumes an external description.
 
-**Implemented so far: M0 (image) and M1 (bring-up + acceptance).** The tracking
-and retargeting layers below are designed and measured but not yet written; they
-are documented here so M2–M5 has a spec to build against, and each is marked.
+**Implemented so far: M0 (image), M1 (bring-up + acceptance), M2 (the humanoid
+moves).** The tracking and retargeting layers below are designed and measured
+but not yet written; they are documented here so M3–M5 has a spec to build
+against, and each is marked.
 
 ## Why FFW and not something from MoveIt
 
@@ -43,6 +44,29 @@ only apt-installable Jazzy robot whose MoveIt config already defines `arm_l`,
   already declares `arm_l_controller` / `arm_r_controller` / `head_controller` /
   `lift_controller`, and MoveIt's simple controller manager only finds ours if
   they match exactly.
+- **`humanoid_mirror/mirror_node.py`** — the node (`mirror_node`). One process,
+  a pose source plus a 50 Hz control timer. Each tick: read the source →
+  One-Euro filter **per output joint angle** → clamp into
+  `[lower+margin, upper-margin]` → slew by at most `max_joint_speed / rate_hz`
+  → publish a single-point `JointTrajectory` to each of the four controllers.
+  Seeds `q_cmd` from `/joint_states` before the first command, so start-up
+  cannot produce a jump; on tracking loss it holds `loss_hold_sec` then decays
+  to HOME at a gentler `decay_speed`.
+  **The architectural upgrade over `hand_follow`: input rate and command rate
+  are decoupled.** `hand_follow` ticks at 20 Hz because that is what MediaPipe
+  sustains. Here the timer runs at 50 Hz and interpolates toward the latest
+  observation, so when M4 adds PoseLandmarker (24.8 ms, ~13 Hz) the robot still
+  moves at 50 Hz — smoother motion for zero extra vision CPU.
+- **`humanoid_mirror/pose_source.py`** — sources of joint targets, behind one
+  interface: `read(t) -> {joint: angle} | None`. M2 ships `SyntheticPoseSource`
+  (a scripted whole-body sweep); M3/M4's `BodyPoseSource` plugs in behind the
+  same interface and the node does not change. Pure math — no ROS, no numpy —
+  so the acceptance tools import it directly.
+- **`humanoid_mirror/joint_limits.py`** — the `MEASURED` limit table, a URDF
+  limit parser, `clamp`/`slew`, and `OneEuro`. Limits are read from the **live**
+  URDF when available and cross-checked against `MEASURED`; a disagreement
+  warns loudly rather than silently trusting either, because it means the robot
+  is not the variant this example's retargeting constants were written for.
 - **`humanoid_mirror/ffw_check.py`** — the M1 acceptance test (`ros2 run
   humanoid_mirror ffw_check`). No camera, no MediaPipe, no RViz. Asserts the
   descriptions are non-empty and name-matched, the SRDF really defines all four
@@ -83,15 +107,64 @@ Three consequences worth internalising:
 
 | Name | Type | Direction | Notes |
 |---|---|---|---|
-| `/arm_l_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish *(M2)* | `arm_l_joint1..7`, single point, 50 Hz |
-| `/arm_r_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish *(M2)* | `arm_r_joint1..7` |
-| `/head_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish *(M2)* | `head_joint1,2` |
-| `/lift_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish *(M5)* | `lift_joint`, gated on `use_lift` |
+| `/arm_l_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish | `arm_l_joint1..7`, single point, 50 Hz |
+| `/arm_r_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish | `arm_r_joint1..7` |
+| `/head_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish | `head_joint1,2` |
+| `/lift_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | publish | `lift_joint`, gated on `use_lift` |
 | `/joint_states` | `sensor_msgs/JointState` | subscribe | 100 Hz; seed / re-seed |
-| `/mirror_enable` | `std_srvs/SetBool` | service *(M5)* | deadman; `false` freezes, `true` re-seeds — no jump |
+| `/mirror_enable` | `std_srvs/SetBool` | service | deadman; `false` freezes, `true` re-seeds — no jump |
 | `/body/markers` | `visualization_msgs/MarkerArray` | publish *(M3)* | 35-connection skeleton |
 | `/body/tracked` | `std_msgs/Bool` | publish *(M3)* | visibility-gated |
 | `/compute_ik` | `moveit_msgs/GetPositionIK` | client | M1 check only; not in the control path |
+
+## Node parameters (all also launch args of `mirror.launch.py`)
+
+| Parameter | Default | Meaning |
+|---|---|---|
+| `synthetic` | `false` | scripted whole-body sweep instead of the camera. **M2 requires `true`** — camera mode raises `NotImplementedError` |
+| `rate_hz` | `50.0` | control tick / command rate |
+| `time_from_start` | `0.06` | seconds-ahead stamp on each trajectory point |
+| `max_joint_speed` | `2.0` | rad/s slew ceiling (FFW's URDF limit is 4.8) |
+| `limit_margin` | `0.05` | stay this far off every joint limit |
+| `min_cutoff` / `beta` | `1.0` / `0.5` | One-Euro on arm angles |
+| `head_min_cutoff` | `0.5` | slower One-Euro for the head (tiny travel) |
+| `use_lift` | `true` | also drive the prismatic lift |
+| `loss_hold_sec` | `2.0` | hold after tracking loss before homing |
+| `decay_speed` | `0.5` | rad/s while decaying home |
+| `sweep_period_s` | `14.0` | synthetic sweep period |
+| `latency_probe` | `false` | log tick rate + clamp/slew hits every 3 s |
+
+`start_delay` (default 18 s) is a launch-only argument: how long to wait for
+`move_group` and the four controller spawners before starting the node.
+
+## M2 acceptance — and a measurement trap worth remembering
+
+`tools/mirror_accept.py` (`ros2-arm mirror-accept`) subscribes for a window and
+checks publish rates, joint limits, the per-tick slew budget, that the robot
+**actually moved**, and that the mock hardware follows. Measured over 10 s:
+
+```
+publish rates      50.8 Hz on all four controller topics
+joint limits       0 violations (margin 0.05)
+per-tick slew      0 violations (<= 0.0400 rad/tick)
+velocity           0 violations (<= 2.00 rad/s)
+motion             11/11 swept joints moved
+mock hardware      11/11 joints tracking the last command
+```
+
+⚠️ **Do not compute joint speed from subscriber arrival times.** The first
+version of this tool did, and reported phantom violations up to 6.68 rad/s on
+`arm_l_joint4` — against a node that provably clamps every tick to 0.04 rad.
+DDS delivers in bursts, so two messages published 20 ms apart can arrive 6 ms
+apart, and `delta / arrival_dt` then reports 3× the truth. Fixes, both applied:
+measure speed from the publisher's **header stamp**, and — better — assert the
+timing-free invariant directly, that consecutive commands never differ by more
+than `max_joint_speed / rate_hz`. The same trap applies to any rate-limit
+assertion over a ROS topic.
+
+The `slew_hits` counter settling at a constant (141 on this box) and never
+growing is the expected signature: the clamp fires only during the start-up
+transient from the seed pose into the sweep, then the sweep stays under it.
 
 ## Planned tracking layer (M3+)
 
@@ -230,7 +303,12 @@ Note the verification step runs under `SHELL ["/bin/bash", "-c"]` and sources
 | File | Role |
 |---|---|
 | `ros2_ws/src/humanoid_mirror/humanoid_mirror/ffw_config.py` | corrected MoveIt config chain + variant pin + joint constants |
+| `ros2_ws/src/humanoid_mirror/humanoid_mirror/mirror_node.py` | the node — 50 Hz control tick, filter → clamp → slew → publish |
+| `ros2_ws/src/humanoid_mirror/humanoid_mirror/pose_source.py` | pose sources; M2's synthetic sweep, M4's camera plugs in behind it |
+| `ros2_ws/src/humanoid_mirror/humanoid_mirror/joint_limits.py` | limit table + URDF parser, clamp/slew, OneEuro |
 | `ros2_ws/src/humanoid_mirror/humanoid_mirror/ffw_check.py` | M1 acceptance (`ros2-arm humanoid-check`) |
+| `ros2_ws/tools/mirror_accept.py` | M2 acceptance (`ros2-arm mirror-accept`) |
+| `ros2_ws/src/humanoid_mirror/launch/mirror.launch.py` | bring-up + node (`ros2-arm mirror synthetic`) |
 | `ros2_ws/src/humanoid_mirror/launch/mock_bringup.launch.py` | full mock stack (`ros2-arm humanoid`) |
 | `ros2_ws/src/humanoid_mirror/launch/ffw_moveit.launch.py` | `move_group` alone, headless |
 | `ros2_ws/src/humanoid_mirror/config/ros2_controllers.yaml` | four JTCs, disjoint joint sets |

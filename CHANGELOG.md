@@ -5,6 +5,47 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-07-25 — humanoid_mirror M2: the humanoid moves
+
+### Added
+- `mirror_node` + `mirror.launch.py` (`ros2-arm mirror synthetic`) — a
+  scripted whole-body sweep drives both 7-DOF arms, the 2-DOF head and
+  the lift in RViz at 50 Hz. **No camera, and MediaPipe is never
+  imported** (vision imports are lazy, inside the camera branch), so the
+  demo cannot be broken by a missing webcam or a drifted venv. Camera
+  mode raises `NotImplementedError` with a pointer to the build plan
+  rather than failing obscurely.
+- `pose_source.py` — pose sources behind one interface
+  (`read(t) -> {joint: angle} | None`); M4's camera source plugs in
+  without touching the node. Pure math, no ROS/numpy, so tools import it.
+- `joint_limits.py` — `MEASURED` limit table + a URDF parser. Limits are
+  read from the **live** URDF and cross-checked against the table; a
+  mismatch warns loudly, since it means the robot is not the variant the
+  retargeting constants were written for.
+- `tools/mirror_accept.py` (`ros2-arm mirror-accept`) — M2 acceptance.
+  Measured over 10 s: **50.8 Hz on all four controller topics, 0
+  joint-limit violations, 0 per-tick slew violations, 11/11 swept joints
+  moved, mock hardware tracking every command.** Emits `RESULT:{json}`.
+- `/mirror_enable` (`std_srvs/SetBool`) landed early from M5 — the
+  control loop needed a freeze path anyway. Verified: frozen publishes
+  **nothing**, resume re-seeds from `/joint_states` (max step on resume
+  0.0164 rad, under the 0.0400 budget — no jump).
+
+### Notes
+- Input rate and command rate are **decoupled**: the timer runs at 50 Hz
+  and interpolates toward the latest observation, so when M4 adds
+  PoseLandmarker (24.8 ms, ~13 Hz) the robot still moves at 50 Hz.
+- `max_joint_speed` is sized from the rate (2.0 rad/s → 0.04 rad/tick at
+  50 Hz), never copied. hand_follow's 0.10 at 20 Hz is *exactly* 2.0
+  rad/s despite its docstring claiming "under" the limit; copied into a
+  50 Hz loop that silently becomes 5.0 rad/s.
+- **Measurement trap, found the hard way:** never compute joint speed
+  from subscriber *arrival* times. DDS delivers in bursts, so messages
+  published 20 ms apart can arrive 6 ms apart — the first version of
+  mirror_accept reported phantom 6.68 rad/s violations against a node
+  that provably clamps to 0.04 rad/tick. Use the publisher's header
+  stamp, and prefer asserting the timing-free per-tick invariant.
+
 ## 2026-07-25 — examples/humanoid_mirror: a humanoid in MoveIt (M0 + M1)
 
 ### Added
@@ -29,7 +70,7 @@ after the touched demos verifiably run).
   `mock_components/GenericSystem` + `move_group` + RViz, with
   `joint_state_broadcaster` and four JTCs chained on `OnProcessExit`.
 - `ffw_check.py` (`ros2-arm humanoid-check`) — M1 acceptance, no camera:
-  19 checks covering descriptions, all four SRDF groups, 19 mock joints,
+  18 checks covering descriptions, all four SRDF groups, 19 mock joints,
   four active controllers over disjoint joint sets, and `/compute_ik`
   success for **both** 7-DOF arms. All green.
 - `pose_landmarker_full.task` baked into the image (sha256-pinned,

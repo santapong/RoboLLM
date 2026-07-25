@@ -36,8 +36,10 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
   Panda/Fanuc + a description-only PR2 whose SRDF is a 75-line stub with
   no head group. We use ROBOTIS FFW `ffw_bg2_rev4_follower`, apt-installed,
   the only Jazzy robot with arm_l/arm_r/HEAD groups ready. M0+M1 done:
-  `ros2-arm humanoid` + `humanoid-check` (19 checks green, dual-arm IK).
-  M2-M5 = tracking/retargeting, specced in its TECHNICAL.md. NOTE
+  `ros2-arm humanoid` + `humanoid-check` (18 checks green, dual-arm IK).
+  M2 too: `ros2-arm mirror synthetic` + `mirror-accept` — sweeps both
+  arms + head + lift at 50 Hz with NO camera and mediapipe never
+  imported. M3-M4 = live tracking, specced in its TECHNICAL.md. NOTE
   ffw_moveit_config's own launch file CRASHES — use ours).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).

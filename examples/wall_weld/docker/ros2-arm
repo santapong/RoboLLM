@@ -32,7 +32,13 @@
 #                        all 4 controllers are active over disjoint joints, and
 #                        /compute_ik succeeds for BOTH 7-DOF arms. Needs a
 #                        running `ros2-arm humanoid` in another terminal.
-#                        (webcam body mirroring is M2+ — not wired up yet)
+#   ros2-arm mirror synthetic      humanoid + scripted whole-body sweep (no
+#                        camera): both arms raise and fold, head nods and
+#                        glances, lift travels. Accepts key:=value overrides
+#                        and rviz:=false. (camera mode is M4 — not yet)
+#   ros2-arm mirror-accept         M2 acceptance: publish rates, joint limits,
+#                        slew limits, did-it-actually-move, and whether the
+#                        mock hardware follows. Needs `mirror synthetic` up.
 # GUI (RViz/MoveIt) works via X passthrough + hardware GL; ~/ros2_ws mounts.
 if [ "$1" = stop ]; then
     docker rm -f armloop armmoveit armdemo armview armpickplace armhandfollow armwallweld armmirror armhumanoid 2>/dev/null
@@ -93,6 +99,20 @@ if [ "$1" = humanoid ]; then
     shift
     DOCKNAME="--name armhumanoid"
     CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mock_bringup.launch.py $*"
+fi
+if [ "$1" = mirror ]; then
+    shift
+    DOCKNAME="--name armmirror"
+    if [ "$1" = synthetic ]; then
+        shift
+        CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mirror.launch.py synthetic:=true $*"
+    else
+        CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mirror.launch.py $*"
+    fi
+fi
+if [ "$1" = mirror-accept ]; then
+    shift
+    CMD="python3 /ros2_ws/tools/mirror_accept.py $*"
 fi
 if [ "$1" = humanoid-check ]; then
     shift
