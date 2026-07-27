@@ -128,3 +128,13 @@ vendored deliverable.
 Under the ~60 MB concern threshold — no lower-res mesh substitution was
 needed. `talos_description/meshes/` was vendored in full (not trimmed to only
 the 47 referenced files) since it was already well under budget as shipped.
+
+## License note (decided 27 Jul 2026)
+
+The talos_robot repository is licensed Apache-2.0 (its root LICENSE, copied
+into each vendored package), but several upstream xacro files carry older
+CC BY-NC-ND 3.0 headers — an upstream inconsistency, present verbatim in
+PAL's own public repo. We redistribute those files unchanged, with
+attribution, in a non-commercial learning repository, and treat the repo
+LICENSE as governing. Final call re-confirmed at the release/push gate.
+If this ever becomes a concern, the fallback robot is JVRC-1 (BSD-2-Clause).
