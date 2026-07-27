@@ -24,6 +24,11 @@
 #                        the SAME launch, which reports max excursion per
 #                        group after `duration` seconds (default 10.0) and
 #                        exits. Accepts duration:=N and use_rviz:=false.
+#                        move_group is OFF by default here (use_moveit:=false
+#                        -- sweep_node never plans, and this skips move_group's
+#                        measured ~3-3.5% CPU tax); pass use_moveit:=true if
+#                        you also want retarget-bench --fk against this
+#                        container.
 #   ros2-arm track                  TALOS M3: full-body webcam BODY tracking
 #                        (talos_mirror track_node) -- your skeleton
 #                        (arms+legs+head+torso lean) in RViz via TF human/*,
@@ -59,9 +64,16 @@
 #                        robot-only config the mock bring-up ships --
 #                        use_rviz:=false for headless, rviz_config:=PATH to
 #                        override. /mirror_enable (std_srvs/SetBool) is the
-#                        deadman; `ros2-arm stop` kills everything. Full
-#                        walkthrough: docs/mirror-run.md. REPOINTED at
-#                        talos_mirror below (M4) -- the
+#                        deadman; `ros2-arm stop` kills everything. move_group
+#                        is OFF by default here too (use_moveit:=false --
+#                        mirroring never plans; grep-confirmed zero FK/IK
+#                        calls in track_node/mirror_node/retarget.py), which
+#                        skips move_group's measured ~3-3.5% CPU tax -- it was
+#                        the CHEAPEST process in the profile but 100% wasted
+#                        on this path. Pass use_moveit:=true if you want
+#                        retarget-bench --fk against this container instead
+#                        of `talos`. Full walkthrough: docs/mirror-run.md.
+#                        REPOINTED at talos_mirror below (M4) -- the
 #                        `mirror`/`mirror-accept` verbs used to be humanoid_
 #                        mirror templates (see the top-of-file note); that
 #                        package was never vendored into THIS ros2_ws (only
@@ -75,10 +87,13 @@
 #                        gating-transition continuity by TICK INDEX -- pure
 #                        math, no ROS. Add --fk to compare arm_dirs()/
 #                        leg_dirs() against MoveIt /compute_fk (needs
-#                        `ros2-arm mirror` or `talos` running), --ros to
-#                        check all six live controllers (needs `mirror`
-#                        running). Also REPOINTED at talos_mirror, same
-#                        reason as `mirror` above.
+#                        `ros2-arm talos` running, or `ros2-arm mirror
+#                        use_moveit:=true` -- move_group is OFF by default
+#                        under `mirror`/`sweep` now, see those verbs above),
+#                        --ros to check all six live controllers (needs
+#                        `mirror` running, any use_moveit setting). Also
+#                        REPOINTED at talos_mirror, same reason as `mirror`
+#                        above.
 #   ros2-arm ab-bench record FILE [--duration S] [--rate HZ]
 #                        c2-qp (M5): record one deterministic synthetic
 #                        body-observation session to FILE (jsonl).
@@ -359,9 +374,17 @@ exec docker run $DOCKTTY --rm $DOCKNAME \
                  echo "building humanoid_mirror (colcon)...";
                  colcon build --packages-select humanoid_mirror;
              fi;
-             if [ -d src/talos_moveit_config ] && [ ! -d install/talos_moveit_config ]; then
-                 echo "building talos description + moveit config (colcon)...";
-                 colcon build --packages-select talos_description_inertial talos_description_calibration pal_urdf_utils talos_description talos_moveit_config;
+             if [ -d src/talos_moveit_config ] && [ ! -d install/talos_description ]; then
+                 echo "building talos description packages (colcon)...";
+                 colcon build --packages-select talos_description_inertial talos_description_calibration pal_urdf_utils talos_description;
+             fi;
+             if [ -d src/talos_moveit_config ]; then
+                 # UNCONDITIONAL like talos_mirror below: launch/config edits
+                 # in this package were once silently masked by a stale
+                 # install/ (the CPU-diet update_rate/use_moveit changes ran
+                 # as no-ops until a forced rebuild). Config-only package, a
+                 # no-op rebuild costs ~a second.
+                 colcon build --packages-select talos_moveit_config;
              fi;
              if [ -d src/talos_mirror ]; then
                  # UNCONDITIONAL, unlike the other guards above -- talos_mirror

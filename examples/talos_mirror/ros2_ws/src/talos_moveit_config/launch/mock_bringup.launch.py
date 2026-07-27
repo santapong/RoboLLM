@@ -56,6 +56,7 @@ def build_moveit_configs():
 
 def _launch_setup(context, *args, **kwargs):
     use_rviz = LaunchConfiguration("use_rviz").perform(context) == "true"
+    use_moveit = LaunchConfiguration("use_moveit").perform(context) == "true"
     moveit_configs = build_moveit_configs()
 
     pkg = get_package_share_directory("talos_moveit_config")
@@ -79,16 +80,29 @@ def _launch_setup(context, *args, **kwargs):
             output="screen",
             parameters=[moveit_configs.robot_description, controllers_yaml],
         ),
-        Node(
-            package="moveit_ros_move_group",
-            executable="move_group",
-            output="screen",
-            parameters=[
-                moveit_configs.to_dict(),
-                {"publish_robot_description_semantic": True},
-            ],
-        ),
     ]
+
+    # move_group -- OPTIONAL (use_moveit:=false). Measured (see TECHNICAL.md
+    # "CPU profile" section): a flat ~3-3.5% CPU tax from its
+    # PlanningSceneMonitor subscribing /joint_states + /tf, paid whether or
+    # not anything ever calls /compute_fk or /compute_ik. talos-check and
+    # retarget-bench --fk are the only consumers of those services in this
+    # package (grep-confirmed: neither track_node nor mirror_node ever calls
+    # a MoveIt service), so this defaults true here (the `talos` verb, used
+    # by talos-check) and defaults false at the mirror/sweep launch files
+    # that include this one, since mirroring/sweeping never plans.
+    if use_moveit:
+        nodes.append(
+            Node(
+                package="moveit_ros_move_group",
+                executable="move_group",
+                output="screen",
+                parameters=[
+                    moveit_configs.to_dict(),
+                    {"publish_robot_description_semantic": True},
+                ],
+            )
+        )
 
     # Spawn joint_state_broadcaster first, then chain the six controllers off
     # its exit so they activate in a deterministic order.
@@ -135,6 +149,16 @@ def generate_launch_description():
         [
             DeclareLaunchArgument(
                 "use_rviz", default_value="true", description="launch RViz2"
+            ),
+            DeclareLaunchArgument(
+                "use_moveit", default_value="true",
+                description="launch move_group. Only talos-check and retarget-bench "
+                             "--fk need it (FK/IK services); mirroring/sweeping never "
+                             "plans, so mirror.launch.py and sweep.launch.py default "
+                             "this false to skip move_group's ~3-3.5% CPU "
+                             "PlanningSceneMonitor tax (see TECHNICAL.md CPU profile). "
+                             "This launch file's own default stays true (the `talos` "
+                             "verb, used by talos-check).",
             ),
             OpaqueFunction(function=_launch_setup),
         ]

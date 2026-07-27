@@ -33,7 +33,10 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(moveit_pkg, "launch", "mock_bringup.launch.py")
         ),
-        launch_arguments={"use_rviz": LaunchConfiguration("use_rviz")}.items(),
+        launch_arguments={
+            "use_rviz": LaunchConfiguration("use_rviz"),
+            "use_moveit": LaunchConfiguration("use_moveit"),
+        }.items(),
     )
 
     sweep = Node(
@@ -64,8 +67,15 @@ def generate_launch_description():
                 description="launch RViz2 alongside the mock stack",
             ),
             DeclareLaunchArgument(
+                "use_moveit", default_value="false",
+                description="launch move_group. sweep_node/limit_monitor never plan, "
+                             "so this defaults false to skip its ~3-3.5% CPU tax; set "
+                             "true to also use retarget-bench --fk against this "
+                             "container.",
+            ),
+            DeclareLaunchArgument(
                 "start_delay", default_value="25.0",
-                description="seconds to wait for move_group + the six controllers",
+                description="seconds to wait for the six controllers",
             ),
             DeclareLaunchArgument(
                 "duration", default_value="10.0",

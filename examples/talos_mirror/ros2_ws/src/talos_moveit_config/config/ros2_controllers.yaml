@@ -15,7 +15,17 @@
 # controller if the name matches exactly.
 controller_manager:
   ros__parameters:
-    update_rate: 100  # Hz -- comfortably above any teleop/planning command rate
+    # Hz -- was 100 ("comfortably above any teleop/planning command rate",
+    # per this comment's own prior admission that the headroom was
+    # unmeasured). Measured (docker exec top, n=20 samples/process, see
+    # TECHNICAL.md CPU profile): mirror_node's real command cadence is
+    # 50 Hz (mirror_rate_hz default) and sweep_node's is also 50 Hz
+    # (rate_hz default) -- /joint_states ran at 92.6-100 Hz against that
+    # 50 Hz input, and ros2_control_node's own CPU jumped 14.00% -> 21.20%
+    # between idle-hold and live-command runs, confirming the control loop
+    # genuinely fires ~2x per command. 60 keeps headroom above the fastest
+    # real command rate on this path without doubling the loop.
+    update_rate: 60
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster

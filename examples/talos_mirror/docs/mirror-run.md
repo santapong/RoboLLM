@@ -34,10 +34,21 @@ experimental QP wrist layer — direct copy is the default, etc. — see the
 help text in `docker/ros2-arm` for the full list).
 
 **Startup takes ~25 s**: RViz shows the robot immediately, but tracking
-starts only after move_group and all six controllers come up
-(`start_delay` in `mirror.launch.py`). Your skeleton appears and
-mirroring begins once that delay elapses — the quiet first half-minute
-is normal, not a hang.
+starts only after all six controllers come up (`start_delay` in
+`mirror.launch.py`). Your skeleton appears and mirroring begins once that
+delay elapses — the quiet first half-minute is normal, not a hang.
+
+**move_group is OFF by default** (`use_moveit:=false`) on `mirror`/`sweep`
+now — measured (see [TECHNICAL.md](../TECHNICAL.md)'s CPU profile section)
+at a flat ~3-3.5% CPU tax that mirroring never uses (neither `track_node`
+nor `mirror_node` calls `/compute_fk` or `/compute_ik`). Pass
+`use_moveit:=true` if you want `retarget-bench --fk` to run against a
+`mirror`/`sweep` container instead of `talos` (which still defaults
+`use_moveit:=true`):
+
+```bash
+./docker/ros2-arm mirror synthetic use_moveit:=true use_rviz:=false
+```
 
 ## Before you start: how to actually get mirrored
 

@@ -91,7 +91,10 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(moveit_pkg, "launch", "mock_bringup.launch.py")
         ),
-        launch_arguments={"use_rviz": LaunchConfiguration("use_rviz")}.items(),
+        launch_arguments={
+            "use_rviz": LaunchConfiguration("use_rviz"),
+            "use_moveit": LaunchConfiguration("use_moveit"),
+        }.items(),
     )
 
     track_ros_args = []
@@ -148,9 +151,17 @@ def generate_launch_description():
                 description="launch RViz2 alongside the mock stack",
             ),
             DeclareLaunchArgument(
+                "use_moveit", default_value="false",
+                description="launch move_group. Mirroring never plans (no FK/IK "
+                             "call anywhere in track_node/mirror_node/retarget.py) "
+                             "so this defaults false to skip its ~3-3.5% CPU tax; "
+                             "set true to also use retarget-bench --fk against this "
+                             "container (see docs/mirror-run.md).",
+            ),
+            DeclareLaunchArgument(
                 "start_delay", default_value="25.0",
-                description="seconds to wait for move_group + the six controllers "
-                            "before track_node/mirror_node start",
+                description="seconds to wait for the six controllers (and move_group, "
+                            "if use_moveit:=true) before track_node/mirror_node start",
             ),
             *[
                 DeclareLaunchArgument(name, default_value=default, description=desc)
