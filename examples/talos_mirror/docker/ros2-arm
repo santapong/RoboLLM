@@ -24,6 +24,82 @@
 #                        the SAME launch, which reports max excursion per
 #                        group after `duration` seconds (default 10.0) and
 #                        exits. Accepts duration:=N and use_rviz:=false.
+#   ros2-arm track                  TALOS M3: full-body webcam BODY tracking
+#                        (talos_mirror track_node) -- your skeleton
+#                        (arms+legs+head+torso lean) in RViz via TF human/*,
+#                        /body/observation and /body/markers, robot PARKED.
+#                        synthetic:=true (default) = deterministic full-body
+#                        motion generator, no camera; synthetic:=false =
+#                        /dev/video0 under /opt/mpvenv. preview:=true for the
+#                        mirrored webcam window (camera mode only). STAND
+#                        BACK so your torso+arms are in frame -- see
+#                        docs/mirror-run.md.
+#   ros2-arm body-accept            TALOS M3 acceptance, synthetic tier (no
+#                        camera): torso frame, per-limb visibility gates
+#                        (arms/legs/head, independently), the raw-frame Pose
+#                        law (with a negative control), the synthetic
+#                        full-body generator. Add --ros for the topic tier
+#                        (needs `ros2-arm track` running), --live for the
+#                        camera tier (needs a person in frame).
+#   ros2-arm mirror synthetic       TALOS M4: mock bring-up + talos_track +
+#                        talos_mirror's mirror_node, ALL IN ONE launch. Your
+#                        LEFT arm/leg drives the robot's RIGHT (mirror mode
+#                        by default; the pelvis never moves). synthetic:=true
+#                        = deterministic full-body generator, no camera;
+#                        omit it for the live webcam (synthetic:=false,
+#                        under /opt/mpvenv). preview:=true for the mirrored
+#                        webcam window, mirror_mode:=direct for behind-you
+#                        mapping. LIVE MODE: STAND BACK so torso+arms are in
+#                        frame and RAISE YOUR ARMS -- at rest elbows measure
+#                        0.02-0.09 visibility, below the gate, so each arm is
+#                        held, not guessed; legs only mirror once your feet
+#                        are in frame too (seated = arms-only, expected).
+#                        RViz opens on rviz/mirror.rviz (robot + your tracked
+#                        skeleton on /body/markers + human/* TF), not the
+#                        robot-only config the mock bring-up ships --
+#                        use_rviz:=false for headless, rviz_config:=PATH to
+#                        override. /mirror_enable (std_srvs/SetBool) is the
+#                        deadman; `ros2-arm stop` kills everything. Full
+#                        walkthrough: docs/mirror-run.md. REPOINTED at
+#                        talos_mirror below (M4) -- the
+#                        `mirror`/`mirror-accept` verbs used to be humanoid_
+#                        mirror templates (see the top-of-file note); that
+#                        package was never vendored into THIS ros2_ws (only
+#                        talos_mirror/talos_description*/talos_moveit_config
+#                        are), so running them unmodified would just fail
+#                        with "package 'humanoid_mirror' not found".
+#   ros2-arm retarget-bench         TALOS M4 verification: round-trip +
+#                        known-answer FK, the discriminating-case mutation-
+#                        kill matrix (forward reach/step vs a negate-x-too
+#                        and a left/right-swap-only wrong formula), and
+#                        gating-transition continuity by TICK INDEX -- pure
+#                        math, no ROS. Add --fk to compare arm_dirs()/
+#                        leg_dirs() against MoveIt /compute_fk (needs
+#                        `ros2-arm mirror` or `talos` running), --ros to
+#                        check all six live controllers (needs `mirror`
+#                        running). Also REPOINTED at talos_mirror, same
+#                        reason as `mirror` above.
+#   ros2-arm ab-bench record FILE [--duration S] [--rate HZ]
+#                        c2-qp (M5): record one deterministic synthetic
+#                        body-observation session to FILE (jsonl).
+#   ros2-arm ab-bench replay FILE --mode direct|qp [--control-hz HZ]
+#                        replay FILE through ONE retarget mode at HZ
+#                        (default 50) and print its metrics.
+#   ros2-arm ab-bench ab FILE [--duration S] [--rate HZ] [--control-hz HZ]
+#                        record (unless --skip-record) THEN replay FILE
+#                        through BOTH modes and print a side-by-side
+#                        comparison: wrist Cartesian tracking error, mean
+#                        jerk, joint-limit margin violations, solve time
+#                        per tick. No ROS/robot needed -- pure python +
+#                        pinocchio/pink under /opt/mpvenv. See
+#                        tools/qp_ab_harness.py.
+#   `mirror mode:=direct|qp` (default direct) -- c2-qp (M5): qp additionally
+#                        runs both wrists through pink/pinocchio task-space
+#                        differential IK (qp_retarget.WristQPSolver),
+#                        warm-started, joint/velocity-limited from the
+#                        pinocchio model, biased to the M4 direct-copy
+#                        solution via a PostureTask; direct is the
+#                        unmodified M4 pipeline. See mirror_node.py.
 # ros2-arm — ROS2 Jazzy + MoveIt2 container for robot-arm work.
 #   ros2-arm             interactive shell (MoveIt2 + ros2_control ready)
 #   ros2-arm <cmd...>    run a command in the arm container
@@ -64,13 +140,8 @@
 #   ros2-arm mirror-accept         M2 acceptance: publish rates, joint limits,
 #                        slew limits, did-it-actually-move, and whether the
 #                        mock hardware follows. Needs `mirror synthetic` up.
-#   ros2-arm track                 M3: webcam BODY tracking — your skeleton in
-#                        RViz (TF human/* + /body/markers) with the robot
-#                        PARKED. add preview:=true for the mirrored webcam
-#                        window. Pose runs on the RAW frame (see TECHNICAL.md).
-#   ros2-arm body-accept           M3 acceptance, synthetic tier (no camera).
-#                        add --live for the camera tier incl. the flip/label
-#                        regression guard, --ros for the topic tier.
+#                        (`track` / `body-accept` above are TALOS's own,
+#                        wired to talos_mirror -- see near the top.)
 #   ros2-arm mirror                M4: LIVE mirroring — your arms and head
 #                        drive the humanoid. Mirror mode by default (your
 #                        LEFT arm -> its RIGHT). RAISE YOUR ARMS: at rest the
@@ -103,6 +174,11 @@ if [ -z "$WS" ]; then
 fi
 mkdir -p "$WS/src"
 DOCKNAME=""
+# Set by the live `mirror` branch below to an in-container rviz2 config path
+# -- when non-empty, the bash -c script backgrounds `rviz2 -d "$RVIZ_BG"`
+# right after sourcing install/setup.bash, alongside the foreground ros2
+# launch. Empty means no extra RViz gets started.
+RVIZ_BG=""
 command -v xhost >/dev/null && xhost +local:root >/dev/null 2>&1
 
 if ! docker image inspect ros2-talos:jazzy >/dev/null 2>&1; then
@@ -147,11 +223,40 @@ fi
 if [ "$1" = mirror ]; then
     shift
     DOCKNAME="--name armmirror"
+    # TALOS M4: mock bring-up + talos_track + mirror_node in ONE launch (see
+    # the top-of-file note -- this used to be a humanoid_mirror template;
+    # that package was never vendored into this ros2_ws, so it is repointed
+    # at talos_mirror/launch/mirror.launch.py now that M4 exists).
     if [ "$1" = synthetic ]; then
         shift
-        CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mirror.launch.py synthetic:=true $*"
+        CMD="ros2 launch /ros2_ws/src/talos_mirror/launch/mirror.launch.py synthetic:=true $*"
     else
-        CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mirror.launch.py $*"
+        # Live mirror: show BOTH the robot and the tracked human skeleton.
+        # mirror.launch.py only forwards use_rviz through to mock_bringup's
+        # own RViz (talos_moveit_config/rviz/talos_moveit.rviz -- robot
+        # only, no /body/markers or human/* TF), and that launch file is
+        # another agent's, so we do not edit it to add an rviz_config
+        # argument. Instead: force its built-in RViz off (use_rviz:=false,
+        # always -- one copy, ours below is the only one that can show the
+        # skeleton) and start OUR OWN rviz2 on rviz/mirror.rviz from inside
+        # the same container via RVIZ_BG (see near the top of this script
+        # and the bash -c block at the bottom), unless the caller passed
+        # use_rviz:=false (fully headless) or overrode rviz_config:=PATH.
+        # rviz_config:= is a LAUNCHER-level flag, not a mirror.launch.py
+        # launch argument -- strip it before forwarding the rest through.
+        MIRROR_RVIZ="/ros2_ws/src/talos_mirror/rviz/mirror.rviz"
+        RVIZ_ON=true
+        FWD=""
+        for a in "$@"; do
+            case "$a" in
+                use_rviz:=false) RVIZ_ON=false ;;
+                use_rviz:=true) RVIZ_ON=true ;;
+                rviz_config:=*) MIRROR_RVIZ="${a#rviz_config:=}" ;;
+                *) FWD="$FWD $a" ;;
+            esac
+        done
+        CMD="ros2 launch /ros2_ws/src/talos_mirror/launch/mirror.launch.py synthetic:=false use_rviz:=false$FWD"
+        [ "$RVIZ_ON" = true ] && RVIZ_BG="$MIRROR_RVIZ"
     fi
 fi
 if [ "$1" = mirror-accept ]; then
@@ -161,11 +266,21 @@ fi
 if [ "$1" = track ]; then
     shift
     DOCKNAME="--name armtrack"
-    CMD="ros2 launch /ros2_ws/src/humanoid_mirror/launch/mirror.launch.py track_only:=true $*"
+    CMD="ros2 launch /ros2_ws/src/talos_mirror/launch/track.launch.py $*"
 fi
 if [ "$1" = retarget-bench ]; then
     shift
     CMD="python3 /ros2_ws/tools/retarget_bench.py $*"
+fi
+if [ "$1" = ab-bench ]; then
+    shift
+    # c2-qp (M5) A/B harness: record one deterministic synthetic body-
+    # observation session, replay it through BOTH direct and qp retarget
+    # modes offline, report tracking-error/jerk/limit-margin/solve-time
+    # metrics per mode. No ROS needed (pure python + pinocchio/pink), but
+    # pinocchio/pink live in /opt/mpvenv -- see tools/qp_ab_harness.py.
+    # Default: `ros2-arm ab-bench ab /ros2_ws/tools/ab_session.jsonl`
+    CMD="/opt/mpvenv/bin/python /ros2_ws/tools/qp_ab_harness.py $*"
 fi
 if [ "$1" = body-accept ]; then
     shift
@@ -219,6 +334,7 @@ exec docker run $DOCKTTY --rm $DOCKNAME \
     -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}" \
     -e ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}" \
     -e RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}" \
+    -e RVIZ_BG="$RVIZ_BG" \
     -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
     -v "$WS:/ros2_ws" \
     -v /dev:/dev \
@@ -247,9 +363,25 @@ exec docker run $DOCKTTY --rm $DOCKNAME \
                  echo "building talos description + moveit config (colcon)...";
                  colcon build --packages-select talos_description_inertial talos_description_calibration pal_urdf_utils talos_description talos_moveit_config;
              fi;
-             if [ -d src/talos_mirror ] && [ ! -d install/talos_mirror ]; then
+             if [ -d src/talos_mirror ]; then
+                 # UNCONDITIONAL, unlike the other guards above -- talos_mirror
+                 # is under active development in this example, and a stale
+                 # install/ (e.g. left over from an earlier milestone, owned
+                 # by root from an earlier container run, so a host-side rm
+                 # cannot even clear it) would otherwise silently keep
+                 # serving old retarget.py/mirror_node.py forever, which
+                 # reads exactly like "my change had no effect". ament_python
+                 # has no compile step, so a no-op rebuild costs under a
+                 # second. NOTE: this whole block lives inside a SINGLE-
+                 # QUOTED bash -c string -- no apostrophes in this comment,
+                 # ever, or the quoting breaks and dash reports a baffling
+                 # "fi unexpected" two lines later, nowhere near the typo.
                  echo "building talos_mirror (colcon)...";
                  colcon build --packages-select talos_mirror;
              fi;
              [ -f install/setup.bash ] && source install/setup.bash;
+             if [ -n "$RVIZ_BG" ]; then
+                 echo "launching rviz2 -d $RVIZ_BG in the background...";
+                 rviz2 -d "$RVIZ_BG" >/tmp/mirror_rviz.log 2>&1 &
+             fi;
              exec "${@:-bash}"' -- $CMD

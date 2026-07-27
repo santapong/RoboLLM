@@ -1,0 +1,27 @@
+# talos_mirror example — scoped .gitignore, mirrors the patterns the repo
+# root already ignores (build/install/log, __pycache__) plus this example's
+# own regenerable harness outputs under ros2_ws/tools/. None of these are
+# sources: every one is produced by a documented `docker/ros2-arm <verb>`
+# command (qp_ab_harness.py record/replay/ab, xacro expansion, …) and should
+# be regenerated locally, not committed.
+
+# ros2_ws colcon build products (belt-and-suspenders with the repo root
+# .gitignore, which already covers build/install/log everywhere).
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/
+
+# qp_ab_harness.py record/replay/ab: recorded synthetic body-observation
+# sessions (record, default ros2_ws/tools/ab_session.jsonl) and per-mode
+# replay dumps (--out FILE.json, {mode, records, summary}).
+ros2_ws/tools/*.jsonl
+ros2_ws/tools/*_out/*.json
+ros2_ws/tools/judge*.json
+
+# ad hoc xacro-expanded URDF dumps used for one-off debugging.
+ros2_ws/tools/judge*.urdf
+
+# python bytecode cache under tools/ -- also covered by the repo root
+# __pycache__/ ignore (unanchored, matches at any depth); listed here too
+# so this file is a complete, self-contained picture of tools/ hygiene.
+ros2_ws/tools/__pycache__/

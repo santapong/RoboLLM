@@ -140,6 +140,46 @@ def safe_amplitude(name, home, limits=None, margin=DEFAULT_MARGIN, frac=0.85):
     return frac * min(home - lo, up - home)
 
 
+class OneEuro:
+    """One-Euro filter, Casiez et al. CHI 2012. Timestamps in seconds.
+
+    Copied from humanoid_mirror's joint_limits.py (itself copied from
+    hand_follow.py), proven on that hardware at min_cutoff=1.0, beta=0.5. Kept
+    as a copy rather than an import -- this example is self-contained, no
+    runtime imports from humanoid_mirror (see docs/joints.json header / the
+    house rule this repeats).
+
+    Filter ANGLES (mirror_node's OUTPUT joint targets), not landmarks:
+    filtering landmarks and then computing angles lets noise through the
+    nonlinearity of the acos/atan2 in retarget.py's solvers.
+    """
+
+    def __init__(self, min_cutoff=1.0, beta=0.0, d_cutoff=1.0):
+        self.min_cutoff, self.beta, self.d_cutoff = min_cutoff, beta, d_cutoff
+        self.x_prev = self.dx_prev = self.t_prev = None
+
+    @staticmethod
+    def _alpha(cutoff, dt):
+        tau = 1.0 / (2.0 * math.pi * cutoff)
+        return 1.0 / (1.0 + tau / dt)
+
+    def reset(self):
+        self.x_prev = self.dx_prev = self.t_prev = None
+
+    def __call__(self, x, t):
+        if self.t_prev is None:
+            self.x_prev, self.dx_prev, self.t_prev = x, 0.0, t
+            return x
+        dt = max(t - self.t_prev, 1e-4)
+        dx = (x - self.x_prev) / dt
+        a_d = self._alpha(self.d_cutoff, dt)
+        dx_hat = a_d * dx + (1.0 - a_d) * self.dx_prev
+        a = self._alpha(self.min_cutoff + self.beta * abs(dx_hat), dt)
+        x_hat = a * x + (1.0 - a) * self.x_prev
+        self.x_prev, self.dx_prev, self.t_prev = x_hat, dx_hat, t
+        return x_hat
+
+
 # math is imported for callers (sweep_node) that want math.sin/pi alongside
 # these helpers without a second import line; keeps this module the single
 # "joint safety" import like humanoid_mirror's joint_limits.py.
@@ -152,5 +192,6 @@ __all__ = [
     "slew",
     "max_step_for",
     "safe_amplitude",
+    "OneEuro",
     "math",
 ]

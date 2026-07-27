@@ -14,7 +14,11 @@
     controller spawn state -- ported from examples/humanoid_mirror's
     ffw_check.py / mirror_accept.py pattern (see TECHNICAL.md there for the
     subprocess-drains-queued-messages, never-rate-limit-from-arrival-times,
-    and acos/asin-wraps-before-range-check traps this package avoids).
+    and acos/asin-wraps-before-range-check traps this package avoids). M3
+    adds talos_track: full-body webcam tracking (body_track.py +
+    pose_source.py, ported and extended from humanoid_mirror with the leg
+    chain and per-limb gating) publishing human/* TF, /body/observation
+    (std_msgs/String JSON) and /body/markers with the robot parked.
   </description>
   <maintainer email="santapong@users.noreply.github.com">santapong</maintainer>
   <license>Apache-2.0</license>
@@ -28,6 +32,10 @@
   <exec_depend>moveit_msgs</exec_depend>
   <exec_depend>moveit_ros_move_group</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>rcl_interfaces</exec_depend>

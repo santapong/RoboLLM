@@ -1,0 +1,153 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 0
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /RobotModel1
+        - /TF1
+        - /MarkerArray1
+      Splitter Ratio: 0.5
+    Tree Height: 700
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 0.5
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.03
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 12
+      Reference Frame: <Fixed Frame>
+      Value: true
+    # The live verb (`ros2-arm mirror`): TALOS itself. Plain RobotModel (not
+    # MotionPlanning's Scene Robot) reading /robot_description off the topic
+    # robot_state_publisher latches -- this config is launched standalone by
+    # docker/ros2-arm, not through move_group's launch-time robot_description
+    # PARAMETER, so it needs the topic form to draw anything.
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Name: RobotModel
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    # The other half of the live verb: the tracked human. track_node
+    # publishes both a MarkerArray (skeleton lines + joint dots) on
+    # /body/markers AND the human/* TF frames (see TF display below) --
+    # this is what makes the demo legible: robot AND person, same view,
+    # so a mirror/direct mapping error is visible at a glance.
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: MarkerArray
+      Namespaces: {}
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /body/markers
+      Value: true
+    # TF: shows human/head, human/l_shoulder..r_ankle etc off camera_link,
+    # plus the robot's own frames off base_link. Names off by default --
+    # 20-odd human/* labels plus the robot's link frames overlap badly at
+    # this zoom; turn Show Names on per-frame from the Displays panel if
+    # you need to identify one.
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+      Marker Alpha: 1
+      Marker Scale: 0.3
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Tree:
+        {}
+      Update Interval: 0
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Value: true
+  Views:
+    Current:
+      # camera_link sits 1.2 m out in front of base_link, facing the robot
+      # (mirror.launch.py's static_transform_publisher) -- a person standing
+      # far enough back to clear the camera shows up roughly a further
+      # 1.5-2 m out. Framed wide and a bit high so BOTH the whole robot and
+      # a standing person land in view on open, no orbiting required.
+      Class: rviz_default_plugins/Orbit
+      Distance: 6.5
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.06
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0.6
+        Y: 0
+        Z: 0.9
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.01
+      Pitch: 0.25
+      Target Frame: base_link
+      Value: Orbit (rviz)
+      Yaw: 0.9
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 960
+  Hide Left Dock: false
+  Hide Right Dock: false
+  Views:
+    collapsed: true
+  Width: 1600
+  X: 60
+  Y: 60
