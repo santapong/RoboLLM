@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!-- 
+  Copyright (c) 2023 PAL Robotics S.L. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+
+<robot name="talos" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find pal_urdf_utils)/urdf/interaction_sensors/imu_talos.gazebo.xacro" />
+  <xacro:include filename="$(find pal_urdf_utils)/urdf/ft_sensors/ati_talos.gazebo.xacro" />
+
+  <xacro:macro name="talos_gazebo">
+
+    <gazebo>
+      <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+        <ros>
+          <argument>--ros-args</argument>
+          <argument>--params-file</argument>
+          <argument>$(find talos_description)/config/gazebo_controller_manager_cfg.yaml</argument>
+        </ros>
+        <hold_joints>false</hold_joints>
+        <parameters>$(find talos_description)/config/gazebo_controller_manager_cfg.yaml</parameters>
+        <xacro:if value="${is_multiple}">
+          <!-- Do something about multirobot -->
+        </xacro:if>
+        <xacro:unless value="${is_multiple}">
+          <!-- Do something about multirobot -->
+        </xacro:unless>
+      </plugin>
+    </gazebo>
+
+    <gazebo>
+      <plugin name="gazebo_ros_ft" filename="libgazebo_ros_ft_sensor.so">
+        <ros>
+          <!-- Add namespace and remap the default topic -->
+          <namespace>/talos</namespace>
+          <remapping>wrench:=base_link_wrench</remapping>
+        </ros>
+        <!-- Replace camelCase elements with camel_case ones -->
+        <body_name>base_link</body_name>
+        <frame_name>link</frame_name>
+        <update_rate>1000</update_rate>
+        <gaussian_noise>0.01</gaussian_noise>
+      </plugin>
+    </gazebo>
+
+    <gazebo>
+      <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+        <always_on>true</always_on>
+        <update_rate>50.0</update_rate>
+        <body_name>base_link</body_name>
+        <ros>
+          <!-- Add namespace and remap the default topic -->
+          <namespace>/talos</namespace>
+        </ros>
+        <gaussian_noise>0.0</gaussian_noise>
+        <frame_name>map</frame_name>
+        <xyzOffsets>0 0 0</xyzOffsets>
+        <rpyOffsets>0 0 0</rpyOffsets>
+      </plugin>
+    </gazebo>
+
+    <xacro:imu_sensor_gazebo update_rate="1000.0"/>
+    <xacro:force_torque_sensor_gazebo parent_joint_name="wrist_left_ft_joint" sensor_name="wrist_left_ft_sensor" update_rate="1000.0"/>
+    <xacro:force_torque_sensor_gazebo parent_joint_name="wrist_right_ft_joint" sensor_name="wrist_right_ft_sensor" update_rate="1000.0"/>
+    <xacro:force_torque_sensor_gazebo parent_joint_name="leg_left_6_joint" sensor_name="ankle_left_ft_sensor" update_rate="1000.0"/>
+    <xacro:force_torque_sensor_gazebo parent_joint_name="leg_right_6_joint" sensor_name="ankle_right_ft_sensor" update_rate="1000.0"/>
+
+  </xacro:macro>
+
+</robot>
+

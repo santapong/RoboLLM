@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>talos_description</name>
+  <version>2.10.3</version>
+  <description>The talos_description package</description>
+
+  <maintainer email="adria.roig@pal-robotics.com">Adria Roig</maintainer>
+  <maintainer email="ilenia.perrella@pal-robotics.com">Ilenia Perrella</maintainer>
+
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+  
+  <exec_depend>xacro</exec_depend>
+
+  <build_depend condition="$PAL_DISTRO >= alum">pal_module_cmake</build_depend>
+
+  <exec_depend>talos_description_calibration</exec_depend>
+  <exec_depend>talos_description_inertial</exec_depend>
+
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_pal</exec_depend>
+  <exec_depend>launch_param_builder</exec_depend>
+  <exec_depend>talos_controller_configuration</exec_depend>
+  <exec_depend>pal_urdf_utils</exec_depend>
+  <exec_depend condition="$PAL_DISTRO >= alum">pal_transmissions</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <test_depend>launch_testing_ament_cmake</test_depend>
+  <test_depend>urdf_test</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>

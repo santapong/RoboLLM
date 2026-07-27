@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>talos_mirror</name>
+  <version>0.1.0</version>
+  <description>
+    M2 synthetic exercise for the vendored PAL TALOS full-body humanoid
+    (talos_moveit_config): a 50 Hz sine sweep across all 30 group joints
+    (arm_l, arm_r, head, torso, leg_l, leg_r), hard-clamped at the measured
+    URDF limits, publishing JointTrajectory to the six mock
+    JointTrajectoryControllers talos_moveit_config brings up. Also carries
+    the acceptance tool (tools/talos_check.py) that checks the SRDF groups,
+    cross-checks docs/joints.json against the live URDF, FK/IK sanity, and
+    controller spawn state -- ported from examples/humanoid_mirror's
+    ffw_check.py / mirror_accept.py pattern (see TECHNICAL.md there for the
+    subprocess-drains-queued-messages, never-rate-limit-from-arrival-times,
+    and acos/asin-wraps-before-range-check traps this package avoids).
+  </description>
+  <maintainer email="santapong@users.noreply.github.com">santapong</maintainer>
+  <license>Apache-2.0</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>controller_manager_msgs</exec_depend>
+  <exec_depend>joint_state_broadcaster</exec_depend>
+  <exec_depend>joint_trajectory_controller</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>rcl_interfaces</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>talos_moveit_config</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

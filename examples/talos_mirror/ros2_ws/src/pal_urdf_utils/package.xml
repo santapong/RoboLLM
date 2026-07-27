@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>pal_urdf_utils</name>
+  <version>2.9.2</version>
+  <description>
+    VENDORED, TRIMMED subset of PAL Robotics' pal_urdf_utils: only the xacro
+    macros talos_full_v2.urdf.xacro actually pulls in (deg_to_rad, the ATI
+    wrist force/torque sensor, the torso IMU, and the default-head Orbbec
+    Astra Pro camera). See ../../VENDORED.md for what was dropped and why.
+  </description>
+  <maintainer email="santapong@users.noreply.github.com">santapong</maintainer>
+  <license>Apache License 2.0</license>
+
+  <url type="website">https://github.com/pal-robotics/pal_urdf_utils</url>
+
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+
+  <exec_depend>xacro</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

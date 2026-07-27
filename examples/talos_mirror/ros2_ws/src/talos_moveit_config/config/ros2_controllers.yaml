@@ -1,0 +1,167 @@
+# controller_manager config for the mock-hardware TALOS stack.
+#
+# Six JointTrajectoryControllers over DISJOINT joint sets, one per planning
+# group (arm_l, arm_r, head, torso, leg_l, leg_r) -- same shape as
+# humanoid_mirror's four-controller FFW layout, just two more groups because
+# TALOS has legs and a torso instead of FFW's lift. Two controllers claiming
+# the same joint would make the resource manager refuse to activate the
+# second one, silently leaving that group dead; a disjoint split avoids that
+# by construction.
+#
+# The controller names ARE ours to pick here (unlike FFW/ffw_moveit_config,
+# there is no upstream moveit_controllers.yaml to match) -- but
+# config/moveit_controllers.yaml in this same package must still name them
+# identically, since MoveIt's simple controller manager only finds a
+# controller if the name matches exactly.
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz -- comfortably above any teleop/planning command rate
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    torso_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    arm_l_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    arm_r_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    head_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    leg_l_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    leg_r_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+# Shared settings, repeated per controller because ros2_control has no
+# anchors across top-level keys in this file layout.
+torso_controller:
+  ros__parameters:
+    joints:
+      - torso_1_joint
+      - torso_2_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+arm_l_controller:
+  ros__parameters:
+    joints:
+      - arm_left_1_joint
+      - arm_left_2_joint
+      - arm_left_3_joint
+      - arm_left_4_joint
+      - arm_left_5_joint
+      - arm_left_6_joint
+      - arm_left_7_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+arm_r_controller:
+  ros__parameters:
+    joints:
+      - arm_right_1_joint
+      - arm_right_2_joint
+      - arm_right_3_joint
+      - arm_right_4_joint
+      - arm_right_5_joint
+      - arm_right_6_joint
+      - arm_right_7_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+head_controller:
+  ros__parameters:
+    joints:
+      - head_1_joint
+      - head_2_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+leg_l_controller:
+  ros__parameters:
+    joints:
+      - leg_left_1_joint
+      - leg_left_2_joint
+      - leg_left_3_joint
+      - leg_left_4_joint
+      - leg_left_5_joint
+      - leg_left_6_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0
+
+leg_r_controller:
+  ros__parameters:
+    joints:
+      - leg_right_1_joint
+      - leg_right_2_joint
+      - leg_right_3_joint
+      - leg_right_4_joint
+      - leg_right_5_joint
+      - leg_right_6_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: true
+    constraints:
+      stopped_velocity_tolerance: 0.0
+      goal_time: 0.0

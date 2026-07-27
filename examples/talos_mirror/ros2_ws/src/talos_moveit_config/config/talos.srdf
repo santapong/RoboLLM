@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This does not replace URDF, and is not an extension of URDF.
+  This is a format for representing semantic information about the robot
+  structure. A URDF file must exist for this robot as well, where the
+  joints and the links that are referenced are defined (config/talos.urdf.xacro
+  in this package).
+
+  Hand-authored groups and group_states; the disable_collisions matrix is
+  NOT hand-curated: it is the unmodified output of MoveIt Setup
+  Assistant's headless collision-computation CLI (collisions_updater),
+  run against config/talos.urdf.xacro (pre-expanded by xacro first: its
+  own xacro-in-place support did not reliably resolve this package's
+  $(find talos_moveit_config) include) and this file's own group block,
+  with its urdf/srdf/output/default/always/trials/min collision fraction
+  flags set to 20000 trials and a 0.95 min-collision-fraction. Full
+  reproduction command in README.md.
+
+  reason="Adjacent": links joined by a non-fixed parent/child joint.
+  reason="Default": links in collision at the SRDF default pose (the
+                    group_states below): a physically real, permanent
+                    overlap (e.g. base_link/torso_2_link, whose only
+                    separation is the very short torso_1_link; or
+                    arm_*_5_link/arm_*_7_link, which the wrist_6 roll
+                    joint sits between with near-zero offset), not a
+                    geometry bug.
+  reason="Never": links whose collision geometry could not be made to
+                  touch across 20000 sampled valid configurations.
+                  Disabling these does not remove any real self-collision
+                  protection; it only removes checks that cannot fire,
+                  which is the same optimization MoveIt Setup Assistant's
+                  GUI applies by default.
+  reason="Always": none computed for this robot (0 pairs).
+
+  Total: 1326 possible link pairs, 351 disabled (35 Adjacent, 5 Default,
+  311 Never, 0 Always), 975 left active for real-time checking.
+-->
+<robot name="talos">
+
+  <group name="torso">
+    <chain base_link="base_link" tip_link="torso_2_link"/>
+  </group>
+
+  <group name="arm_l">
+    <chain base_link="torso_2_link" tip_link="wrist_left_ft_tool_link"/>
+  </group>
+
+  <group name="arm_r">
+    <chain base_link="torso_2_link" tip_link="wrist_right_ft_tool_link"/>
+  </group>
+
+  <group name="head">
+    <chain base_link="torso_2_link" tip_link="head_2_link"/>
+  </group>
+
+  <group name="leg_l">
+    <chain base_link="base_link" tip_link="left_sole_link"/>
+  </group>
+
+  <group name="leg_r">
+    <chain base_link="base_link" tip_link="right_sole_link"/>
+  </group>
+
+  <!--
+    Default standing pose, one group_state per group, named "home". Values
+    are talos_description/config/default_configuration_zeros.yaml verbatim
+    (PAL's own "zeros" configuration), not a fresh guess. All-zero would
+    be simpler but is actually out of range on both shoulders:
+    arm_left_2_joint's limits are [0.0087, 2.871] and arm_right_2_joint's
+    are [-2.871, -0.0087], so 0.0 sits half a degree past the joint-2 limit
+    on either arm. PAL's own default carries a deliberate +-0.2 rad
+    shoulder-roll offset (and a matching -0.02 rad elbow bend) to stay
+    inside both ranges; every other joint in the pose really is 0.0. This
+    is the same pose config/mock_hardware.ros2_control.xacro boots the mock
+    hardware into, so "home" here is also where the robot starts.
+  -->
+  <group_state name="home" group="torso">
+    <joint name="torso_1_joint" value="0"/>
+    <joint name="torso_2_joint" value="0"/>
+  </group_state>
+
+  <group_state name="home" group="arm_l">
+    <joint name="arm_left_1_joint" value="0"/>
+    <joint name="arm_left_2_joint" value="0.2"/>
+    <joint name="arm_left_3_joint" value="0"/>
+    <joint name="arm_left_4_joint" value="-0.02"/>
+    <joint name="arm_left_5_joint" value="0"/>
+    <joint name="arm_left_6_joint" value="0"/>
+    <joint name="arm_left_7_joint" value="0"/>
+  </group_state>
+
+  <group_state name="home" group="arm_r">
+    <joint name="arm_right_1_joint" value="0"/>
+    <joint name="arm_right_2_joint" value="-0.2"/>
+    <joint name="arm_right_3_joint" value="0"/>
+    <joint name="arm_right_4_joint" value="-0.02"/>
+    <joint name="arm_right_5_joint" value="0"/>
+    <joint name="arm_right_6_joint" value="0"/>
+    <joint name="arm_right_7_joint" value="0"/>
+  </group_state>
+
+  <group_state name="home" group="head">
+    <joint name="head_1_joint" value="0"/>
+    <joint name="head_2_joint" value="0"/>
+  </group_state>
+
+  <group_state name="home" group="leg_l">
+    <joint name="leg_left_1_joint" value="0"/>
+    <joint name="leg_left_2_joint" value="0"/>
+    <joint name="leg_left_3_joint" value="0"/>
+    <joint name="leg_left_4_joint" value="0"/>
+    <joint name="leg_left_5_joint" value="0"/>
+    <joint name="leg_left_6_joint" value="0"/>
+  </group_state>
+
+  <group_state name="home" group="leg_r">
+    <joint name="leg_right_1_joint" value="0"/>
+    <joint name="leg_right_2_joint" value="0"/>
+    <joint name="leg_right_3_joint" value="0"/>
+    <joint name="leg_right_4_joint" value="0"/>
+    <joint name="leg_right_5_joint" value="0"/>
+    <joint name="leg_right_6_joint" value="0"/>
+  </group_state>
+
+  <!--DISABLE COLLISIONS: computed, see header. Do not hand-edit; re-run collisions_updater instead.-->
+  <disable_collisions link1="arm_left_1_link" link2="arm_left_2_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_left_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_left_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_left_7_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="arm_right_7_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="base_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="head_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_left_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="torso_2_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_1_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_1_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_left_3_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_left_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_left_7_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="arm_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="base_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_left_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_2_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_left_4_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_left_7_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="arm_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_3_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_left_5_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_left_7_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="arm_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_4_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_5_link" link2="arm_left_6_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_5_link" link2="arm_left_7_link" reason="Default"/>
+  <disable_collisions link1="arm_left_5_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_5_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_5_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_5_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_5_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_5_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="arm_left_7_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_6_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_left_6_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_left_7_link" link2="arm_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_left_7_link" link2="arm_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_left_7_link" link2="wrist_left_ft_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_left_7_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="arm_right_2_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_1_link" link2="arm_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="arm_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="arm_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="arm_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="arm_right_7_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="base_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="head_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_left_3_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="torso_2_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_1_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_1_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="arm_right_3_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_2_link" link2="arm_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="arm_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="arm_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="arm_right_7_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="base_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_left_3_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_right_3_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_2_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="arm_right_4_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_3_link" link2="arm_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="arm_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="arm_right_7_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_3_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="arm_right_5_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_4_link" link2="arm_right_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="arm_right_7_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_4_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_5_link" link2="arm_right_6_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_5_link" link2="arm_right_7_link" reason="Default"/>
+  <disable_collisions link1="arm_right_5_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_5_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_6_link" link2="arm_right_7_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_6_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="arm_right_6_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="arm_right_6_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="arm_right_6_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="arm_right_7_link" link2="wrist_right_ft_link" reason="Adjacent"/>
+  <disable_collisions link1="arm_right_7_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="head_1_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="head_2_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="leg_left_1_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="leg_right_1_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="base_link" link2="torso_1_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="torso_2_link" reason="Default"/>
+  <disable_collisions link1="head_1_link" link2="head_2_link" reason="Adjacent"/>
+  <disable_collisions link1="head_1_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_left_3_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_right_3_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="head_1_link" link2="torso_2_link" reason="Adjacent"/>
+  <disable_collisions link1="head_2_link" link2="leg_left_1_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_left_2_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_left_3_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_right_3_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="rgbd_link" reason="Adjacent"/>
+  <disable_collisions link1="head_2_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="head_2_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="leg_left_2_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_left_1_link" link2="leg_left_3_link" reason="Default"/>
+  <disable_collisions link1="leg_left_1_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_1_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="leg_left_3_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_left_2_link" link2="leg_left_4_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="leg_right_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="leg_right_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_left_2_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="leg_left_3_link" link2="leg_left_4_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_left_3_link" link2="leg_left_5_link" reason="Never"/>
+  <disable_collisions link1="leg_left_3_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_left_3_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_3_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_4_link" link2="leg_left_5_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_left_4_link" link2="leg_left_6_link" reason="Never"/>
+  <disable_collisions link1="leg_left_4_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_left_4_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_4_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_5_link" link2="leg_left_6_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_left_5_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_left_5_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_5_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_5_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_left_6_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="leg_right_1_link" link2="leg_right_2_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_right_1_link" link2="leg_right_3_link" reason="Default"/>
+  <disable_collisions link1="leg_right_1_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="leg_right_1_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="leg_right_1_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_right_1_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_right_1_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_right_2_link" link2="leg_right_3_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_right_2_link" link2="leg_right_4_link" reason="Never"/>
+  <disable_collisions link1="leg_right_2_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="leg_right_2_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_right_2_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_right_2_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_right_3_link" link2="leg_right_4_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_right_3_link" link2="leg_right_5_link" reason="Never"/>
+  <disable_collisions link1="leg_right_3_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_right_3_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_right_3_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_right_4_link" link2="leg_right_5_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_right_4_link" link2="leg_right_6_link" reason="Never"/>
+  <disable_collisions link1="leg_right_4_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_right_4_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_right_4_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="leg_right_6_link" reason="Adjacent"/>
+  <disable_collisions link1="leg_right_5_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_right_5_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="leg_right_6_link" link2="rgbd_link" reason="Never"/>
+  <disable_collisions link1="leg_right_6_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="leg_right_6_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="leg_right_6_link" link2="wrist_left_ft_link" reason="Never"/>
+  <disable_collisions link1="leg_right_6_link" link2="wrist_left_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="rgbd_link" link2="torso_1_link" reason="Never"/>
+  <disable_collisions link1="rgbd_link" link2="torso_2_link" reason="Never"/>
+  <disable_collisions link1="torso_1_link" link2="torso_2_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_left_ft_link" link2="wrist_left_ft_tool_link" reason="Adjacent"/>
+  <disable_collisions link1="wrist_left_ft_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="wrist_left_ft_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="wrist_left_ft_tool_link" link2="wrist_right_ft_link" reason="Never"/>
+  <disable_collisions link1="wrist_left_ft_tool_link" link2="wrist_right_ft_tool_link" reason="Never"/>
+  <disable_collisions link1="wrist_right_ft_link" link2="wrist_right_ft_tool_link" reason="Adjacent"/>
+</robot>

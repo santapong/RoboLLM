@@ -1,0 +1,50 @@
+# KDL for every group. TALOS has no vendor IK plugin for Jazzy (that is the
+# whole reason this package exists), and KDL is the only solver that needs
+# nothing beyond the chain itself -- no per-robot IKFast/TRAC-IK/pick-ik
+# plugin to generate or vendor. All six groups (arm_l, arm_r, head, torso,
+# leg_l, leg_r) are simple open chains (see config/talos.srdf), which is
+# exactly what KDL's chain-based Jacobian solver wants.
+#
+# position_only_ik on the legs: a 6-DOF leg chain has just enough DOF for a
+# full 6D foot pose, but KDL's damped-least-squares solver converges far
+# more reliably on the position-only sub-problem for a foot-placement task
+# (the leg's actual planning use) than it does chasing a coupled 6D pose
+# from an arbitrary seed. Left off the arms/head, where a full pose (e.g.
+# wrist orientation for a specific tool approach) is normally what you want.
+arm_l:
+  kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+  kinematics_solver_attempts: 3
+
+arm_r:
+  kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+  kinematics_solver_attempts: 3
+
+head:
+  kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+  kinematics_solver_attempts: 3
+
+torso:
+  kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+  kinematics_solver_attempts: 3
+
+leg_l:
+  kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+  kinematics_solver_attempts: 3
+  position_only_ik: true
+
+leg_r:
+  kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+  kinematics_solver_search_resolution: 0.005
+  kinematics_solver_timeout: 0.05
+  kinematics_solver_attempts: 3
+  position_only_ik: true

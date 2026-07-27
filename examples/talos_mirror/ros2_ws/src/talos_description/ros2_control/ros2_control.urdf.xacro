@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2023 PAL Robotics S.L. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro"
+       name="talos" >
+
+  <xacro:macro name="talos_ros2_control" params="use_sim:=^|false">
+
+    <xacro:include filename="$(find talos_description)/urdf/arm/arm.ros2_control.xacro" />
+    <xacro:include filename="$(find talos_description)/urdf/arm/wrist.ros2_control.xacro"/>
+    <xacro:include filename="$(find talos_description)/urdf/gripper/gripper.ros2_control.xacro" />
+    <xacro:include filename="$(find talos_description)/urdf/head/head.ros2_control.xacro" />
+    <xacro:include filename="$(find talos_description)/urdf/leg/leg.ros2_control.xacro" />
+    <xacro:include filename="$(find talos_description)/urdf/torso/torso.ros2_control.xacro" />
+    <xacro:include filename="$(find pal_urdf_utils)/urdf/interaction_sensors/imu_sensors.ros2_control.xacro" />
+    <xacro:include filename="$(find pal_urdf_utils)/urdf/ft_sensors/ftsensor.ros2_control.xacro" />
+    <xacro:include filename="$(find talos_description_calibration)/urdf/calibration/calibration_constants.urdf.xacro" />
+
+    <!-- Calibration offsets -->
+    <xacro:include filename="$(find talos_description_calibration)/urdf/calibration/calibration_constants.urdf.xacro" />
+
+    <ros2_control name="ros2_control_talos_system" type="system" is_async="${'false' if use_sim else 'true'}">
+
+      <xacro:unless value="$(arg use_sim)">
+        <properties>
+          <async thread_priority="70" affinity="[1]" scheduling_policy="detached"/>
+        </properties>
+      </xacro:unless>
+      <hardware>
+        <xacro:if value="$(arg use_sim)">
+          <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </xacro:if>
+        <xacro:unless value="$(arg use_sim)">
+          <plugin>robot_control/RobotControl</plugin>
+          <param name="error_protection">true</param>
+          <param name="expose_safety_interface">true</param>
+          <param name="idle_mode_on_stop">true</param>
+          <param name="idle_mode_on_stop_interfaces">[current, effort, torque]</param>
+        </xacro:unless>
+      </hardware>
+
+
+      <!-- IMU -->
+      <xacro:if value="$(arg use_sim)">
+        <xacro:ros2_control_imu name="imu_sensor"/>
+      </xacro:if>
+
+      <!-- arm right-->
+      <xacro:ros2_control_arm name="arm" side="right" number="1" joint_offset="${arm_right_1_joint_offset}"/>
+      <xacro:ros2_control_arm name="arm" side="right" number="2" joint_offset="${arm_right_2_joint_offset}"/>
+      <xacro:ros2_control_arm name="arm" side="right" number="3" joint_offset="${arm_right_3_joint_offset}"/>
+      <xacro:ros2_control_arm name="arm" side="right" number="4" joint_offset="${arm_right_4_joint_offset}"/>
+
+      <!-- Wrist right -->
+      <xacro:ros2_control_wrist name="arm" side="right" joint_5_offset="${arm_right_5_joint_offset}" joint_6_offset="${arm_right_6_joint_offset}" joint_7_offset="${arm_right_7_joint_offset}"/>
+
+      <!-- Arm left-->
+      <xacro:ros2_control_arm name="arm" side="left" number="1" joint_offset="${arm_left_1_joint_offset}"/>
+      <xacro:ros2_control_arm name="arm" side="left" number="2" joint_offset="${arm_left_2_joint_offset}"/>
+      <xacro:ros2_control_arm name="arm" side="left" number="3" joint_offset="${arm_left_3_joint_offset}"/>
+      <xacro:ros2_control_arm name="arm" side="left" number="4" joint_offset="${arm_left_4_joint_offset}"/>
+
+      <!-- Wrist left -->
+      <xacro:ros2_control_wrist name="arm" side="left" joint_5_offset="${arm_left_5_joint_offset}" joint_6_offset="${arm_left_6_joint_offset}" joint_7_offset="${arm_left_7_joint_offset}"/>
+
+      <!-- Gripper right-->
+      <xacro:ros2_control_gripper name="gripper_right"/>
+      <!-- Gripper left-->
+      <xacro:ros2_control_gripper name="gripper_left"/>
+
+      <!-- Head -->
+      <xacro:ros2_control_head name="head" number_1="1" number_2="2" offset_value_1="${head_1_joint_yaw_offset}" offset_value_2="${head_2_joint_yaw_offset}"/>
+
+      <!-- Torso -->
+      <xacro:ros2_control_torso name="torso"/>
+
+      <!-- Force Torque sensor-->
+      <xacro:ros2_control_force_torque_sensor name="wrist_right_ft_sensor"/>
+      <xacro:ros2_control_force_torque_sensor name="wrist_left_ft_sensor"/>
+      <xacro:ros2_control_force_torque_sensor name="ankle_right_ft_sensor"/>
+      <xacro:ros2_control_force_torque_sensor name="ankle_left_ft_sensor"/>
+
+      <!-- Leg left -->
+      <xacro:ros2_control_leg side="left" number="1" />
+      <xacro:ros2_control_leg side="left" number="2" />
+      <xacro:ros2_control_leg side="left" number="3" />
+      <xacro:ros2_control_leg side="left" number="4" />
+      <xacro:ros2_control_leg side="left" number="5" />
+      <xacro:ros2_control_leg side="left" number="6" />
+
+      <!-- Leg right -->
+      <xacro:ros2_control_leg side="right" number="1" />
+      <xacro:ros2_control_leg side="right" number="2" />
+      <xacro:ros2_control_leg side="right" number="3" />
+      <xacro:ros2_control_leg side="right" number="4" />
+      <xacro:ros2_control_leg side="right" number="5" />
+      <xacro:ros2_control_leg side="right" number="6" />
+
+    </ros2_control>
+
+    <xacro:unless value="$(arg use_sim)">
+      <ros2_control name="ros2_control_orientus" type="sensor" rw_rate="1000" is_async="true">
+        <hardware>
+          <plugin>pal_orientus_sensor/OrientusSensor</plugin>
+          <param name="io_device">/dev/ttyS4</param>
+          <param name="sensor_name">imu_sensor</param>
+          <param name="orientation_to_enu_frame">3.14159, 0.0, 1.570796</param>
+          <!-- The following parameter is used to enable the ENU transformation for velocity and acceleration -->
+          <param name="enable_orientation_to_enu_frame">false</param>
+        </hardware>
+      </ros2_control>
+    </xacro:unless>
+
+  </xacro:macro>
+</robot>

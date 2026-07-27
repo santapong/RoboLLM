@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2023 PAL Robotics S.L. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="ros2_control_leg" params="side number leg_reduction:=1.0 flexibility:=false" >
+    <joint name="leg_${side}_${number}_joint">
+      <command_interface name="position" />
+      <command_interface name="velocity" />
+      <command_interface name="effort" />
+
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+      <state_interface name="effort" />
+      <state_interface name="torque" />
+      <state_interface name="absolute_position" />
+    </joint>
+
+   <!-- transmissions -->
+   <xacro:include filename="$(find talos_description)/urdf/leg/leg.transmission.xacro" />
+   <xacro:talos_leg_simple_transmission side="${side}" number="${number}" reduction="${leg_reduction}" />
+
+    <xacro:if value="${flexibility}">
+        <xacro:talos_leg_simple_transmission side="${side}" number="flex_1" reduction="${leg_reduction}" />
+        <xacro:talos_leg_simple_transmission side="${side}" number="flex_2" reduction="${leg_reduction}" />
+    </xacro:if>
+
+  </xacro:macro>
+</robot>

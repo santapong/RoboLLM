@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+  Our own mock-hardware ros2_control block for TALOS.
+
+  talos_description ships ros2_control/ros2_control.urdf.xacro, but it has
+  no mock switch: `use_sim:=false` (the default) resolves to
+  `robot_control/RobotControl`, PAL's real EtherCAT driver plugin, and
+  `use_sim:=true` resolves to `gazebo_ros2_control/GazeboSystem`, which needs
+  a running Gazebo. Neither is usable for a headless, GPU-free move_group
+  smoke test (same "no vendor mock switch" gap FFW's ffw_moveit_config had
+  for its *launch* file, documented in humanoid_mirror/ffw_config.py: here
+  the gap is one layer down, in the hardware plugin choice itself). So this
+  package supplies its own <ros2_control> block, unconditionally
+  mock_components/GenericSystem, covering only the 30 joints in the six
+  planning groups (arm_l, arm_r, head, torso, leg_l, leg_r). Grippers are
+  deliberately left out of both this block and config/talos.urdf.xacro:
+  they are not in the group list this package was asked to build, and
+  talos_description's gripper macro alone adds 7 more joints (2 revolute +
+  5 mimic-with-dummy-link) per hand that would only pad the collision
+  matrix without adding a MoveIt group.
+
+  initial_value on every position state interface is the PAL-authored
+  "zeros" standing pose (talos_description/config/default_configuration_zeros.yaml),
+  the same numbers used for the SRDF "home" group states below. Booting the
+  mock hardware there (rather than at all-joints-0.0) matters for one
+  joint pair: arm_left_2_joint's range is [0.0087, 2.871] and
+  arm_right_2_joint's is [-2.871, -0.0087], so literal 0.0 is out of range
+  on both arms by half a degree. mock_components/GenericSystem holds
+  whatever initial_value it is given until commanded, so without this the
+  mock robot would boot in a state MoveIt has to immediately warn about.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:macro name="talos_mock_joint" params="joint initial:=0.0">
+    <joint name="${joint}">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">${initial}</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="talos_mock_ros2_control">
+    <ros2_control name="talos_mock_system" type="system">
+      <hardware>
+        <plugin>mock_components/GenericSystem</plugin>
+      </hardware>
+
+      <!-- torso -->
+      <xacro:talos_mock_joint joint="torso_1_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="torso_2_joint" initial="0.0"/>
+
+      <!-- head -->
+      <xacro:talos_mock_joint joint="head_1_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="head_2_joint" initial="0.0"/>
+
+      <!-- arm_l -->
+      <xacro:talos_mock_joint joint="arm_left_1_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_left_2_joint" initial="0.2"/>
+      <xacro:talos_mock_joint joint="arm_left_3_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_left_4_joint" initial="-0.02"/>
+      <xacro:talos_mock_joint joint="arm_left_5_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_left_6_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_left_7_joint" initial="0.0"/>
+
+      <!-- arm_r -->
+      <xacro:talos_mock_joint joint="arm_right_1_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_right_2_joint" initial="-0.2"/>
+      <xacro:talos_mock_joint joint="arm_right_3_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_right_4_joint" initial="-0.02"/>
+      <xacro:talos_mock_joint joint="arm_right_5_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_right_6_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="arm_right_7_joint" initial="0.0"/>
+
+      <!-- leg_l -->
+      <xacro:talos_mock_joint joint="leg_left_1_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_left_2_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_left_3_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_left_4_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_left_5_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_left_6_joint" initial="0.0"/>
+
+      <!-- leg_r -->
+      <xacro:talos_mock_joint joint="leg_right_1_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_right_2_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_right_3_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_right_4_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_right_5_joint" initial="0.0"/>
+      <xacro:talos_mock_joint joint="leg_right_6_joint" initial="0.0"/>
+    </ros2_control>
+  </xacro:macro>
+
+</robot>

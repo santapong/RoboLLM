@@ -1,0 +1,378 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find pal_urdf_utils)/urdf/deg_to_rad.urdf.xacro" />
+
+  <xacro:macro name="talos_gripper" params="name parent reflect">
+
+            <xacro:macro name="dummy_mimic_joint" params="name parent">
+              <link name="${name}_dummy_mimic_link"/>
+
+              <joint name="${name}_joint_mimic" type="fixed">
+                <parent link="${parent}" />
+                <child link="${name}_dummy_mimic_link" />
+              </joint>
+            </xacro:macro>
+
+            <xacro:macro name="finger_mimic_dummy" params="name">
+              <xacro:dummy_mimic_joint name="${name}_fingertip_1" parent="${name}_base_link"/>
+              <xacro:dummy_mimic_joint name="${name}_fingertip_2" parent="${name}_base_link"/>
+              <xacro:dummy_mimic_joint name="${name}_inner_single" parent="${name}_base_link"/>
+              <xacro:dummy_mimic_joint name="${name}_fingertip_3" parent="${name}_base_link"/>
+              <xacro:dummy_mimic_joint name="${name}_motor_single" parent="${name}_base_link"/>
+              <xacro:dummy_mimic_joint name="${name}_inner_double" parent="${name}_base_link"/>
+            </xacro:macro>
+
+            <link name="${name}_base_link">
+              <xacro:call macro="${name}_base_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/base_link.STL" scale="1 1 1"/>
+                </geometry>
+                <material name="DarkGrey"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-0.00141404 0.0132339 -0.0265828" e2="-0.00133643 -0.0137463 -0.0261142" rad="0.060646620008233225" clen="0.026984385527609595" rpy="1.55343 0.00287592 0.00282641" mid="-0.00137524 -0.00025619 -0.0263485" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/base_link_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+
+            </link>
+
+            <joint name="${name}_base_link_joint" type="fixed">
+              <parent link="${parent}"/>
+              <child link="${name}_base_link"/>
+              <origin xyz="0.00000 0.00000 -0.02875"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad}"/>
+              <axis xyz="0 0 0" />
+            </joint>
+
+
+            <link name="${name}_motor_double_link">
+              <xacro:call macro="${name}_motor_double_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/gripper_motor_double.STL" scale="1 1 1"/>
+                </geometry>
+              <material name="Orange"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-0.0265616 0.0150351 -0.0244879" e2="0.0170994 0.0176648 -0.0189716" rad="0.056117638554986304" clen="0.044086614202536976" rpy="-0.444846 1.43174 -0.388469" mid="-0.00473109 0.0163499 -0.0217297" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/gripper_motor_double_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+            <joint name="${name}_joint" type="revolute">
+              <parent link="${name}_base_link"/>
+              <child link="${name}_motor_double_link"/>
+              <origin xyz="0.0 0.02025 -0.03"
+                      rpy="${0.0 * deg_to_rad} ${0.0 * deg_to_rad} ${0.0 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${-55.0 * deg_to_rad}" upper="${0.0 * deg_to_rad}" effort="1.0" velocity="1.0" />
+              <dynamics friction="1.0" damping="1.0"/>
+            </joint>
+
+
+            <link name="${name}_inner_double_link">
+              <xacro:call macro="${name}_inner_double_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/inner_double.STL" scale="1 1 1"/>
+                </geometry>
+              <material name="Orange"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-0.0179304 0.0279391 -0.034841" e2="0.0190611 0.0265842 -0.0355285" rad="0.048779412908590628" clen="0.03702274994466908" rpy="2.04039 1.52975 2.00344" mid="0.000565336 0.0272617 -0.0351848" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/inner_double_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+            <joint name="${name}_inner_double_joint" type="revolute">
+              <parent link="${name}_base_link"/>
+              <child link="${name}_inner_double_link"/>
+              <origin xyz="0.00000 0.00525 -0.05598"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${-60.0 * deg_to_rad}" upper="${0.0 * deg_to_rad}" effort="100.0" velocity="1.0" />
+              <mimic joint="${name}_joint" multiplier="${1.0}" offset="0.0" />
+            </joint>
+
+
+
+            <link name="${name}_fingertip_1_link">
+              <xacro:call macro="${name}_fingertip_1_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/fingertip.STL" scale="1 1 1"/>
+                </geometry>
+              <material name="DarkGrey"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+          		  <xacro:capsule-collision e1="-3.72021e-06 0.000302954 -0.026257" e2="-5.04286e-05 0.0140159 0.0163723" rad="0.016697853294401835" clen="0.044780558196911839" rpy="-0.311226 -0.00104305 0.000163635" mid="-2.70744e-05 0.00715944 -0.00494235" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/fingertip_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+
+            <joint name="${name}_fingertip_1_joint" type="revolute">
+              <parent link="${name}_inner_double_link"/>
+              <child link="${name}_fingertip_1_link"/>
+              <origin xyz="0.03200 0.04589 -0.06553"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${0.0 * deg_to_rad}" upper="${60.0 * deg_to_rad}" effort="100.0" velocity="1.0" />
+              <mimic joint="${name}_joint" multiplier="${-1.0}" offset="0.0" />
+            </joint>
+
+
+            <link name="${name}_fingertip_2_link">
+              <xacro:call macro="${name}_fingertip_2_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/fingertip.STL" scale="1 1 1"/>
+                </geometry>
+                <material name="DarkGrey"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-3.72021e-06 0.000302954 -0.026257" e2="-5.04286e-05 0.0140159 0.0163723" rad="0.016697853294401835" clen="0.044780558196911839" rpy="-0.311226 -0.00104305 0.000163635" mid="-2.70744e-05 0.00715944 -0.00494235" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/fingertip_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+            <joint name="${name}_fingertip_2_joint" type="revolute">
+              <parent link="${name}_inner_double_link"/>
+              <child link="${name}_fingertip_2_link"/>
+              <origin xyz="-0.03200 0.04589 -0.06553"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${0.0 * deg_to_rad}" upper="${60.0 * deg_to_rad}" effort="100.0" velocity="1.0" />
+              <mimic joint="${name}_joint" multiplier="${-1.0}" offset="0.0" />
+            </joint>
+
+
+            <link name="${name}_motor_single_link">
+              <xacro:call macro="${name}_motor_single_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/gripper_motor_single.STL" scale="1 1 1"/>
+                </geometry>
+              <material name="Orange"/>
+              </visual>
+
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-0.00541609 -0.00889752 -0.0121105" e2="0.0100479 -0.0148793 -0.0200314" rad="0.060566804043534143" clen="0.018375470004515674" rpy="2.49478 1.00016 2.04115" mid="0.00231593 -0.0118884 -0.0160709" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/gripper_motor_single_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+            <joint name="${name}_motor_single_joint" type="revolute">
+              <parent link="${name}_base_link"/>
+              <child link="${name}_motor_single_link"/>
+              <origin xyz="0.00000 -0.02025 -0.03000"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${0.0 * deg_to_rad}" upper="${60.0 * deg_to_rad}" effort="100.0" velocity="1.0" />
+              <mimic joint="${name}_joint" multiplier="${-1.0}" offset="0.0" />
+            </joint>
+
+
+
+            <link name="${name}_inner_single_link">
+              <xacro:call macro="${name}_inner_single_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/inner_single.STL" scale="1 1 1"/>
+                </geometry>
+              <material name="Orange"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-0.000202241 -0.0141496 0.000280576" e2="0.000808315 -0.0507867 -0.0515168" rad="0.023859684447196262" clen="0.063452821575460158" rpy="2.52597 0.0159268 0.0500884" mid="0.000303037 -0.0324682 -0.0256181" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                    <mesh filename="package://talos_description/meshes/gripper/inner_single_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+            <joint name="${name}_inner_single_joint" type="revolute">
+              <parent link="${name}_base_link"/>
+              <child link="${name}_inner_single_link"/>
+              <origin xyz="0.00000 -0.00525 -0.05598"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${0.0 * deg_to_rad}" upper="${60.0 * deg_to_rad}" effort="100.0" velocity="1.0" />
+              <mimic joint="${name}_joint" multiplier="${-1.0}" offset="0.0" />
+            </joint>
+
+
+            <link name="${name}_fingertip_3_link">
+              <xacro:call macro="${name}_fingertip_3_link_inertial" />
+
+              <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/fingertip.STL" scale="1 1 1"/>
+                </geometry>
+              <material name="DarkGrey"/>
+              </visual>
+
+              <xacro:if value="$(arg use_capsule_collision)">
+                <xacro:capsule-collision e1="-3.72021e-06 0.000302954 -0.026257" e2="-5.04286e-05 0.0140159 0.0163723" rad="0.016697853294401835" clen="0.044780558196911839" rpy="-0.311226 -0.00104305 0.000163635" mid="-2.70744e-05 0.00715944 -0.00494235" />
+              </xacro:if>
+              <xacro:unless value="$(arg use_capsule_collision)">
+                <collision>
+                  <origin xyz="0 0 0" rpy="0 0 0" />
+                  <geometry>
+                  <mesh filename="package://talos_description/meshes/gripper/fingertip_collision.STL" scale="1 1 1"/>
+                  </geometry>
+                </collision>
+              </xacro:unless>
+            </link>
+
+            <joint name="${name}_fingertip_3_joint" type="revolute">
+              <parent link="${name}_inner_single_link"/>
+              <child link="${name}_fingertip_3_link"/>
+              <origin xyz="0.00000 -0.04589 -0.06553"
+                      rpy="${0.00000 * deg_to_rad} ${0.00000 * deg_to_rad} ${180.00000 * deg_to_rad}"/>
+              <axis xyz="1 0 0" />
+              <limit lower="${0.0 * deg_to_rad}" upper="${60.0 * deg_to_rad}" effort="100.0" velocity="1.0" />
+              <mimic joint="${name}_joint" multiplier="${-1.0}" offset="0.0" />
+            </joint>
+
+
+            <gazebo reference="${name}_joint">
+                <implicitSpringDamper>1</implicitSpringDamper>
+                <provideFeedback>1</provideFeedback>
+              </gazebo>
+
+              <gazebo reference="${name}_inner_double_joint">
+                <implicitSpringDamper>1</implicitSpringDamper>
+                <provideFeedback>1</provideFeedback>
+              </gazebo>
+
+              <gazebo reference="${name}_fingertip_1_joint">
+                <implicitSpringDamper>1</implicitSpringDamper>
+                <provideFeedback>1</provideFeedback>
+              </gazebo>
+
+              <gazebo reference="${name}_fingertip_2_joint">
+                <implicitSpringDamper>1</implicitSpringDamper>
+                <provideFeedback>1</provideFeedback>
+              </gazebo>
+
+              <gazebo reference="${name}_motor_single_joint">
+                <implicitSpringDamper>1</implicitSpringDamper>
+                <provideFeedback>1</provideFeedback>
+              </gazebo>
+
+              <gazebo reference="${name}_fingertip_3_joint">
+                <implicitSpringDamper>1</implicitSpringDamper>
+                <provideFeedback>1</provideFeedback>
+              </gazebo>
+
+              <gazebo reference="${name}_base_link">
+                <material>Gazebo/FlatBlack</material>
+              </gazebo>
+
+              <gazebo reference="${name}_motor_double_link">
+                <material>Gazebo/Orange</material>
+              </gazebo>
+
+              <gazebo reference="${name}_inner_double_link">
+                <material>Gazebo/Orange</material>
+              </gazebo>
+
+              <gazebo reference="${name}_fingertip_1_link">
+                <material>Gazebo/FlatBlack</material>
+              </gazebo>
+
+              <gazebo reference="${name}_motor_single_link">
+                <material>Gazebo/Orange</material>
+              </gazebo>
+
+
+              <gazebo reference="${name}_inner_single_link">
+                <material>Gazebo/Orange</material>
+              </gazebo>
+
+              <gazebo reference="${name}_fingertip_2_link">
+                <material>Gazebo/FlatBlack</material>
+              </gazebo>
+
+              <gazebo reference="${name}_fingertip_3_link">
+                <material>Gazebo/FlatBlack</material>
+              </gazebo>
+
+              <!-- Temporary fix until mimic joint works properly with MoveIt!-->
+              <xacro:finger_mimic_dummy name="${name}"/>
+              <xacro:dummy_mimic_joint name="${name}_link" parent="${name}_base_link"/>
+
+  </xacro:macro>
+</robot>

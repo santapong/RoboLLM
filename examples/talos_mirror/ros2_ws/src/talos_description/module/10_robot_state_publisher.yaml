@@ -1,0 +1,2 @@
+robot_state_publisher:
+  launch: "talos_description robot_state_publisher.launch.py"

@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+  Copyright (c) 2023 PAL Robotics S.L. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+      www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<robot name="talos" xmlns:xacro="http://ros.org/wiki/xacro"
+        xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+        xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
+
+  <xacro:include filename="$(find talos_description)/urdf/arm/arm_specifics_v2.urdf.xacro" />
+
+  <xacro:include filename="$(find talos_description)/urdf/arm/arm.urdf.xacro" />
+  <xacro:include filename="$(find talos_description_inertial)/urdf/inertial.xacro" />
+
+  <xacro:include filename="$(find pal_urdf_utils)/urdf/ft_sensors/ati_talos.urdf.xacro" />
+  <xacro:include filename="$(find talos_description)/urdf/gripper/gripper.urdf.xacro" />
+  
+  <xacro:include filename="$(find talos_description_calibration)/urdf/calibration/calibration_constants.urdf.xacro" />
+
+
+  <xacro:arg name="use_sim" default="false"/>
+  <xacro:arg name="multiple" default="false"/>
+
+  <xacro:property name="is_multiple" value="$(arg multiple)" />
+
+  <!--************************-->
+  <!--     FAKE BASE_LINK     -->
+  <!--************************-->
+  <link name="arm_base_link">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.00000 0.00000 0.00000"/>
+      <mass value="1000.0"/>
+      <!-- AS: inconsistent -->
+      <inertia ixx="100.0" ixy="0.0" ixz="0.0"
+               iyy="100.0" iyz="0.0"
+               izz="100.0"/>
+    </inertial>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="2.0 0.3 2.0" />
+      </geometry>
+      <material name="BaseMaterial" />
+    </visual>
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="2.0 0.3 2.0" />
+      </geometry>
+      <material name="BaseMaterial"/>
+    </collision>
+  </link>
+
+  <material name="BaseMaterial">
+    <color rgba="0.7 0.7 0.7 1.0"/>
+  </material>
+
+
+  <xacro:talos_arm name="arm" parent="arm_base_link" side="right" reflect="-1" />
+  <xacro:ft_sensor name="wrist" parent="arm_right_7_link" side="right" reflect="1"  />
+  <xacro:talos_gripper name="gripper_right" parent="wrist_right_ft_tool_link" reflect="-1" />
+
+  <!-- Generic simulator_gazebo plugins -->
+  <xacro:include filename="$(find talos_description)/gazebo/gazebo.urdf.xacro" />
+  <!-- Materials for visualization -->
+  <xacro:include filename="$(find talos_description)/urdf/materials.urdf.xacro" />
+
+  <!-- ROS 2 Control-->
+  <xacro:include filename="$(find talos_description)/ros2_control/ros2_control.urdf.xacro" />
+  <xacro:talos_ros2_control use_sim="$(arg use_sim)"/>
+
+</robot>
