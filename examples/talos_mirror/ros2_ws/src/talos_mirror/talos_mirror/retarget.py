@@ -358,7 +358,37 @@ def _solve4(a, b, limits4, free_rotate, d4, f0, q_seed=None, margin=0.05):
                 continue
             if r0 == 0.0 or r0 * r1 < 0.0:
                 lo_g, hi_g, ra = g0, g1, r0
-                for _ in range(24):
+                # T1 (loop-algo A2, round 3 -- corrects a wrong number round
+                # 2 shipped in this same comment): 24 -> 12 bisection
+                # halvings, ARM SOLVER ONLY. Round-1's identical cut to the
+                # LEG solver (solve_leg_hip_knee below) was REFUTED twice: it
+                # turns `retarget-bench --samples 2000` from a passing gate
+                # into a failing one (leg_right round-trip 0.0520 -> 1.4367
+                # deg, > the tool's own 1 deg bar; leg_left 0.0573 -> 0.9625
+                # deg, within 4% of it) at the leg's documented hip-pitch
+                # singularity (see solve_leg_hip_knee()'s docstring), so the
+                # leg loop below is back to 24 halvings and this 12-halving
+                # cut applies to the arm only. The arm has NO such
+                # singularity (see _solve4's/solve_arm's own docstrings) and
+                # is empirically free here: re-derived on the A1 golden
+                # corpus (601-tick fixture, tools/diff_replay.py) with T2's
+                # round-3 cache-key fix in place (so this is now the
+                # ISOLATED T1 signal, not conflated with a T2 defect -- see
+                # MirrorPoseSource's own comments), the worst per-joint
+                # deviation this halving introduces is 8.0214e-4 deg on
+                # arm_left_3_joint (tick 96) and 8.0214e-4 deg on
+                # arm_right_3_joint (tick 398) -- NOT tick 234 as a prior
+                # round of this comment claimed, an unverified number caught
+                # by the round-3 gate; every other group (torso, head,
+                # leg_l, leg_r) exactly 0.0 deg -- MEASURED, diff-bench
+                # compare against tools/golden_commanded.json, not the
+                # catalog's refuted "0.0014 deg" figure (that number is this
+                # same measurement's p99 over a wider paired 24-vs-12
+                # sample, not a bound). retarget-bench --samples 2000 arm
+                # round-trip is unchanged to 4 decimal places (arm_l 0.2079,
+                # arm_r 0.3400 deg, bit-identical to the 24-halving
+                # baseline).
+                for _ in range(12):
                     m = 0.5 * (lo_g + hi_g)
                     rm, _q = evaluate(m, branch)
                     if rm is None:
@@ -536,6 +566,25 @@ def solve_leg_hip_knee(a, b, side="left", q_seed=None, margin=0.05):
         for (g0, r0, _q0), (g1, r1, _q1) in zip(samples, samples[1:]):
             if r0 == 0.0 or r0 * r1 < 0.0:
                 lo_g, hi_g, ra = g0, g1, r0
+                # T1 (loop-algo A2, round 2): REVERTED to 24 bisection
+                # halvings (round 1 cut this to 12; see git history / task
+                # A2). Two independent re-gates demonstrated the cut is NOT
+                # free here, reproducibly: `retarget-bench --samples 2000`
+                # round-trip worst case rose from 0.0520 deg (24 halvings,
+                # this baseline) to 1.4367 deg at 12 halvings on leg_right
+                # (leg_left 0.0573 -> 0.9625 deg), breaching the tool's own
+                # <1 deg gate; at 40k samples/side the tail reaches 14.0554
+                # deg (leg_right) / 3.2533 deg (leg_left). Root cause is the
+                # documented hip-pitch-near-+-90deg singularity above (a
+                # "high march step", a realistic teleop pose, not an edge
+                # case): near-zero cos(q3) in _hip_exact_pair's hip-roll
+                # inversion amplifies a coarser q1 estimate there. The ARM
+                # solver's identical-looking cut (_solve4 above) has no such
+                # singularity and stays at 12 halvings -- see its comment
+                # for the re-derived arm-only bound. This loop stays at the
+                # pre-T1 halving count until/unless a leg-specific mechanism
+                # (e.g. adaptively finer steps only near the singular
+                # region) is proposed and re-gated.
                 for _ in range(24):
                     m = 0.5 * (lo_g + hi_g)
                     rm, _q = evaluate(m, branch)

@@ -172,6 +172,27 @@ class MirrorNode(Node):
             for group, topic in CONTROLLER_TOPICS.items()
         }
 
+        # T3 (loop-algo A2): preallocate the six JointTrajectory/
+        # JointTrajectoryPoint message objects ONCE, here, instead of
+        # instantiating six of each every _publish() tick (50 Hz x 6 groups
+        # = 300 message-object allocations/sec previously). joint_names is
+        # also built once per group here -- it never changes across the
+        # node's lifetime (GROUP_JOINTS is a module-level constant) -- and
+        # msg.points is set to [point] once, wiring each preallocated
+        # JointTrajectoryPoint into its parent message permanently. Every
+        # subsequent _publish() only MUTATES msg.header.stamp and this same
+        # point's .positions/.time_from_start in place; no message wrapper
+        # object nor joint_names list is ever recreated after this loop.
+        # See _publish()'s own comment for why reusing these objects across
+        # publish() calls carries no aliasing hazard.
+        self._traj_msgs = {}
+        for group, joints in GROUP_JOINTS.items():
+            msg = JointTrajectory()
+            msg.joint_names = list(joints)
+            point = JointTrajectoryPoint()
+            msg.points = [point]
+            self._traj_msgs[group] = (msg, point)
+
         self.q_cmd = None
         self.last_seen_t = None
         self.joint_state = None
@@ -236,12 +257,25 @@ class MirrorNode(Node):
         below returns before publishing, same mechanism a lost observation
         already uses -- no new hold path to get wrong); true re-seeds q_cmd
         from the live /joint_states and resets every OneEuro filter so
-        resuming after a hold can never jump."""
+        resuming after a hold can never jump.
+
+        REPAIR (gate round 2, T2 defect): also invalidate the source's
+        observation-dedup cache (if it has one -- QPMirrorPoseSource does
+        not) so the first post-resume tick is forced to re-solve. Without
+        this, an unchanged /body/observation across the freeze (operator
+        still, or the upstream tracker paused) made the dedup cache replay
+        the pre-freeze solution -- computed against the STALE prev=q_cmd
+        seed -- instead of solving fresh against the seed re-seeded above.
+        See MirrorPoseSource.invalidate()'s own docstring for the measured
+        worst case this closes."""
         self.enabled = bool(request.data)
         if self.enabled:
             self.q_cmd = None  # force a re-seed from the live state
             for f in self.filters.values():
                 f.reset()
+            invalidate = getattr(self.source, "invalidate", None)
+            if invalidate is not None:
+                invalidate()
             response.message = "mirroring ENABLED (re-seeded from /joint_states)"
         else:
             response.message = "mirroring DISABLED (holding current pose)"
@@ -298,6 +332,24 @@ class MirrorNode(Node):
         self._ticks += 1
 
     def _publish(self):
+        # T3: reuse the six preallocated (msg, point) pairs from __init__ --
+        # mutate header.stamp and this tick's positions/time_from_start in
+        # place, then publish the SAME message object again. Safe to reuse
+        # immediately after publish() returns: rclpy's Publisher.publish()
+        # converts the Python message and calls straight through to the
+        # rmw/DDS layer (rmw_fastrtps_cpp's rmw_publish) SYNCHRONOUSLY --
+        # it CDR-serializes the message into the RTPS writer's own buffer
+        # (or, depending on QoS, copies it into the writer history cache)
+        # before rmw_publish returns control to rclpy, and rclpy's publish()
+        # itself does not queue the message for later (there is no
+        # background serialization thread in the middleware's send path,
+        # and this node's publishers use create_publisher's own vanilla
+        # depth-10 QoS, no zero-copy/loaned-message API that would extend a
+        # message's lifetime past the call). So by the time pub.publish(msg)
+        # returns here, the wire bytes for THIS tick are already committed
+        # and the next tick's in-place mutation cannot race or alias a
+        # publish still in flight. No new message wrapper objects, and no
+        # new joint_names list, are created on this path any more.
         stamp = self.get_clock().now().to_msg()
         sec = int(self.time_from_start)
         nanosec = int((self.time_from_start - sec) * 1e9)
@@ -305,13 +357,10 @@ class MirrorNode(Node):
             pub = self.pubs.get(group)
             if pub is None:
                 continue
-            msg = JointTrajectory()
+            msg, point = self._traj_msgs[group]
             msg.header.stamp = stamp
-            msg.joint_names = list(joints)
-            point = JointTrajectoryPoint()
             point.positions = [self.q_cmd[j] for j in joints]
             point.time_from_start = Duration(sec=sec, nanosec=nanosec)
-            msg.points = [point]
             pub.publish(msg)
 
     def _report(self):

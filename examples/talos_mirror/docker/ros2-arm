@@ -108,6 +108,57 @@
 #                        per tick. No ROS/robot needed -- pure python +
 #                        pinocchio/pink under /opt/mpvenv. See
 #                        tools/qp_ab_harness.py.
+#   ros2-arm diff-bench record-golden [--out FILE] [--mode direct|qp]
+#                        loop-test DO-PHASE A1 (repair round 2): bank the
+#                        golden commanded-joint AND published-topic stream
+#                        by driving the REAL mirror_node.MirrorNode (rclpy
+#                        Node -- not a reimplementation of its tick
+#                        pipeline, see tools/diff_replay.py's module
+#                        docstring) against a fixed deterministic session
+#                        with a per-limb gate-out/gate-in cycle for every
+#                        limb and a /mirror_enable disable/enable cycle.
+#                        Default out is tools/golden_commanded.json
+#                        (committed, ~135 KB).
+#   ros2-arm diff-bench compare [--golden FILE] [--mode direct|qp]
+#                        replay the SAME fixture through the REAL MirrorNode
+#                        of whatever build of talos_mirror is currently
+#                        checked out and diff against the golden's PUBLISHED
+#                        stream (what the six real controller-topic
+#                        publishers actually emitted, not just internal
+#                        q_cmd -- repair round 2) by TICK INDEX (never
+#                        arrival time): PASS = 0 deg deviation everywhere
+#                        (dedup-hold transients, once T2 exists, get a
+#                        0.65 deg allowance -- see the tool's docstring),
+#                        gate transitions and the deadman freeze tick-exact,
+#                        all six controller topics actually published every
+#                        cycle, and mirror.launch.py's own argument defaults
+#                        asserted to still match mirror_node.py's declared
+#                        parameter defaults. Run this BEFORE and AFTER any
+#                        optimization edit.
+#   ros2-arm diff-bench self-test [--golden FILE]
+#                        proves the comparator fails for the right reason:
+#                        clean self-compare must PASS, then an artificially
+#                        perturbed copy of the same PUBLISHED stream must
+#                        FAIL with the deviation localised to the perturbed
+#                        joint/tick-range. NEEDS ROS (rclpy) for EVERY
+#                        diff-bench subcommand now, including --mode direct
+#                        -- it drives a real rclpy Node, not pure python;
+#                        --mode qp additionally needs pink/pinocchio, same
+#                        as ab-bench -- hence /opt/mpvenv (--system-site-
+#                        packages keeps rclpy importable there too, see
+#                        body-accept's own comment below) for every mode.
+#                        See tools/diff_replay.py.
+#                        RUNTIME HAZARD / ISOLATION: every diff-bench
+#                        subcommand replays through the REAL six controller-
+#                        topic publishers of a REAL rclpy node -- 601+ actual
+#                        JointTrajectory messages per topic, not a
+#                        simulation. diff-bench therefore always runs on its
+#                        OWN fixed ROS_DOMAIN_ID (77 by default -- override
+#                        with DIFF_BENCH_ROS_DOMAIN_ID=<n>), ignoring this
+#                        script's usual ROS_DOMAIN_ID/default-0 fallback, so
+#                        a diff-bench replay can NEVER land on the same
+#                        domain as a live `mirror`/`sweep`/`talos` stack by
+#                        accident.
 #   `mirror mode:=direct|qp` (default direct) -- c2-qp (M5): qp additionally
 #                        runs both wrists through pink/pinocchio task-space
 #                        differential IK (qp_retarget.WristQPSolver),
@@ -194,6 +245,10 @@ DOCKNAME=""
 # right after sourcing install/setup.bash, alongside the foreground ros2
 # launch. Empty means no extra RViz gets started.
 RVIZ_BG=""
+# Set by the `diff-bench` branch below to pin that verb to its own
+# ROS_DOMAIN_ID, isolated from any live stack -- see that branch's own
+# comment. Empty means the usual ROS_DOMAIN_ID/default-0 behavior applies.
+DOMAIN_ID_OVERRIDE=""
 command -v xhost >/dev/null && xhost +local:root >/dev/null 2>&1
 
 if ! docker image inspect ros2-talos:jazzy >/dev/null 2>&1; then
@@ -297,6 +352,33 @@ if [ "$1" = ab-bench ]; then
     # Default: `ros2-arm ab-bench ab /ros2_ws/tools/ab_session.jsonl`
     CMD="/opt/mpvenv/bin/python /ros2_ws/tools/qp_ab_harness.py $*"
 fi
+if [ "$1" = diff-bench ]; then
+    shift
+    # loop-test DO-PHASE A1 no-regression comparator (repair round 2): drives
+    # the REAL mirror_node.MirrorNode (rclpy Node), record-golden banks its
+    # commanded-joint AND published-topic stream, compare diffs the
+    # CURRENTLY checked-out build's real node against it by TICK INDEX,
+    # self-test proves the comparator itself fails for the right reason.
+    # Needs rclpy for EVERY mode now (not just --mode qp) -- /opt/mpvenv is
+    # --system-site-packages so rclpy imports fine there too, same as
+    # ab-bench/body-accept. See tools/diff_replay.py.
+    #
+    # RUNTIME HAZARD (repair round 2): `compare`/`self-test` replay through
+    # the REAL rclpy Publisher.publish of a REAL mirror_node.MirrorNode --
+    # this is not a simulation of the six controller topics, it is 601+
+    # actual JointTrajectory messages per topic going out under whatever
+    # ROS_DOMAIN_ID this container is on. On the default domain 0 (this
+    # script's own default, shared with `mirror`/`sweep`/`talos`), running
+    # diff-bench while one of those is up would inject real commands into a
+    # live stack. diff-bench therefore gets its OWN fixed domain (77) below,
+    # independent of `$ROS_DOMAIN_ID`/the default-0 fallback every other
+    # verb uses -- a live stack on domain 0 (or any other domain) can never
+    # receive a diff-bench replay by accident. Override with
+    # DIFF_BENCH_ROS_DOMAIN_ID=<n> if 77 collides with something else on
+    # this host.
+    DOMAIN_ID_OVERRIDE="${DIFF_BENCH_ROS_DOMAIN_ID:-77}"
+    CMD="/opt/mpvenv/bin/python /ros2_ws/tools/diff_replay.py $*"
+fi
 if [ "$1" = body-accept ]; then
     shift
     # mpvenv python: mediapipe for --live, and --system-site-packages keeps
@@ -346,7 +428,7 @@ exec docker run $DOCKTTY --rm $DOCKNAME \
     --net=host --ipc=host --pid=host \
     -e DISPLAY="${DISPLAY:-:1}" \
     -e QT_X11_NO_MITSHM=1 \
-    -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}" \
+    -e ROS_DOMAIN_ID="${DOMAIN_ID_OVERRIDE:-${ROS_DOMAIN_ID:-0}}" \
     -e ROS_LOCALHOST_ONLY="${ROS_LOCALHOST_ONLY:-0}" \
     -e RMW_IMPLEMENTATION="${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}" \
     -e RVIZ_BG="$RVIZ_BG" \
