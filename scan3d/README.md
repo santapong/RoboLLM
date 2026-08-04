@@ -105,6 +105,7 @@ python3 mesh_to_print.py ../assets/scan/mug/mug_photo.ply --height-mm 95 --smoot
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
 | `mesh_to_print.py` | Any mesh → watertight true-scale STL for slicer / FreeCAD |
 | `scale_mat.py` | ChArUco scale mat: `make` printable mat, `solve` metric scale → `scale.json` |
+| `poisson_mesh.py` + `poisson.Dockerfile` | Screened Poisson mesher (Open3D, MIT): `MESHER=poisson ./reconstruct_cpu.sh …` for smoother watertight surfaces when the OpenMVS mesh is noisy |
 
 Scans are written under `../assets/scan/<session>/` and are git-ignored (they can
 be large / are personal). URDF links land in `../assets/urdf/<name>/`.

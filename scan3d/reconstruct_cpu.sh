@@ -79,8 +79,15 @@ step "[5/7] OpenMVS densify (the slow one)"
 MR /usr/local/bin/OpenMVS/InterfaceCOLMAP -w /work -i /work/dense -o /work/scene.mvs --image-folder /work/dense/images
 MR /usr/local/bin/OpenMVS/DensifyPointCloud -w /work /work/scene.mvs -o /work/scene_dense.mvs
 
-step "[6/7] OpenMVS mesh"
-MR /usr/local/bin/OpenMVS/ReconstructMesh -w /work /work/scene_dense.mvs -o /work/scene_mesh.mvs
+if [[ "${MESHER:-openmvs}" == "poisson" ]]; then
+  step "[6/7] Screened Poisson mesh (MESHER=poisson, Open3D)"
+  docker build -q -t scan3d/poisson -f "$HERE/poisson.Dockerfile" "$HERE" >/dev/null
+  docker run --rm -v "$SESS:/work" scan3d/poisson \
+      /work/scene_dense.ply -o /work/scene_mesh.ply ${POISSON_ARGS:-}
+else
+  step "[6/7] OpenMVS mesh (MESHER=poisson for the Screened Poisson alternative)"
+  MR /usr/local/bin/OpenMVS/ReconstructMesh -w /work /work/scene_dense.mvs -o /work/scene_mesh.mvs
+fi
 
 step "[7/7] OpenMVS texture"
 MR /usr/local/bin/OpenMVS/TextureMesh -w /work /work/scene_dense.mvs -m /work/scene_mesh.ply -o "/work/${SESSION}_photo.mvs"
