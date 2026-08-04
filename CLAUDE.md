@@ -94,6 +94,8 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
 ## Status (2026-08-04)
+Next steps are tiered in ROADMAP.md (spine: bench -> encoders ->
+LeRobot logger -> demos). Gap triggers below stay authoritative.
 Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +
 patrol_bot, CAD arm, scan3d, .mcpb, hardware stack vs sim_uno. scan3d
 print/CAD stack merged to develop (Route C Docker CPU photogrammetry,
