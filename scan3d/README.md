@@ -108,3 +108,7 @@ python3 mesh_to_print.py ../assets/scan/mug/mug_photo.ply --height-mm 95 --smoot
 
 Scans are written under `../assets/scan/<session>/` and are git-ignored (they can
 be large / are personal). URDF links land in `../assets/urdf/<name>/`.
+
+License note: OpenMVS is **AGPL-3.0**. Route C only invokes it as an unmodified
+Docker binary (its output data is unaffected) — never vendor or link OpenMVS
+code into this Apache-2.0 repo.
