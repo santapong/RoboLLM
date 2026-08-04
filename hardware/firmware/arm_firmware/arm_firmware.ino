@@ -1,124 +1,193 @@
-// arm_firmware.ino — DIY robot arm firmware for Arduino Uno R3
+// arm_firmware.ino — arm-fw 2.0: 6-DOF servo arm + gripper with MEASURED state.
 //
-// The Uno is a dumb servo controller: it holds up to 6 hobby servos and obeys
-// a tiny line-based serial protocol (115200 baud). All planning/kinematics
-// lives on the host (Raspberry Pi 5 / laptop) — the Uno's 2 KB RAM can't run
-// micro-ROS, so plain serial is the right transport.
+// The Uno is a dumb servo controller; all planning/kinematics lives on the host
+// (2 KB RAM can't run micro-ROS — plain serial is the right transport).
 //
-// Protocol (one command per line, replies end with \n):
-//   PING              -> PONG arm-fw 1.0
-//   E 1 | E 0         -> attach/detach all servos (0 = torque off)  -> OK
-//   S <ch> <deg>      -> move servo <ch> (0-5) to <deg> (clamped)   -> OK
-//   G                 -> A <deg0> <deg1> <deg2> <deg3> <deg4> <deg5>
-//   LED 1 | LED 0     -> onboard LED, smoke test without servos     -> OK
-//   Unknown input     -> ERR <what>
+// v2 merges the Phase A research protocol (measured encoder state, batch set,
+// timestamps, e-stop) with v1's slew-rate limiting and smoke tests.
 //
-// Movement is slew-rate limited (MAX_STEP_DEG every TICK_MS) so a big command
-// doesn't slam the arm at full servo speed.
+// Protocol (115200 baud, one command per line, every motion/state command
+// replies with ONE state line):
+//   Pi -> Uno:
+//     S d0 d1 d2 d3 d4 d5 g   set all joint targets (deg) + gripper (0-100) -> s
+//     Q                        query state, no motion                        -> s
+//     H                        go to home pose                               -> s
+//     E                        enable torque (attach servos)                 -> s
+//     X                        e-stop: detach servos (safe, hand-movable)    -> s
+//     P                        ping                                          -> # pong arm-fw 2.0
+//     L 1 | L 0                onboard LED, smoke test without servos        -> # led
+//   Uno -> Pi:
+//     s d0..d5 g t_ms          MEASURED angles (deg), gripper, millis()
+//     # ...                    comment / banner        ! ...    error
 //
-// Wiring: servo signal pins below; servo POWER must come from an external
-// 5-6 V supply (NOT the Uno's 5V pin), with grounds tied together.
+// KEY IDEA: we COMMAND servos open-loop but REPORT what the encoders measure.
+// Command != measurement — that is what makes recorded demonstrations honest
+// (research hypothesis H5). readEncoderDeg() is stubbed to return the slewed
+// commanded position until real encoders are wired: that stub IS the
+// "commanded state" baseline. Swap it out before recording real datasets.
+//
+// Wiring: servo POWER from an external 5-6 V supply (NOT the Uno's 5V pin),
+// grounds tied together.
 
 #include <Servo.h>
 
-const uint8_t N_SERVOS = 6;
-const uint8_t SERVO_PINS[N_SERVOS] = {3, 5, 6, 9, 10, 11}; // PWM-capable pins
+const uint8_t NJOINTS = 6;
+const uint8_t SERVO_PIN[NJOINTS] = {3, 5, 6, 9, 10, 11}; // PWM-capable pins
+const uint8_t GRIPPER_PIN = 4;
 const uint8_t LED_PIN = 13;
 
-// Per-channel safe range — tighten these once you know your arm's limits.
-const uint8_t MIN_DEG[N_SERVOS] = {0, 0, 0, 0, 0, 0};
-const uint8_t MAX_DEG[N_SERVOS] = {180, 180, 180, 180, 180, 180};
-const uint8_t HOME_DEG = 90;
+// Per-joint safety limits (deg) — tighten once the arm's real limits are known.
+const float JMIN[NJOINTS] = {  0,   0,   0,   0,   0,   0};
+const float JMAX[NJOINTS] = {180, 180, 180, 180, 180, 180};
+const float GMIN = 0, GMAX = 100;
+const float HOME_DEG[NJOINTS] = {90, 90, 90, 90, 90, 90};
 
-const uint16_t TICK_MS = 20;      // 50 Hz update
-const uint8_t MAX_STEP_DEG = 2;   // max degrees per tick (=100 deg/s)
+const uint16_t TICK_MS = 20;     // 50 Hz slew update
+const float MAX_STEP_DEG = 2.0;  // per tick == 100 deg/s
 
-Servo servos[N_SERVOS];
-float current_deg[N_SERVOS];
-float target_deg[N_SERVOS];
-bool enabled = false;
+Servo servo[NJOINTS];
+Servo gripper;
+
+float current[NJOINTS];  // slewed position actually written to servos (deg)
+float target[NJOINTS];   // last commanded target (deg)
+float gCurrent = 0, gTarget = 0;
+bool  enabled = false;
 unsigned long last_tick = 0;
 
-char line[32];
-uint8_t line_len = 0;
+// ------------------------------------------------------------------
+// ENCODER READ — replace with the real encoder code per joint.
+//   Case 1 analog pot:  map(analogRead(POT_PIN[i]), RAW_MIN, RAW_MAX, JMIN, JMAX)
+//   Case 2 AS5600 I2C (via mux): read raw angle register, scale to degrees
+//   Case 3 quadrature: counts[i] * DEG_PER_COUNT[i] + offset[i]
+// Until then it returns the SLEWED COMMANDED position — the honest label for
+// that is "commanded state" (H5 baseline), not a measurement.
+// ------------------------------------------------------------------
+float readEncoderDeg(uint8_t i) {
+  return current[i];              // TODO: real encoder read for joint i
+}
+float readGripper() {
+  return gCurrent;                // TODO: replace if the gripper has feedback
+}
 
-void attach_all() {
-  for (uint8_t i = 0; i < N_SERVOS; i++) {
-    servos[i].write((int)current_deg[i]);
-    servos[i].attach(SERVO_PINS[i]);
+float clampf(float v, float lo, float hi) {
+  return v < lo ? lo : (v > hi ? hi : v);
+}
+
+void sendState() {
+  Serial.print('s');
+  for (uint8_t i = 0; i < NJOINTS; i++) {
+    Serial.print(' ');
+    Serial.print(readEncoderDeg(i), 2);
   }
+  Serial.print(' ');
+  Serial.print(readGripper(), 1);
+  Serial.print(' ');
+  Serial.println(millis());
+}
+
+void attachAll() {
+  for (uint8_t i = 0; i < NJOINTS; i++) {
+    servo[i].write((int)round(current[i]));
+    servo[i].attach(SERVO_PIN[i]);
+  }
+  gripper.write((int)round(map((long)gCurrent, 0, 100, 0, 180)));
+  gripper.attach(GRIPPER_PIN);
   enabled = true;
 }
 
-void detach_all() {
-  for (uint8_t i = 0; i < N_SERVOS; i++) servos[i].detach();
+void detachAll() {
+  for (uint8_t i = 0; i < NJOINTS; i++) servo[i].detach();
+  gripper.detach();
   enabled = false;
+}
+
+// Parse "d0 d1 d2 d3 d4 d5 g" (after the 'S').
+bool parseSet(char *args) {
+  float tmp[NJOINTS]; float g;
+  char *tok = strtok(args, " ");
+  for (uint8_t i = 0; i < NJOINTS; i++) {
+    if (!tok) return false;
+    tmp[i] = atof(tok);
+    tok = strtok(NULL, " ");
+  }
+  if (!tok) return false;
+  g = atof(tok);
+
+  bool oor = false;
+  for (uint8_t i = 0; i < NJOINTS; i++) {
+    float c = clampf(tmp[i], JMIN[i], JMAX[i]);
+    if (c != tmp[i]) oor = true;
+    target[i] = c;
+  }
+  float gc = clampf(g, GMIN, GMAX);
+  if (gc != g) oor = true;
+  gTarget = gc;
+
+  if (!enabled) attachAll();
+  if (oor) Serial.println("! out_of_range");
+  return true;
+}
+
+char buf[96];
+uint8_t blen = 0;
+
+void handleLine(char *line) {
+  switch (line[0]) {
+    case 'S': if (!parseSet(line + 1)) Serial.println("! bad_cmd"); sendState(); break;
+    case 'Q': sendState(); break;
+    case 'H':
+      for (uint8_t i = 0; i < NJOINTS; i++) target[i] = HOME_DEG[i];
+      gTarget = 0;
+      if (!enabled) attachAll();
+      sendState(); break;
+    case 'E': attachAll();  sendState(); break;
+    case 'X': detachAll();  sendState(); break;
+    case 'P': Serial.println("# pong arm-fw 2.0"); break;
+    case 'L':
+      digitalWrite(LED_PIN, (line[1] == ' ' && line[2] == '1') ? HIGH : LOW);
+      Serial.println("# led"); break;
+    case '\0': break;
+    default:  Serial.println("! bad_cmd"); break;
+  }
 }
 
 void setup() {
   pinMode(LED_PIN, OUTPUT);
-  for (uint8_t i = 0; i < N_SERVOS; i++) {
-    current_deg[i] = HOME_DEG;
-    target_deg[i] = HOME_DEG;
-  }
+  for (uint8_t i = 0; i < NJOINTS; i++) { current[i] = HOME_DEG[i]; target[i] = HOME_DEG[i]; }
   Serial.begin(115200);
-  // boot blink: 3 fast flashes = firmware alive
-  for (uint8_t i = 0; i < 3; i++) {
+  for (uint8_t i = 0; i < 3; i++) {           // boot blink: firmware alive
     digitalWrite(LED_PIN, HIGH); delay(80);
     digitalWrite(LED_PIN, LOW);  delay(80);
   }
-  Serial.println(F("READY arm-fw 1.0"));
-}
-
-void handle_line() {
-  line[line_len] = '\0';
-  if (strcmp(line, "PING") == 0) {
-    Serial.println(F("PONG arm-fw 1.0"));
-  } else if (strcmp(line, "G") == 0) {
-    Serial.print(F("A"));
-    for (uint8_t i = 0; i < N_SERVOS; i++) {
-      Serial.print(' '); Serial.print((int)current_deg[i]);
-    }
-    Serial.println();
-  } else if (strncmp(line, "E ", 2) == 0) {
-    if (line[2] == '1') attach_all(); else detach_all();
-    Serial.println(F("OK"));
-  } else if (strncmp(line, "LED ", 4) == 0) {
-    digitalWrite(LED_PIN, line[4] == '1' ? HIGH : LOW);
-    Serial.println(F("OK"));
-  } else if (strncmp(line, "S ", 2) == 0) {
-    int ch = -1, deg = -1;
-    if (sscanf(line + 2, "%d %d", &ch, &deg) == 2 && ch >= 0 && ch < N_SERVOS) {
-      if (deg < MIN_DEG[ch]) deg = MIN_DEG[ch];
-      if (deg > MAX_DEG[ch]) deg = MAX_DEG[ch];
-      target_deg[ch] = deg;
-      Serial.println(F("OK"));
-    } else {
-      Serial.println(F("ERR S <ch 0-5> <deg 0-180>"));
-    }
-  } else if (line_len > 0) {
-    Serial.print(F("ERR unknown: ")); Serial.println(line);
-  }
-  line_len = 0;
+  // start relaxed & safe; the host sends 'E' / 'S' / 'H' to energize
+  Serial.println("# ready arm-fw 2.0");
 }
 
 void loop() {
   while (Serial.available()) {
-    char c = Serial.read();
-    if (c == '\n' || c == '\r') handle_line();
-    else if (line_len < sizeof(line) - 1) line[line_len++] = c;
-    else line_len = 0; // overflow: drop the line
+    char c = (char)Serial.read();
+    if (c == '\n' || c == '\r') {
+      buf[blen] = '\0';
+      if (blen > 0) handleLine(buf);
+      blen = 0;
+    } else if (blen < sizeof(buf) - 1) {
+      buf[blen++] = c;
+    } else {
+      blen = 0;
+      Serial.println("! overflow");
+    }
   }
 
   unsigned long now = millis();
   if (now - last_tick >= TICK_MS) {
     last_tick = now;
-    for (uint8_t i = 0; i < N_SERVOS; i++) {
-      float d = target_deg[i] - current_deg[i];
-      if (d > MAX_STEP_DEG) d = MAX_STEP_DEG;
-      if (d < -MAX_STEP_DEG) d = -MAX_STEP_DEG;
-      current_deg[i] += d;
-      if (enabled) servos[i].write((int)current_deg[i]);
+    for (uint8_t i = 0; i < NJOINTS; i++) {
+      float d = clampf(target[i] - current[i], -MAX_STEP_DEG, MAX_STEP_DEG);
+      current[i] += d;
+      if (enabled) servo[i].write((int)round(current[i]));
     }
+    float dg = clampf(gTarget - gCurrent, -MAX_STEP_DEG * 2, MAX_STEP_DEG * 2);
+    gCurrent += dg;
+    if (enabled) gripper.write((int)round(map((long)gCurrent, 0, 100, 0, 180)));
   }
 }

@@ -21,14 +21,23 @@ stack is developable and testable with zero hardware plugged in.
 - **`arm_serial.py`** — host-side pyserial driver + CLI. Auto-detects the port
   by USB VID (genuine Uno + CH340/CP210x clones), falling back to any
   ttyACM/ttyUSB; `ARM_PORT` env overrides (this is how sim_uno plugs in).
-  Opening the port DTR-resets the Uno, so the constructor waits ~2.5 s and
-  swallows the `READY` banner. API: `ping()`, `enable(bool)`, `set_joint(ch,
-  deg)`, `get_joints()`, `led(bool)`.
+  Opening the port DTR-resets the Uno, so the constructor waits ~2.5 s.
+  API (the contract every later phase uses, mirroring VLA I/O): `get_state()`
+  → measured radians + gripper + timestamps, `set_action(q, grip)`, `home()`,
+  `enable()`, `relax()` (e-stop), `ping()`, `led(bool)`. Radians↔degrees and
+  per-joint calibration (`JointCalib`: offset/sign/limits) live here and only
+  here.
 - **`arm_bridge_node.py`** — the ROS 2 node (`arm_bridge`). Subscribes
-  `/arm/command`, streams each element to a servo channel, publishes
-  `/arm/joint_states` at 10 Hz (degrees converted to radians). Disables torque
-  on shutdown. This is the real-hardware twin of the sim arm path in
-  `robot_bridge.py`.
+  `/arm/command` (degrees), sends one batch `set_action` per message,
+  publishes `/arm/joint_states` at 10 Hz with the MEASURED state in radians.
+  Relaxes servos on shutdown. This is the real-hardware twin of the sim arm
+  path in `robot_bridge.py`.
+- **`camera_logger.py`** — synchronized (image, state, action) episode
+  recorder for Phase B demonstrations: grabs the newest camera frame, reads
+  state immediately after, logs both timestamps + the lag so sync quality is
+  auditable. `episodes/ep_NNNN/{frames/, record.jsonl, meta.json}`.
+- **`acceptance_test.py`** — the Phase A milestone check on real hardware:
+  read state → commanded move lands → synced camera grab → lag < 50 ms.
 - **`sim_uno.py`** — fake Uno on a pty (`pty.openpty()`, raw mode). Speaks the
   identical protocol including the 100 deg/s slew limit, so motion takes real
   time. Prints its port (e.g. `/dev/pts/3`) and logs every command/reply.
@@ -38,16 +47,28 @@ stack is developable and testable with zero hardware plugged in.
   arduino-cli (ARM64), ROS 2 Jazzy, and a udev rule that symlinks the Uno to
   `/dev/arm_uno`.
 
-## Serial protocol (115200 baud, one command per line, replies end with `\n`)
+## Serial protocol — arm-fw 2.0 (115200 baud, one command per line)
+
+v2 replaces the v1 word protocol with the Phase A research protocol (see
+`docs/serial_protocol.md` for the full rationale): batch all-joints set,
+**measured** state replies with timestamps, and an e-stop. Every
+motion/state command returns exactly one `s` line.
 
 | Command | Reply | Meaning |
 |---------|-------|---------|
-| `PING` | `PONG arm-fw 1.0` | liveness (sim answers `PONG arm-fw 1.0 (SIM)`) |
-| `E 1` / `E 0` | `OK` | attach / detach all servos (0 = torque off) |
-| `S <ch> <deg>` | `OK` | move servo `<ch>` (0–5) to `<deg>` (clamped to limits) |
-| `G` | `A d0 d1 d2 d3 d4 d5` | read current angles (deg) |
-| `LED 1` / `LED 0` | `OK` | onboard LED — smoke test with no servos wired |
-| anything else | `ERR …` | error with hint |
+| `S d0..d5 g` | `s …` | set ALL joint targets (deg) + gripper (0–100), one round-trip |
+| `Q` | `s …` | read state, no motion |
+| `H` | `s …` | go to home pose |
+| `E` | `s …` | attach servos (torque on) |
+| `X` | `s …` | e-stop: detach servos (safe, hand-movable) |
+| `P` | `# pong arm-fw 2.0` | liveness (sim adds `(SIM)`) |
+| `L 1` / `L 0` | `# led` | onboard LED — smoke test with no servos wired |
+| state reply | `s d0..d5 g t_ms` | **MEASURED** angles (deg), gripper, `millis()` |
+| errors / comments | `! …` / `# …` | host logs `!`, ignores `#` |
+
+`readEncoderDeg()` is stubbed to return the slewed commanded position until
+real encoders are wired — that stub is the H5 "commanded state" baseline;
+swap it before recording datasets.
 
 ## Key files
 

@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""sim_uno.py — fake Arduino: emulates arm_firmware.ino on a virtual serial port.
+"""sim_uno.py — fake Arduino: emulates arm_firmware.ino (arm-fw 2.0) on a pty.
 
 Lets you develop/test the WHOLE arm stack (arm_serial.py, arm_bridge_node.py,
-future MCP tools) with no hardware plugged in. It speaks the identical
-protocol, including the 100 deg/s slew-rate limit, so motion takes real time.
+camera_logger.py, acceptance_test.py) with no hardware plugged in. Speaks the
+identical v2 protocol — S/Q/H/E/X/P/L with measured-state `s` replies and
+millis timestamps — including the 100 deg/s slew limit, so motion takes real
+time and measured != commanded is visible mid-move, exactly like the bench.
 
     python3 sim_uno.py            # prints the port, e.g. /dev/pts/3
     ARM_PORT=/dev/pts/3 python3 arm_serial.py ping
@@ -15,41 +17,70 @@ import time
 import tty
 
 N = 6
-current = [90.0] * N
-target = [90.0] * N
+HOME = [90.0] * N
+current = HOME[:]
+target = HOME[:]
+g_current = 0.0
+g_target = 0.0
 enabled = False
 MAX_STEP = 2.0   # deg per 20 ms tick == 100 deg/s, same as firmware
+T0 = time.monotonic()
+
+
+def millis() -> int:
+    return int((time.monotonic() - T0) * 1000)
 
 
 def slew_loop():
+    global g_current
     while True:
         for i in range(N):
             d = max(-MAX_STEP, min(MAX_STEP, target[i] - current[i]))
             current[i] += d
+        g_current += max(-2 * MAX_STEP, min(2 * MAX_STEP, g_target - g_current))
         time.sleep(0.02)
 
 
+def state_line() -> str:
+    joints = " ".join(f"{v:.2f}" for v in current)
+    return f"s {joints} {g_current:.1f} {millis()}"
+
+
 def handle(line: str) -> str:
-    global enabled
-    if line == "PING":
-        return "PONG arm-fw 1.0 (SIM)"
-    if line == "G":
-        return "A " + " ".join(str(int(v)) for v in current)
-    if line.startswith("E "):
-        enabled = line[2] == "1"
-        return "OK"
-    if line.startswith("LED "):
-        return "OK"
-    if line.startswith("S "):
+    global enabled, g_target
+    if not line:
+        return ""
+    c, _, args = line.partition(" ")
+    if c == "S":
         try:
-            ch, deg = (int(v) for v in line[2:].split())
-            if not 0 <= ch < N:
+            vals = [float(v) for v in args.split()]
+            if len(vals) != N + 1:
                 raise ValueError
-            target[ch] = max(0, min(180, deg))
-            return "OK"
+            for i in range(N):
+                target[i] = max(0.0, min(180.0, vals[i]))
+            g_target = max(0.0, min(100.0, vals[N]))
+            enabled = True
+            return state_line()
         except ValueError:
-            return "ERR S <ch 0-5> <deg 0-180>"
-    return f"ERR unknown: {line}" if line else ""
+            return "! bad_cmd\n" + state_line()
+    if c == "Q":
+        return state_line()
+    if c == "H":
+        target[:] = HOME
+        g_target = 0.0
+        enabled = True
+        return state_line()
+    if c == "E":
+        enabled = True
+        return state_line()
+    if c == "X":
+        enabled = False
+        return state_line()
+    if c == "P":
+        return "# pong arm-fw 2.0 (SIM)"
+    if c == "L":
+        return "# led"
+    return "! bad_cmd"
 
 
 def main():
@@ -58,7 +89,7 @@ def main():
     port = os.ttyname(slave)
     print(f"SIM UNO on {port}   (Ctrl-C to stop)", flush=True)
     threading.Thread(target=slew_loop, daemon=True).start()
-    os.write(master, b"READY arm-fw 1.0 (SIM)\n")
+    os.write(master, b"# ready arm-fw 2.0 (SIM)\n")
     buf = b""
     while True:
         buf += os.read(master, 64)
@@ -68,7 +99,7 @@ def main():
             reply = handle(line.decode(errors="replace").strip())
             if reply:
                 os.write(master, reply.encode() + b"\n")
-                print(f"  {line.decode()!r:24} -> {reply}", flush=True)
+                print(f"  {line.decode()!r:32} -> {reply.splitlines()[-1]}", flush=True)
 
 
 if __name__ == "__main__":
