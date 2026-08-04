@@ -61,6 +61,30 @@ Resolution matters far less than these:
   centered and fully in frame the whole way around.
 - **Overlap** (photogrammetry): each photo should share ~70% with the last.
 
+## D. 3D printing / CAD-CAM — `mesh_to_print.py`
+Any scanned mesh (Route A hull or Route C photogrammetry) → watertight,
+true-scale, bed-oriented **STL** ready for a slicer or FreeCAD:
+
+```bash
+python3 mesh_to_print.py ../assets/scan/mug/mug_photo.ply --height-mm 95 --smooth 10
+# -> mug_photo_print.stl  (watertight, Z=95mm, sitting on the bed at Z=0)
+```
+
+- **`--height-mm` is mandatory**: photogrammetry has no absolute scale — measure
+  the real object's height with callipers or the print will be a random size.
+- Repairs automatically: drops floating debris, fills holes, fixes normals; if
+  still leaky it voxel-remeshes (guaranteed watertight, detail set by
+  `--voxel-mm`). Prints dims, volume, and estimated solid-PLA grams.
+- Best route per goal: **phone + Route C** for fidelity/organic shapes
+  (concavities captured); **webcam + Route A** for fast watertight solids of
+  convex objects (a cup scans as filled — fine for CAD reference, wrong for
+  printing the cavity).
+- CAD/CAM: STL is a mesh, not BREP — in FreeCAD use Part → Shape from mesh →
+  refine, or remodel over the scan as a reference body. A scan never becomes
+  clean STEP automatically.
+- A scan missing whole regions (unscanned underside) comes back as a thin
+  shell, not a solid — rescan with more coverage rather than fighting it.
+
 ## Files
 | File | Role |
 |------|------|
@@ -69,6 +93,7 @@ Resolution matters far less than these:
 | `reconstruct.sh` | COLMAP photogrammetry (sparse on CPU, dense on GPU) |
 | `reconstruct_cpu.sh` | Full photogrammetry in Docker: COLMAP sparse + OpenMVS dense, CPU-only |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
+| `mesh_to_print.py` | Any mesh → watertight true-scale STL for slicer / FreeCAD |
 
 Scans are written under `../assets/scan/<session>/` and are git-ignored (they can
 be large / are personal). URDF links land in `../assets/urdf/<name>/`.

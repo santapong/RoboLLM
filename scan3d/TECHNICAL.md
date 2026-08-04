@@ -56,6 +56,7 @@ ROS 2 / Gazebo world.
 | `reconstruct.sh` | COLMAP photogrammetry: sparse locally, prints GPU dense steps |
 | `reconstruct_cpu.sh` | Route C: COLMAP sparse + OpenMVS dense, CPU-only, Docker |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
+| `mesh_to_print.py` | Second tail: repair + true-scale + bed-orient → printable STL |
 
 ## CLI flags
 
@@ -94,6 +95,17 @@ dimensions, mass, and `watertight=True/False`. Try the part with
 `examples/pybullet/load_robot.py` (point its `loadURDF` at the new URDF).
 Route B: `sudo apt install colmap`, capture 30–60 overlapping snapshots
 (snapshot mode, ~70% overlap), then `./reconstruct.sh mug`.
+
+- **`mesh_to_print.py`** — the 3D-print/CAD tail. Largest-component filter →
+  degenerate/duplicate face removal → winding+normal fix → `fill_holes`; if
+  still open, a voxel remesh (`voxelized(pitch).fill()` + marching cubes,
+  scaled by pitch back to mm) guarantees watertightness at `--voxel-mm`
+  resolution. Scale is set by `--height-mm` (photogrammetry is scale-free;
+  the visual hull is already metric but re-asserting a callipered height
+  costs nothing). Output is centred in XY with min-Z on the bed plane.
+  Verified on synthetic torture meshes: holes + floating debris → watertight
+  solid at exact height; a mesh missing a whole cap becomes a thin watertight
+  shell (correct behaviour — coverage can't be invented).
 
 ## Gotchas
 
