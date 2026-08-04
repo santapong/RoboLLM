@@ -42,6 +42,15 @@ shots, ≥60% overlap — do NOT rotate the object on a plate for this route
 (a static background breaks feature matching). 40–80 photos; expect
 10–40 min on CPU.
 
+**Metric scale for free — put the ChArUco mat under the object.** One-time:
+`python3 scale_mat.py make -o scale_mat.png`, print at 100% ("actual size"),
+measure a square with a ruler (should be 30 mm). Shoot with the mat visible
+in most frames; `reconstruct_cpu.sh` then detects it, solves the true
+mm-per-unit against the recovered camera poses, and writes
+`scale.json` — after which `mesh_to_print.py` needs no `--height-mm`.
+If your printout measured e.g. 29.5 mm, re-solve with
+`python3 scale_mat.py solve --session ../assets/scan/mug --square-mm 29.5`.
+
 ## B. Photogrammetry — higher fidelity (needs a GPU for the dense step)
 COLMAP recovers camera poses + geometry from overlapping photos. Sparse runs on
 CPU here; the dense surface needs CUDA → run it on your GCP/AWS GPU instance.
@@ -70,8 +79,9 @@ python3 mesh_to_print.py ../assets/scan/mug/mug_photo.ply --height-mm 95 --smoot
 # -> mug_photo_print.stl  (watertight, Z=95mm, sitting on the bed at Z=0)
 ```
 
-- **`--height-mm` is mandatory**: photogrammetry has no absolute scale — measure
-  the real object's height with callipers or the print will be a random size.
+- **Scale**: uses the session's `scale.json` (ChArUco mat, automatic) when
+  present; otherwise pass `--height-mm` (calliper the real object) — without
+  either, the print would be a random size, so the tool refuses to guess.
 - Repairs automatically: drops floating debris, fills holes, fixes normals; if
   still leaky it voxel-remeshes (guaranteed watertight, detail set by
   `--voxel-mm`). Prints dims, volume, and estimated solid-PLA grams.
@@ -94,6 +104,7 @@ python3 mesh_to_print.py ../assets/scan/mug/mug_photo.ply --height-mm 95 --smoot
 | `reconstruct_cpu.sh` | Full photogrammetry in Docker: COLMAP sparse + OpenMVS dense, CPU-only |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
 | `mesh_to_print.py` | Any mesh → watertight true-scale STL for slicer / FreeCAD |
+| `scale_mat.py` | ChArUco scale mat: `make` printable mat, `solve` metric scale → `scale.json` |
 
 Scans are written under `../assets/scan/<session>/` and are git-ignored (they can
 be large / are personal). URDF links land in `../assets/urdf/<name>/`.

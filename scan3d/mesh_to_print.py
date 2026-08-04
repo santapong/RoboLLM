@@ -24,6 +24,7 @@ Deps: pip install trimesh numpy scipy networkx scikit-image  (repo venv has all;
       elsewhere use -c constraints.txt to keep the numpy 1.26.4 pin)
 """
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -62,8 +63,11 @@ def voxel_remesh(mesh: trimesh.Trimesh, pitch: float) -> trimesh.Trimesh:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("mesh", help=".ply/.obj/.stl from Route A or C")
-    ap.add_argument("--height-mm", type=float, required=True,
-                    help="real measured height (Z extent) of the object in mm — sets absolute scale")
+    ap.add_argument("--height-mm", type=float, default=None,
+                    help="real measured height (Z extent) in mm; not needed if the "
+                         "session has scale.json from scale_mat.py")
+    ap.add_argument("--scale-json", default=None,
+                    help="path to scale.json (default: auto-detect next to the mesh)")
     ap.add_argument("--smooth", type=int, default=0, metavar="N",
                     help="N Laplacian smoothing iterations (photogrammetry noise; try 5-15)")
     ap.add_argument("--voxel-mm", type=float, default=0.4,
@@ -82,18 +86,29 @@ def main() -> int:
         trimesh.smoothing.filter_laplacian(mesh, iterations=args.smooth)
         print(f"  smoothed: {args.smooth} Laplacian iterations")
 
-    # scale so Z extent == the measured real height
-    z_extent = mesh.extents[2]
-    if z_extent <= 0:
-        print("error: mesh has zero Z extent", file=sys.stderr)
+    # scale to real millimetres: prefer the solved ChArUco scale, else --height-mm
+    scale_path = Path(args.scale_json) if args.scale_json else src.parent / "scale.json"
+    if scale_path.exists():
+        mm_per_unit = json.loads(scale_path.read_text())["mm_per_unit"]
+        print(f"  metric scale from {scale_path.name}: {mm_per_unit:.4f} mm/unit")
+        mesh.apply_scale(mm_per_unit)
+    elif args.height_mm is not None:
+        z_extent = mesh.extents[2]
+        if z_extent <= 0:
+            print("error: mesh has zero Z extent", file=sys.stderr)
+            return 1
+        mesh.apply_scale(args.height_mm / z_extent)
+    else:
+        print("error: no scale.json found and no --height-mm given — the mesh has "
+              "no absolute scale. Shoot with the ChArUco mat (scale_mat.py make) "
+              "or measure the object.", file=sys.stderr)
         return 1
-    scale = args.height_mm / z_extent
-    mesh.apply_scale(scale)
 
     if not mesh.is_watertight:
+        target_z = mesh.extents[2]  # already in true mm at this point
         mesh = voxel_remesh(mesh, pitch=args.voxel_mm)
         mesh = basic_repair(mesh)
-        mesh.apply_scale(args.height_mm / mesh.extents[2])  # remesh pads by a voxel
+        mesh.apply_scale(target_z / mesh.extents[2])  # remesh pads by a voxel
 
     # sit flat on the print bed: min corner at Z=0, centred in XY
     minc, _ = mesh.bounds

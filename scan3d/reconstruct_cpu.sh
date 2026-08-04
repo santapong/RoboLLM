@@ -60,6 +60,16 @@ step "[3/7] COLMAP mapping (sparse SfM)"
 mkdir -p "$SESS/sparse"
 CR colmap mapper --database_path /work/colmap.db --image_path /work/images --output_path /work/sparse
 
+step "[3b/7] export text model + solve metric scale (ChArUco mat, best-effort)"
+mkdir -p "$SESS/sparse_txt"
+CR colmap model_converter --input_path /work/sparse/0 --output_path /work/sparse_txt --output_type TXT
+if python3 -c 'import cv2, numpy' 2>/dev/null; then
+  python3 "$HERE/scale_mat.py" solve --session "$SESS" \
+    || echo "no scale mat found — pass --height-mm to mesh_to_print.py instead"
+else
+  echo "python3-opencv not available — skipping scale solve (use --height-mm)"
+fi
+
 step "[4/7] COLMAP undistortion"
 CR colmap image_undistorter --image_path /work/images --input_path /work/sparse/0 \
    --output_path /work/dense --output_type COLMAP
