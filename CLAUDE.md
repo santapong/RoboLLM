@@ -100,7 +100,9 @@ print/CAD stack merged to develop (Route C Docker CPU photogrammetry,
 mesh_to_print.py, scale_mat.py ChArUco metric scale, MESHER=poisson;
 all verified on synthetic data only). PENDING user:
 `sudo usermod -aG dialout santapong` + plug the real Uno in → run
-check_arduino.sh.
+check_arduino.sh (now flashes arm-fw 2.0 — the measured-state protocol from
+the Phase A convergence, hardware/docs/phaseA-convergence.md; camera_logger
++ acceptance_test are ported and sim-verified; encoders still stubbed).
 
 scan3d BACKLOG (in order — first item gates develop→main for scan3d):
 1. PHYSICAL VALIDATION: `python3 scan3d/scale_mat.py make -o mat.png`,
