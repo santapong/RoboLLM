@@ -1,9 +1,21 @@
 # Roadmap
 
-The spine: **bench afternoon → encoders → LeRobot logger → collect demos.**
-Everything else hangs off it. Tiered 4 Aug 2026 after the Phase A convergence;
-gap triggers live in [CLAUDE.md](CLAUDE.md) (stack-gap backlog). Re-tier when
-a Tier S item lands.
+Two parallel tracks sharing one artifact (the LeRobot-format logger, A2):
+
+- **Real-arm track** (bench-gated): bench afternoon → encoders → logger →
+  collect demos → Phase B imitation.
+- **Sim track** (unblocked TODAY, laptop + rented GPU hours): MuJoCo scene →
+  LeRobot dataset in sim → SmolVLA fine-tune (~450M; 3090/A100-hours, not
+  weeks) → break it deliberately and MEASURE the failure. Steps 1–3 are
+  table stakes; step 4 is the contribution — and it feeds the per-axis
+  evaluation harness (research Gap 2). Candidate thesis rows: failure
+  detection, mid-chunk abort (reactivity vs chunking — the G1 capstone's
+  50 Hz/200 Hz split is the same pattern), safety/refusal.
+
+Tiered 4 Aug 2026 after the Phase A convergence; sim track added same day
+from the VLA field-map research (LLM share thins toward the metal; the job
+is the action expert, its data, and the loop that catches failures). Gap
+triggers live in [CLAUDE.md](CLAUDE.md). Re-tier when a Tier S item lands.
 
 ## Tier S — next (unblocks everything, ~1 hour combined, hardware in hand)
 
@@ -17,7 +29,8 @@ a Tier S item lands.
 | # | Item | Why | Status |
 |---|------|-----|--------|
 | A1 | Wire real encoders into `readEncoderDeg()` (after S2) | turns on H5 (measured-vs-commanded — the novel research axis); makes demos honest | ⏳ bench |
-| A2 | Upgrade `camera_logger` episodes to **LeRobot dataset format** | the format Phases B–D and community tooling consume; code-only | ⏳ code (Claude can do) |
+| A2 | Upgrade `camera_logger` episodes to **LeRobot dataset format** | the format BOTH tracks and community tooling consume; code-only | ⏳ code (Claude can do) |
+| A3 | **Sim-track step 1**: MuJoCo arm scene + scripted policy + sim episode recording (extends `examples/mujoco/`) | starts the bench-independent research path; CPU-only | ⏳ code (Claude can do) |
 
 ## Tier B — the compounding build (pick ONE main quest)
 
