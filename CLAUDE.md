@@ -120,6 +120,24 @@ scan3d BACKLOG (in order — first item gates develop→main for scan3d):
 Open gaps: cloud-GPU workflow, tests/CI, RL example,
 live desktop demo (docs/live-session.md).
 
+STACK-GAP BACKLOG (mapped 4 Aug 2026 — each with its build trigger; do
+NOT open these fronts early, the trigger is the point):
+- SLAM (online sibling of scan3d): RTAB-Map (BSD, Jazzy-native) webcam RGB
+  node. License note: ORB-SLAM3 is GPLv3 — do not vendor. TRIGGER: first
+  task needing a live map (real-robot Nav2, or G1 capstone Phase 3).
+- Grasp planning: scanned mesh → grasp poses → MoveIt pick (bridges scan3d
+  assets to autonomous pick-and-place; the Phase D story). TRIGGER: arm
+  bench works + one scanned object validated.
+- State estimation (EKF odom/IMU fusion, robot_localization pkg). TRIGGER:
+  G1 capstone Phase 3 (Nav2 needs fused /odom) or any real mobile base.
+- Sim-to-real / domain randomization. TRIGGER: Phase C VLA fine-tune, or
+  G1 capstone Phase 3.5 gap test.
+- Behavior trees (Nav2 BTs / L5 planner output). TRIGGER: Phase D LLM
+  planner design.
+- Force/tactile sensing. TRIGGER: first task where pose control provably
+  fails (e.g. insertion); needs hardware selection first.
+- Voice interface for the LLM brain. TRIGGER: live desktop demo milestone.
+
 ## Conventions
 - Commit style: short imperative subject.
 - Branching (`docs/branching.md`): day-to-day work on `develop`;
