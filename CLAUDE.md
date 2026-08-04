@@ -93,11 +93,29 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - Real Uno health check: `hardware/check_arduino.sh` (needs user in `dialout`).
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
-## Status (2026-07-14)
+## Status (2026-08-04)
 Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +
-patrol_bot, CAD arm, scan3d, .mcpb, hardware stack vs sim_uno. PENDING user:
+patrol_bot, CAD arm, scan3d, .mcpb, hardware stack vs sim_uno. scan3d
+print/CAD stack merged to develop (Route C Docker CPU photogrammetry,
+mesh_to_print.py, scale_mat.py ChArUco metric scale, MESHER=poisson;
+all verified on synthetic data only). PENDING user:
 `sudo usermod -aG dialout santapong` + plug the real Uno in → run
-check_arduino.sh. Open gaps: cloud-GPU workflow, tests/CI, RL example,
+check_arduino.sh.
+
+scan3d BACKLOG (in order — first item gates develop→main for scan3d):
+1. PHYSICAL VALIDATION: `python3 scan3d/scale_mat.py make -o mat.png`,
+   print at 100% + measure a square, put a calliper-measurable object on
+   it, orbit 40–80 phone photos, `./reconstruct_cpu.sh test ~/photos/`,
+   `mesh_to_print.py` → compare STL dims vs callipers (target: within
+   ~1–2%). Also solves Scene 3 if the same object is scanned with the
+   KIRI Engine app for comparison.
+2. Scene 4 VGGT rescue path (needs cloud GPU + an object COLMAP fails
+   on): VGGT-1B-Commercial checkpoint → COLMAP-format poses → existing
+   OpenMVS tail. Do not use MASt3R/DUSt3R (CC-BY-NC).
+3. Optional: swap scale_mat.py's hand-rolled COLMAP text parser for
+   pycolmap (BSD) if the format ever breaks.
+
+Open gaps: cloud-GPU workflow, tests/CI, RL example,
 live desktop demo (docs/live-session.md).
 
 ## Conventions
