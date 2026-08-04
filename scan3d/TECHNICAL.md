@@ -56,6 +56,8 @@ ROS 2 / Gazebo world.
 | `reconstruct.sh` | COLMAP photogrammetry: sparse locally, prints GPU dense steps |
 | `reconstruct_cpu.sh` | Route C: COLMAP sparse + OpenMVS dense, CPU-only, Docker |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
+| `mesh_to_print.py` | Second tail: repair + true-scale + bed-orient → printable STL |
+| `scale_mat.py` | ChArUco mat: printable target + metric-scale solver → `scale.json` |
 
 ## CLI flags
 
@@ -94,6 +96,29 @@ dimensions, mass, and `watertight=True/False`. Try the part with
 `examples/pybullet/load_robot.py` (point its `loadURDF` at the new URDF).
 Route B: `sudo apt install colmap`, capture 30–60 overlapping snapshots
 (snapshot mode, ~70% overlap), then `./reconstruct.sh mug`.
+
+- **`mesh_to_print.py`** — the 3D-print/CAD tail. Largest-component filter →
+  degenerate/duplicate face removal → winding+normal fix → `fill_holes`; if
+  still open, a voxel remesh (`voxelized(pitch).fill()` + marching cubes,
+  scaled by pitch back to mm) guarantees watertightness at `--voxel-mm`
+  resolution. Scale is set by `--height-mm` (photogrammetry is scale-free;
+  the visual hull is already metric but re-asserting a callipered height
+  costs nothing). Output is centred in XY with min-Z on the bed plane.
+  Verified on synthetic torture meshes: holes + floating debris → watertight
+  solid at exact height; a mesh missing a whole cap becomes a thin watertight
+  shell (correct behaviour — coverage can't be invented). Scale source order:
+  session `scale.json` → `--height-mm` → hard error (never guesses).
+- **`scale_mat.py`** — metric scale without callipers. `make` renders a
+  7×5 ChArUco board (DICT_5X5_100, 30 mm squares) centred on A4 @ 300 DPI;
+  `solve` reads the COLMAP text model (`sparse_txt/`, exported by
+  `reconstruct_cpu.sh` step 3b), detects ChArUco corners per registered image
+  (`cv2.aruco.CharucoDetector`), triangulates each corner seen in ≥2 views by
+  multi-view DLT on undistorted pixels, then takes the median over all corner
+  pairs of known-mm / model-distance → `mm_per_unit` in `scale.json`, with a
+  p90 spread stat (>3% ⇒ warn: mat not flat / print not 100% / bad poses).
+  `--self-test` proves the math on 6 synthetic cameras with 0.3 px noise
+  (recovers a known scale to <0.5%; measured 0.006%). The board self-detects
+  24/24 corners from its own rendered image.
 
 ## Gotchas
 
