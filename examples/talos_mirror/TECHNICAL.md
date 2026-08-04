@@ -4,6 +4,8 @@
 TALOS full-size humanoid: both arms, head, torso, and both legs (pelvis
 pinned), CPU-only and RViz-based (no Gazebo, no GPU, no hardware).
 
+![talos_mirror component diagram](docs/talos_mirror-architecture.svg)
+
 STATUS: skeleton only -- section stubs below name the gotchas the c2-qp (M5)
 review surfaced (traps to avoid, not yet written up). Full write-up is a
 docs-phase task; each stub is a placeholder for a full explanation in the

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1280" height="640" fill="#FFFFFF"/>
+
+  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — talos_mirror: Webcam Whole-Body Teleop of the PAL TALOS Humanoid</text>
+  <text x="24" y="58" font-size="12" fill="#555555">Full body — both arms, head, torso, both legs (pelvis pinned) — webcam pose → gimbal/branch-safe retargeting → JointTrajectory → RViz. CPU-only. TECHNICAL.md is still a gotcha-stub skeleton.</text>
+
+  <!-- boundary -->
+  <rect x="240" y="90" width="720" height="440" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="256" y="112" font-size="12" font-style="italic" fill="#444444">talos_mirror package — vendored TALOS description (unlike humanoid_mirror's apt-installed FFW)</text>
+
+  <!-- arrows -->
+  <line x1="210" y1="200" x2="255" y2="200" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="265,200 255,195 255,205" fill="#707070"/>
+  <text x="237" y="188" font-size="11" fill="#333333" text-anchor="middle">RAW frame</text>
+
+  <line x1="520" y1="200" x2="630" y2="200" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="640,200 630,195 630,205" fill="#707070"/>
+  <text x="580" y="188" font-size="11" fill="#333333" text-anchor="middle">body landmarks</text>
+
+  <line x1="770" y1="260" x2="770" y2="300" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="770,310 765,300 775,300" fill="#707070"/>
+  <text x="780" y="288" font-size="11" fill="#333333">JointTrajectory</text>
+
+  <line x1="895" y1="360" x2="1000" y2="360" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1010,360 1000,355 1000,365" fill="#707070"/>
+  <text x="952" y="348" font-size="11" fill="#333333" text-anchor="middle">TF</text>
+
+  <!-- bench -> retarget (dashed) -->
+  <line x1="455" y1="380" x2="640" y2="240" stroke="#707070" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="648,234 638.6,237.6 644.5,245.5" fill="#707070"/>
+  <rect x="500" y="300" width="140" height="14" fill="#FFFFFF"/>
+  <text x="570" y="311" font-size="11" fill="#333333" text-anchor="middle">round-trip error gates</text>
+
+  <!-- externals -->
+  <g>
+    <rect x="30" y="150" width="180" height="100" rx="6" fill="#999999"/>
+    <text x="120" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Webcam + you</text>
+    <text x="120" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[V4L2 · full body in frame]</text>
+    <text x="120" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">arms, head, torso and legs;</text>
+    <text x="120" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">pelvis stays pinned</text>
+  </g>
+  <g>
+    <rect x="1010" y="310" width="240" height="100" rx="6" fill="#999999"/>
+    <text x="1130" y="334" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">RViz</text>
+    <text x="1130" y="351" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[no Gazebo · no GPU]</text>
+    <text x="1130" y="369" font-size="12" fill="#FFFFFF" text-anchor="middle">TALOS mirrors your whole</text>
+    <text x="1130" y="384" font-size="12" fill="#FFFFFF" text-anchor="middle">body (~CPU-profiled 27 Jul)</text>
+  </g>
+
+  <!-- components -->
+  <g>
+    <rect x="265" y="150" width="255" height="110" rx="6" fill="#1168BD"/>
+    <text x="392" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">body tracking</text>
+    <text x="392" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[MediaPipe Pose · RAW frame]</text>
+    <text x="392" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">whole-body landmarks with</text>
+    <text x="392" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">visibility gating; One-Euro</text>
+    <text x="392" y="239" font-size="12" fill="#FFFFFF" text-anchor="middle">filtering on angles</text>
+  </g>
+  <g>
+    <rect x="640" y="150" width="255" height="110" rx="6" fill="#1168BD"/>
+    <text x="767" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">retarget.py</text>
+    <text x="767" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[gimbal/branch-safe solver]</text>
+    <text x="767" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">_pick_gimbal ACOS-branch labels</text>
+    <text x="767" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">(asin branch cost 24° leg error);</text>
+    <text x="767" y="239" font-size="12" fill="#FFFFFF" text-anchor="middle">1-DOF knee residual handling</text>
+  </g>
+  <g>
+    <rect x="640" y="310" width="255" height="100" rx="6" fill="#1168BD"/>
+    <text x="767" y="334" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">controllers + rsp</text>
+    <text x="767" y="351" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[mock hardware · JTCs]</text>
+    <text x="767" y="369" font-size="12" fill="#FFFFFF" text-anchor="middle">vendored TALOS URDF;</text>
+    <text x="767" y="384" font-size="12" fill="#FFFFFF" text-anchor="middle">launcher avoids the bash -c</text>
+    <text x="767" y="399" font-size="12" fill="#FFFFFF" text-anchor="middle">single-quote trap</text>
+  </g>
+  <g>
+    <rect x="265" y="380" width="255" height="110" rx="6" fill="#85BBF0"/>
+    <text x="392" y="404" font-size="15" font-weight="bold" fill="#000000" text-anchor="middle">retarget-bench</text>
+    <text x="392" y="421" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[acceptance harness]</text>
+    <text x="392" y="439" font-size="12" fill="#000000" text-anchor="middle">round-trip solver gates; beware</text>
+    <text x="392" y="454" font-size="12" fill="#000000" text-anchor="middle">the kwargs-vs-int-key landmark</text>
+    <text x="392" y="469" font-size="12" fill="#000000" text-anchor="middle">dict trap (false pass/fail)</text>
+  </g>
+
+  <!-- legend -->
+  <line x1="24" y1="552" x2="210" y2="552" stroke="#DDDDDD" stroke-width="1"/>
+  <text x="24" y="574" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <rect x="24" y="586" width="18" height="18" rx="3" fill="#1168BD"/>
+  <text x="50" y="600" font-size="12" fill="#333333">Component (this package)</text>
+  <rect x="250" y="586" width="18" height="18" rx="3" fill="#85BBF0"/>
+  <text x="276" y="600" font-size="12" fill="#333333">Acceptance harness</text>
+  <rect x="450" y="586" width="18" height="18" rx="3" fill="#999999"/>
+  <text x="476" y="600" font-size="12" fill="#333333">External system</text>
+  <line x1="640" y1="595" x2="680" y2="595" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="690,595 680,590 680,600" fill="#707070"/>
+  <text x="700" y="600" font-size="12" fill="#333333">Data flow (dashed = test/verify)</text>
+  <text x="24" y="628" font-size="11" fill="#777777">C4 model (component view) · generated from repository sources: examples/talos_mirror/TECHNICAL.md (stub), retarget.py, ros2_ws/ — refresh when the docs-phase write-up lands</text>
+</svg>

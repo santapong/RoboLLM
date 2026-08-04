@@ -10,6 +10,8 @@ consumes an external description.
 **Implemented: M0 (image), M1 (bring-up), M2 (the humanoid moves), M3 (body
 tracking), M4 (live mirroring).**
 
+![humanoid_mirror component diagram](docs/humanoid_mirror-architecture.svg)
+
 ## Why FFW and not something from MoveIt
 
 MoveIt ships no humanoid. `moveit_resources` is Panda + Fanuc + a PR2 that is

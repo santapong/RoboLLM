@@ -3,10 +3,13 @@
 Two ways to get a 3D mesh from your (bad, that's fine!) laptop webcam. Both feed
 `mesh_to_urdf.py`, so a scanned real object becomes a robot/sim part.
 
+![scan3d architecture (C4 component view)](docs/scan3d-architecture.svg)
+
 ```
- webcam ──capture.py──▶ images ──┬─ visual_hull.py  (CPU, laptop)  ─┐
-                                 │                                   ├─▶ mesh ──mesh_to_urdf.py──▶ URDF ──▶ PyBullet / Gazebo / FreeCAD
-                                 └─ reconstruct.sh  (COLMAP, +GPU)  ─┘
+ webcam ─capture.py─┐          ┌─ A: visual_hull.py    (CPU)        ─┐   ┌─ mesh_to_urdf.py  ─▶ URDF ─▶ PyBullet / Gazebo
+                    ├─ images ─┼─ C: reconstruct_cpu.sh (Docker,CPU) ─┼───┤
+ phone (photos) ────┘          └─ B: reconstruct.sh    (CPU+GPU box) ─┘   └─ mesh_to_print.py ─▶ STL  ─▶ Slicer / FreeCAD
+                                       └─ scale_mat.py ─▶ scale.json ─────────┘  (true mm)
 ```
 
 ## A. CPU visual hull — works on this laptop today

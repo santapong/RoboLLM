@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" font-family="Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="1280" height="760" fill="#FFFFFF"/>
+
+  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — humanoid_mirror: Webcam Upper-Body Teleop of the ROBOTIS FFW Humanoid</text>
+  <text x="24" y="58" font-size="12" fill="#555555">One node mirrors your left arm, right arm and head onto the apt-installed FFW bg2_rev4 — MediaPipe Pose → One-Euro → retarget → four disjoint JTCs — CPU-only, RViz-based (M0–M4 done)</text>
+
+  <!-- boundary -->
+  <rect x="240" y="90" width="720" height="560" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="256" y="112" font-size="12" font-style="italic" fill="#444444">humanoid_mirror ament_python package — consumes the external ffw description (no vendored URDF)</text>
+
+  <!-- ===== arrows ===== -->
+  <!-- webcam -> mirror node -->
+  <line x1="210" y1="200" x2="255" y2="200" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="265,200 255,195 255,205" fill="#707070"/>
+  <text x="237" y="188" font-size="11" fill="#333333" text-anchor="middle">RAW frame</text>
+  <!-- ffw_config -> mirror node -->
+  <line x1="640" y1="230" x2="530" y2="230" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="520,230 530,225 530,235" fill="#707070"/>
+  <text x="585" y="218" font-size="11" fill="#333333" text-anchor="middle">group/joint constants</text>
+  <!-- ffw_config -> move_group -->
+  <line x1="770" y1="290" x2="770" y2="330" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="770,340 765,330 775,330" fill="#707070"/>
+  <text x="780" y="318" font-size="11" fill="#333333">corrected MoveItConfigsBuilder chain</text>
+  <!-- mirror node -> JTCs -->
+  <line x1="390" y1="290" x2="390" y2="330" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="390,340 385,330 395,330" fill="#707070"/>
+  <text x="400" y="318" font-size="11" fill="#333333">JointTrajectory @ 50 Hz</text>
+  <!-- mirror node <-> move_group (fk verify) -->
+  <line x1="520" y1="260" x2="655" y2="345" stroke="#707070" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="663,350 653.3,347.3 658.6,338.9" fill="#707070"/>
+  <rect x="530" y="290" width="120" height="14" fill="#FFFFFF"/>
+  <text x="590" y="301" font-size="11" fill="#333333" text-anchor="middle">/compute_fk verify</text>
+  <!-- JTCs -> rsp -->
+  <line x1="390" y1="440" x2="390" y2="480" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="390,490 385,480 395,480" fill="#707070"/>
+  <text x="400" y="468" font-size="11" fill="#333333">/joint_states</text>
+  <!-- rsp -> rviz -->
+  <line x1="520" y1="545" x2="1000" y2="545" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="1010,545 1000,540 1000,550" fill="#707070"/>
+  <text x="760" y="533" font-size="11" fill="#333333" text-anchor="middle">TF + robot_description</text>
+  <!-- mirror node -> body markers/tf (track mode) -->
+  <line x1="455" y1="290" x2="700" y2="480" stroke="#707070" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="708,486 698.2,483.7 704.3,475.9" fill="#707070"/>
+  <rect x="520" y="378" width="160" height="14" fill="#FFFFFF"/>
+  <text x="600" y="389" font-size="11" fill="#333333" text-anchor="middle">M3 track: TF human/* + /body/markers</text>
+  <!-- ffw_check -> stack -->
+  <line x1="840" y1="440" x2="810" y2="400" stroke="#707070" stroke-width="1" stroke-dasharray="4,3"/>
+  <polygon points="804,392 812.9,396.6 804.9,402.6" fill="#707070"/>
+
+  <!-- ===== externals ===== -->
+  <g>
+    <rect x="30" y="150" width="180" height="100" rx="6" fill="#999999"/>
+    <text x="120" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Webcam + you</text>
+    <text x="120" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[V4L2 · arms RAISED]</text>
+    <text x="120" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">hips/elbows invisible at a</text>
+    <text x="120" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">desk — raise your arms</text>
+  </g>
+  <g>
+    <rect x="1010" y="490" width="240" height="110" rx="6" fill="#999999"/>
+    <text x="1130" y="514" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">RViz</text>
+    <text x="1130" y="531" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[no Gazebo · no GPU]</text>
+    <text x="1130" y="549" font-size="12" fill="#FFFFFF" text-anchor="middle">FFW mirrors your left arm</text>
+    <text x="1130" y="564" font-size="12" fill="#FFFFFF" text-anchor="middle">on its right, and head;</text>
+    <text x="1130" y="579" font-size="12" fill="#FFFFFF" text-anchor="middle">verified to 0.0000° vs FK</text>
+  </g>
+  <g>
+    <rect x="1010" y="150" width="240" height="110" rx="6" fill="#999999"/>
+    <text x="1130" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ffw description (apt)</text>
+    <text x="1130" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[ffw_bg2_rev4_follower]</text>
+    <text x="1130" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">only Jazzy robot with arm_l /</text>
+    <text x="1130" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">arm_r / head MoveIt groups;</text>
+    <text x="1130" y="239" font-size="12" fill="#FFFFFF" text-anchor="middle">its own launch file crashes</text>
+  </g>
+  <line x1="1010" y1="205" x2="905" y2="205" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="895,205 905,200 905,210" fill="#707070"/>
+
+  <!-- ===== components ===== -->
+  <g>
+    <rect x="265" y="150" width="255" height="140" rx="6" fill="#1168BD"/>
+    <text x="392" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">mirror_node.py</text>
+    <text x="392" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[one process · /opt/mpvenv python]</text>
+    <text x="392" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">MediaPipe Pose on the RAW frame</text>
+    <text x="392" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">(cv2.flip swaps L/R labels!) →</text>
+    <text x="392" y="239" font-size="12" fill="#FFFFFF" text-anchor="middle">One-Euro on angles → retarget;</text>
+    <text x="392" y="254" font-size="12" fill="#FFFFFF" text-anchor="middle">pose_source.py swaps synthetic /</text>
+    <text x="392" y="269" font-size="12" fill="#FFFFFF" text-anchor="middle">track / live behind one interface</text>
+  </g>
+  <g>
+    <rect x="640" y="150" width="255" height="140" rx="6" fill="#1168BD"/>
+    <text x="767" y="174" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ffw_config.py</text>
+    <text x="767" y="191" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[description plumbing]</text>
+    <text x="767" y="209" font-size="12" fill="#FFFFFF" text-anchor="middle">build_moveit_configs() fixes the</text>
+    <text x="767" y="224" font-size="12" fill="#FFFFFF" text-anchor="middle">upstream crash (semantic without</text>
+    <text x="767" y="239" font-size="12" fill="#FFFFFF" text-anchor="middle">robot_description); pins variant;</text>
+    <text x="767" y="254" font-size="12" fill="#FFFFFF" text-anchor="middle">exports group/joint constants +</text>
+    <text x="767" y="269" font-size="12" fill="#FFFFFF" text-anchor="middle">joint_limits.py MEASURED table</text>
+  </g>
+  <g>
+    <rect x="265" y="340" width="255" height="100" rx="6" fill="#1168BD"/>
+    <text x="392" y="364" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">4× JointTrajectoryController</text>
+    <text x="392" y="381" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[ros2_controllers.yaml · mock hw]</text>
+    <text x="392" y="399" font-size="12" fill="#FFFFFF" text-anchor="middle">arm_l · arm_r · head · lift over</text>
+    <text x="392" y="414" font-size="12" fill="#FFFFFF" text-anchor="middle">DISJOINT joint sets — no joint</text>
+    <text x="392" y="429" font-size="12" fill="#FFFFFF" text-anchor="middle">owned by two controllers</text>
+  </g>
+  <g>
+    <rect x="640" y="340" width="255" height="100" rx="6" fill="#1168BD"/>
+    <text x="767" y="364" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">move_group (MoveIt)</text>
+    <text x="767" y="381" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[ffw_moveit.launch.py · headless]</text>
+    <text x="767" y="399" font-size="12" fill="#FFFFFF" text-anchor="middle">dual-arm IK + /compute_fk used</text>
+    <text x="767" y="414" font-size="12" fill="#FFFFFF" text-anchor="middle">as the ground truth the mirror</text>
+    <text x="767" y="429" font-size="12" fill="#FFFFFF" text-anchor="middle">math is verified against</text>
+  </g>
+  <g>
+    <rect x="265" y="490" width="255" height="110" rx="6" fill="#1168BD"/>
+    <text x="392" y="514" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">robot_state_publisher</text>
+    <text x="392" y="531" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[mock_bringup.launch.py]</text>
+    <text x="392" y="549" font-size="12" fill="#FFFFFF" text-anchor="middle">full stack bring-up: rsp +</text>
+    <text x="392" y="564" font-size="12" fill="#FFFFFF" text-anchor="middle">controller_manager + spawners</text>
+    <text x="392" y="579" font-size="12" fill="#FFFFFF" text-anchor="middle">(ros2-arm humanoid)</text>
+  </g>
+  <g>
+    <rect x="700" y="490" width="230" height="110" rx="6" fill="#85BBF0"/>
+    <text x="815" y="514" font-size="15" font-weight="bold" fill="#000000" text-anchor="middle">ffw_check.py</text>
+    <text x="815" y="531" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[M1 acceptance · humanoid-check]</text>
+    <text x="815" y="549" font-size="12" fill="#000000" text-anchor="middle">18 checks green: description,</text>
+    <text x="815" y="564" font-size="12" fill="#000000" text-anchor="middle">controllers, dual-arm IK;</text>
+    <text x="815" y="579" font-size="12" fill="#000000" text-anchor="middle">body-accept tiers for M3</text>
+  </g>
+
+  <!-- legend -->
+  <line x1="24" y1="672" x2="210" y2="672" stroke="#DDDDDD" stroke-width="1"/>
+  <text x="24" y="694" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <rect x="24" y="706" width="18" height="18" rx="3" fill="#1168BD"/>
+  <text x="50" y="720" font-size="12" fill="#333333">Component (this package)</text>
+  <rect x="250" y="706" width="18" height="18" rx="3" fill="#85BBF0"/>
+  <text x="276" y="720" font-size="12" fill="#333333">Acceptance harness</text>
+  <rect x="450" y="706" width="18" height="18" rx="3" fill="#999999"/>
+  <text x="476" y="720" font-size="12" fill="#333333">External system</text>
+  <line x1="640" y1="715" x2="680" y2="715" stroke="#707070" stroke-width="1.5"/>
+  <polygon points="690,715 680,710 680,720" fill="#707070"/>
+  <text x="700" y="720" font-size="12" fill="#333333">Data flow (dashed = verify/alt mode)</text>
+  <text x="24" y="748" font-size="11" fill="#777777">C4 model (component view) · generated from repository sources: examples/humanoid_mirror/TECHNICAL.md, ffw_config.py, mirror_node.py, ros2_controllers.yaml, launch/</text>
+</svg>
