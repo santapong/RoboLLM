@@ -1,59 +1,102 @@
-# Roadmap
+# ROADMAP — RoboLLM
 
-Two parallel tracks sharing one artifact (the LeRobot-format logger, A2):
+**Objective of this repo: LEARNING.** RoboLLM is the workbench where the
+five-layer robot stack is learned by building — every subsystem exists to
+teach its layer, publicly and reproducibly. Product-shaped and OSS-tool
+outputs do NOT live here: they graduate to the **RLM** repo
+(github.com/santapong/RLM — working name) once they stop being lessons and
+start being deliverables.
 
-- **Real-arm track** (bench-gated): bench afternoon → encoders → logger →
-  collect demos → Phase B imitation.
-- **Sim track** (unblocked TODAY, laptop + rented GPU hours): MuJoCo scene →
-  LeRobot dataset in sim → SmolVLA fine-tune (~450M; 3090/A100-hours, not
-  weeks) → break it deliberately and MEASURE the failure. Steps 1–3 are
-  table stakes; step 4 is the contribution — and it feeds the per-axis
-  evaluation harness (research Gap 2). Candidate thesis rows: failure
-  detection, mid-chunk abort (reactivity vs chunking — the G1 capstone's
-  50 Hz/200 Hz split is the same pattern), safety/refusal.
+```
+RoboLLM (learn it here)  ──graduates──▶  RLM (ship it there)
+```
 
-Tiered 4 Aug 2026 after the Phase A convergence; sim track added same day
-from the VLA field-map research (LLM share thins toward the metal; the job
-is the action expert, its data, and the loop that catches failures). Gap
-triggers live in [CLAUDE.md](CLAUDE.md). Re-tier when a Tier S item lands.
+**Graduation rule:** an artifact moves to RLM when a stranger would want to
+use it without wanting to learn from it. Candidates already identified (the
+research doc's gap→products): diversity-first data-collection kit ·
+per-axis evaluation harness · measured-spec actuator bench + datasheets ·
+the reference benchmark-arm report. NOTE: RLM currently holds the research
+bundle's original Phase A code — superseded by this repo's arm-fw 2.0
+convergence (`hardware/docs/phaseA-convergence.md`); RLM should consume
+RoboLLM's stack, not fork it.
 
-## Tier S — next (unblocks everything, ~1 hour combined, hardware in hand)
+---
 
-| # | Item | Proves | Status |
-|---|------|--------|--------|
-| S1 | **scan3d physical validation** — print ChArUco mat at 100%, scan a calliper-measurable object, compare STL dims (target ~1–2%); scan the same object with KIRI Engine as baseline | the whole scan→print pipeline on real optics; gates scan3d develop→main | ⏳ user bench |
-| S2 | **Arm bench check** — `sudo usermod -aG dialout santapong`, plug Uno in, `hardware/check_arduino.sh` (flashes arm-fw 2.0) | the measured-state stack on real hardware | ⏳ user bench |
+## The learning map (five layers, from the research framing)
 
-## Tier A — high value, cheap, already de-risked (after S)
+| Layer | What it is | Where this repo teaches it |
+|---|---|---|
+| L5 cognitive brain | LLM/VLM planning, 1–10 Hz | MCP server + web dashboard (done); Phase D planner (future) |
+| L4 robotics large model | VLA action expert, 10–50 Hz | sim track: SmolVLA fine-tune + break-and-measure |
+| L3 whole-body control | WBC/MPC, locomotion | humanoid/talos mirrors (done); G1 capstone (Nav2 + policy @50 Hz) |
+| L2 joint control | PID, estimation, 1 kHz | arm-fw 2.0 measured-state stack (done, bench pending); EKF (triggered) |
+| L1 hardware | actuators, sensors, structure | DIY arm bench; scan3d → printed parts; actuator test bench (future) |
 
-| # | Item | Why | Status |
-|---|------|-----|--------|
-| A1 | Wire real encoders into `readEncoderDeg()` (after S2) | turns on H5 (measured-vs-commanded — the novel research axis); makes demos honest | ⏳ bench |
-| A2 | Upgrade `camera_logger` episodes to **LeRobot dataset format** | the format BOTH tracks and community tooling consume; code-only | ⏳ code (Claude can do) |
-| A3 | **Sim-track step 1**: MuJoCo arm scene + scripted policy + sim episode recording (extends `examples/mujoco/`) | starts the bench-independent research path; CPU-only | ⏳ code (Claude can do) |
+Cross-cutting: **perception** (scan3d done; SLAM triggered) and
+**evaluation rigor** — the thesis edge both research docs converge on.
 
-## Tier B — the compounding build (pick ONE main quest)
+---
 
-| # | Item | Why |
-|---|------|-----|
-| B1 | **Phase B demo collection** via the hand-teleop stack — 30–50 episodes on scanned objects | the imitation-learning main quest; exercises arm + logger + diversity-kit idea (research Gap 1) |
-| B2 | **Grasp planning on scanned meshes** → MoveIt pick | the autonomy-first alternative; bridges scan3d assets to pick-and-place, no GPU needed |
+## Two tracks, one shared artifact
 
-## Tier C — triggered, not scheduled
+- **Sim track — unblocked today** (laptop + rented GPU hours):
+  MuJoCo scene → LeRobot dataset in sim → SmolVLA fine-tune (~450M,
+  3090/A100 hours) → break it deliberately and MEASURE the failure.
+  Steps 1–3 are table stakes; step 4 is the contribution. Thesis rows:
+  failure detection · mid-chunk abort (the G1 capstone's 50/200 Hz split is
+  the same pattern) · safety/refusal.
+- **Real-arm track — bench-gated**: bench afternoon → encoders → collect
+  demos via hand-teleop → Phase B imitation (ACT/DP) → Phase C VLA.
+- Shared: the **LeRobot-format logger** (A2) — both tracks record into it.
 
-RTAB-Map SLAM (first live-map need / G1 capstone Phase 3) · EKF odom fusion
-(arrives with G1 Nav2) · VGGT rescue path + Phase C VLA fine-tune (cloud GPU)
-· actuator test bench (weekend spin-off once the bench works; research Gap 3).
+## Tiers (re-tier when a Tier S item lands)
 
-## Tier D — explicitly parked (triggers in CLAUDE.md; do not open early)
+### Tier S — next, ~1 hour combined, hardware in hand
+| # | Item | Proves |
+|---|------|--------|
+| S1 | scan3d physical validation (ChArUco mat @100%, calliper object, STL vs callipers ~1–2%; KIRI baseline on the same object) | scan→print pipeline on real optics; gates scan3d develop→main |
+| S2 | Arm bench check (`dialout`, plug Uno, `hardware/check_arduino.sh` — flashes arm-fw 2.0) | measured-state stack on real hardware |
 
-Sim-to-real randomization · behavior trees · force/tactile · voice interface
-· carrier PCB (only after an Orbiter-style rig exists) · transfer-prediction
-(research Gap 5 — data-centre economics) · task-memory middleware (Gap 6).
+### Tier A — high value, cheap, de-risked
+| # | Item | Track | Who |
+|---|------|-------|-----|
+| A1 | Real encoders into `readEncoderDeg()` (turns on H5 — the novel research axis) | real-arm | bench |
+| A2 | `camera_logger` → LeRobot dataset format | both | Claude, code-only |
+| A3 | MuJoCo arm scene + scripted policy + sim episode recording (extends `examples/mujoco/`) | sim | Claude, code-only |
 
-## Context documents
+### Tier B — the main quests (pick per track)
+| # | Item | Learning payoff |
+|---|------|-----------------|
+| B1 | Sim ladder steps 2–4: sim dataset → SmolVLA fine-tune (rented GPU) → measured failure study | L4, evaluation rigor; the thesis seed |
+| B2 | Phase B demo collection via hand-teleop on scanned objects (30–50 episodes) | L2+L4 data; diversity-kit lessons → graduates to RLM |
+| B3 | G1 locomotion capstone (CLAUDE.md in ~/Downloads: MuJoCo G1 + ros2_control + Nav2, phase-gated) | L3; brings EKF + Nav2 + BTs in on their triggers |
 
-- `hardware/docs/phaseA-convergence.md` — how the two arm stacks merged
-- `scan3d/` README + TECHNICAL — the scan→print/URDF pipeline
-- `~/Downloads/research/project_summary_and_gaps.md` — the research framing
-  (five hypotheses, gap→product map) this roadmap serialises
+### Tier C — triggered, not scheduled
+RTAB-Map SLAM (first live-map need / G1 Phase 3) · EKF odom fusion (G1
+Nav2) · grasp planning on scanned meshes (arm bench + one validated scan)
+· VGGT rescue path + Phase C fine-tune of a 3B-class model (cloud GPU) ·
+actuator test bench (weekend spin-off; lessons → RLM datasheets).
+
+### Tier D — parked with triggers (CLAUDE.md stack-gap backlog is authoritative)
+Sim2real randomization · behavior trees · force/tactile · voice · carrier
+PCB · transfer-prediction (Gap 5) · task-memory (Gap 6).
+
+---
+
+## Milestone arc (the story this repo is trying to tell)
+
+1. **Foundations** (done): ROS 2 examples 01–10, MCP tools, dashboard,
+   teleop family (hand → gen3 → wall_weld → humanoid → talos), CAD, scan3d.
+2. **Honest hardware** (in progress): arm-fw 2.0 measured state → bench →
+   encoders → H5 instrumented.
+3. **First learned policy** (sim track): a SmolVLA you fine-tuned, and a
+   failure study you measured — the MSc-application artifact.
+4. **Imitation on real hardware** (real-arm track): Phase B demos → ACT/DP
+   baselines with CIs.
+5. **The full stack, one robot** (G1 capstone): language → plan → walk —
+   L5 through L1 exercised end to end.
+6. **Graduations**: eval harness, diversity kit, actuator datasheets,
+   benchmark-arm report → RLM as products/OSS.
+
+Context: `hardware/docs/phaseA-convergence.md` · scan3d README/TECHNICAL ·
+`~/Downloads/research/` (gap→product summary + VLA field map).
