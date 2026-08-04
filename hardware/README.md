@@ -39,9 +39,12 @@ sudo usermod -aG dialout $USER    # ONE root step: serial-port permission,
 hardware/check_arduino.sh         # answers "does the Arduino work fine?"
 ```
 
-## Protocol (115200 baud, line-based)
-`PING`→`PONG arm-fw 1.0` · `E 1|0` torque on/off · `S <ch> <deg>` move ·
-`G`→`A d0..d5` read · `LED 1|0`. Unknown → `ERR …`.
+## Protocol (arm-fw 2.0 — 115200 baud, line-based, measured state)
+`S d0..d5 g` set all targets · `Q` query · `H` home · `E` torque on ·
+`X` e-stop/off — each replies `s d0..d5 g t_ms` with the **MEASURED** angles +
+timestamp (never the command — honest data for imitation learning). Plus
+`P`→`# pong arm-fw 2.0` and `L 1|0` (LED). Errors `! …`, comments `# …`.
+Full spec + rationale: `docs/serial_protocol.md`.
 Note: opening the port **resets the Uno** (DTR) — wait ~2 s (ArmSerial does).
 
 ## Wiring — read before powering servos ⚠️
