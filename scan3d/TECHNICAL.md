@@ -119,6 +119,16 @@ Route B: `sudo apt install colmap`, capture 30–60 overlapping snapshots
   `--self-test` proves the math on 6 synthetic cameras with 0.3 px noise
   (recovers a known scale to <0.5%; measured 0.006%). The board self-detects
   24/24 corners from its own rendered image.
+- **`poisson_mesh.py`** — optional Screened Poisson mesher (Scene 5).
+  `MESHER=poisson ./reconstruct_cpu.sh …` swaps OpenMVS ReconstructMesh for
+  Open3D Poisson (depth 9 default) on the dense cloud, in its own auto-built
+  Docker image (`poisson.Dockerfile` — Open3D lacks wheels for every host
+  Python and needs X11/GL libs even headless). Estimates + orients normals if
+  the cloud has none. Density trimming is OFF by default: untrimmed Poisson
+  output is watertight (verified: noisy 10k-pt sphere → 64.5 cm³ vs 65.4
+  truth) and trimming opens holes; largest-component filtering already
+  removes detached hallucinated bubbles. `--trim-quantile 0.02` only when
+  hallucinated surface stays attached — mesh_to_print.py closes the holes.
 
 ## Gotchas
 
