@@ -6,7 +6,11 @@ simulation-ready robot part. Two reconstruction routes feed one common tail:
 turntable frame is a shadow, and the mesh is the intersection of all shadows —
 so it runs on this GPU-free laptop today; **Route B** (`reconstruct.sh`) is
 COLMAP photogrammetry, whose sparse Structure-from-Motion step runs locally on
-CPU while the dense surface needs CUDA on a cloud GPU box. Either route's mesh
+CPU while the dense surface needs CUDA on a cloud GPU box; **Route C**
+(`reconstruct_cpu.sh`) removes that GPU dependency — COLMAP sparse plus an
+OpenMVS dense/mesh/texture tail, all CPU, all in Docker (`colmap/colmap` +
+`openmvs/openmvs-ubuntu` images), and it ingests phone photos or video too
+(the Orbiter-rig technique, hand-held). Any route's mesh
 goes through `mesh_to_urdf.py`, which wraps it into a URDF link with visual
 mesh, convex-hull collision mesh, and computed inertia for PyBullet or a
 ROS 2 / Gazebo world.
@@ -50,6 +54,7 @@ ROS 2 / Gazebo world.
 | `capture.py` | Webcam capture: snapshots, `--turntable N`, `--background` cutout reference |
 | `visual_hull.py` | CPU silhouette carving → watertight `.obj`/`.ply` mesh |
 | `reconstruct.sh` | COLMAP photogrammetry: sparse locally, prints GPU dense steps |
+| `reconstruct_cpu.sh` | Route C: COLMAP sparse + OpenMVS dense, CPU-only, Docker |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
 
 ## CLI flags
@@ -71,6 +76,7 @@ ROS 2 / Gazebo world.
 | `assets/scan/<s>/images/frame_NNN.jpg`, `background.jpg` | `capture.py` | git-ignored (`assets/scan/`) |
 | `assets/scan/<s>/<s>_hull.obj` + `.ply` | `visual_hull.py` | Route A mesh, metres |
 | `assets/scan/<s>/colmap.db`, `sparse/`, `dense/`, `<s>_photo.ply` | `reconstruct.sh` (+ GPU box) | Route B |
+| `assets/scan/<s>/scene_dense.ply`, `scene_mesh.ply`, `<s>_photo.ply` | `reconstruct_cpu.sh` | Route C, CPU |
 | `assets/urdf/<name>/<name>.urdf` + `meshes/*.stl` | `mesh_to_urdf.py` | URDF tracked; STLs git-ignored (`assets/**/*.stl`) |
 
 ## Run + verify (Route A, this laptop)
@@ -99,6 +105,10 @@ Route B: `sudo apt install colmap`, capture 30–60 overlapping snapshots
   even 360° — uneven hand-turning warps the hull.
 - COLMAP dense (`patch_match_stereo`) hard-requires CUDA; only sparse runs on
   this laptop. The script prints the exact GPU commands — don't retype them.
+  Route C (`reconstruct_cpu.sh`) sidesteps this entirely via OpenMVS.
+- Route C phone capture must ORBIT a static object (camera moves); the
+  turntable style of Routes A/B breaks its feature matching — static
+  backgrounds match across frames and COLMAP reconstructs the room.
 - The MCP `spawn_object` tool spawns primitive shapes only (box/sphere/
   cylinder via `gazebo_world.py`); a scanned URDF part goes into a sim by
   loading it in PyBullet or including it in a Gazebo/ROS 2 world yourself.
