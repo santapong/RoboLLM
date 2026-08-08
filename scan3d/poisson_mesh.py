@@ -11,8 +11,11 @@ Runs inside the scan3d/poisson Docker image (see poisson.Dockerfile) because
 Open3D has no wheel for every host Python. Direct use:
 
   docker build -t scan3d/poisson -f poisson.Dockerfile .
-  docker run --rm -v "$SESS:/work" scan3d/poisson \
+  docker run --rm --init -v "$SESS:/work" scan3d/poisson \
       /work/scene_dense.ply -o /work/scene_mesh_poisson.ply
+
+Keep --init: without it the tool is PID 1, SIGABRT's default action is ignored there,
+and a crash hangs forever instead of exiting non-zero.
 
 Deps (in-image): numpy, open3d (MIT).
 """

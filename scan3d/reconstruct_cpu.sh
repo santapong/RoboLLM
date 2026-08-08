@@ -44,8 +44,13 @@ N=$(find "$IMAGES" -type f | wc -l)
 echo "$N images"
 [[ $N -ge 20 ]] || echo "WARNING: <20 images — reconstruction may fail. Aim for 40-80."
 
-CR() { docker run --rm -v "$SESS:/work" -w /work "$COLMAP_IMG" "$@"; }
-MR() { docker run --rm -v "$SESS:/work" -w /work --entrypoint "" "$OPENMVS_IMG" "$@"; }
+# --init is NOT optional: without it the tool runs as PID 1, where the kernel ignores
+# SIGABRT's default action, so a COLMAP/OpenMVS abort() prints its diagnostic, dumps a
+# stack trace and then HANGS FOREVER instead of exiting. Verified: bad --path wedges >5 min
+# without --init, exits 134 immediately with it. set -e cannot save you from a process that
+# never returns.
+CR() { docker run --rm --init -v "$SESS:/work" -w /work "$COLMAP_IMG" "$@"; }
+MR() { docker run --rm --init -v "$SESS:/work" -w /work --entrypoint "" "$OPENMVS_IMG" "$@"; }
 
 # --- 1. Sparse SfM (COLMAP, CPU SIFT) --------------------------------------
 step "[1/7] COLMAP feature extraction"
@@ -82,7 +87,7 @@ MR /usr/local/bin/OpenMVS/DensifyPointCloud -w /work /work/scene.mvs -o /work/sc
 if [[ "${MESHER:-openmvs}" == "poisson" ]]; then
   step "[6/7] Screened Poisson mesh (MESHER=poisson, Open3D)"
   docker build -q -t scan3d/poisson -f "$HERE/poisson.Dockerfile" "$HERE" >/dev/null
-  docker run --rm -v "$SESS:/work" scan3d/poisson \
+  docker run --rm --init -v "$SESS:/work" scan3d/poisson \
       /work/scene_dense.ply -o /work/scene_mesh.ply ${POISSON_ARGS:-}
 else
   step "[6/7] OpenMVS mesh (MESHER=poisson for the Screened Poisson alternative)"
