@@ -1,4 +1,10 @@
-# Webcam Hand-Following Teleop — Run Guide
+# RoboLLM · Webcam hand-following runbook
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Example](../README.md) · [Technical notes](../TECHNICAL.md) · [Theory](handfollow-inception.md)
+
+**Environment:** RViz reference arm · **Success:** stable 20 Hz trajectory
+stream, bounded workspace, and clean pause/resume behavior.
 
 One command brings up the 6-joint weld arm in RViz (MoveIt2 demo,
 `demo.launch.py`) plus `hand_follow.py`, which streams single-point

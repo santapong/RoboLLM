@@ -1,4 +1,7 @@
-# Hand-Guided Pick-and-Place: Theory and Design Rationale (R3)
+# RoboLLM · Hand-guided pick-and-place theory
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Example](../README.md) · [Technical notes](../TECHNICAL.md) · [Runbook](pickplace-run.md)
 
 Target system: Kinova Gen3 lite (6-DOF + gen3_lite_2f gripper), ROS 2 Jazzy in
 Docker (Fast DDS), mock hardware, MoveIt planning scene, MediaPipe

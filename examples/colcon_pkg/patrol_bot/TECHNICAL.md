@@ -1,4 +1,7 @@
-# patrol_bot — technical notes
+# RoboLLM · patrol_bot technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Examples](../../README.md) · [Documentation](../../../docs/README.md) · [Diagram](docs/patrol_bot-architecture.svg)
 
 `patrol_bot` is the repo's first **real ROS 2 package**: example 04 (drive a
 square) grown up into a proper `ament_python` colcon package. Instead of a

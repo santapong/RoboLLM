@@ -1,4 +1,7 @@
-# Packaging the ROS 2 MCP server
+# RoboLLM · Package the ROS 2 MCP server
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](../docs/README.md) · [Architecture](../docs/ARCHITECTURE.md) · [Live session](../docs/live-session.md)
 
 Two install formats, because Claude Desktop and Claude Code use different ones.
 
@@ -17,7 +20,7 @@ required on any machine that runs this.
 ## Claude Code (what you use)
 You already have it registered at **user scope** (works everywhere):
 ```bash
-claude mcp add --scope user ros2 -- ~/Desktop/robot-llm-loop/run-server.sh
+claude mcp add --scope user ros2 -- /path/to/RoboLLM/run-server.sh
 ```
 The repo also ships `../.mcp.json` for **project scope** — anyone who opens this
 folder in Claude Code gets the `ros2` server after a one-time approval prompt. It

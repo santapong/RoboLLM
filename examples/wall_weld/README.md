@@ -1,4 +1,10 @@
-# wall_weld — fist-triggered autonomous wall welding (RViz, CPU-only)
+# RoboLLM · Gesture-triggered wall-weld simulation
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Technical notes](TECHNICAL.md) · [Runbook](docs/wallweld-run.md)
+
+**Environment:** RViz simulation · CPU-only · no welding hardware. This is a
+state-machine and planning lesson, not a real welding controller.
 
 Show the webcam an ArUco marker to place (or **live-move**) a wall in the
 MoveIt planning scene, then **make a fist**: the 6-DOF weld arm autonomously

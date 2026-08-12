@@ -1,4 +1,9 @@
-# humanoid_mirror — webcam body teleop of a humanoid
+# RoboLLM · Webcam humanoid mirroring
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Technical notes](TECHNICAL.md) · [Runbook](docs/mirror-run.md)
+
+**Environment:** ROBOTIS FFW model in RViz · CPU-only · no physical humanoid.
 
 Your **left arm**, **right arm** and **head** drive a humanoid robot in MoveIt,
 live from one USB webcam. CPU-only, no GPU, no Gazebo, no hardware.

@@ -1,4 +1,10 @@
-# Gen3-lite Hand-Guided Pick-and-Place — Run Guide
+# RoboLLM · Gen3 hand-guided pick-and-place runbook
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Example](../README.md) · [Technical notes](../TECHNICAL.md) · [Theory](pickplace-theory.md)
+
+**Environment:** RViz + MoveIt simulation · **Success:** accepted grip,
+attach, carry, release, and detach sequence with no safety-gate violation.
 
 Webcam gesture control of a simulated Kinova Gen3 lite (6-DOF +
 gen3_lite_2f gripper, mock hardware — no robot, no kortex_driver): your

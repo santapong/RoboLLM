@@ -1,4 +1,7 @@
-# cad/ — Technical notes: FreeCAD → URDF pipeline
+# RoboLLM · CAD pipeline technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Run guide](README.md) · [Documentation](../docs/README.md) · [Architecture diagram](docs/cad-architecture.svg)
 
 This directory proves the CAD-to-robot pipeline end to end with a 2-link arm:
 parametric FreeCAD parts are built **headless** (`freecadcmd`, no display),

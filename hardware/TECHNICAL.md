@@ -1,4 +1,7 @@
-# Physical-arm technical notes
+# RoboLLM · Physical-arm technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Hardware guide](README.md) · [Arm architecture](../docs/physical-arm/ARCHITECTURE.md) · [Serial protocol](docs/serial_protocol.md)
 
 The Arduino Uno R3 has 2 KB RAM and intentionally runs a small line-oriented
 serial controller, not micro-ROS. ROS 2, trajectory sampling, calibration

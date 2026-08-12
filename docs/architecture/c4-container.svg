@@ -1,13 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM container architecture</title>
+  <desc id="desc">MCP and browser surfaces share one ROS 2 bridge while scanning, CAD, teleoperation, and physical-arm containers remain bounded.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
 
   <!-- Title -->
   <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — C4 Level 2: Container Diagram</text>
-  <text x="24" y="58" font-size="12" fill="#555555">LLM-driven ROS 2 robotics workbench — Claude controls sim and real robots through one shared rclpy bridge</text>
+  <text x="24" y="58" font-size="12" fill="#555555">Hybrid ROS 2 workbench — human and language-model surfaces share one rclpy bridge</text>
 
   <!-- System boundary -->
   <rect x="230" y="90" width="850" height="590" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="246" y="112" font-size="12" font-style="italic" fill="#444444">RoboLLM workbench — ~/RoboLLM  [github.com/santapong/RoboLLM · branch develop]</text>
+  <text x="246" y="112" font-size="12" font-style="italic" fill="#444444">RoboLLM workbench [github.com/santapong/RoboLLM · branch develop]</text>
 
   <!-- ============ Relationships (lines first, under boxes' labels) ============ -->
   <!-- Claude -> mcp server -->
@@ -69,12 +71,12 @@
   <text x="1065" y="608" font-size="11" fill="#333333" text-anchor="middle">115200</text>
 
   <!-- ============ External actors / systems ============ -->
-  <!-- Claude (LLM agent) -->
+  <!-- Language-model client -->
   <g>
     <rect x="25" y="125" width="180" height="95" rx="6" fill="#08427B"/>
-    <text x="115" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Claude</text>
+    <text x="115" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">LLM client</text>
     <text x="115" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[LLM agent · MCP client]</text>
-    <text x="115" y="184" font-size="12" fill="#FFFFFF" text-anchor="middle">Claude Desktop / Code</text>
+    <text x="115" y="184" font-size="12" fill="#FFFFFF" text-anchor="middle">Claude / IDE / agent</text>
     <text x="115" y="199" font-size="12" fill="#FFFFFF" text-anchor="middle">drives the robot tools</text>
   </g>
 
@@ -212,5 +214,5 @@
     <polygon points="840,761 830,756 830,766" fill="#707070"/>
     <text x="850" y="766" font-size="12" fill="#333333">Relationship [protocol]</text>
   </g>
-  <text x="24" y="800" font-size="11" fill="#777777">C4 model · Level 2 (Containers) · robot-llm-loop · generated from repository sources at ros2_mcp_server.py, robot_bridge.py, web/, examples/, hardware/, scan3d/, cad/</text>
+  <text x="24" y="800" font-size="11" fill="#777777">C4 model · Level 2 (Containers) · RoboLLM · generated from ros2_mcp_server.py, robot_bridge.py, web/, examples/, hardware/, scan3d/, cad/</text>
 </svg>

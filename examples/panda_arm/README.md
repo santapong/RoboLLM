@@ -1,4 +1,10 @@
-# panda_arm — 7-DOF arm: FK/IK → serial → Arduino → vision pick & place
+# RoboLLM · Panda manipulation ladder
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Technical notes](TECHNICAL.md) · [Diagram](docs/panda_arm-architecture.svg)
+
+**Scope:** a five-demo learning ladder from FK/IK to virtual serial and vision
+sorting; it is separate from the DIY arm’s acceptance record.
 
 A progressive series on the Franka Panda that teaches the full manipulation
 pipeline, ending at the same place `../../hardware` starts — joint angles

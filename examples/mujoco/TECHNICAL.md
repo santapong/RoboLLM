@@ -1,4 +1,7 @@
-# mujoco — technical notes
+# RoboLLM · MuJoCo technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Documentation](../../docs/README.md) · [Diagram](docs/mujoco-architecture.svg)
 
 `examples/mujoco/` is a single-file MuJoCo quickstart: `hello_mujoco.py` defines
 a one-hinge pendulum directly in MJCF (MuJoCo's XML format, as an inline Python

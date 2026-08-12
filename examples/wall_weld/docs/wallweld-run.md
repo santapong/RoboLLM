@@ -1,4 +1,10 @@
-# wallweld — fist-triggered autonomous wall welding
+# RoboLLM · Wall-weld simulation runbook
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Example](../README.md) · [Technical notes](../TECHNICAL.md) · [Examples](../../README.md)
+
+**Environment:** RViz simulation · **Success:** synthetic full/abort/idle
+acceptance scenarios finish with the expected state and no collision failure.
 
 Show the webcam a wall (via an ArUco marker), make a **fist**, and the weld
 arm rasters the entire wall face autonomously — serpentine passes, growing

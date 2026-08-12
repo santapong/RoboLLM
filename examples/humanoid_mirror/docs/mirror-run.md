@@ -1,4 +1,10 @@
-# humanoid_mirror — runbook
+# RoboLLM · Humanoid mirroring runbook
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Example](../README.md) · [Technical notes](../TECHNICAL.md) · [Examples](../../README.md)
+
+**Environment:** FFW in RViz · **Success:** acceptance tools pass and tracked
+arms/head mirror without publishing during freeze or tracking loss.
 
 Operational notes for running the FFW semi-humanoid. For *why* FFW and not a
 MoveIt-shipped humanoid (there isn't one), see [../README.md](../README.md);

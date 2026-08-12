@@ -1,4 +1,7 @@
-# panda_arm — technical notes
+# RoboLLM · Panda arm technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Run guide](README.md) · [Examples](../README.md) · [Diagram](docs/panda_arm-architecture.svg)
 
 `examples/panda_arm/` is a five-demo progression on the Franka Panda (URDF from
 `moveit_resources_panda_description`) that builds the full manipulation pipeline

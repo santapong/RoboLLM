@@ -1,4 +1,7 @@
-# scan3d/ — Technical notes: webcam → 3D mesh → URDF
+# RoboLLM · Scan3D technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Run guide](README.md) · [Documentation](../docs/README.md) · [Architecture diagram](docs/scan3d-architecture.svg)
 
 This directory turns a cheap laptop webcam into a 3D scanner whose output is a
 simulation-ready robot part. Two reconstruction routes feed one common tail:

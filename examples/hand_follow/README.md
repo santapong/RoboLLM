@@ -1,4 +1,9 @@
-# hand_follow — webcam LEFT-hand teleop of a 6-DOF arm (RViz, CPU-only)
+# RoboLLM · Webcam hand-following teleoperation
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Technical notes](TECHNICAL.md) · [Runbook](docs/handfollow-run.md) · [Theory](docs/handfollow-inception.md)
+
+**Environment:** 6-DOF reference arm in RViz · CPU-only · no physical arm.
 
 Wave your **left hand** at a webcam and a 6-DOF sim arm follows it live in
 RViz at 20 Hz. No GPU, no Gazebo, no hardware.

@@ -1,4 +1,7 @@
-# ros2_py — technical notes
+# RoboLLM · ROS 2 Python lessons
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Documentation](../../docs/README.md) · [Diagram](docs/ros2_py-architecture.svg)
 
 `examples/ros2_py/` is the repo's 10-lesson rclpy learning path: ten standalone,
 runnable Python scripts that each add exactly one ROS 2 concept, in order — node +

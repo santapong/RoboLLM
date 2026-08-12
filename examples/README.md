@@ -1,11 +1,17 @@
-# examples — a hands-on path through robot software
+# RoboLLM · Hands-on robot software path
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](../docs/README.md) · [Architecture](../docs/ARCHITECTURE.md) · [Roadmap](../ROADMAP.md)
+
+Each example is a bounded learning system. “Verified” means verified in the
+environment named by that example; it does not imply physical-arm acceptance.
 
 Runnable, commented examples you can read, run, and break. Each ROS 2 file is a
 single script — run it with the project venv while ROS 2 is sourced:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-cd ~/Desktop/robot-llm-loop
+cd /path/to/RoboLLM
 .venv/bin/python examples/ros2_py/01_hello_node.py
 ```
 
@@ -39,7 +45,7 @@ Everything above is standalone scripts; real ROS 2 work ships as **packages**.
 parameters, and a launch file. Build it into your workspace:
 ```bash
 mkdir -p ~/ros2_ws/src
-cp -r ~/Desktop/robot-llm-loop/examples/colcon_pkg/patrol_bot ~/ros2_ws/src/
+cp -r /path/to/RoboLLM/examples/colcon_pkg/patrol_bot ~/ros2_ws/src/
 cd ~/ros2_ws && colcon build --packages-select patrol_bot
 source install/setup.bash
 ros2 launch patrol_bot patrol.launch.py side_m:=0.6 laps:=2   # with the sim up

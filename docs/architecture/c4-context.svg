@@ -1,8 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM system context</title>
+  <desc id="desc">Human and language-model clients interact with the RoboLLM workbench, webcam, ROS 2 simulation, and physical arm.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
 
   <!-- Title -->
-  <text x="30" y="40" font-size="18" font-weight="bold" fill="#000000">System Context — robot-llm-loop workbench</text>
+  <text x="30" y="40" font-size="18" font-weight="bold" fill="#000000">RoboLLM — System Context</text>
   <text x="30" y="62" font-size="12" fill="#555555">C4 Level 1 · System Context</text>
 
   <!-- ===================== Relationships (drawn under boxes) ===================== -->
@@ -54,22 +56,22 @@
     </text>
   </g>
 
-  <!-- ===================== External: Claude (LLM) ===================== -->
+  <!-- ===================== External: language-model client ===================== -->
   <g>
     <rect x="880" y="80" width="280" height="140" rx="6" fill="#999999"/>
-    <text x="1020" y="108" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Claude (LLM)</text>
+    <text x="1020" y="108" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">LLM client</text>
     <text x="1020" y="126" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[External · any MCP client]</text>
     <text x="1020" y="148" font-size="12" fill="#FFFFFF" text-anchor="middle">LLM agent driving robots via
       <tspan x="1020" dy="16">MCP tools over stdio. Can be</tspan>
-      <tspan x="1020" dy="16">any MCP client (Claude</tspan>
-      <tspan x="1020" dy="16">Desktop, IDEs, agents).</tspan>
+      <tspan x="1020" dy="16">any MCP client (Claude,</tspan>
+      <tspan x="1020" dy="16">IDEs, or other agents).</tspan>
     </text>
   </g>
 
-  <!-- ===================== System: robot-llm-loop workbench ===================== -->
+  <!-- ===================== System: RoboLLM workbench ===================== -->
   <g>
     <rect x="470" y="370" width="340" height="160" rx="6" fill="#1168BD"/>
-    <text x="640" y="398" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">robot-llm-loop workbench</text>
+    <text x="640" y="398" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">RoboLLM workbench</text>
     <text x="640" y="418" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python · rclpy · FastAPI · FastMCP]</text>
     <text x="640" y="442" font-size="12" fill="#FFFFFF" text-anchor="middle">One shared rclpy bridge node
       <tspan x="640" dy="16">powering 22 MCP tools and a web</tspan>

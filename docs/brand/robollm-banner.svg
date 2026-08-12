@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM</title>
+  <desc id="desc">A hybrid robotics workbench connecting perception, planning, validated control, and physical motion.</desc>
+  <defs>
+    <linearGradient id="flow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="360" rx="28" fill="#0b1f33"/>
+  <circle cx="1265" cy="-25" r="190" fill="#38bdf8" opacity=".08"/>
+  <circle cx="1170" cy="385" r="250" fill="#f59e0b" opacity=".07"/>
+
+  <g transform="translate(80 72)">
+    <rect width="210" height="210" rx="44" fill="#0f172a" stroke="#38bdf8" stroke-width="4"/>
+    <rect x="42" y="48" width="126" height="88" rx="24" fill="#e0f2fe"/>
+    <circle cx="82" cy="91" r="12" fill="#1168bd"/>
+    <circle cx="128" cy="91" r="12" fill="#1168bd"/>
+    <path d="M78 116 Q105 137 132 116" fill="none" stroke="#1168bd" stroke-width="7" stroke-linecap="round"/>
+    <path d="M105 48 V25 M92 25 H118" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+    <path d="M55 159 H155" stroke="#38bdf8" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="55" cy="159" r="10" fill="#38bdf8"/>
+    <circle cx="105" cy="159" r="10" fill="#60a5fa"/>
+    <circle cx="155" cy="159" r="10" fill="#f59e0b"/>
+  </g>
+
+  <g transform="translate(350 76)">
+    <text x="0" y="82" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="76" font-weight="800" fill="#f8fafc">RoboLLM</text>
+    <text x="4" y="132" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="25" font-weight="500" fill="#bae6fd">Hybrid classical + learning-based robotics</text>
+    <text x="4" y="188" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="21" fill="#cbd5e1">Build  →  Observe  →  Measure  →  Learn</text>
+    <rect x="4" y="218" width="760" height="4" rx="2" fill="#38bdf8"/>
+  </g>
+
+  <g transform="translate(1110 105)" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">
+    <rect width="210" height="150" rx="20" fill="#0f172a" opacity=".72" stroke="#94a3b8"/>
+    <text x="105" y="38" font-size="14" fill="#94a3b8">CONTROL INVARIANT</text>
+    <text x="105" y="72" font-size="18" font-weight="700" fill="#f8fafc">AI proposes</text>
+    <path d="M105 83 V100" stroke="#38bdf8" stroke-width="3"/>
+    <text x="105" y="123" font-size="18" font-weight="700" fill="#f59e0b">safety decides</text>
+  </g>
+</svg>

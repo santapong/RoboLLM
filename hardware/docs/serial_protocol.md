@@ -1,4 +1,10 @@
-# arm-fw 2.1 serial protocol (Arduino ↔ Raspberry Pi)
+# RoboLLM · arm-fw 2.1 serial protocol
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Hardware guide](../README.md) · [Technical notes](../TECHNICAL.md) · [Arm architecture](../../docs/physical-arm/ARCHITECTURE.md)
+
+**Boundary:** Raspberry Pi/host ↔ Arduino Uno · **Wire units:** raw degrees ·
+**Safety:** reject invalid commands; never silently clamp.
 
 *The contract between the fast motor board (Arduino) and the orchestrator (Pi). Everything in Phase B/C rides on this, so it's worth getting simple and robust.*
 

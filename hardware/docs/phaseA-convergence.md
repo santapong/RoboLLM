@@ -1,4 +1,7 @@
-# Phase A convergence plan — RoboLLM hardware/ × arm_vla research bundle
+# RoboLLM · Phase A convergence record
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Hardware guide](../README.md) · [Arm roadmap](../../docs/physical-arm/ROADMAP.md) · [Serial protocol](serial_protocol.md)
 
 > Historical decision record. Steps 1–4 were absorbed into arm-fw 2.0 and are
 > now superseded by the fail-closed arm-fw 2.1 / `robo_arm_driver` foundation.
@@ -57,5 +60,6 @@ C4 docs pattern.
 - After 5: one recorded episode replays with measured≠commanded visibly
   logged (that's H5's instrumentation working).
 
-Research bundle source: `~/Downloads/research/arm_vla_project_bundle.zip`
+Research bundle source: private `arm_vla_project_bundle.zip` outside this
+public repository.
 (`02_phaseA_code/`). Gap→product context: `project_summary_and_gaps.md` there.

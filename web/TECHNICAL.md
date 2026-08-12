@@ -1,4 +1,10 @@
-# web/ — Technical notes: the browser dashboard
+# RoboLLM · Browser dashboard technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](../docs/README.md) · [Architecture](../docs/ARCHITECTURE.md) · [Diagram](docs/web-architecture.svg)
+
+**Status:** implemented human-control surface over the shared
+`robot_bridge.py` node.
 
 This directory is the human operator UI of RoboLLM: a FastAPI app (`web/server.py`)
 serving a single-page dashboard (`web/static/index.html`) on port 8080. It gives
@@ -13,7 +19,7 @@ teleop path.
 
 ## Component walkthrough
 
-- **`server.py`** — the FastAPI app (`robot-llm-loop dashboard`). Control
+- **`server.py`** — the FastAPI app (`RoboLLM dashboard`). Control
   endpoints (`/api/cmd`, `/api/stop`, `/api/nav`, `/api/safe`) run through
   `check(token)`: if `ROBOT_TOKEN` is set, a wrong/missing `?token=` query is a
   401. Read endpoints (`/`, `/api/topics`, `/api/camera`, `/static`, `/ws`)

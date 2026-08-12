@@ -1,4 +1,7 @@
-# Theory: ROS2 x LLM, and Webcam Hand-Following Teleoperation
+# RoboLLM · ROS 2, LLMs, and hand-following theory
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Example](../README.md) · [Technical notes](../TECHNICAL.md) · [Runbook](handfollow-run.md)
 
 ## Part A — The ROS2 x LLM Landscape
 
@@ -54,7 +57,7 @@ NASA JPL ROSA; MCP-ROS2 bridge servers (lpigeon/ros-mcp-server et al.); LLM task
 
 ---
 
-# Architecture: In-Container Hand Tracker → Tracking-Mode IK → JointTrajectory Streaming
+## Architecture: In-container hand tracker → tracking-mode IK → JointTrajectory streaming
 
 **Chosen: Candidate A (max-reuse, minimal), amended with every fix from the three verify lenses.** All lenses returned feasible=true; each refuted specific claims as-written and supplied verified fixes, all adopted below. Candidate B (MoveIt Servo) is the designated hardware-upgrade path — moveit_servo 2.12.4 is already in the image, so no rebuild is needed to switch later. Candidate C's LLM supervisory layer is an optional final unit, kept strictly out of the control loop.
 
@@ -128,7 +131,7 @@ Hygiene fixes also adopted: call `HandLandmarker.close()` explicitly (harmless `
 
 ---
 
-# Construction units (as synthesized at the gate)
+## Construction units (as synthesized at the gate)
 
 ## U1-camera-passthrough
 **Scope:** Add --device /dev/video0 (or --device-cgroup-rule='c 81:* rmw') to the docker run in the ros2-arm launcher so V4L2 (major 81) clears the container's device-cgroup filter; leave /dev/video1 (metadata node) alone.
@@ -175,7 +178,7 @@ Hygiene fixes also adopted: call `HandLandmarker.close()` explicitly (harmless `
 
 ---
 
-# Risks
+## Risks
 - IK tracking robustness: the warm-start single-descent fix is bounded (~1-2 h estimate) but unproven at frame rate over the whole workspace — fast hand motion enlarges per-frame target deltas, risking lag, local-minimum stalls, or elbow-branch flips; mitigation is capped step size, reachability clamping, and falling back to a short multi-seed re-solve on divergence (U3 acceptance gates this).
 - arm_ik.py frame conventions were built for the weld-arm torch path; although CHAIN geometry was verified against robot_arm.urdf.xacro, the de-welded cost function must be validated against TF at multiple poses before trusting it across the workspace (folded into U3 acceptance).
 - Monocular depth is fundamentally relative: MediaPipe z is a heuristic, so Z tracking will be the least faithful axis — set expectations (operator closes the loop visually via RViz), clamp Z hard, and note RGB-D as the upgrade if precision Z matters.
@@ -190,7 +193,7 @@ Hygiene fixes also adopted: call `HandLandmarker.close()` explicitly (harmless `
 
 ---
 
-# Critic gaps (to fold into Construction)
+## Critic gaps (to fold into construction)
 - LOAD-BEARING UNVERIFIED CLAIM (U4): the plan tracks 'wrist world landmarks', but MediaPipe hand_world_landmarks are expressed relative to the hand's own geometric center — the wrist world coordinate barely changes when the hand translates across the frame, so it cannot drive absolute position tracking. The camera lens verified world-landmark VALUES on a static reference image but never verified they vary with hand position. The node must use normalized image landmarks (x,y) plus MediaPipe's heuristic z (or bounding-box scale as a depth proxy); no lens tested that path, and U4's design as written would produce a near-stationary arm.
 - Camera-to-robot axis mapping is not designed: no convention for which camera axis maps to which base_link axis, no handedness/mirror decision for intuitive motion (hand moves left → arm moves which way?), and U5's 'tune scale/offsets' has no procedure. U4 acceptance only checks left-vs-right hand filtering, not that the mapping direction is ergonomic — a fully inverted mapping would pass all stated acceptance criteria.
 - Re-acquisition jump handling is missing: hold-position on hand loss is specified, but when the hand is re-detected far from the held pose the target teleports and the arm snaps. No slew-rate limit on the target, no per-frame joint-delta clamp, and no hand-loss timeout/decay policy — the risks list notes absent velocity limiting but no unit owns even a cheap joint-space delta clamp for the sim.

@@ -1,4 +1,7 @@
-# pybullet — technical notes
+# RoboLLM · PyBullet technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [CAD pipeline](../../cad/README.md) · [Diagram](docs/pybullet-architecture.svg)
 
 `examples/pybullet/` is the repo's CPU-only physics sandbox: two standalone
 scripts, no ROS, no GPU. `load_robot.py` is the engine quickstart — load the

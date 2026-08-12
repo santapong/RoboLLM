@@ -1,4 +1,7 @@
-# robot-llm-loop — project overview for Claude
+# RoboLLM · Maintainer and agent context
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](README.md) · [Documentation](docs/README.md) · [Roadmap](ROADMAP.md) · [Architecture](docs/ARCHITECTURE.md)
 
 LLM ↔ robotics learning workbench (learn/research first, product later).
 Owner: santapong. GitHub: `santapong/RoboLLM` (**PUBLIC** — everything
@@ -97,7 +100,7 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - Real Uno health check: `hardware/check_arduino.sh` (needs user in `dialout`).
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
-## Status (2026-08-12)
+## Status (2026-08-13)
 Next steps are tiered in ROADMAP.md (spine: bench -> encoders ->
 LeRobot logger -> demos). Gap triggers below stay authoritative.
 Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +

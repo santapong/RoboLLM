@@ -1,4 +1,7 @@
-# humanoid_mirror — technical notes
+# RoboLLM · Humanoid mirroring technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Run guide](README.md) · [Runbook](docs/mirror-run.md) · [Documentation](../../docs/README.md)
 
 `examples/humanoid_mirror/` is webcam **whole-upper-body** teleop of the ROBOTIS
 FFW semi-humanoid: left arm, right arm and head, CPU-only and RViz-based (no

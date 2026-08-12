@@ -1,4 +1,10 @@
-# scan3d — turn your webcam into a 3D scanner
+# RoboLLM · Webcam 3D scanning
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](../docs/README.md) · [Technical notes](TECHNICAL.md) · [Architecture diagram](docs/scan3d-architecture.svg)
+
+**Status:** software routes implemented; real optical accuracy remains tied to
+the calibration and measurement evidence recorded for each scan session.
 
 Two ways to get a 3D mesh from your (bad, that's fine!) laptop webcam. Both feed
 `mesh_to_urdf.py`, so a scanned real object becomes a robot/sim part.
@@ -16,7 +22,7 @@ Two ways to get a 3D mesh from your (bad, that's fine!) laptop webcam. Both feed
 Best for a quick, watertight solid. Cannot capture concavities (a cup looks full).
 
 ```bash
-cd ~/Desktop/robot-llm-loop/scan3d
+cd /path/to/RoboLLM/scan3d
 ../.venv/bin/python capture.py --background                 # 1) empty scene
 ../.venv/bin/python capture.py --turntable 36 --session mug # 2) rotate object 360°
 ../.venv/bin/python visual_hull.py --session mug --height-mm 95

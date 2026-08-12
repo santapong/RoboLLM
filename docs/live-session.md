@@ -1,4 +1,10 @@
-# Live session playbook — the full LLM ↔ robot demo
+# RoboLLM · Live LLM ↔ robot session
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](README.md) · [Architecture](ARCHITECTURE.md) · [Examples](../examples/README.md)
+
+**Status:** simulation runbook · **Time:** about 30 minutes · **Hardware:**
+webcam optional, no physical arm required.
 
 A guided ~30-minute session on your desktop that exercises everything: Claude
 sees through the camera, controls the world, drives the robot, builds a map,
@@ -10,12 +16,12 @@ previous one.
 ## Setup (2 terminals + Claude Code)
 ```bash
 # Terminal 1 — simulator (keep it visible, you'll watch the robot)
-TURTLEBOT3_MODEL=waffle_pi ~/Desktop/robot-llm-loop/sim/launch_turtlebot.sh
+TURTLEBOT3_MODEL=waffle_pi /path/to/RoboLLM/sim/launch_turtlebot.sh
 
 # Terminal 2 — browser dashboard (optional but fun: you watch telemetry live)
-~/Desktop/robot-llm-loop/web/run-web.sh     # → http://localhost:8080
+/path/to/RoboLLM/web/run-web.sh     # → http://localhost:8080
 ```
-Then **restart Claude Code** in `~/Desktop/robot-llm-loop` so the `ros2` MCP
+Then restart the MCP client in `/path/to/RoboLLM` so the `ros2` server
 (22 tools) is fresh.
 
 ## Stage 1 — Claude wakes up (introspection)
@@ -55,21 +61,21 @@ Expect: `spawn_object` + a camera shot with the red box visible in it.
 
 ## Stage 6 — map & navigate (add Terminal 3)
 ```bash
-~/Desktop/robot-llm-loop/sim/launch_slam.sh          # Terminal 3
+/path/to/RoboLLM/sim/launch_slam.sh          # Terminal 3
 ```
 - *"Drive a slow exploration pattern and tell me the map status every so often.
   Stop when it's mostly explored."* (Claude: `drive` + `get_map_status`)
 - Save the map, then swap SLAM for Nav2:
   ```bash
   ros2 run nav2_map_server map_saver_cli -f ~/map    # then Ctrl-C SLAM
-  ~/Desktop/robot-llm-loop/sim/launch_nav2.sh        # set 2D Pose Estimate in RViz!
+  /path/to/RoboLLM/sim/launch_nav2.sh        # set 2D Pose Estimate in RViz!
   ```
 - *"Navigate to x=0.5, y=0.5 and confirm with the transform where you ended up."*
   (Claude: `navigate_to` + `get_transform("map", "base_link")`)
 
 ## Stage 7 — the arm (separate demo, no Gazebo needed)
 ```bash
-~/Desktop/robot-llm-loop/sim/launch_moveit_panda.sh   # can replace Stages 1–6
+/path/to/RoboLLM/sim/launch_moveit_panda.sh   # can replace Stages 1–6
 ```
 - *"Read the arm's joint states, then move it to a ready pose."*
   (Claude: `get_joint_states` + `move_arm('panda_joint1=0, panda_joint2=-0.785,

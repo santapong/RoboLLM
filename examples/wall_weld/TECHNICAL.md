@@ -1,4 +1,7 @@
-# wall_weld — technical reference
+# RoboLLM · Wall-weld technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Run guide](README.md) · [Runbook](docs/wallweld-run.md) · [Examples](../README.md)
 
 One node (`ros2_ws/src/robot_arm_moveit_config/scripts/wall_weld.py`,
 ~1250 lines, runs under `/opt/mpvenv/bin/python`) drives the whole demo:

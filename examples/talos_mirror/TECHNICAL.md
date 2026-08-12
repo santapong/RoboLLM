@@ -1,4 +1,10 @@
-# talos_mirror — technical notes
+# RoboLLM · TALOS mirroring technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Runbook](docs/mirror-run.md) · [Joint inventory](docs/joint-inventory.md)
+
+**Scope:** research/learning stack around a vendored TALOS model; upstream
+vendored documentation is intentionally not restyled.
 
 `examples/talos_mirror/` is webcam **whole-body** teleop of the vendored PAL
 TALOS full-size humanoid: both arms, head, torso, and both legs (pelvis

@@ -1,4 +1,7 @@
-# ROADMAP — RoboLLM
+# RoboLLM · Learning and research roadmap
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](README.md) · [Documentation](docs/README.md) · [Physical-arm roadmap](docs/physical-arm/ROADMAP.md) · [Architecture](docs/ARCHITECTURE.md)
 
 **Objective of this repo: LEARNING.** RoboLLM is the workbench where the
 five-layer robot stack is learned by building — every subsystem exists to
@@ -9,7 +12,7 @@ start being deliverables.
 
 The execution status for the DIY physical arm is tracked separately in
 [`docs/physical-arm/ROADMAP.md`](docs/physical-arm/ROADMAP.md). As of
-2026-08-12, only the Phase 0 software foundation and v0.2 driver core are
+2026-08-13, only the Phase 0 software foundation and v0.2 driver core are
 implemented; later physical-arm phases are not marked complete by the presence
 of related simulation examples.
 
@@ -75,7 +78,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 |---|------|-----------------|
 | B1 | Sim ladder steps 2–4: sim dataset → SmolVLA fine-tune (rented GPU) → measured failure study | L4, evaluation rigor; the thesis seed |
 | B2 | Phase B demo collection via hand-teleop on scanned objects (30–50 episodes) | L2+L4 data; diversity-kit lessons → graduates to RLM |
-| B3 | G1 locomotion capstone (CLAUDE.md in ~/Downloads: MuJoCo G1 + ros2_control + Nav2, phase-gated) | L3; brings EKF + Nav2 + BTs in on their triggers |
+| B3 | G1 locomotion capstone (private research brief: MuJoCo G1 + ros2_control + Nav2, phase-gated) | L3; brings EKF + Nav2 + BTs in on their triggers |
 
 ### Tier C — triggered, not scheduled
 RTAB-Map SLAM (first live-map need / G1 Phase 3) · EKF odom fusion (G1
@@ -104,5 +107,6 @@ PCB · transfer-prediction (Gap 5) · task-memory (Gap 6).
 6. **Graduations**: eval harness, diversity kit, actuator datasheets,
    benchmark-arm report → RLM as products/OSS.
 
-Context: `hardware/docs/phaseA-convergence.md` · scan3d README/TECHNICAL ·
-`~/Downloads/research/` (gap→product summary + VLA field map).
+Repository context: `hardware/docs/phaseA-convergence.md` and scan3d
+README/TECHNICAL. The gap→product summary and VLA field map remain private
+research inputs outside this public repository.

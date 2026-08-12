@@ -1,4 +1,7 @@
-# TALOS Joint Inventory
+# RoboLLM · TALOS joint inventory
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Technical notes](../TECHNICAL.md) · [Runbook](mirror-run.md) · [Examples](../../README.md)
 
 Measured from the expanded URDF (vendored in full, verified 2026-07-27).
 

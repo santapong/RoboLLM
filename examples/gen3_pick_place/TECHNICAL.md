@@ -1,4 +1,7 @@
-# gen3_pick_place — technical notes
+# RoboLLM · Gen3 pick-and-place technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Run guide](README.md) · [Runbook](docs/pickplace-run.md) · [Theory](docs/pickplace-theory.md)
 
 `examples/gen3_pick_place/` is gesture-driven pick-and-place on a simulated
 **Kinova Gen3 lite** (6-DOF + gen3_lite_2f gripper, mock `ros2_control`

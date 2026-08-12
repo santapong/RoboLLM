@@ -1,31 +1,61 @@
-# robot-llm-loop
+# RoboLLM · Hybrid robotics workbench
 
-Your LLM ↔ robotics workbench. Claude (via MCP) can introspect and drive a ROS 2
-robot and design CAD/URDF in FreeCAD — **and** you get a browser dashboard to
-drive it yourself, a set of runnable examples to learn robot software, and a
-webcam 3D scanner that turns real objects into robot parts.
+![RoboLLM — Build, Observe, Measure, Learn](docs/brand/robollm-banner.svg)
 
-![System context — you and Claude are peers, driving the same robot](docs/architecture/c4-context.svg)
+[![ROS 2 Jazzy](https://img.shields.io/badge/ROS%202-Jazzy-1168bd)](https://docs.ros.org/en/jazzy/)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776ab)](https://www.python.org/)
+[![Arduino Uno](https://img.shields.io/badge/Arduino-Uno-00979d)](hardware/README.md)
+[![Branch](https://img.shields.io/badge/branch-develop-f59e0b)](docs/branching.md)
 
-`robot_bridge.py` is the single ROS 2 node; **both** Claude (MCP) and the web
-dashboard use it, so you and the LLM drive the exact same robot. The full
-picture — C4 context → containers → components diagrams with narrative — is in
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+> **Build → Observe → Measure → Learn.** RoboLLM is a learning-first robotics
+> platform where classical control, perception, robot learning, and language
+> planning meet behind one non-negotiable safety boundary.
 
-## Physical-arm status
+RoboLLM combines an MCP-controlled ROS 2 workbench, browser teleoperation,
+runnable manipulation examples, CAD and scanning pipelines, and a safe DIY
+6-DOF arm foundation. Humans and language-model clients can propose actions;
+validated ROS 2 and firmware layers decide what the robot may execute.
+
+![System context — human and LLM clients share the same robot interfaces](docs/architecture/c4-context.svg)
+
+`robot_bridge.py` is the shared ROS 2 node for both the MCP server and browser
+dashboard. The physical arm uses the stricter `robo_arm_driver` → serial →
+arm-fw 2.1 path. See the [C4 workbench architecture](docs/ARCHITECTURE.md) and
+the [physical-arm C4 + Kruchten 4+1 model](docs/physical-arm/ARCHITECTURE.md).
+
+## Start here
+
+| Goal | First stop | Delivery state |
+|---|---|---|
+| Understand the whole platform | [Architecture tour](docs/ARCHITECTURE.md) | **Current** |
+| Run a simulation learning path | [Examples guide](examples/README.md) | **Verified examples** |
+| Commission the DIY arm | [Hardware worksheet](docs/physical-arm/HARDWARE_WORKSHEET.md) | **Bench-gated** |
+| Use the ROS 2 arm driver | [ROS 2 workspace](ros2/README.md) | **Code-ready** |
+| Track Phase 0–5 delivery | [Physical-arm roadmap](docs/physical-arm/ROADMAP.md) | **Authoritative** |
+| Find any document | [Documentation hub](docs/README.md) | **Current** |
+
+## Delivery status
 
 The full Phase 0–5 plan is **not complete**. RoboLLM currently has the Phase 0
 software/commissioning foundation and the v0.2 ROS driver core. Physical
 calibration, measured URDF/MoveIt execution, webcam control on this arm,
 autonomous pick-and-place, VLA training, and the arm-specific LLM planner remain
-gated work. See the [honest phase matrix](docs/physical-arm/ROADMAP.md) and the
-[physical-arm C4 + 4+1 architecture](docs/physical-arm/ARCHITECTURE.md).
+gated work.
 
-## What's here
+| Area | Status | Evidence boundary |
+|---|---|---|
+| Shared ROS 2 bridge + 22 MCP tools | **Verified** | Simulation demos exist; live use requires a running ROS graph. |
+| Browser dashboard | **Verified** | FastAPI/WebSocket surface over the shared bridge. |
+| Simulation examples | **Verified** | Each example names its own acceptance environment. |
+| Physical arm v0.2 foundation | **Code-ready** | 30 native tests; ROS/Arduino/bench evidence remains open. |
+| Physical arm Phases 2–5 | **Planned / gated** | Not promoted from simulation examples. |
+
+## Repository map
+
 | Path | Purpose |
 |------|---------|
 | `robot_bridge.py` | The shared ROS 2 node (pubs/subs + helpers, deadman teleop). |
-| `ros2_mcp_server.py` | MCP server — 22 tools Claude calls. **Edit to add robot skills.** |
+| `ros2_mcp_server.py` | MCP server — 22 tools exposed to language-model clients. **Edit to add robot skills.** |
 | `run-server.sh` | Launches the `ros2` MCP server. |
 | `web/` | Browser dashboard: live telemetry, lidar radar, WASD teleop, Nav2 goals. |
 | `examples/` | Runnable ROS 2 + PyBullet + MuJoCo learning path. |
@@ -40,7 +70,10 @@ gated work. See the [honest phase matrix](docs/physical-arm/ROADMAP.md) and the
 | `setup/dev-setup.sh` | Full machine provisioner. |
 | `requirements-extra.txt` | Extra pip deps (numpy pinned to 1.26 for ROS). |
 
-## 1 · Browser dashboard (easy teleop)  🕹️
+## Explore the platform
+
+### Browser dashboard · human control
+
 ```bash
 web/run-web.sh          # then open http://localhost:8080
 ```
@@ -50,12 +83,15 @@ Runs alongside the sim and the MCP server — all three share the robot.
 
 Technical: [`web/TECHNICAL.md`](web/TECHNICAL.md) — server internals, HTTP/WS endpoint tables, diagram.
 
-## 2 · Talk to Claude (the MCP loop)
-Start the sim (`sim/launch_turtlebot.sh`), then just ask:
+### MCP loop · language-model control
+
+Start the sim (`sim/launch_turtlebot.sh`), then ask your MCP client:
+
 - "List the ROS 2 topics." · "Where is the robot?" · "Drive forward 3 s, then turn left."
 - "What's the nearest obstacle?" · "Navigate to x=1.5, y=0.5." (Nav2 running)
 
 ### MCP tools (`ros2_mcp_server.py`)
+
 | Tool | Does |
 |------|------|
 | `list_topics` / `list_nodes` | Introspect the ROS graph |
@@ -75,12 +111,14 @@ Start the sim (`sim/launch_turtlebot.sh`), then just ask:
 | `reset_world` / `list_world_objects` | Reset or inspect the simulation world |
 | `run_ros2` | Run any `ros2` CLI command — the fast learn/introspect tool |
 
-Add a tool = add an `@mcp.tool()` function, then restart Claude Code. (22 tools.)
+Add a tool by adding an `@mcp.tool()` function, then restart the MCP client.
+The current registry contains 22 tools.
 
-**▶ Ready for the full demo?** Follow `docs/live-session.md` — a guided ~30 min
-session where Claude sees, spawns objects, drives, maps, navigates, and moves an arm.
+**Ready for the full demo?** Follow `docs/live-session.md` — a guided ~30 min
+session where an MCP client sees, spawns objects, drives, maps, navigates, and moves an arm.
 
-## 3 · Learn robot software (`examples/`)
+### Learning path · robot software
+
 A guided path: ROS 2 nodes → pub/sub → open-loop drive → closed-loop obstacle
 avoidance → Nav2 goal (actions) → MoveIt arm, plus CPU physics sims (PyBullet,
 MuJoCo) and two webcam **hand-teleop** arm examples (below). Launch helpers for
@@ -88,6 +126,7 @@ MuJoCo) and two webcam **hand-teleop** arm examples (below). Launch helpers for
 in `sim/`. See `examples/README.md`.
 
 ### Drive an arm with your hand (webcam, CPU-only)
+
 Two containerized examples turn the webcam into a robot controller — no GPU, no
 Gazebo, no hardware. Build the shared image once
 (`docker build -t ros2-arm:jazzy examples/hand_follow/docker/`), then:
@@ -99,7 +138,8 @@ Details, native (non-Docker) routes, and verified numbers:
 `examples/hand_follow/README.md` and `examples/gen3_pick_place/README.md`; the
 pipeline walkthrough is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## 4 · Scan a real object with your webcam (`scan3d/`)
+### Scan pipeline · webcam to mesh and URDF
+
 ```bash
 cd scan3d
 ../.venv/bin/python capture.py --background
@@ -112,7 +152,8 @@ on your GPU cloud) is included. See `scan3d/README.md`.
 
 Technical: [`scan3d/TECHNICAL.md`](scan3d/TECHNICAL.md) — both reconstruction routes, script internals, diagram.
 
-## 5 · CAD → URDF → sim (`cad/`, verified end-to-end)
+### CAD pipeline · FreeCAD to URDF and simulation
+
 A worked **2-link arm** proves the pipeline, and it runs headless:
 ```bash
 freecadcmd cad/build_two_link_arm.py        # FreeCAD builds + exports meshes
@@ -120,18 +161,20 @@ freecadcmd cad/build_two_link_arm.py        # FreeCAD builds + exports meshes
 .venv/bin/python cad/verify_arm_pybullet.py # PASS: 2 revolute joints, tip moves
 ```
 See `cad/README.md`. Or interactively via the `freecad` MCP: open FreeCAD →
-**MCP Addon** workbench → **Start RPC Server**, then ask Claude:
+**MCP Addon** workbench → **Start RPC Server**, then ask the CAD client:
 - "In FreeCAD, create a 2-link robot arm and export it as URDF."
 - "Make a 100×60×20 mm mounting bracket with four M4 holes."
 
 Technical: [`cad/TECHNICAL.md`](cad/TECHNICAL.md) — headless build, joint-frame discipline, PyBullet verify, diagram.
 
 ## Documentation map
+
 | Doc | What |
 |-----|------|
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The C4 tour: context → containers → components diagrams + narrative. |
 | [`docs/physical-arm/ARCHITECTURE.md`](docs/physical-arm/ARCHITECTURE.md) | Physical-arm C4 levels 1–3 plus the 4+1 view model. |
 | [`docs/physical-arm/ROADMAP.md`](docs/physical-arm/ROADMAP.md) | Phase 0–5 delivery truth and acceptance gates. |
+| [`docs/STYLE_GUIDE.md`](docs/STYLE_GUIDE.md) | Shared theme, status vocabulary, and documentation conventions. |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed, when — grouped by date on `develop`. |
 | [`docs/live-session.md`](docs/live-session.md) | Guided ~30 min LLM ↔ robot demo playbook. |
 | [`docs/branching.md`](docs/branching.md) | Branch tiers: `main` / `develop` / `experiment/*`. |
@@ -139,24 +182,27 @@ Technical: [`cad/TECHNICAL.md`](cad/TECHNICAL.md) — headless build, joint-fram
 | `examples/*/README.md` | Per-example run instructions (`examples/README.md` = the learning path). |
 | `examples/hand_follow/docs/` · `examples/gen3_pick_place/docs/` | Researched theory (ROS 2 × LLM, teleop, grasping) + runbooks. |
 
-## Setup
+## Environment setup
+
 Extra Python deps live in the venv (created with `--system-site-packages` so it
 sees ROS `rclpy`):
 ```bash
 .venv/bin/python -m pip install -r requirements-extra.txt
 ```
 
-## Install / distribute the MCP server
+## MCP client packaging
+
 | Client | Format | Where |
 |--------|--------|-------|
-| Claude Code (yours) | user scope (done) + `.mcp.json` (project scope, in repo) | `claude mcp add --scope user ros2 -- ~/Desktop/robot-llm-loop/run-server.sh` |
+| Claude Code | project `.mcp.json` or user scope | `claude mcp add --scope user ros2 -- /path/to/RoboLLM/run-server.sh` |
 | Claude Desktop | `.mcpb` bundle (drag-and-drop) | build with `mcpb/build_mcpb.sh` → `mcpb/dist/ros2-bridge.mcpb` |
 
 `.mcpb` is a **Claude Desktop** format; **Claude Code uses `.mcp.json`** (shipped
 in this repo — opening the folder registers `ros2` after one approval). Details
 and the bundle build in `mcpb/README.md`.
 
-## Version control
+## Development workflow
+
 This folder is a git repo; `.venv/`, scan sessions, and large binaries are
 git-ignored. Day-to-day verified work is committed and pushed to `develop`;
 `main` receives a later `develop` merge only after the touched physical demos

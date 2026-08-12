@@ -1,4 +1,10 @@
-# hardware/ — DIY 6-DOF arm commissioning and Arduino firmware
+# RoboLLM · DIY 6-DOF arm hardware
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Arm roadmap](../docs/physical-arm/ROADMAP.md) · [Worksheet](../docs/physical-arm/HARDWARE_WORKSHEET.md) · [Technical notes](TECHNICAL.md)
+
+**Status:** code-ready and bench-gated. The checked-in physical profile is
+fail-closed until real measurements are recorded and reviewed.
 
 The physical path is deliberately layered:
 

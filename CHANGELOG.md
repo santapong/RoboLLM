@@ -1,9 +1,25 @@
-# Changelog
+# RoboLLM · Changelog
 
-Notable changes to **robot-llm-loop**. Format follows
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](README.md) · [Documentation](docs/README.md) · [Roadmap](ROADMAP.md) · [Architecture](docs/ARCHITECTURE.md)
+
+Notable changes to **RoboLLM**. Format follows
 [Keep a Changelog](https://keepachangelog.com/); this project is not yet
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
+
+## 2026-08-13 — unified documentation theme
+
+### Changed
+
+- Adopted the RoboLLM identity and **Build → Observe → Measure → Learn** theme
+  across first-party documentation.
+- Added consistent navigation, status vocabulary, and evidence boundaries to
+  root, module, runbook, architecture, and research pages.
+- Added a repository banner SVG and documentation style guide; vendored
+  upstream documents remain untouched.
+- Replaced machine-specific `robot-llm-loop` paths with repository-relative or
+  `/path/to/RoboLLM` examples.
 
 ## 2026-08-12 — physical arm v0.2 foundation and architecture baseline
 

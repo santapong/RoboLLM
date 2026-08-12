@@ -1,4 +1,9 @@
-# cad — FreeCAD → URDF → simulated robot
+# RoboLLM · CAD → URDF → simulated robot
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](../docs/README.md) · [Technical notes](TECHNICAL.md) · [Architecture diagram](docs/cad-architecture.svg)
+
+**Status:** verified reference pipeline on the environment named below.
 
 Proves the CAD-to-robot pipeline end to end with a **2-link arm**, and it runs
 **headless** (no display) so you can regenerate it anytime — or drive the same
@@ -14,7 +19,7 @@ build interactively through the `freecad` MCP.
 
 ## Run it
 ```bash
-cd ~/Desktop/robot-llm-loop
+cd /path/to/RoboLLM
 freecadcmd cad/build_two_link_arm.py        # FreeCAD builds + exports meshes
 .venv/bin/python cad/make_arm_urdf.py       # -> assets/urdf/two_link_arm/two_link_arm.urdf
 .venv/bin/python cad/verify_arm_pybullet.py # PASS: 2 revolute joints, tip moves ~200 mm

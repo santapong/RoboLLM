@@ -1,4 +1,10 @@
-# talos_mirror — live mirroring runbook
+# RoboLLM · TALOS live-mirroring runbook
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../../README.md) · [Technical notes](../TECHNICAL.md) · [Joint inventory](joint-inventory.md) · [Examples](../../README.md)
+
+**Environment:** TALOS model in RViz/MoveIt · **Success:** bringup, tracking,
+retargeting, and acceptance tooling agree on the documented joint inventory.
 
 Operational notes for running TALOS M4 live mirroring: your webcam-tracked
 body drives the full-body mock robot (torso, both 7-DOF arms, 2-DOF head,

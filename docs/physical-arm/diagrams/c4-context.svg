@@ -9,7 +9,7 @@
   </defs>
   <rect width="1280" height="760" fill="#f8fafc"/>
   <text x="40" y="48" class="title">C4 Level 1 — RoboLLM Physical Arm System Context</text>
-  <text x="40" y="72" class="sub">Architecture baseline · 2026-08-12 · implemented foundation plus explicitly planned capabilities</text>
+  <text x="40" y="72" class="sub">Architecture baseline · 2026-08-13 · implemented foundation plus explicitly planned capabilities</text>
 
   <rect x="60" y="150" width="235" height="145" rx="10" class="external"/>
   <text x="177" y="183" text-anchor="middle" class="name">Human operator</text>

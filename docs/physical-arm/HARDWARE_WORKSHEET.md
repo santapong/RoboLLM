@@ -1,4 +1,10 @@
-# Phase 0 hardware worksheet
+# RoboLLM · Phase 0 hardware worksheet
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Documentation](../README.md) · [Arm roadmap](ROADMAP.md) · [Architecture](ARCHITECTURE.md)
+
+**Status:** bench-gated record. Do not mark a checkbox from simulation or
+assumption; attach the actual measurement or observed safety result.
 
 Complete this at the bench before changing `calibrated: false` to `true`.
 Photograph the wiring and write measured values here; do not rely on servo

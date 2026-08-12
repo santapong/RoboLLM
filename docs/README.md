@@ -1,13 +1,21 @@
-# docs — index
+# RoboLLM · Documentation hub
 
-| [`../CHANGELOG.md`](../CHANGELOG.md) | Project changelog — notable changes by date. |
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Roadmap](../ROADMAP.md) · [Architecture](ARCHITECTURE.md) · [Style guide](STYLE_GUIDE.md)
+
+Use this page as the repository’s table of contents. Start with a README to
+run something, a TECHNICAL page to understand it, and a runbook when you need
+repeatable operations or acceptance evidence.
+
 | Doc | One line |
 |-----|----------|
+| [`../CHANGELOG.md`](../CHANGELOG.md) | Project changelog — notable changes by date. |
+| [`STYLE_GUIDE.md`](STYLE_GUIDE.md) | Theme, status vocabulary, navigation, and evidence conventions. |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The C4 tour of the workbench: context → containers → components, diagrams + narrative. |
-| [`architecture/c4-context.svg`](architecture/c4-context.svg) | C4 level 1 — who uses what: you, Claude, the ROS 2/Gazebo stack, the real arm. |
+| [`architecture/c4-context.svg`](architecture/c4-context.svg) | C4 level 1 — humans, language-model clients, ROS 2/Gazebo, and the real arm. |
 | [`architecture/c4-container.svg`](architecture/c4-container.svg) | C4 level 2 — the runnable pieces and the one shared `robot_bridge.py` node. |
 | [`architecture/c4-component-handteleop.svg`](architecture/c4-component-handteleop.svg) | C4 level 3 — inside the hand-teleop pipeline (MediaPipe → IK → 20 Hz trajectory). |
-| [`live-session.md`](live-session.md) | Guided ~30 min demo playbook: Claude sees, spawns, drives, maps, navigates, moves an arm. |
+| [`live-session.md`](live-session.md) | Guided ~30 min demo playbook: observe, spawn, drive, map, navigate, and move an arm through MCP. |
 | [`branching.md`](branching.md) | Branch tiers: `main` (stable) / `develop` (daily) / `experiment/*` (throwaway). |
 
 ## Per-example docs
@@ -22,6 +30,12 @@
 | [`../examples/gen3_pick_place/docs/pickplace-theory.md`](../examples/gen3_pick_place/docs/pickplace-theory.md) | Theory: hand-guided pick-and-place design rationale (gestures, palm orientation, IK). |
 | [`../examples/gen3_pick_place/docs/pickplace-run.md`](../examples/gen3_pick_place/docs/pickplace-run.md) | gen3_pick_place runbook: Docker/native bring-up and overrides. |
 | [`../examples/panda_arm/README.md`](../examples/panda_arm/README.md) | 7-DOF Panda series: FK/IK → serial → virtual Arduino → vision pick & place. |
+| [`../examples/humanoid_mirror/README.md`](../examples/humanoid_mirror/README.md) | CPU-only webcam body mirroring on the FFW humanoid model. |
+| [`../examples/humanoid_mirror/docs/mirror-run.md`](../examples/humanoid_mirror/docs/mirror-run.md) | Humanoid Docker/native runbook and acceptance signals. |
+| [`../examples/wall_weld/README.md`](../examples/wall_weld/README.md) | Gesture-triggered autonomous raster planning in RViz; no welding hardware. |
+| [`../examples/wall_weld/docs/wallweld-run.md`](../examples/wall_weld/docs/wallweld-run.md) | Wall-weld synthetic/full/abort/idle runbook. |
+| [`../examples/talos_mirror/docs/mirror-run.md`](../examples/talos_mirror/docs/mirror-run.md) | TALOS live-mirroring bringup and acceptance runbook. |
+| [`../examples/talos_mirror/docs/joint-inventory.md`](../examples/talos_mirror/docs/joint-inventory.md) | Joint-name and control-group inventory used by TALOS retargeting. |
 
 ## Technical deep-dives (per module)
 
@@ -34,6 +48,8 @@
 | [`../examples/panda_arm/TECHNICAL.md`](../examples/panda_arm/TECHNICAL.md) | The five Panda demos layer by layer: FK/IK → serial → vision sort. |
 | [`../examples/hand_follow/TECHNICAL.md`](../examples/hand_follow/TECHNICAL.md) | hand_follow node internals: MediaPipe → One-Euro → IK → 20 Hz stream. |
 | [`../examples/gen3_pick_place/TECHNICAL.md`](../examples/gen3_pick_place/TECHNICAL.md) | Gesture state machine, `/compute_ik` streaming, planning-scene attach/detach. |
+| [`../examples/humanoid_mirror/TECHNICAL.md`](../examples/humanoid_mirror/TECHNICAL.md) | FFW geometry, tracking, retargeting, measured traps, and acceptance evidence. |
+| [`../examples/talos_mirror/TECHNICAL.md`](../examples/talos_mirror/TECHNICAL.md) | TALOS model, QP/classical retargeting, limits, and test harnesses. |
 | [`../examples/wall_weld/TECHNICAL.md`](../examples/wall_weld/TECHNICAL.md) | Fist-triggered autonomous wall welding: raster planner, marker tracking, weld state machine. |
 | [`../hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) | The real Uno arm stack: firmware, serial protocol, driver, ROS 2 bridge. |
 | [`physical-arm/ARCHITECTURE.md`](physical-arm/ARCHITECTURE.md) | Physical-arm safety boundary, ROS interfaces, and configuration ownership. |
@@ -60,3 +76,18 @@ Module READMEs live next to their code: [`../cad/`](../cad/README.md)
 (FreeCAD → URDF), [`../scan3d/`](../scan3d/README.md) (webcam → mesh → URDF),
 [`../hardware/`](../hardware/README.md) (the real Uno arm),
 [`../mcpb/`](../mcpb/README.md) (Claude Desktop bundle).
+
+## Module and operations guides
+
+| Doc | One line |
+|---|---|
+| [`../README.md`](../README.md) | Project landing page, delivery status, and shortest paths. |
+| [`../ROADMAP.md`](../ROADMAP.md) | Learning/research priorities and graduation rules. |
+| [`../CLAUDE.md`](../CLAUDE.md) | Public maintainer/agent context and repository invariants. |
+| [`../cad/README.md`](../cad/README.md) | Run the FreeCAD → URDF → PyBullet reference pipeline. |
+| [`../scan3d/README.md`](../scan3d/README.md) | Capture and reconstruct an object using the available scan routes. |
+| [`../hardware/README.md`](../hardware/README.md) | Commission the DIY arm without bypassing calibration locks. |
+| [`../hardware/docs/serial_protocol.md`](../hardware/docs/serial_protocol.md) | arm-fw 2.1 wire contract and error behavior. |
+| [`../hardware/docs/phaseA-convergence.md`](../hardware/docs/phaseA-convergence.md) | Historical convergence decisions and remaining research gates. |
+| [`../ros2/README.md`](../ros2/README.md) | Physical-arm ROS 2 package status and boundaries. |
+| [`../mcpb/README.md`](../mcpb/README.md) | Claude Code registration and Claude Desktop bundle packaging. |

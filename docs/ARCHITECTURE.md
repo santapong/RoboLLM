@@ -1,4 +1,7 @@
-# Architecture — the C4 tour
+# RoboLLM · C4 architecture tour
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](README.md) · [Roadmap](../ROADMAP.md) · [Physical arm](physical-arm/ARCHITECTURE.md)
 
 This doc walks the workbench top-down using the [C4 model](https://c4model.com/):
 a small stack of zoom levels where each diagram answers one question —
@@ -18,11 +21,11 @@ implemented foundations from reusable examples and planned phases; see
 
 ![C4 level 1 — system context diagram](architecture/c4-context.svg)
 
-Two actors drive everything. **You** talk to Claude in natural language, drive
-the robot yourself from the browser dashboard, and wave a hand at the webcam
-for the hand-teleop examples. **Claude** — any MCP client, in practice Claude
-Code or Claude Desktop — calls the workbench's MCP tools over stdio. The
-workbench turns both kinds of intent into the same robot traffic: ROS 2 topics
+Two actors drive everything. The **human operator** uses natural language,
+drives from the browser dashboard, and waves a hand at the webcam for teleop.
+The **language-model client** — Claude Code/Desktop or any compatible MCP
+client — calls the workbench’s tools over stdio. The workbench turns both
+kinds of intent into the same robot traffic: ROS 2 topics
 and actions into the **ROS 2 Jazzy + Gazebo** stack (TurtleBot3 sim, SLAM,
 Nav2, MoveIt), and a 115200-baud text serial protocol to the **real DIY arm**
 (Raspberry Pi 5 + Arduino Uno R3). The **webcam** feeds frames in for

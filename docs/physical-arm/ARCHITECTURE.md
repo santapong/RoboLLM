@@ -1,6 +1,9 @@
-# Physical arm architecture
+# RoboLLM · Physical-arm architecture
 
-Status date: **2026-08-12**. This document describes the target architecture
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Documentation](../README.md) · [Arm roadmap](ROADMAP.md) · [Hardware worksheet](HARDWARE_WORKSHEET.md)
+
+Status date: **2026-08-13**. This document describes the target architecture
 and labels delivery status explicitly. The Phase 0 software foundation and
 v0.2 driver core exist; the physical bench, measured model, autonomous
 manipulation, learned policy, and language planner are not complete.

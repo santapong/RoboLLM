@@ -1,4 +1,7 @@
-# hand_follow — technical notes
+# RoboLLM · Hand-following technical notes
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Run guide](README.md) · [Runbook](docs/handfollow-run.md) · [Theory](docs/handfollow-inception.md)
 
 `examples/hand_follow/` is webcam **LEFT-hand** teleop of a vendored 6-DOF arm,
 CPU-only and RViz-based (no Gazebo, no GPU, no hardware). A single node,

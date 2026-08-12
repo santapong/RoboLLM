@@ -1,4 +1,9 @@
-# gen3_pick_place — gesture-driven pick-and-place on a Kinova Gen3 lite (RViz, CPU-only)
+# RoboLLM · Gen3 gesture pick-and-place
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Examples](../README.md) · [Technical notes](TECHNICAL.md) · [Runbook](docs/pickplace-run.md) · [Theory](docs/pickplace-theory.md)
+
+**Environment:** Kinova Gen3 lite model in RViz · CPU-only · no physical arm.
 
 Guide a real **Kinova Gen3 lite** (6-DOF + integrated 2-finger gripper) with
 your **LEFT hand** on a webcam; **make a fist to grip, open your palm to

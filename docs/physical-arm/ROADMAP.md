@@ -1,6 +1,9 @@
-# RoboLLM physical-arm roadmap
+# RoboLLM · Physical-arm delivery roadmap
 
-Status date: **2026-08-12**.
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../../README.md) · [Documentation](../README.md) · [Architecture](ARCHITECTURE.md) · [Hardware worksheet](HARDWARE_WORKSHEET.md)
+
+Status date: **2026-08-13**.
 
 This track implements **RoboLLM — A Hybrid Classical and Learning-Based
 Manipulation Platform for Language-Guided Robotics**. The repository-wide

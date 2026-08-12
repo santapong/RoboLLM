@@ -1,4 +1,10 @@
-# ROS 2 physical-arm workspace
+# RoboLLM · ROS 2 physical-arm workspace
+
+> **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
+> [Home](../README.md) · [Documentation](../docs/README.md) · [Arm roadmap](../docs/physical-arm/ROADMAP.md) · [Driver package](robo_arm_driver/)
+
+**Status:** v0.2 driver foundation is code-ready; ROS Jazzy deployment and
+physical motion acceptance remain open.
 
 This tree contains the installable ROS 2 packages for the physical RoboLLM arm.
 Simulation and learning examples remain under `examples/`; hardware-facing code
