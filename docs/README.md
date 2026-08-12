@@ -36,6 +36,13 @@
 | [`../examples/gen3_pick_place/TECHNICAL.md`](../examples/gen3_pick_place/TECHNICAL.md) | Gesture state machine, `/compute_ik` streaming, planning-scene attach/detach. |
 | [`../examples/wall_weld/TECHNICAL.md`](../examples/wall_weld/TECHNICAL.md) | Fist-triggered autonomous wall welding: raster planner, marker tracking, weld state machine. |
 | [`../hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) | The real Uno arm stack: firmware, serial protocol, driver, ROS 2 bridge. |
+| [`physical-arm/ARCHITECTURE.md`](physical-arm/ARCHITECTURE.md) | Physical-arm safety boundary, ROS interfaces, and configuration ownership. |
+| [`physical-arm/HARDWARE_WORKSHEET.md`](physical-arm/HARDWARE_WORKSHEET.md) | Phase 0 bench measurements and commissioning procedure. |
+| [`physical-arm/ROADMAP.md`](physical-arm/ROADMAP.md) | Honest Phase 0–5 status plus v0.1→v1.0 evidence gates. |
+| [`physical-arm/diagrams/c4-context.svg`](physical-arm/diagrams/c4-context.svg) | Physical arm C4 level 1 — people and external systems. |
+| [`physical-arm/diagrams/c4-container.svg`](physical-arm/diagrams/c4-container.svg) | Physical arm C4 level 2 — delivered, partial, and planned runtime containers. |
+| [`physical-arm/diagrams/c4-component-driver.svg`](physical-arm/diagrams/c4-component-driver.svg) | Physical arm C4 level 3 — validated driver components. |
+| [`physical-arm/diagrams/architecture-4plus1.svg`](physical-arm/diagrams/architecture-4plus1.svg) | Logical, process, development, physical, and scenario (+1) views. |
 | [`../web/TECHNICAL.md`](../web/TECHNICAL.md) | The dashboard internals: FastAPI + WebSocket over the shared bridge, endpoint tables. |
 | [`../scan3d/TECHNICAL.md`](../scan3d/TECHNICAL.md) | Webcam scanner internals: visual hull vs COLMAP routes, mesh → URDF tail. |
 | [`../cad/TECHNICAL.md`](../cad/TECHNICAL.md) | FreeCAD → URDF pipeline: headless build, joint-frame discipline, PyBullet verify. |

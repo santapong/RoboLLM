@@ -7,6 +7,12 @@ outputs do NOT live here: they graduate to the **RLM** repo
 (github.com/santapong/RLM — working name) once they stop being lessons and
 start being deliverables.
 
+The execution status for the DIY physical arm is tracked separately in
+[`docs/physical-arm/ROADMAP.md`](docs/physical-arm/ROADMAP.md). As of
+2026-08-12, only the Phase 0 software foundation and v0.2 driver core are
+implemented; later physical-arm phases are not marked complete by the presence
+of related simulation examples.
+
 ```
 RoboLLM (learn it here)  ──graduates──▶  RLM (ship it there)
 ```
@@ -16,7 +22,7 @@ use it without wanting to learn from it. Candidates already identified (the
 research doc's gap→products): diversity-first data-collection kit ·
 per-axis evaluation harness · measured-spec actuator bench + datasheets ·
 the reference benchmark-arm report. NOTE: RLM currently holds the research
-bundle's original Phase A code — superseded by this repo's arm-fw 2.0
+bundle's original Phase A code — superseded by this repo's arm-fw 2.1
 convergence (`hardware/docs/phaseA-convergence.md`); RLM should consume
 RoboLLM's stack, not fork it.
 
@@ -29,7 +35,7 @@ RoboLLM's stack, not fork it.
 | L5 cognitive brain | LLM/VLM planning, 1–10 Hz | MCP server + web dashboard (done); Phase D planner (future) |
 | L4 robotics large model | VLA action expert, 10–50 Hz | sim track: SmolVLA fine-tune + break-and-measure |
 | L3 whole-body control | WBC/MPC, locomotion | humanoid/talos mirrors (done); G1 capstone (Nav2 + policy @50 Hz) |
-| L2 joint control | PID, estimation, 1 kHz | arm-fw 2.0 measured-state stack (done, bench pending); EKF (triggered) |
+| L2 joint control | PID, estimation, 1 kHz | arm-fw 2.1 measured-state/safety stack (code done, bench pending); EKF (triggered) |
 | L1 hardware | actuators, sensors, structure | DIY arm bench; scan3d → printed parts; actuator test bench (future) |
 
 Cross-cutting: **perception** (scan3d done; SLAM triggered) and
@@ -55,7 +61,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 | # | Item | Proves |
 |---|------|--------|
 | S1 | scan3d physical validation (ChArUco mat @100%, calliper object, STL vs callipers ~1–2%; KIRI baseline on the same object) | scan→print pipeline on real optics; gates scan3d develop→main |
-| S2 | Arm bench check (`dialout`, plug Uno, `hardware/check_arduino.sh` — flashes arm-fw 2.0) | measured-state stack on real hardware |
+| S2 | Arm bench check (`dialout`, Phase 0 worksheet, `hardware/check_arduino.sh` — flashes arm-fw 2.1) | measured-state and fail-closed safety stack on real hardware |
 
 ### Tier A — high value, cheap, de-risked
 | # | Item | Track | Who |
@@ -87,7 +93,7 @@ PCB · transfer-prediction (Gap 5) · task-memory (Gap 6).
 
 1. **Foundations** (done): ROS 2 examples 01–10, MCP tools, dashboard,
    teleop family (hand → gen3 → wall_weld → humanoid → talos), CAD, scan3d.
-2. **Honest hardware** (in progress): arm-fw 2.0 measured state → bench →
+2. **Honest hardware** (in progress): arm-fw 2.1 measured state + safety → bench →
    encoders → H5 instrumented.
 3. **First learned policy** (sim track): a SmolVLA you fine-tuned, and a
    failure study you measured — the MSc-application artifact.

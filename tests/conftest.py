@@ -32,3 +32,8 @@ _ARM_IK_DIR = os.path.join(
 )
 if _ARM_IK_DIR not in sys.path:
     sys.path.insert(0, _ARM_IK_DIR)
+
+# Shim 3 — canonical physical-arm ROS package (pure config/safety modules).
+_ROBO_ARM_DRIVER_DIR = os.path.join(_ROOT, "ros2", "robo_arm_driver")
+if _ROBO_ARM_DRIVER_DIR not in sys.path:
+    sys.path.insert(0, _ROBO_ARM_DRIVER_DIR)

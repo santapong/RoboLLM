@@ -6,8 +6,14 @@ CLI  ?= $(HOME)/.local/bin/arduino-cli
 FQBN ?= arduino:avr:uno
 PORT ?= /dev/ttyACM0
 
-all:
+all: check-config
 	$(CLI) compile --fqbn $(FQBN) .
+
+config:
+	python3 ../../generate_firmware_config.py
+
+check-config:
+	python3 ../../generate_firmware_config.py --check
 
 upload: all
 	$(CLI) upload -p $(PORT) --fqbn $(FQBN) .
@@ -15,4 +21,4 @@ upload: all
 monitor:
 	$(CLI) monitor -p $(PORT) --config 115200
 
-.PHONY: all upload monitor
+.PHONY: all config check-config upload monitor

@@ -48,7 +48,8 @@ else
 fi
 
 echo "[4/6] compile firmware"
-if "$CLI" compile --fqbn "$FQBN" "$FW" >/tmp/arm_fw_build.log 2>&1; then
+if python3 "$HERE/generate_firmware_config.py" --check \
+   && "$CLI" compile --fqbn "$FQBN" "$FW" >/tmp/arm_fw_build.log 2>&1; then
   ok "arm_firmware.ino compiles ($(grep -oE 'Sketch uses [0-9]+ bytes \([0-9]+%\)' /tmp/arm_fw_build.log || echo 'see /tmp/arm_fw_build.log'))"
 else
   bad "compile failed — see /tmp/arm_fw_build.log"
@@ -75,5 +76,6 @@ fi
 
 echo
 echo "RESULT: $PASS passed, $FAIL failed — Arduino is ready for the arm."
-echo "Next: wire servos (EXTERNAL 5-6V supply, common GND) and try:"
-echo "  python3 $HERE/arm_serial.py set 0 120"
+echo "Next: complete docs/physical-arm/HARDWARE_WORKSHEET.md before servo motion."
+echo "Commission only inside the narrow configured window, for example:"
+echo "  python3 $HERE/arm_serial.py commission 0 91"

@@ -1,0 +1,24 @@
+# Physical-arm commissioning profile. This is intentionally NOT motion-ready.
+# Keep calibrated=false until every TODO value has been measured and reviewed.
+schema_version: 1
+calibrated: false
+state_source: commanded  # change to measured only after real feedback is wired
+command_timeout_ms: 750
+control_rate_hz: 20
+
+# The initial 85..95 degree windows are deliberately narrow commissioning
+# guards, not claimed physical limits. Center each unloaded servo at 90 degrees,
+# mount its horn without loading the mechanism, then expand one joint at a time.
+joints:
+  - {name: joint1, channel: 0, servo_pin: 3,  offset_deg: 90, sign: 1, min_deg: 85, max_deg: 95, home_deg: 90, max_velocity_deg_s: 20}
+  - {name: joint2, channel: 1, servo_pin: 5,  offset_deg: 90, sign: 1, min_deg: 85, max_deg: 95, home_deg: 90, max_velocity_deg_s: 20}
+  - {name: joint3, channel: 2, servo_pin: 6,  offset_deg: 90, sign: 1, min_deg: 85, max_deg: 95, home_deg: 90, max_velocity_deg_s: 20}
+  - {name: joint4, channel: 3, servo_pin: 9,  offset_deg: 90, sign: 1, min_deg: 85, max_deg: 95, home_deg: 90, max_velocity_deg_s: 20}
+  - {name: joint5, channel: 4, servo_pin: 10, offset_deg: 90, sign: 1, min_deg: 85, max_deg: 95, home_deg: 90, max_velocity_deg_s: 20}
+  - {name: joint6, channel: 5, servo_pin: 11, offset_deg: 90, sign: 1, min_deg: 85, max_deg: 95, home_deg: 90, max_velocity_deg_s: 20}
+
+gripper:
+  servo_pin: 4
+  open_percent: 45
+  closed_percent: 55
+  max_velocity_percent_s: 20

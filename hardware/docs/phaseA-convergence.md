@@ -1,5 +1,10 @@
 # Phase A convergence plan — RoboLLM hardware/ × arm_vla research bundle
 
+> Historical decision record. Steps 1–4 were absorbed into arm-fw 2.0 and are
+> now superseded by the fail-closed arm-fw 2.1 / `robo_arm_driver` foundation.
+> Physical encoders, bench acceptance, and the LeRobot logger upgrade remain
+> open; current status is maintained in `docs/physical-arm/ROADMAP.md`.
+
 Two independent Uno+arm serial stacks exist for the same physical arm:
 
 | | `RoboLLM/hardware/` (this repo) | research bundle `02_phaseA_code/` |
@@ -28,21 +33,21 @@ Everything *around* the wire stays RoboLLM: port autodetect, `sim_uno.py`
 superpower), `arm_bridge_node.py`, `check_arduino.sh`, the Makefile, and the
 C4 docs pattern.
 
-## Port order (each step keeps the stack testable against sim_uno)
+## Port order (implementation record)
 
-1. **Firmware**: replace command handling with `S/Q/H/E/X`; keep the existing
+1. **Done** — **Firmware**: replace command handling with `S/Q/H/E/X`; keep the existing
    slew-rate limiter and LED smoke test; leave `readEncoderDeg()` stubbed to
    return the slewed position until real encoders are wired (that stub IS the
    commanded-state baseline for H5).
-2. **`sim_uno.py`**: speak the new protocol (echo `s` lines with fake
+2. **Done** — **`sim_uno.py`**: speak the new protocol (echo `s` lines with fake
    dynamics + `millis`).
-3. **`arm_serial.py`**: absorb `robot_driver.py`'s `get_state`/`set_action`
+3. **Done** — **`arm_serial.py`**: absorb `robot_driver.py`'s `get_state`/`set_action`
    API (radians + calibration Pi-side, per the protocol doc); keep the CLI.
-4. **`arm_bridge_node.py`**: republish measured state as `/joint_states`.
-5. **Bring over** `camera_logger.py` + `acceptance_test.py`; upgrade the
+4. **Done in the canonical ROS package** — publish state as `/joint_states`.
+5. **Partial** — bring over `camera_logger.py` + `acceptance_test.py`; upgrade the
    logger's episode folders to LeRobot dataset format (Phase B needs it, and
    the hand_follow/gen3 teleop stack is the natural demo source).
-6. Retire the bundle's duplicate files; `serial_protocol.md` moves here as
+6. **Done** — retire the bundle's duplicate files; `serial_protocol.md` moves here as
    the protocol reference.
 
 ## Gates

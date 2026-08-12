@@ -12,6 +12,15 @@ dashboard use it, so you and the LLM drive the exact same robot. The full
 picture — C4 context → containers → components diagrams with narrative — is in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
+## Physical-arm status
+
+The full Phase 0–5 plan is **not complete**. RoboLLM currently has the Phase 0
+software/commissioning foundation and the v0.2 ROS driver core. Physical
+calibration, measured URDF/MoveIt execution, webcam control on this arm,
+autonomous pick-and-place, VLA training, and the arm-specific LLM planner remain
+gated work. See the [honest phase matrix](docs/physical-arm/ROADMAP.md) and the
+[physical-arm C4 + 4+1 architecture](docs/physical-arm/ARCHITECTURE.md).
+
 ## What's here
 | Path | Purpose |
 |------|---------|
@@ -23,7 +32,8 @@ picture — C4 context → containers → components diagrams with narrative —
 | `examples/hand_follow/` | **Webcam hand teleop**: a 6-DOF arm follows your LEFT hand in RViz (MediaPipe → IK, Docker or native). |
 | `examples/gen3_pick_place/` | **Gesture pick-and-place** on a Kinova Gen3 lite: fist = grip, open palm = release. |
 | `scan3d/` | Webcam → 3D mesh → URDF (CPU visual hull + COLMAP photogrammetry). |
-| `hardware/` | **Real DIY arm**: Uno R3 firmware + serial driver + ROS 2 bridge + Pi 5 setup + `check_arduino.sh` health check — technical doc: [`hardware/TECHNICAL.md`](hardware/TECHNICAL.md). |
+| `hardware/` | **Real DIY arm**: fail-closed Uno firmware, serial simulator, bench tools, and Pi 5 setup — start with the [Phase 0 worksheet](docs/physical-arm/HARDWARE_WORKSHEET.md). |
+| `ros2/` | Installable physical-arm packages; v0.2 starts with the validated `robo_arm_driver`. |
 | `sim/launch_turtlebot.sh` | Starts TurtleBot3 in Gazebo (own terminal). |
 | `docs/` | Architecture (C4), live-session playbook, branching — index in `docs/README.md`. |
 | `assets/` | Outputs: `urdf/`, `cad/`, `screenshots/`, `scan/` (git-ignored). |
@@ -120,6 +130,8 @@ Technical: [`cad/TECHNICAL.md`](cad/TECHNICAL.md) — headless build, joint-fram
 | Doc | What |
 |-----|------|
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The C4 tour: context → containers → components diagrams + narrative. |
+| [`docs/physical-arm/ARCHITECTURE.md`](docs/physical-arm/ARCHITECTURE.md) | Physical-arm C4 levels 1–3 plus the 4+1 view model. |
+| [`docs/physical-arm/ROADMAP.md`](docs/physical-arm/ROADMAP.md) | Phase 0–5 delivery truth and acceptance gates. |
 | [`CHANGELOG.md`](CHANGELOG.md) | What changed, when — grouped by date on `develop`. |
 | [`docs/live-session.md`](docs/live-session.md) | Guided ~30 min LLM ↔ robot demo playbook. |
 | [`docs/branching.md`](docs/branching.md) | Branch tiers: `main` / `develop` / `experiment/*`. |
@@ -146,4 +158,6 @@ and the bundle build in `mcpb/README.md`.
 
 ## Version control
 This folder is a git repo; `.venv/`, scan sessions, and large binaries are
-git-ignored. Normal flow: `git add -A && git commit -m "…" && git push`.
+git-ignored. Day-to-day verified work is committed and pushed to `develop`;
+`main` receives a later `develop` merge only after the touched physical demos
+actually run. See [`docs/branching.md`](docs/branching.md).

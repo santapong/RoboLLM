@@ -53,11 +53,14 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);
   root `launch_all.sh`. `docs/live-session.md` = guided 30-min demo playbook;
   `docs/ARCHITECTURE.md` = C4 diagrams + narrative; `docs/README.md` = doc index.
-- `hardware/` — the REAL arm: Uno firmware (serial protocol @115200),
-  `arm_serial.py` driver, `arm_bridge_node.py` ROS 2 node, `sim_uno.py` fake
-  Uno on a pty (develop with no hardware), `check_arduino.sh` 6-step health
-  check, `pi5_setup.sh` for the Pi. Uno R3 can't run micro-ROS (2 KB RAM) —
-  text serial is intentional.
+- `hardware/` + `ros2/robo_arm_driver/` — the REAL arm: fail-closed arm-fw
+  2.1 (generated limits, commissioning lock, 750 ms watchdog), canonical
+  config, `JointTrajectory` ROS 2 package, and `sim_uno.py` fake Uno on a pty.
+  `hardware/arm_{serial,bridge_node}.py` are compatibility launchers. Uno R3
+  can't run micro-ROS (2 KB RAM) — text serial is intentional. The physical
+  YAML stays `calibrated: false` until the Phase 0 worksheet is completed.
+  Delivery truth + gates: `docs/physical-arm/ROADMAP.md`; physical-arm C4 and
+  4+1 SVGs: `docs/physical-arm/ARCHITECTURE.md`.
 
 ## Environment gotchas (learned the hard way — do not rediscover)
 - **numpy MUST stay 1.26.4** (ROS Jazzy ABI; 2.x breaks rclpy). Always
@@ -88,12 +91,13 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 ## Verify / run
 - Quick MCP smoke test: ask Claude `list_topics` (needs a sim running).
 - Sim: `sim/launch_turtlebot.sh` (own terminal, display needed).
-- Arm with no hardware: `python3 hardware/sim_uno.py` then
-  `ARM_PORT=/dev/pts/N python3 hardware/arm_serial.py ping`.
+- Arm with no hardware: start `sim_uno.py` and the client with
+  `ARM_CONFIG=ros2/robo_arm_driver/config/joints.sim.yaml`, then set
+  `ARM_PORT=/dev/pts/N` for the client.
 - Real Uno health check: `hardware/check_arduino.sh` (needs user in `dialout`).
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
-## Status (2026-08-04)
+## Status (2026-08-12)
 Next steps are tiered in ROADMAP.md (spine: bench -> encoders ->
 LeRobot logger -> demos). Gap triggers below stay authoritative.
 Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +
@@ -102,9 +106,12 @@ print/CAD stack merged to develop (Route C Docker CPU photogrammetry,
 mesh_to_print.py, scale_mat.py ChArUco metric scale, MESHER=poisson;
 all verified on synthetic data only). PENDING user:
 `sudo usermod -aG dialout santapong` + plug the real Uno in → run
-check_arduino.sh (now flashes arm-fw 2.0 — the measured-state protocol from
+check_arduino.sh (now flashes arm-fw 2.1 — fail-closed configuration plus the measured-state protocol from
 the Phase A convergence, hardware/docs/phaseA-convergence.md; camera_logger
 + acceptance_test are ported and sim-verified; encoders still stubbed).
+The physical-arm plan is NOT complete: Phase 0 bench evidence, measured
+URDF/MoveIt, physical webcam mirroring, pick/place, VLA, and the allowlisted
+LLM planner remain gated in `docs/physical-arm/ROADMAP.md`.
 
 scan3d BACKLOG (in order — first item gates develop→main for scan3d):
 1. PHYSICAL VALIDATION: `python3 scan3d/scale_mat.py make -o mat.png`,

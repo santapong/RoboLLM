@@ -1,73 +1,84 @@
-# hardware/ — DIY robot arm (Raspberry Pi 5 + Arduino Uno R3)
+# hardware/ — DIY 6-DOF arm commissioning and Arduino firmware
 
-The real-hardware path of this repo. Same philosophy as the sim side:
-**the LLM/ROS layer plans, a dumb fast layer actuates.**
+The physical path is deliberately layered:
 
-```
-Claude / ROS 2 (laptop or Pi 5)          Arduino Uno R3            arm
-  arm_bridge_node.py ── USB serial ──▶ arm_firmware.ino ──▶ up to 6 servos
-        /arm/command  115200, text        50 Hz slew-limited PWM
-        /arm/joint_states ◀──────────  current angles
+```text
+JointTrajectory (rad) → robo_arm_driver → serial (deg) → arm-fw → PWM
 ```
 
-Why serial and not micro-ROS: the Uno R3 (AVR, 2 KB RAM) cannot run
-micro-ROS. A tiny text protocol is robust, debuggable with any serial
-monitor, and the Pi 5 easily runs the actual ROS 2 node.
+AI code never sends PWM or raw servo angles. The installable ROS package and
+canonical joint configuration live in `ros2/robo_arm_driver/`; this directory
+owns the Uno firmware, simulator, bench tools, and compatibility launchers.
+
+## Start here
+
+1. Read and complete `../docs/physical-arm/HARDWARE_WORKSHEET.md`.
+2. Provide an external 5–6 V servo supply with common ground and a cutoff.
+3. Install serial permissions once, then reconnect your session:
+
+   ```bash
+   sudo usermod -aG dialout "$USER"
+   ```
+
+4. Plug in the Uno and run `hardware/check_arduino.sh`.
+5. Commission one unloaded or mechanically safe joint at a time.
+
+The physical config starts with `calibrated: false` and 85–95° limits. Normal
+`HOME`, `ENABLE`, and six-joint commands are rejected until calibration is
+complete. The only motion available before then is the bounded single-joint
+commissioning command:
+
+```bash
+python3 hardware/arm_serial.py commission 0 91
+python3 hardware/arm_serial.py relax
+```
+
+After editing `ros2/robo_arm_driver/config/joints.yaml`, synchronize firmware:
+
+```bash
+python3 hardware/generate_firmware_config.py
+make -C hardware/firmware/arm_firmware
+```
+
+Review both the YAML and generated header before flashing.
 
 ## Files
-| File | What |
-|------|------|
-| `firmware/arm_firmware/` | Uno sketch + Makefile (arduino-cli, `make upload`) |
-| `arm_serial.py` | Python driver + CLI (`ping`, `joints`, `set <ch> <deg>`, `led`) |
-| `arm_bridge_node.py` | ROS 2 node: `/arm/command` (deg) → servos, publishes `/arm/joint_states` |
-| `check_arduino.sh` | **One-command health check**: toolchain→port→perms→compile→flash→PING |
-| `sim_uno.py` | **Fake Uno** on a virtual port — develop/demo the whole stack with no hardware: `python3 sim_uno.py`, then `ARM_PORT=/dev/pts/N …` |
-| `pi5_setup.sh` | Run on the Pi 5: dialout, toolchain, ROS 2 Jazzy, udev rule |
 
-## Toolchain (already installed on the laptop, rootless)
-- **arduino-cli 1.5.1** at `~/.local/bin/arduino-cli`, AVR core 1.8.8 +
-  Servo 1.3.0 in `~/.arduino15` — compiles/flashes with **no sudo**.
-- **Arduino IDE 2.3.10** at `~/.local/opt/arduino-ide` — launch with
-  `arduino-ide` or from the app menu. (Wrapper passes `--no-sandbox`:
-  Ubuntu 24.04 AppArmor blocks Electron's sandbox outside apt/snap.)
-- Reinstall anywhere: `arduino-cli core install arduino:avr && arduino-cli lib install Servo`.
+| Path | Role |
+|---|---|
+| `firmware/arm_firmware/` | arm-fw 2.1, strict limits, slew control, timeout, e-stop |
+| `generate_firmware_config.py` | generates firmware limits from canonical YAML |
+| `arm_serial.py` | compatibility CLI for `robo_arm_driver.arm_serial` |
+| `arm_bridge_node.py` | compatibility launcher for the ROS package node |
+| `sim_uno.py` | protocol/dynamics simulator on a pseudo-terminal |
+| `check_arduino.sh` | toolchain, port, compile, flash, ping, and LED check |
+| `acceptance_test.py` | state/motion/camera synchronization bench check |
+| `camera_logger.py` | synchronized image/state/action episode logger |
+
+## Simulation without hardware
+
+Terminal 1:
 
 ```bash
-sudo usermod -aG dialout $USER    # ONE root step: serial-port permission,
-                                  # then log out & back in once
-# plug the Uno in over USB, then:
-hardware/check_arduino.sh         # answers "does the Arduino work fine?"
+ARM_CONFIG=ros2/robo_arm_driver/config/joints.sim.yaml \
+  python3 hardware/sim_uno.py
 ```
 
-## Protocol (arm-fw 2.0 — 115200 baud, line-based, measured state)
-`S d0..d5 g` set all targets · `Q` query · `H` home · `E` torque on ·
-`X` e-stop/off — each replies `s d0..d5 g t_ms` with the **MEASURED** angles +
-timestamp (never the command — honest data for imitation learning). Plus
-`P`→`# pong arm-fw 2.0` and `L 1|0` (LED). Errors `! …`, comments `# …`.
-Full spec + rationale: `docs/serial_protocol.md`.
-Note: opening the port **resets the Uno** (DTR) — wait ~2 s (ArmSerial does).
+Terminal 2, using the printed pseudo-terminal:
 
-## Wiring — read before powering servos ⚠️
-- Servo **signal** wires → Uno pins **3, 5, 6, 9, 10, 11** (ch 0–5).
-- Servo **power** → an **external 5–6 V supply** (≥1 A per moving servo).
-  **Never** the Uno's 5V pin — 6 servos will brown-out/kill the board.
-- **Common ground**: external supply GND ↔ Uno GND ↔ servo GND.
-- Set per-joint limits in `MIN_DEG[]`/`MAX_DEG[]` in the sketch so the arm
-  can't drive into itself, then `make upload` again.
-
-## Pi 5 deployment
 ```bash
-scp -r hardware/ <user>@<pi-ip>:~/arm/
-ssh <user>@<pi-ip> 'bash ~/arm/pi5_setup.sh'   # Ubuntu 24.04 on the Pi
-# then on the Pi:
-bash ~/arm/check_arduino.sh
-python3 ~/arm/arm_bridge_node.py               # ROS 2 node
+ARM_CONFIG=ros2/robo_arm_driver/config/joints.sim.yaml \
+ARM_PORT=/dev/pts/N python3 hardware/arm_serial.py state
 ```
-Laptop and Pi on the same LAN + same `ROS_DOMAIN_ID` → the laptop's ROS 2
-(and the MCP bridge) sees `/arm/joint_states` and can publish `/arm/command`
-over the network. On Raspberry Pi OS instead of Ubuntu, run the node in
-Docker: `docker run -it --device=/dev/ttyACM0 -v ~/arm:/arm ros:jazzy-ros-base`.
 
-## Smoke test without any servos connected
-The firmware boot-blinks the onboard LED 3×, and `arm_serial.py led 1`
-lights it — proves USB + firmware + protocol with zero wiring.
+## Wiring invariant
+
+- Joint signals: Uno pins 3, 5, 6, 9, 10, 11; gripper signal: pin 4.
+- Servo power: external supply sized from measured stall current.
+- Ground: supply GND ↔ Uno GND ↔ every servo GND.
+- Never power six servos from the Uno 5 V pin.
+
+The protocol reference is `docs/serial_protocol.md`; the ROS interface is
+documented with C4 and 4+1 SVGs in
+`../docs/physical-arm/ARCHITECTURE.md`. Phase completion and bench evidence are
+tracked in `../docs/physical-arm/ROADMAP.md`.

@@ -19,7 +19,7 @@ stable     integration     playground
 # normal work
 git checkout develop
 # ... edit, commit ...
-git push
+git push origin develop
 
 # start an experiment (e.g. trying AprilTag detection)
 git checkout develop

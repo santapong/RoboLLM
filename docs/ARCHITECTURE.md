@@ -9,6 +9,11 @@ first time; after that, jump straight to the zoom you need. The diagrams are
 plain SVGs in `docs/architecture/` — they render on GitHub and in any browser,
 no tooling required.
 
+The DIY arm now has its own delivery-focused architecture set: C4 context,
+container, and driver-component SVGs plus a 4+1 view model. It distinguishes
+implemented foundations from reusable examples and planned phases; see
+[`physical-arm/ARCHITECTURE.md`](physical-arm/ARCHITECTURE.md).
+
 ## Level 1 — System context: who uses what
 
 ![C4 level 1 — system context diagram](architecture/c4-context.svg)
@@ -112,6 +117,8 @@ it; `/box_reset` respawns it.
   (grasp orientation + gesture design rationale); runbooks sit next to each.
 - [`../examples/README.md`](../examples/README.md) — the whole learning path,
   from `01_hello_node.py` up.
+- [`physical-arm/ARCHITECTURE.md`](physical-arm/ARCHITECTURE.md) — the real
+  arm's C4 and 4+1 views, safety boundary, interfaces, and delivery status.
 - Technical deep-dives: each example (incl. `examples/wall_weld/`) ships a `TECHNICAL.md` next to its code —
   [`ros2_py`](../examples/ros2_py/TECHNICAL.md),
   [`patrol_bot`](../examples/colcon_pkg/patrol_bot/TECHNICAL.md),

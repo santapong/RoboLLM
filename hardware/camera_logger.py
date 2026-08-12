@@ -41,8 +41,8 @@ class Frame:
     t_host: float            # host time of the state read
     t_cam: float             # host time the image was grabbed
     cam_lag_ms: float        # t_host - t_cam, for auditing sync quality
-    q: list                  # measured joint angles (rad)
-    gripper: float           # measured gripper 0..1
+    q: list                  # joint state (rad; provenance is in arm config)
+    gripper: float           # gripper state 0..1
     action_q: Optional[list] # commanded joint targets this step (rad) or None
     action_gripper: Optional[float]
     frame_path: str

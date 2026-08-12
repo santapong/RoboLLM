@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 920" font-family="Inter,Arial,sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM Physical Arm C4 container diagram</title>
+  <desc id="desc">Runnable containers from high-level planning through ROS, validated arm driver, firmware, camera, and robot hardware. Colors identify implementation status.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
+    <style>
+      .title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.boundary{fill:#eff6ff;stroke:#2563eb;stroke-width:2;stroke-dasharray:8 5}.impl{fill:#1168bd;stroke:#0c4a6e;stroke-width:2}.partial{fill:#d97706;stroke:#92400e;stroke-width:2}.planned{fill:#64748b;stroke:#334155;stroke-width:2;stroke-dasharray:7 5}.external{fill:#475569;stroke:#1e293b;stroke-width:2}.name{font-size:16px;font-weight:700;fill:white}.type{font-size:11px;font-style:italic;fill:#e2e8f0}.body{font-size:12px;fill:white}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:11px;fill:#334155}.legend{font-size:12px;fill:#0f172a}
+    </style>
+  </defs>
+  <rect width="1500" height="920" fill="#f8fafc"/>
+  <text x="35" y="44" class="title">C4 Level 2 — Physical Arm Containers</text>
+  <text x="35" y="67" class="sub">Blue = implemented foundation · amber = reusable example/partial integration · gray dashed = planned physical-arm capability</text>
+
+  <rect x="25" y="115" width="175" height="105" rx="9" class="external"/>
+  <text x="112" y="146" text-anchor="middle" class="name">Human</text><text x="112" y="166" text-anchor="middle" class="type">[Person]</text>
+  <text x="112" y="192" text-anchor="middle" class="body">task / hand motion</text>
+  <rect x="25" y="630" width="175" height="105" rx="9" class="external"/>
+  <text x="112" y="661" text-anchor="middle" class="name">Webcam</text><text x="112" y="681" text-anchor="middle" class="type">[Device]</text>
+  <text x="112" y="707" text-anchor="middle" class="body">RGB observations</text>
+
+  <rect x="240" y="90" width="990" height="700" rx="14" class="boundary"/>
+  <text x="260" y="119" class="sub">RoboLLM physical-arm software system</text>
+
+  <rect x="285" y="155" width="230" height="115" rx="9" class="planned"/>
+  <text x="400" y="184" text-anchor="middle" class="name">LLM task planner</text><text x="400" y="204" text-anchor="middle" class="type">[Python / schema output]</text>
+  <text x="400" y="231" text-anchor="middle" class="body">Phase 5 · allowlisted plans</text>
+
+  <rect x="575" y="155" width="230" height="115" rx="9" class="planned"/>
+  <text x="690" y="184" text-anchor="middle" class="name">Skill router</text><text x="690" y="204" text-anchor="middle" class="type">[ROS 2 orchestration]</text>
+  <text x="690" y="231" text-anchor="middle" class="body">classical skill or VLA</text>
+
+  <rect x="865" y="155" width="230" height="115" rx="9" class="planned"/>
+  <text x="980" y="184" text-anchor="middle" class="name">VLA policy</text><text x="980" y="204" text-anchor="middle" class="type">[Learned runtime]</text>
+  <text x="980" y="231" text-anchor="middle" class="body">Phase 4 · logical actions</text>
+
+  <rect x="285" y="340" width="230" height="115" rx="9" class="partial"/>
+  <text x="400" y="369" text-anchor="middle" class="name">Teleoperation</text><text x="400" y="389" text-anchor="middle" class="type">[MediaPipe + filters]</text>
+  <text x="400" y="416" text-anchor="middle" class="body">RViz example exists;</text><text x="400" y="434" text-anchor="middle" class="body">physical integration pending</text>
+
+  <rect x="575" y="340" width="230" height="115" rx="9" class="planned"/>
+  <text x="690" y="369" text-anchor="middle" class="name">Perception/world model</text><text x="690" y="389" text-anchor="middle" class="type">[Camera calibration + TF]</text>
+  <text x="690" y="416" text-anchor="middle" class="body">Phase 3 marker-first</text>
+
+  <rect x="865" y="340" width="230" height="115" rx="9" class="partial"/>
+  <text x="980" y="369" text-anchor="middle" class="name">ROS 2 + MoveIt</text><text x="980" y="389" text-anchor="middle" class="type">[Jazzy / trajectories]</text>
+  <text x="980" y="416" text-anchor="middle" class="body">driver input exists;</text><text x="980" y="434" text-anchor="middle" class="body">measured URDF pending</text>
+
+  <rect x="435" y="535" width="270" height="135" rx="9" class="impl"/>
+  <text x="570" y="568" text-anchor="middle" class="name">robo_arm_driver</text><text x="570" y="590" text-anchor="middle" class="type">[ament_python / rclpy]</text>
+  <text x="570" y="617" text-anchor="middle" class="body">names · limits · time · velocity</text><text x="570" y="636" text-anchor="middle" class="body">trajectory sampling + status</text>
+
+  <rect x="805" y="535" width="270" height="135" rx="9" class="impl"/>
+  <text x="940" y="568" text-anchor="middle" class="name">arm-fw 2.1</text><text x="940" y="590" text-anchor="middle" class="type">[Arduino C++ / serial]</text>
+  <text x="940" y="617" text-anchor="middle" class="body">generated hard limits · slew</text><text x="940" y="636" text-anchor="middle" class="body">commissioning lock · watchdog</text>
+
+  <rect x="1275" y="525" width="190" height="145" rx="9" class="external"/>
+  <text x="1370" y="557" text-anchor="middle" class="name">Physical arm</text><text x="1370" y="579" text-anchor="middle" class="type">[6 joints + gripper]</text>
+  <text x="1370" y="607" text-anchor="middle" class="body">external servo supply</text><text x="1370" y="626" text-anchor="middle" class="body">physical cutoff</text>
+
+  <line x1="200" y1="165" x2="275" y2="205" stroke="#475569" stroke-width="2.5"/><text x="210" y="150" class="label">language</text>
+  <line x1="200" y1="185" x2="275" y2="385" stroke="#475569" stroke-width="2.5"/><text x="205" y="295" class="label">hand motion</text>
+  <line x1="200" y1="680" x2="275" y2="410" stroke="#475569" stroke-width="2.5"/><text x="205" y="550" class="label">frames</text>
+  <line x1="515" y1="212" x2="565" y2="212" stroke="#475569" stroke-width="2.5"/>
+  <line x1="805" y1="212" x2="855" y2="212" stroke="#475569" stroke-width="2.5"/><text x="815" y="198" class="label">learned route</text>
+  <line x1="740" y1="270" x2="930" y2="330" stroke="#475569" stroke-width="2.5"/><text x="795" y="285" class="label">classical route</text>
+  <line x1="690" y1="340" x2="690" y2="280" stroke="#475569" stroke-width="2.5"/><text x="700" y="312" class="label">world state</text>
+  <line x1="930" y1="455" x2="650" y2="525" stroke="#475569" stroke-width="2.5"/><text x="760" y="500" class="label">JointTrajectory</text>
+  <line x1="705" y1="603" x2="795" y2="603" stroke="#475569" stroke-width="2.5"/><text x="712" y="590" class="label">serial degrees</text>
+  <line x1="1075" y1="603" x2="1265" y2="603" stroke="#475569" stroke-width="2.5"/><text x="1145" y="590" class="label">PWM</text>
+  <text x="750" y="755" text-anchor="middle" class="label">All classical and learned paths converge on the same validated driver and firmware chain.</text>
+
+  <rect x="280" y="820" width="25" height="18" class="impl"/><text x="314" y="834" class="legend">implemented/tested without hardware</text>
+  <rect x="570" y="820" width="25" height="18" class="partial"/><text x="604" y="834" class="legend">reusable example or partial integration</text>
+  <rect x="920" y="820" width="25" height="18" class="planned"/><text x="954" y="834" class="legend">planned; acceptance evidence absent</text>
+</svg>

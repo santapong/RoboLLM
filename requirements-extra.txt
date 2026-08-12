@@ -6,6 +6,10 @@
 # against. Do NOT let another package upgrade it to 2.x — that breaks rclpy.
 numpy==1.26.4
 
+# physical arm host driver
+pyserial
+PyYAML
+
 # web dashboard
 fastapi
 uvicorn

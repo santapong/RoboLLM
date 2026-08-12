@@ -4,7 +4,9 @@
 # laptop, so ROS 2 Jazzy installs the same way. (On Raspberry Pi OS, use
 # Docker: ros:jazzy-ros-base — see README.)
 #
-#   scp -r hardware/ pi@<pi-ip>:~/arm/ && ssh pi@<pi-ip> 'bash ~/arm/pi5_setup.sh'
+# Copy/clone the whole RoboLLM repository; the canonical driver now spans
+# ros2/robo_arm_driver and hardware/.
+#   ssh pi@<pi-ip> 'bash ~/RoboLLM/hardware/pi5_setup.sh'
 set -e
 
 echo "== [1/5] serial permissions =="
@@ -12,7 +14,7 @@ sudo usermod -aG dialout "$USER"
 
 echo "== [2/5] base tools + arduino-cli (flash the Uno from the Pi too) =="
 sudo apt update
-sudo apt install -y python3-pip python3-serial git curl
+sudo apt install -y python3-pip python3-serial python3-yaml git curl
 if ! [ -x "$HOME/.local/bin/arduino-cli" ]; then
   ARCH=ARM64 # Pi 5
   VER=$(curl -fsSL https://api.github.com/repos/arduino/arduino-cli/releases/latest | grep -F tag_name | awk -F'"' '{print $4}')
@@ -49,5 +51,7 @@ sudo udevadm control --reload-rules
 
 echo "== [5/5] done =="
 echo "Log out/in for the dialout group, plug in the Uno, then:"
-echo "  bash ~/arm/check_arduino.sh"
-echo "  source /opt/ros/jazzy/setup.bash && python3 ~/arm/arm_bridge_node.py"
+echo "  cd ~/RoboLLM && bash hardware/check_arduino.sh"
+echo "  cd ~/RoboLLM/ros2 && colcon build --symlink-install"
+echo "  source /opt/ros/jazzy/setup.bash && source ~/RoboLLM/ros2/install/setup.bash"
+echo "  ros2 launch robo_arm_driver driver.launch.py port:=/dev/arm_uno"

@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" font-family="Inter,Arial,sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM Physical Arm Kruchten 4 plus 1 architectural view model</title>
+  <desc id="desc">Logical, process, development, physical, and scenario views for the physical arm platform, with implementation status.</desc>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
+    <style>.title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.panel{fill:white;stroke:#334155;stroke-width:2}.head{fill:#1168bd}.headText{font-size:18px;font-weight:700;fill:white}.text{font-size:13px;fill:#1e293b}.small{font-size:11px;fill:#475569}.impl{fill:#dbeafe;stroke:#1168bd;stroke-width:1.5}.partial{fill:#ffedd5;stroke:#d97706;stroke-width:1.5}.planned{fill:#e2e8f0;stroke:#64748b;stroke-width:1.5;stroke-dasharray:6 4}.scenario{fill:#fff7ed;stroke:#c2410c;stroke-width:3}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1500" height="1000" fill="#f8fafc"/>
+  <text x="35" y="45" class="title">RoboLLM Physical Arm — Kruchten 4+1 Architectural View Model</text>
+  <text x="35" y="69" class="sub">The four engineering views are tied together by task scenarios (+1). Status styling prevents planned architecture from being mistaken for delivered code.</text>
+
+  <!-- Logical -->
+  <rect x="430" y="105" width="640" height="215" rx="12" class="panel"/><path d="M442 105 H1058 Q1070 105 1070 117 V145 H430 V117 Q430 105 442 105" class="head"/>
+  <text x="750" y="132" text-anchor="middle" class="headText">Logical view — responsibilities and safety layers</text>
+  <rect x="458" y="173" width="120" height="70" rx="7" class="planned"/><text x="518" y="201" text-anchor="middle" class="text">LLM planner</text><text x="518" y="222" text-anchor="middle" class="small">Phase 5</text>
+  <rect x="600" y="173" width="120" height="70" rx="7" class="partial"/><text x="660" y="201" text-anchor="middle" class="text">Skills / VLA</text><text x="660" y="222" text-anchor="middle" class="small">examples / planned</text>
+  <rect x="742" y="173" width="120" height="70" rx="7" class="partial"/><text x="802" y="201" text-anchor="middle" class="text">ROS / MoveIt</text><text x="802" y="222" text-anchor="middle" class="small">driver ready</text>
+  <rect x="884" y="173" width="150" height="70" rx="7" class="impl"/><text x="959" y="201" text-anchor="middle" class="text">Driver + firmware</text><text x="959" y="222" text-anchor="middle" class="small">implemented</text>
+  <line x1="578" y1="208" x2="590" y2="208" stroke="#475569" stroke-width="2"/><line x1="720" y1="208" x2="732" y2="208" stroke="#475569" stroke-width="2"/><line x1="862" y1="208" x2="874" y2="208" stroke="#475569" stroke-width="2"/>
+  <text x="750" y="282" text-anchor="middle" class="small">Invariant: every AI output becomes a validated logical goal; PWM remains below the firmware boundary.</text>
+
+  <!-- Development -->
+  <rect x="45" y="360" width="425" height="300" rx="12" class="panel"/><path d="M57 360 H458 Q470 360 470 372 V400 H45 V372 Q45 360 57 360" class="head"/>
+  <text x="257" y="388" text-anchor="middle" class="headText">Development view — repository ownership</text>
+  <text x="75" y="438" class="text">ros2/robo_arm_driver/</text><text x="275" y="438" class="small">canonical host driver</text>
+  <text x="75" y="476" class="text">hardware/firmware/</text><text x="275" y="476" class="small">Uno safety controller</text>
+  <text x="75" y="514" class="text">hardware/sim_uno.py</text><text x="275" y="514" class="small">hardware-free contract test</text>
+  <text x="75" y="552" class="text">docs/physical-arm/</text><text x="275" y="552" class="small">gates + architecture + bench data</text>
+  <text x="75" y="590" class="text">examples/hand_follow/</text><text x="275" y="590" class="small">reusable teleop research</text>
+  <text x="75" y="628" class="text">learning/ · llm/</text><text x="275" y="628" class="small">created only at phase trigger</text>
+
+  <!-- Process -->
+  <rect x="1030" y="360" width="425" height="300" rx="12" class="panel"/><path d="M1042 360 H1443 Q1455 360 1455 372 V400 H1030 V372 Q1030 360 1042 360" class="head"/>
+  <text x="1242" y="388" text-anchor="middle" class="headText">Process view — runtime sequence and rates</text>
+  <rect x="1060" y="430" width="105" height="60" rx="7" class="planned"/><text x="1112" y="455" text-anchor="middle" class="text">Planner</text><text x="1112" y="475" text-anchor="middle" class="small">1–10 Hz</text>
+  <rect x="1190" y="430" width="105" height="60" rx="7" class="partial"/><text x="1242" y="455" text-anchor="middle" class="text">ROS plan</text><text x="1242" y="475" text-anchor="middle" class="small">event driven</text>
+  <rect x="1320" y="430" width="105" height="60" rx="7" class="impl"/><text x="1372" y="455" text-anchor="middle" class="text">Driver</text><text x="1372" y="475" text-anchor="middle" class="small">20 Hz</text>
+  <line x1="1165" y1="460" x2="1180" y2="460" stroke="#475569" stroke-width="2"/><line x1="1295" y1="460" x2="1310" y2="460" stroke="#475569" stroke-width="2"/>
+  <text x="1065" y="535" class="text">1. Validate schema, skill, world state</text>
+  <text x="1065" y="567" class="text">2. Validate IK, collision, limits, velocity</text>
+  <text x="1065" y="599" class="text">3. Stream target; poll honest state provenance</text>
+  <text x="1065" y="631" class="text">4. Timeout or I/O failure → torque-off request</text>
+
+  <!-- Scenario +1 -->
+  <rect x="535" y="390" width="430" height="270" rx="16" class="scenario"/>
+  <text x="750" y="425" text-anchor="middle" class="headText" fill="#9a3412">+1 Scenarios — acceptance drives architecture</text>
+  <text x="570" y="466" class="text">Now: “Move joint1 safely from RViz.”</text>
+  <text x="570" y="499" class="small">trajectory → validation → serial → watchdog → state</text>
+  <text x="570" y="540" class="text">Next: “Mirror my hand without leaving workspace.”</text>
+  <text x="570" y="573" class="small">camera → filter → target pose → MoveIt → same safety chain</text>
+  <text x="570" y="610" class="text">Final: “Put the red cube in the basket.”</text>
+  <text x="570" y="630" class="small">LLM plan → skill/VLA → verification; planned, not delivered</text>
+
+  <!-- Physical -->
+  <rect x="330" y="720" width="840" height="215" rx="12" class="panel"/><path d="M342 720 H1158 Q1170 720 1170 732 V760 H330 V732 Q330 720 342 720" class="head"/>
+  <text x="750" y="748" text-anchor="middle" class="headText">Physical view — deployment topology</text>
+  <rect x="365" y="795" width="150" height="75" rx="7" class="partial"/><text x="440" y="823" text-anchor="middle" class="text">Laptop / Pi 5</text><text x="440" y="845" text-anchor="middle" class="small">ROS 2 Jazzy</text>
+  <rect x="580" y="795" width="150" height="75" rx="7" class="impl"/><text x="655" y="823" text-anchor="middle" class="text">Arduino Uno</text><text x="655" y="845" text-anchor="middle" class="small">arm-fw 2.1</text>
+  <rect x="795" y="795" width="150" height="75" rx="7" class="partial"/><text x="870" y="823" text-anchor="middle" class="text">Servo arm</text><text x="870" y="845" text-anchor="middle" class="small">bench pending</text>
+  <rect x="995" y="795" width="140" height="75" rx="7" class="partial"/><text x="1065" y="823" text-anchor="middle" class="text">Webcam</text><text x="1065" y="845" text-anchor="middle" class="small">later phases</text>
+  <line x1="515" y1="833" x2="570" y2="833" stroke="#475569" stroke-width="2"/><text x="520" y="817" class="small">USB serial</text><line x1="730" y1="833" x2="785" y2="833" stroke="#475569" stroke-width="2"/><text x="739" y="817" class="small">PWM</text>
+  <text x="750" y="906" text-anchor="middle" class="small">External servo supply + common ground + physical cutoff are hardware safety controls, not software options.</text>
+</svg>

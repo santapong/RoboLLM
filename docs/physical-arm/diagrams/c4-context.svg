@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" font-family="Inter,Arial,sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM Physical Arm C4 system context</title>
+  <desc id="desc">People and external systems around the RoboLLM physical arm platform, with the safety boundary between AI goals and servo PWM.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
+    <style>
+      .title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.name{font-size:18px;font-weight:700;fill:white}.type{font-size:12px;font-style:italic;fill:#dbeafe}.body{font-size:13px;fill:white}.external{fill:#64748b;stroke:#334155;stroke-width:2}.system{fill:#1168bd;stroke:#0c4a6e;stroke-width:2}.label{font-size:12px;fill:#334155}.note{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.noteText{font-size:14px;font-weight:700;fill:#9a3412}
+    </style>
+  </defs>
+  <rect width="1280" height="760" fill="#f8fafc"/>
+  <text x="40" y="48" class="title">C4 Level 1 — RoboLLM Physical Arm System Context</text>
+  <text x="40" y="72" class="sub">Architecture baseline · 2026-08-12 · implemented foundation plus explicitly planned capabilities</text>
+
+  <rect x="60" y="150" width="235" height="145" rx="10" class="external"/>
+  <text x="177" y="183" text-anchor="middle" class="name">Human operator</text>
+  <text x="177" y="205" text-anchor="middle" class="type">[Person]</text>
+  <text x="177" y="235" text-anchor="middle" class="body">Builds and calibrates hardware</text>
+  <text x="177" y="256" text-anchor="middle" class="body">Teleoperates and gives tasks</text>
+
+  <rect x="60" y="430" width="235" height="145" rx="10" class="external"/>
+  <text x="177" y="463" text-anchor="middle" class="name">Camera</text>
+  <text x="177" y="485" text-anchor="middle" class="type">[External device]</text>
+  <text x="177" y="515" text-anchor="middle" class="body">Hand/object observations</text>
+  <text x="177" y="536" text-anchor="middle" class="body">Success verification</text>
+
+  <rect x="440" y="205" width="400" height="310" rx="14" class="system"/>
+  <text x="640" y="246" text-anchor="middle" class="name">RoboLLM Physical Arm Platform</text>
+  <text x="640" y="270" text-anchor="middle" class="type">[Software system]</text>
+  <text x="640" y="310" text-anchor="middle" class="body">Converts human, vision, and language intent</text>
+  <text x="640" y="332" text-anchor="middle" class="body">into validated ROS 2 goals and trajectories.</text>
+  <text x="640" y="373" text-anchor="middle" class="body">Classical planning · teleoperation · perception</text>
+  <text x="640" y="395" text-anchor="middle" class="body">learned policies · allowlisted task skills</text>
+  <rect x="492" y="432" width="296" height="54" rx="8" class="note"/>
+  <text x="640" y="455" text-anchor="middle" class="noteText">AI never controls servo PWM</text>
+  <text x="640" y="475" text-anchor="middle" class="label">Every action crosses ROS + safety validation</text>
+
+  <rect x="975" y="130" width="245" height="145" rx="10" class="external"/>
+  <text x="1097" y="163" text-anchor="middle" class="name">LLM / VLM runtime</text>
+  <text x="1097" y="185" text-anchor="middle" class="type">[External system]</text>
+  <text x="1097" y="215" text-anchor="middle" class="body">Produces structured task plans</text>
+  <text x="1097" y="236" text-anchor="middle" class="body">Never raw motor commands</text>
+
+  <rect x="975" y="445" width="245" height="145" rx="10" class="external"/>
+  <text x="1097" y="478" text-anchor="middle" class="name">6-DOF arm + Arduino</text>
+  <text x="1097" y="500" text-anchor="middle" class="type">[External device system]</text>
+  <text x="1097" y="530" text-anchor="middle" class="body">Firmware limits, watchdog, PWM</text>
+  <text x="1097" y="551" text-anchor="middle" class="body">External servo power + cutoff</text>
+
+  <line x1="295" y1="215" x2="430" y2="290" stroke="#475569" stroke-width="2.5"/><polygon points="430,290 417,287 423,277" fill="#475569"/><text x="330" y="225" class="label">language / teleop</text>
+  <line x1="295" y1="500" x2="430" y2="438" stroke="#475569" stroke-width="2.5"/><polygon points="430,438 421,449 416,438" fill="#475569"/><text x="305" y="485" class="label">frames</text>
+  <line x1="840" y1="290" x2="965" y2="218" stroke="#475569" stroke-width="2.5"/><polygon points="965,218 956,229 951,219" fill="#475569"/><text x="858" y="230" class="label">prompt + scene</text>
+  <line x1="975" y1="250" x2="850" y2="322" stroke="#475569" stroke-width="2.5"/><polygon points="850,322 859,311 864,321" fill="#475569"/><text x="858" y="292" class="label">structured plan</text>
+  <line x1="840" y1="430" x2="965" y2="505" stroke="#475569" stroke-width="2.5"/><polygon points="965,505 952,502 958,492" fill="#475569"/><text x="850" y="486" class="label">validated actions</text>
+  <line x1="975" y1="545" x2="850" y2="470" stroke="#475569" stroke-width="2.5"/><polygon points="850,470 863,473 857,483" fill="#475569"/><text x="860" y="548" class="label">state / status</text>
+
+  <rect x="40" y="670" width="1200" height="55" rx="8" fill="#e2e8f0"/>
+  <text x="640" y="694" text-anchor="middle" class="label">Current truth: Phase 0 software and v0.2 driver foundation are implemented; physical calibration and Phases 1–5 remain gated.</text>
+  <text x="640" y="714" text-anchor="middle" class="label">See ROADMAP.md for acceptance evidence required before a phase is marked complete.</text>
+</svg>

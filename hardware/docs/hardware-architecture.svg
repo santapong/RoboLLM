@@ -3,40 +3,40 @@
 
   <!-- Title -->
   <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — Hardware Architecture: Real Arm Stack (Pi 5 + Uno R3)</text>
-  <text x="24" y="58" font-size="12" fill="#555555">Host plans in ROS 2 and streams targets over a text serial protocol; the Uno slew-limits servos; sim_uno.py is the drop-in no-hardware substitute</text>
+  <text x="24" y="58" font-size="12" fill="#555555">ROS 2 validates named trajectories; the Uno enforces generated limits and a watchdog; sim_uno.py is the no-hardware substitute</text>
 
   <!-- Host boundary -->
   <rect x="250" y="90" width="580" height="610" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="266" y="112" font-size="12" font-style="italic" fill="#444444">hardware/ — host side  [Python 3 · ROS 2 Jazzy · laptop or Raspberry Pi 5]</text>
+  <text x="266" y="112" font-size="12" font-style="italic" fill="#444444">ros2/robo_arm_driver + hardware/  [ROS 2 Jazzy · laptop or Raspberry Pi 5]</text>
 
   <!-- Uno boundary -->
   <rect x="880" y="250" width="310" height="240" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
   <text x="896" y="272" font-size="12" font-style="italic" fill="#444444">Arduino Uno R3  [ATmega328P · 2 KB RAM]</text>
 
   <!-- ============ Relationships ============ -->
-  <!-- ROS 2 graph -> arm_bridge_node (/arm/command) -->
+  <!-- ROS 2 graph -> driver (JointTrajectory) -->
   <line x1="175" y1="170" x2="260" y2="170" stroke="#707070" stroke-width="1.5"/>
   <polygon points="270,170 260,165 260,175" fill="#707070"/>
   <rect x="184" y="149" width="92" height="14" fill="#FFFFFF"/>
-  <text x="230" y="160" font-size="11" fill="#333333" text-anchor="middle">/arm/command</text>
+  <text x="230" y="160" font-size="10" fill="#333333" text-anchor="middle">JointTrajectory</text>
 
-  <!-- arm_bridge_node -> ROS 2 graph (/arm/joint_states) -->
+  <!-- driver -> ROS 2 graph (/joint_states) -->
   <line x1="270" y1="205" x2="185" y2="205" stroke="#707070" stroke-width="1.5"/>
   <polygon points="175,205 185,200 185,210" fill="#707070"/>
   <rect x="176" y="212" width="104" height="14" fill="#FFFFFF"/>
-  <text x="228" y="223" font-size="11" fill="#333333" text-anchor="middle">/arm/joint_states</text>
+  <text x="228" y="223" font-size="11" fill="#333333" text-anchor="middle">/joint_states</text>
 
   <!-- arm_bridge_node -> arm_serial -->
   <line x1="397" y1="235" x2="397" y2="290" stroke="#707070" stroke-width="1.5"/>
   <polygon points="397,300 392,290 402,290" fill="#707070"/>
-  <text x="407" y="260" font-size="11" font-style="italic" fill="#333333">ArmSerial: set_joint(),</text>
-  <text x="407" y="274" font-size="11" font-style="italic" fill="#333333">get_joints(), enable()</text>
+  <text x="407" y="260" font-size="11" font-style="italic" fill="#333333">validated radians →</text>
+  <text x="407" y="274" font-size="11" font-style="italic" fill="#333333">calibrated raw degrees</text>
 
   <!-- arm_serial -> firmware (USB serial) -->
   <line x1="525" y1="352" x2="895" y2="352" stroke="#707070" stroke-width="1.5"/>
   <polygon points="905,352 895,347 895,357" fill="#707070"/>
   <text x="715" y="340" font-size="11" fill="#333333" text-anchor="middle">USB serial · 115200 · one text line per command</text>
-  <text x="715" y="368" font-size="11" fill="#333333" text-anchor="middle">PING · E 1|0 · S &lt;ch&gt; &lt;deg&gt; · G · LED 1|0</text>
+  <text x="715" y="368" font-size="11" fill="#333333" text-anchor="middle">S · Q · H · E · X · commissioning-only C · P · L</text>
   <text x="715" y="384" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">(open resets the Uno: DTR → ~2.5 s wait)</text>
 
   <!-- arm_serial -> sim_uno (alternative endpoint) -->
@@ -70,11 +70,11 @@
   <!-- arm_bridge_node.py -->
   <g>
     <rect x="270" y="130" width="255" height="105" rx="6" fill="#1168BD"/>
-    <text x="397" y="154" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">arm_bridge_node.py</text>
-    <text x="397" y="173" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / rclpy · node arm_bridge]</text>
-    <text x="397" y="192" font-size="12" fill="#FFFFFF" text-anchor="middle">subscribes /arm/command (deg),</text>
-    <text x="397" y="207" font-size="12" fill="#FFFFFF" text-anchor="middle">publishes /arm/joint_states</text>
-    <text x="397" y="222" font-size="12" fill="#FFFFFF" text-anchor="middle">at 10 Hz (radians)</text>
+    <text x="397" y="154" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">robo_arm_driver</text>
+    <text x="397" y="173" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / rclpy · installable package]</text>
+    <text x="397" y="192" font-size="12" fill="#FFFFFF" text-anchor="middle">names · limits · time · velocity,</text>
+    <text x="397" y="207" font-size="12" fill="#FFFFFF" text-anchor="middle">trajectory sampling + /joint_states</text>
+    <text x="397" y="222" font-size="12" fill="#FFFFFF" text-anchor="middle">honest commanded/measured provenance</text>
   </g>
 
   <!-- arm_serial.py -->
@@ -84,7 +84,7 @@
     <text x="397" y="343" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / pyserial · driver + CLI]</text>
     <text x="397" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">auto-detects the Uno's USB port</text>
     <text x="397" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">(ARM_PORT env overrides); CLI:</text>
-    <text x="397" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">ping · joints · set · led</text>
+    <text x="397" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">ping · state · commission · relax · led</text>
   </g>
 
   <!-- sim_uno.py -->
@@ -93,7 +93,7 @@
     <text x="397" y="494" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">sim_uno.py</text>
     <text x="397" y="513" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / pty · fake Uno]</text>
     <text x="397" y="532" font-size="12" fill="#FFFFFF" text-anchor="middle">emulates the firmware protocol</text>
-    <text x="397" y="547" font-size="12" fill="#FFFFFF" text-anchor="middle">incl. 100 deg/s slew limit —</text>
+    <text x="397" y="547" font-size="12" fill="#FFFFFF" text-anchor="middle">same YAML limits + watchdog —</text>
     <text x="397" y="562" font-size="12" fill="#FFFFFF" text-anchor="middle">develop with no hardware</text>
   </g>
 
@@ -121,17 +121,17 @@
     <text x="1035" y="324" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">arm_firmware.ino</text>
     <text x="1035" y="343" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[C++ / Servo lib · 115200 baud]</text>
     <text x="1035" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">line protocol → servo targets;</text>
-    <text x="1035" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">slew limit 2°/20 ms (100 deg/s);</text>
-    <text x="1035" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">MIN/MAX_DEG per-joint clamps;</text>
-    <text x="1035" y="407" font-size="12" fill="#FFFFFF" text-anchor="middle">2 KB RAM — no micro-ROS,</text>
-    <text x="1035" y="422" font-size="12" fill="#FFFFFF" text-anchor="middle">text serial is intentional</text>
+    <text x="1035" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">generated per-joint limits + slew;</text>
+    <text x="1035" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">commissioning lock + 750 ms timeout;</text>
+    <text x="1035" y="407" font-size="12" fill="#FFFFFF" text-anchor="middle">rejects invalid commands; 2 KB RAM,</text>
+    <text x="1035" y="422" font-size="12" fill="#FFFFFF" text-anchor="middle">so text serial is intentional</text>
   </g>
 
   <!-- ============ External: servos ============ -->
   <g>
     <rect x="905" y="560" width="260" height="120" rx="6" fill="#999999"/>
-    <text x="1035" y="584" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Arm servos (up to 6)</text>
-    <text x="1035" y="603" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[hobby PWM servos · ch 0–5]</text>
+    <text x="1035" y="584" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">6 joints + gripper servo</text>
+    <text x="1035" y="603" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[hobby PWM servos · calibrated limits]</text>
     <text x="1035" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">power from EXTERNAL 5–6 V</text>
     <text x="1035" y="637" font-size="12" fill="#FFFFFF" text-anchor="middle">supply, common GND — never</text>
     <text x="1035" y="652" font-size="12" fill="#FFFFFF" text-anchor="middle">the Uno's 5V pin</text>
@@ -154,5 +154,5 @@
     <polygon points="790,771 780,766 780,776" fill="#707070"/>
     <text x="800" y="776" font-size="12" fill="#333333">Relationship [protocol]</text>
   </g>
-  <text x="24" y="812" font-size="11" fill="#777777">C4 model (component view) · generated from repository sources: hardware/arm_bridge_node.py, arm_serial.py, sim_uno.py, check_arduino.sh, pi5_setup.sh, firmware/arm_firmware/</text>
+  <text x="24" y="812" font-size="11" fill="#777777">C4 component view · sources: ros2/robo_arm_driver, hardware/sim_uno.py, check_arduino.sh, pi5_setup.sh, firmware/arm_firmware/</text>
 </svg>

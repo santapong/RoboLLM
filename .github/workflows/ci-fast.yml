@@ -25,10 +25,16 @@ jobs:
           python -m pip install --upgrade pip
           # constraints.txt guards the numpy 1.26.4 ABI law even though these
           # pure-python tests don't import numpy.
-          pip install -c constraints.txt pytest hypothesis ruff
+          pip install -c constraints.txt pytest hypothesis ruff pyserial pyyaml
 
       - name: Ruff (errors only — E9, F)
-        run: ruff check --select E9,F robot_bridge.py ros2_mcp_server.py web/server.py
+        run: >-
+          ruff check --select E9,F
+          robot_bridge.py ros2_mcp_server.py web/server.py hardware/
+          ros2/robo_arm_driver/robo_arm_driver/ tests/
+
+      - name: Firmware config is synchronized
+        run: python hardware/generate_firmware_config.py --check
 
       - name: Pytest (native fast suite)
         run: pytest tests/ -q

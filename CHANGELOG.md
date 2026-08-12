@@ -5,6 +5,34 @@ Notable changes to **robot-llm-loop**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-08-12 — physical arm v0.2 foundation and architecture baseline
+
+### Added
+
+- Installable `robo_arm_driver` package with named `JointTrajectory` input,
+  exact name/limit/time/velocity validation, trajectory sampling,
+  `/joint_states`, and honest `/arm/status` provenance.
+- arm-fw 2.1 commissioning lock, generated per-arm limits, strict command
+  rejection, single-joint commissioning path, and communication watchdog.
+- Canonical physical/simulation YAML profiles, firmware config generator,
+  pseudo-terminal integration tests, and Phase 0 hardware worksheet.
+- Physical-arm phase matrix with explicit evidence gates for Phases 0–5.
+- C4 context, container, and driver-component SVGs plus a 4+1 architectural
+  view SVG. Planned capabilities are visually distinct from delivered code.
+
+### Verified
+
+- Native suite: 30 passed, 1 environment-dependent skip.
+- Serial driver ↔ simulated Uno contract passes in calibrated and commissioning
+  modes; host and firmware reject unsafe/bypassing commands.
+- Ruff, Python syntax, YAML, shell syntax, package metadata, XML, and generated
+  firmware-config synchronization pass.
+
+### Pending hardware/environment evidence
+
+- ROS 2 Jazzy/colcon build, Arduino CLI compilation/flash, electrical and
+  mechanical calibration, measured URDF/MoveIt, and all later physical phases.
+
 ## 2026-07-25 — humanoid_mirror: mirror direction + preview window (both user-reported)
 
 ### Fixed

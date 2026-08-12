@@ -1,4 +1,4 @@
-# Phase A — Serial Protocol (Arduino ↔ Raspberry Pi)
+# arm-fw 2.1 serial protocol (Arduino ↔ Raspberry Pi)
 
 *The contract between the fast motor board (Arduino) and the orchestrator (Pi). Everything in Phase B/C rides on this, so it's worth getting simple and robust.*
 
@@ -14,10 +14,13 @@
 | Line | Meaning |
 |---|---|
 | `S d0 d1 d2 d3 d4 d5 g` | **Set** target angles (degrees) for joints 0–5 and gripper `g` (0–100). Arduino updates targets, then replies with current measured state. |
+| `C channel degrees` | **Commission** one joint inside its configured narrow window. Available only while `calibrated: false`; disabled in production mode. |
 | `Q` | **Query** only — read encoders, don't move. Replies with state. |
 | `H` | Go to the **home** pose (defined in firmware). |
 | `E` | **Enable** torque (attach/energize servos). |
 | `X` | Relax / **e-stop** — de-energize servos so the arm is safe and (if backdrivable) hand-movable. |
+| `P` | Ping; does not keep an energized arm alive. |
+| `L 0` / `L 1` | Onboard LED smoke test; does not energize servos. |
 
 ## Messages: Arduino → Pi
 
@@ -40,6 +43,8 @@ s 90.3 45.1 120.0 88.9 10.2 0.6 12 10461   (reply: still moving toward target)
 ## Conventions & safety
 
 - **Rate:** the Pi polls at a fixed period (start at 20 Hz = every 50 ms; raise to 50–100 Hz once stable). The Arduino should reply in well under that period.
-- **Joint limits** live in the firmware (hard safety) *and* the Pi driver (soft, friendlier errors). Firmware clamps out-of-range targets and emits `! out_of_range`.
+- **Joint limits** come from one YAML file and live in the firmware (hard safety) *and* host driver. Neither layer clamps a bad motion command: the complete command is rejected.
+- **Commissioning lock:** `S`, `H`, and `E` return `! not_calibrated` until the generated config says calibration is complete. `C` is then disabled so production code cannot bypass logical coordinates.
+- **Communication timeout:** an enabled controller detaches all servos if no valid state/motion command arrives within `command_timeout_ms` (750 ms initially). `P` and `L` do not refresh this watchdog.
 - **Framing robustness:** the Pi reads full lines and discards partial/garbled ones. A one-byte XOR checksum can be added later as an 8th field if you see corruption — noted, not needed to start.
 - **Baud:** 115200 (reliable, fast enough).

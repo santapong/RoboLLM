@@ -1,0 +1,18 @@
+# Broad limits are acceptable only for the virtual Uno.
+schema_version: 1
+calibrated: true
+state_source: commanded
+command_timeout_ms: 750
+control_rate_hz: 20
+joints:
+  - {name: joint1, channel: 0, servo_pin: 3,  offset_deg: 90, sign: 1, min_deg: 0, max_deg: 180, home_deg: 90, max_velocity_deg_s: 100}
+  - {name: joint2, channel: 1, servo_pin: 5,  offset_deg: 90, sign: 1, min_deg: 0, max_deg: 180, home_deg: 90, max_velocity_deg_s: 100}
+  - {name: joint3, channel: 2, servo_pin: 6,  offset_deg: 90, sign: 1, min_deg: 0, max_deg: 180, home_deg: 90, max_velocity_deg_s: 100}
+  - {name: joint4, channel: 3, servo_pin: 9,  offset_deg: 90, sign: 1, min_deg: 0, max_deg: 180, home_deg: 90, max_velocity_deg_s: 100}
+  - {name: joint5, channel: 4, servo_pin: 10, offset_deg: 90, sign: 1, min_deg: 0, max_deg: 180, home_deg: 90, max_velocity_deg_s: 100}
+  - {name: joint6, channel: 5, servo_pin: 11, offset_deg: 90, sign: 1, min_deg: 0, max_deg: 180, home_deg: 90, max_velocity_deg_s: 100}
+gripper:
+  servo_pin: 4
+  open_percent: 0
+  closed_percent: 100
+  max_velocity_percent_s: 200
