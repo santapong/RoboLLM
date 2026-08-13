@@ -1,5 +1,7 @@
 """Fast, hardware-free tests for the v0.2 arm safety boundary."""
 from pathlib import Path
+import xml.etree.ElementTree as ET
+import re
 
 import pytest
 
@@ -67,3 +69,24 @@ def test_trajectory_requires_exact_joint_set():
             [0.0] * 6,
             config,
         )
+
+
+def test_ros_package_declares_standard_trajectory_action_dependency():
+    package = ET.parse(
+        ROOT / "ros2" / "robo_arm_driver" / "package.xml").getroot()
+    dependencies = {item.text for item in package.findall("exec_depend")}
+    assert "control_msgs" in dependencies
+    assert package.findtext("export/build_type") == "ament_python"
+    setup_text = (ROOT / "ros2" / "robo_arm_driver" / "setup.py").read_text(
+        encoding="utf-8")
+    setup_version = re.search(r'version="([^"]+)"', setup_text)
+    assert setup_version is not None
+    assert package.findtext("version") == setup_version.group(1)
+
+
+def test_physical_and_simulation_launch_profiles_are_separate():
+    launch_dir = ROOT / "ros2" / "robo_arm_driver" / "launch"
+    physical = (launch_dir / "driver.launch.py").read_text(encoding="utf-8")
+    simulation = (launch_dir / "simulation.launch.py").read_text(encoding="utf-8")
+    assert '"config" / "joints.yaml"' in physical
+    assert '"config" / "joints.sim.yaml"' in simulation

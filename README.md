@@ -5,7 +5,7 @@
 [![CI](https://github.com/santapong/RoboLLM/actions/workflows/ci-fast.yml/badge.svg?branch=develop)](https://github.com/santapong/RoboLLM/actions/workflows/ci-fast.yml)
 [![ROS 2](https://img.shields.io/badge/ROS%202-Jazzy-0F6CBD)](https://docs.ros.org/en/jazzy/)
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB)](https://www.python.org/)
-[![Arm driver](https://img.shields.io/badge/arm%20driver-v0.2-D97706)](ros2/README.md)
+[![Arm driver](https://img.shields.io/badge/arm%20driver-v0.2.1-D97706)](ros2/README.md)
 [![Stage](https://img.shields.io/badge/stage-research%20platform-475569)](ROADMAP.md)
 
 **RoboLLM is a learning-first robotics platform for building and evaluating
@@ -21,7 +21,7 @@ letting an LLM or learned policy bypass deterministic safety controls.
 > [!IMPORTANT]
 > The complete physical-arm Phase 0–5 plan is **not finished**. The repository
 > currently provides the Phase 0 software/commissioning foundation and the
-> v0.2 ROS 2 driver core. Hardware calibration, measured URDF/MoveIt execution,
+> v0.2.1 ROS 2 driver core. Hardware calibration, measured URDF/MoveIt execution,
 > physical webcam mirroring, autonomous pick-and-place, VLA training, and the
 > arm-specific LLM planner remain acceptance-gated work.
 
@@ -90,7 +90,7 @@ See the [workbench C4 tour](docs/ARCHITECTURE.md) and the
 | Gesture manipulation | Fist/open-palm state machine with MoveIt scene attach/detach | **Verified in RViz** | [`gen3_pick_place`](examples/gen3_pick_place/README.md) |
 | CAD | Headless FreeCAD → meshes → inertial URDF → PyBullet verification | **Verified headlessly** | [`cad/`](cad/README.md) |
 | 3D scanning | Visual hull and photogrammetry routes to mesh, URDF, and printable STL | **Software ready; optics gated** | [`scan3d/`](scan3d/README.md) |
-| Physical arm | Named `JointTrajectory`, validation, serial mapping, simulator, and safe firmware | **v0.2 code-ready; bench-gated** | [`ros2/`](ros2/README.md) |
+| Physical arm | `FollowJointTrajectory`, validation, serial mapping, simulator, and safe firmware | **v0.2.1 simulation-verified; bench-gated** | [`ros2/`](ros2/README.md) |
 | Robot learning | Demonstration logging, VLA experiments, and classical-vs-learned evaluation | **Planned** | [`ROADMAP.md`](ROADMAP.md) |
 | Language planning | Schema-valid plans routed through allowlisted skills and safety checks | **Planned** | [Phase 5](docs/physical-arm/ROADMAP.md#phase-5) |
 

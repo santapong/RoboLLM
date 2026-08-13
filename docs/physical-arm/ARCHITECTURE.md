@@ -5,7 +5,7 @@
 
 Status date: **2026-08-13**. This document describes the target architecture
 and labels delivery status explicitly. The Phase 0 software foundation and
-v0.2 driver core exist; the physical bench, measured model, autonomous
+v0.2.1 simulation-verified driver core exist; the physical bench, measured model, autonomous
 manipulation, learned policy, and language planner are not complete.
 
 ## Non-negotiable control boundary
@@ -71,18 +71,21 @@ ownership, runtime timing, logical validation, and the real deployment path.
 A diagram box is not considered delivered until its scenario has recorded
 evidence in the roadmap.
 
-## v0.2 runtime interfaces
+## v0.2.1 runtime interfaces
 
 | Name | Type | Direction | Contract |
 |---|---|---|---|
+| `/arm_controller/follow_joint_trajectory` | `control_msgs/action/FollowJointTrajectory` | input + feedback/result | one validated active goal; cancellation holds; I/O failure aborts |
 | `/arm_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | input | all six named joints, radians, increasing timestamps |
 | `/joint_states` | `sensor_msgs/JointState` | output | logical radians; commanded estimate until encoders exist |
 | `/arm/status` | `std_msgs/String` JSON | output | calibration lock, state source, activity, last error |
 | USB serial | arm-fw 2.1 text | host ↔ Uno | raw degrees, strict limits, request/reply |
 
-`/arm/status` is intentionally lightweight for v0.2. A typed status message and
-`FollowJointTrajectory` action belong in the v0.3 controller integration after
-real timing and MoveIt behavior are measured.
+`/arm/status` is intentionally lightweight for v0.2.1. The standard action is
+now the primary MoveIt-facing boundary; the topic remains for compatibility.
+Because state provenance is still `commanded`, goals with path or goal
+tolerances are rejected instead of pretending encoder-backed error checking is
+available. A typed status message remains future work.
 
 ## Configuration ownership
 

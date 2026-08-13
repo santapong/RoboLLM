@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>robo_arm_driver</name>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
   <description>Validated JointTrajectory-to-Arduino bridge for the RoboLLM physical arm.</description>
   <maintainer email="santapong@users.noreply.github.com">santapong</maintainer>
   <license>MIT</license>
   <buildtool_depend>ament_python</buildtool_depend>
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
   <exec_depend>python3-serial</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
   <exec_depend>rclpy</exec_depend>
@@ -14,4 +15,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>trajectory_msgs</exec_depend>
   <test_depend>ament_pytest</test_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
 </package>

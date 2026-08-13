@@ -15,7 +15,7 @@ record for the one physical arm.
 | Phase | Target | Current status | Evidence / blocker |
 |---|---|---|---|
 | Phase 0 | Hardware foundation | **Software ready; hardware pending** | Fail-closed config, firmware, simulator, worksheet, and tests exist. Servo electrical/mechanical values and cutoff tests are still TODO. |
-| Phase 1 | ROS 2 physical control | **Partial — v0.2 core implemented** | Installable `robo_arm_driver`, named `JointTrajectory`, `/joint_states`, validation, and status exist. No measured URDF, MoveIt hardware execution, or five-pose bench evidence yet. |
+| Phase 1 | ROS 2 physical control | **Partial — v0.2.1 simulation-verified** | `robo_arm_driver` builds on Jazzy; standard `FollowJointTrajectory` success/cancel/rejection, compatibility topic, `/joint_states`, validation, status, serial PTY, and sim launch exist. No deployment-workstation, measured URDF, MoveIt hardware execution, or five-pose bench evidence yet. |
 | Phase 2 | Webcam human mirroring | **Reusable simulation example only** | `examples/hand_follow` proves MediaPipe → filtering → IK → trajectory in RViz. It is not calibrated or safety-accepted on this arm. |
 | Phase 3 | Autonomous vision pick/place | **Not started on the physical arm** | Gesture/MoveIt examples exist, but marker detection, camera calibration, base-camera TF, grasp state machine, and 20-trial physical report are absent. |
 | Phase 4 | VLA / robot learning | **Not started** | Camera/state logger groundwork exists. No accepted physical demonstrations, LeRobot dataset, trained policy, or classical-vs-learned evaluation. |
@@ -54,7 +54,7 @@ without creating a second software stack.
 ### Software track after measurements arrive
 
 - Generate `robo_arm_description` from measured axes and dimensions.
-- Add a `FollowJointTrajectory` controller/action boundary and bringup package.
+- Create measured description/bringup packages after hardware dimensions arrive.
 - Build the MoveIt configuration from the measured model.
 - Run RViz ↔ arm direction checks, HOME, and five repeatable poses.
 - Promote the existing hand-follow pipeline only after the Phase 1 safety gate.
@@ -79,6 +79,9 @@ without creating a second software stack.
 - [x] Valid trajectories interpolated at the configured control rate in tests.
 - [x] `/joint_states` publishes configured names with honest provenance.
 - [x] `/arm/status` reports calibration, source, activity, and error state.
+- [x] Standard `FollowJointTrajectory` goal, feedback, cancel, result, and busy-goal boundary implemented.
+- [x] Explicit PTY simulation launch profile is separate from the fail-closed physical profile.
+- [x] ROS 2 Jazzy container build, launch, action feedback/success, cancellation, and invalid-goal rejection pass against the PTY Uno.
 - [ ] ROS 2 Jazzy package builds and launches on the deployment machine.
 - [ ] Arduino firmware compiles/flashes with the real toolchain.
 - [ ] RViz and physical motion agree in joint direction.
