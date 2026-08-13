@@ -1,183 +1,186 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
-  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM PyBullet inverse-kinematics architecture</title>
+  <desc id="desc">The CAD arm URDF and analytic two-link inverse kinematics are checked against simulated tool-tip motion.</desc>
+  <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 
   <!-- Title -->
-  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — examples/pybullet: IK on the CAD arm</text>
-  <text x="24" y="58" font-size="12" fill="#555555">Closed-form 2-link inverse kinematics commanded and verified in PyBullet — FreeCAD URDF in, tip error in millimetres out</text>
+  <text x="24" y="38" font-size="22" font-weight="700" fill="#0F172A">RoboLLM · PyBullet IK verification</text>
+  <text x="24" y="58" font-size="12" fill="#475569">Closed-form 2-link inverse kinematics commanded and verified in PyBullet — FreeCAD URDF in, tip error in millimetres out</text>
 
   <!-- Boundaries -->
-  <rect x="40" y="100" width="310" height="510" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="56" y="122" font-size="12" font-style="italic" fill="#444444">cad/ + assets/urdf — upstream pipeline</text>
+  <rect x="40" y="100" width="310" height="510" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="56" y="122" font-size="12" font-style="italic" fill="#475569">cad/ + assets/urdf — upstream pipeline</text>
 
-  <rect x="365" y="100" width="630" height="640" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="381" y="122" font-size="12" font-style="italic" fill="#444444">examples/pybullet — CPU-only physics sandbox</text>
+  <rect x="365" y="100" width="630" height="640" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="381" y="122" font-size="12" font-style="italic" fill="#475569">examples/pybullet — CPU-only physics sandbox</text>
 
   <!-- ============ Relationships ============ -->
   <!-- build -> make_urdf -->
-  <line x1="195" y1="245" x2="195" y2="290" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="195,300 190,290 200,290" fill="#707070"/>
-  <text x="205" y="278" font-size="11" fill="#333333">per-link meshes</text>
+  <line x1="195" y1="245" x2="195" y2="290" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="195,300 190,290 200,290" fill="#64748B"/>
+  <text x="205" y="278" font-size="11" fill="#334155">per-link meshes</text>
 
   <!-- make_urdf -> urdf -->
-  <line x1="195" y1="405" x2="195" y2="450" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="195,460 190,450 200,450" fill="#707070"/>
-  <text x="205" y="438" font-size="11" fill="#333333">mass + inertia</text>
+  <line x1="195" y1="405" x2="195" y2="450" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="195,460 190,450 200,450" fill="#64748B"/>
+  <text x="205" y="438" font-size="11" fill="#334155">mass + inertia</text>
 
   <!-- urdf -> main() (elbow route through the gap) -->
-  <line x1="323" y1="512" x2="357" y2="512" stroke="#707070" stroke-width="1.5"/>
-  <line x1="357" y1="512" x2="357" y2="240" stroke="#707070" stroke-width="1.5"/>
-  <line x1="357" y1="240" x2="375" y2="240" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="385,240 375,235 375,245" fill="#707070"/>
-  <rect x="322" y="404" width="70" height="15" fill="#FFFFFF"/>
-  <text x="357" y="416" font-size="11" fill="#333333" text-anchor="middle">p.loadURDF</text>
+  <line x1="323" y1="512" x2="357" y2="512" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="357" y1="512" x2="357" y2="240" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="357" y1="240" x2="375" y2="240" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="385,240 375,235 375,245" fill="#64748B"/>
+  <rect x="322" y="404" width="70" height="15" fill="#F8FAFC"/>
+  <text x="357" y="416" font-size="11" fill="#334155" text-anchor="middle">p.loadURDF</text>
 
   <!-- main -> ik_2link -->
-  <line x1="640" y1="232" x2="695" y2="232" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="705,232 695,227 695,237" fill="#707070"/>
-  <text x="672" y="222" font-size="11" fill="#333333" text-anchor="middle">target (x, z)</text>
+  <line x1="640" y1="232" x2="695" y2="232" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="705,232 695,227 695,237" fill="#64748B"/>
+  <text x="672" y="222" font-size="11" fill="#334155" text-anchor="middle">target (x, z)</text>
 
   <!-- ik_2link -> motor loop -->
-  <line x1="832" y1="285" x2="832" y2="330" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="832,340 827,330 837,330" fill="#707070"/>
-  <text x="842" y="315" font-size="11" fill="#333333">(shoulder, elbow) rad</text>
+  <line x1="832" y1="285" x2="832" y2="330" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="832,340 827,330 837,330" fill="#64748B"/>
+  <text x="842" y="315" font-size="11" fill="#334155">(shoulder, elbow) rad</text>
 
   <!-- motor loop -> measured_tip -->
-  <line x1="705" y1="392" x2="650" y2="392" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="640,392 650,387 650,397" fill="#707070"/>
-  <text x="672" y="382" font-size="11" fill="#333333" text-anchor="middle">480 steps</text>
+  <line x1="705" y1="392" x2="650" y2="392" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="640,392 650,387 650,397" fill="#64748B"/>
+  <text x="672" y="382" font-size="11" fill="#334155" text-anchor="middle">480 steps</text>
 
   <!-- measured_tip -> main (verify) -->
-  <line x1="512" y1="340" x2="512" y2="295" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="512,285 507,295 517,295" fill="#707070"/>
-  <text x="520" y="318" font-size="11" fill="#333333">tip (x, z) error</text>
+  <line x1="512" y1="340" x2="512" y2="295" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="512,285 507,295 517,295" fill="#64748B"/>
+  <text x="520" y="318" font-size="11" fill="#334155">tip (x, z) error</text>
 
   <!-- motor loop -> PyBullet engine -->
-  <line x1="960" y1="392" x2="1010" y2="392" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1020,392 1010,387 1010,397" fill="#707070"/>
-  <rect x="965" y="368" width="50" height="15" fill="#FFFFFF"/>
-  <text x="990" y="380" font-size="11" fill="#333333" text-anchor="middle">p.* API</text>
+  <line x1="960" y1="392" x2="1010" y2="392" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1020,392 1010,387 1010,397" fill="#64748B"/>
+  <rect x="965" y="368" width="50" height="15" fill="#F8FAFC"/>
+  <text x="990" y="380" font-size="11" fill="#334155" text-anchor="middle">p.* API</text>
 
   <!-- load_robot -> PyBullet engine -->
-  <line x1="640" y1="612" x2="1011" y2="439" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1020,435 1013,443.7 1008.8,434.7" fill="#707070"/>
-  <text x="830" y="512" font-size="11" fill="#333333" text-anchor="middle">loadURDF · step 240 Hz</text>
+  <line x1="640" y1="612" x2="1011" y2="439" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1020,435 1013,443.7 1008.8,434.7" fill="#64748B"/>
+  <text x="830" y="512" font-size="11" fill="#334155" text-anchor="middle">loadURDF · step 240 Hz</text>
 
   <!-- PyBullet -> GUI window -->
-  <line x1="1137" y1="450" x2="1137" y2="550" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1137,560 1132,550 1142,550" fill="#707070"/>
-  <text x="1145" y="505" font-size="11" fill="#333333">renders (--gui)</text>
+  <line x1="1137" y1="450" x2="1137" y2="550" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1137,560 1132,550 1142,550" fill="#64748B"/>
+  <text x="1145" y="505" font-size="11" fill="#334155">renders (--gui)</text>
 
   <!-- ============ Upstream pipeline (cad/ + assets) ============ -->
   <g>
-    <rect x="68" y="140" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="195" y="164" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">build_two_link_arm.py</text>
-    <text x="195" y="183" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[FreeCAD · freecadcmd]</text>
-    <text x="195" y="202" font-size="12" fill="#000000" text-anchor="middle">parametric 2-link arm parts in</text>
-    <text x="195" y="217" font-size="12" fill="#000000" text-anchor="middle">cad/; exports one mesh per</text>
-    <text x="195" y="232" font-size="12" fill="#000000" text-anchor="middle">link (base, link1, link2)</text>
+    <rect x="68" y="140" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="195" y="164" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">build_two_link_arm.py</text>
+    <text x="195" y="183" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[FreeCAD · freecadcmd]</text>
+    <text x="195" y="202" font-size="12" fill="#0F172A" text-anchor="middle">parametric 2-link arm parts in</text>
+    <text x="195" y="217" font-size="12" fill="#0F172A" text-anchor="middle">cad/; exports one mesh per</text>
+    <text x="195" y="232" font-size="12" fill="#0F172A" text-anchor="middle">link (base, link1, link2)</text>
   </g>
 
   <g>
-    <rect x="68" y="300" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="195" y="324" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">make_arm_urdf.py</text>
-    <text x="195" y="343" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[Python · trimesh]</text>
-    <text x="195" y="362" font-size="12" fill="#000000" text-anchor="middle">mass + inertia at 700 kg/m³,</text>
-    <text x="195" y="377" font-size="12" fill="#000000" text-anchor="middle">writes 2-revolute-joint URDF</text>
-    <text x="195" y="392" font-size="12" fill="#000000" text-anchor="middle">(shoulder + elbow, axis y)</text>
+    <rect x="68" y="300" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="195" y="324" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">make_arm_urdf.py</text>
+    <text x="195" y="343" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[Python · trimesh]</text>
+    <text x="195" y="362" font-size="12" fill="#0F172A" text-anchor="middle">mass + inertia at 700 kg/m³,</text>
+    <text x="195" y="377" font-size="12" fill="#0F172A" text-anchor="middle">writes 2-revolute-joint URDF</text>
+    <text x="195" y="392" font-size="12" fill="#0F172A" text-anchor="middle">(shoulder + elbow, axis y)</text>
   </g>
 
   <g>
-    <rect x="68" y="460" width="255" height="105" rx="6" fill="#1168BD"/>
-    <text x="195" y="484" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">two_link_arm.urdf</text>
-    <text x="195" y="503" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[assets/urdf/two_link_arm/]</text>
-    <text x="195" y="522" font-size="12" fill="#FFFFFF" text-anchor="middle">base_link → link1 → link2,</text>
-    <text x="195" y="537" font-size="12" fill="#FFFFFF" text-anchor="middle">L1 = 0.15 m, L2 = 0.12 m,</text>
-    <text x="195" y="552" font-size="12" fill="#FFFFFF" text-anchor="middle">limits ±1.57 rad, OBJ meshes</text>
+    <rect x="68" y="460" width="255" height="105" rx="6" fill="#0F6CBD"/>
+    <text x="195" y="484" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">two_link_arm.urdf</text>
+    <text x="195" y="503" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[assets/urdf/two_link_arm/]</text>
+    <text x="195" y="522" font-size="12" fill="#F8FAFC" text-anchor="middle">base_link → link1 → link2,</text>
+    <text x="195" y="537" font-size="12" fill="#F8FAFC" text-anchor="middle">L1 = 0.15 m, L2 = 0.12 m,</text>
+    <text x="195" y="552" font-size="12" fill="#F8FAFC" text-anchor="middle">limits ±1.57 rad, OBJ meshes</text>
   </g>
 
   <!-- ============ examples/pybullet components ============ -->
   <g>
-    <rect x="385" y="180" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="512" y="204" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">arm_ik_control — main()</text>
-    <text x="512" y="223" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[--gui or headless · exit 0/1]</text>
-    <text x="512" y="242" font-size="12" fill="#000000" text-anchor="middle">loads the CAD URDF fixed-base,</text>
-    <text x="512" y="257" font-size="12" fill="#000000" text-anchor="middle">walks 4 (x, z) targets, asserts</text>
-    <text x="512" y="272" font-size="12" fill="#000000" text-anchor="middle">worst tip error &lt; 10 mm</text>
+    <rect x="385" y="180" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="512" y="204" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">arm_ik_control — main()</text>
+    <text x="512" y="223" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[--gui or headless · exit 0/1]</text>
+    <text x="512" y="242" font-size="12" fill="#0F172A" text-anchor="middle">loads the CAD URDF fixed-base,</text>
+    <text x="512" y="257" font-size="12" fill="#0F172A" text-anchor="middle">walks 4 (x, z) targets, asserts</text>
+    <text x="512" y="272" font-size="12" fill="#0F172A" text-anchor="middle">worst tip error &lt; 10 mm</text>
   </g>
 
   <g>
-    <rect x="705" y="180" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="832" y="204" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">ik_2link(x, z)</text>
-    <text x="832" y="223" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[closed form · law of cosines]</text>
-    <text x="832" y="242" font-size="12" fill="#000000" text-anchor="middle">elbow-down branch; returns</text>
-    <text x="832" y="257" font-size="12" fill="#000000" text-anchor="middle">None outside the reachable</text>
-    <text x="832" y="272" font-size="12" fill="#000000" text-anchor="middle">annulus or past ±1.57 rad</text>
+    <rect x="705" y="180" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="832" y="204" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">ik_2link(x, z)</text>
+    <text x="832" y="223" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[closed form · law of cosines]</text>
+    <text x="832" y="242" font-size="12" fill="#0F172A" text-anchor="middle">elbow-down branch; returns</text>
+    <text x="832" y="257" font-size="12" fill="#0F172A" text-anchor="middle">None outside the reachable</text>
+    <text x="832" y="272" font-size="12" fill="#0F172A" text-anchor="middle">annulus or past ±1.57 rad</text>
   </g>
 
   <g>
-    <rect x="705" y="340" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="832" y="364" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">motor + step loop</text>
-    <text x="832" y="383" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[p.setJointMotorControl2]</text>
-    <text x="832" y="402" font-size="12" fill="#000000" text-anchor="middle">POSITION_CONTROL, force=20,</text>
-    <text x="832" y="417" font-size="12" fill="#000000" text-anchor="middle">480 × p.stepSimulation()</text>
-    <text x="832" y="432" font-size="12" fill="#000000" text-anchor="middle">(~2 s for motors to settle)</text>
+    <rect x="705" y="340" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="832" y="364" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">motor + step loop</text>
+    <text x="832" y="383" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[p.setJointMotorControl2]</text>
+    <text x="832" y="402" font-size="12" fill="#0F172A" text-anchor="middle">POSITION_CONTROL, force=20,</text>
+    <text x="832" y="417" font-size="12" fill="#0F172A" text-anchor="middle">480 × p.stepSimulation()</text>
+    <text x="832" y="432" font-size="12" fill="#0F172A" text-anchor="middle">(~2 s for motors to settle)</text>
   </g>
 
   <g>
-    <rect x="385" y="340" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="512" y="364" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">measured_tip()</text>
-    <text x="512" y="383" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[p.getLinkState + rotateVector]</text>
-    <text x="512" y="402" font-size="12" fill="#000000" text-anchor="middle">link2 frame origin + rotated</text>
-    <text x="512" y="417" font-size="12" fill="#000000" text-anchor="middle">[0, 0, L2] = physical tip;</text>
-    <text x="512" y="432" font-size="12" fill="#000000" text-anchor="middle">proves math matches physics</text>
+    <rect x="385" y="340" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="512" y="364" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">measured_tip()</text>
+    <text x="512" y="383" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[p.getLinkState + rotateVector]</text>
+    <text x="512" y="402" font-size="12" fill="#0F172A" text-anchor="middle">link2 frame origin + rotated</text>
+    <text x="512" y="417" font-size="12" fill="#0F172A" text-anchor="middle">[0, 0, L2] = physical tip;</text>
+    <text x="512" y="432" font-size="12" fill="#0F172A" text-anchor="middle">proves math matches physics</text>
   </g>
 
   <g>
-    <rect x="385" y="560" width="255" height="105" rx="6" fill="#85BBF0"/>
-    <text x="512" y="584" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">load_robot.py</text>
-    <text x="512" y="603" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[quickstart · pybullet_data]</text>
-    <text x="512" y="622" font-size="12" fill="#000000" text-anchor="middle">plane + r2d2 built-in URDFs,</text>
-    <text x="512" y="637" font-size="12" fill="#000000" text-anchor="middle">drops the robot, 5 s @ 240 Hz,</text>
-    <text x="512" y="652" font-size="12" fill="#000000" text-anchor="middle">prints joints + base height</text>
+    <rect x="385" y="560" width="255" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="512" y="584" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">load_robot.py</text>
+    <text x="512" y="603" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[quickstart · pybullet_data]</text>
+    <text x="512" y="622" font-size="12" fill="#0F172A" text-anchor="middle">plane + r2d2 built-in URDFs,</text>
+    <text x="512" y="637" font-size="12" fill="#0F172A" text-anchor="middle">drops the robot, 5 s @ 240 Hz,</text>
+    <text x="512" y="652" font-size="12" fill="#0F172A" text-anchor="middle">prints joints + base height</text>
   </g>
 
   <!-- ============ Externals ============ -->
   <g>
-    <rect x="1020" y="340" width="235" height="110" rx="6" fill="#999999"/>
-    <text x="1137" y="366" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">PyBullet</text>
-    <text x="1137" y="383" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[bullet3 · CPU physics]</text>
-    <text x="1137" y="402" font-size="12" fill="#FFFFFF" text-anchor="middle">p.DIRECT headless / p.GUI;</text>
-    <text x="1137" y="417" font-size="12" fill="#FFFFFF" text-anchor="middle">gravity −9.81, 240 Hz steps,</text>
-    <text x="1137" y="432" font-size="12" fill="#FFFFFF" text-anchor="middle">no GPU and no ROS needed</text>
+    <rect x="1020" y="340" width="235" height="110" rx="6" fill="#64748B"/>
+    <text x="1137" y="366" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">PyBullet</text>
+    <text x="1137" y="383" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[bullet3 · CPU physics]</text>
+    <text x="1137" y="402" font-size="12" fill="#F8FAFC" text-anchor="middle">p.DIRECT headless / p.GUI;</text>
+    <text x="1137" y="417" font-size="12" fill="#F8FAFC" text-anchor="middle">gravity −9.81, 240 Hz steps,</text>
+    <text x="1137" y="432" font-size="12" fill="#F8FAFC" text-anchor="middle">no GPU and no ROS needed</text>
   </g>
 
   <g>
-    <rect x="1020" y="560" width="235" height="90" rx="6" fill="#999999"/>
-    <text x="1137" y="582" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">GUI window</text>
-    <text x="1137" y="599" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[OpenGL · optional]</text>
-    <text x="1137" y="618" font-size="12" fill="#FFFFFF" text-anchor="middle">watch the arm reach; needs</text>
-    <text x="1137" y="633" font-size="12" fill="#FFFFFF" text-anchor="middle">a display</text>
+    <rect x="1020" y="560" width="235" height="90" rx="6" fill="#64748B"/>
+    <text x="1137" y="582" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">GUI window</text>
+    <text x="1137" y="599" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[OpenGL · optional]</text>
+    <text x="1137" y="618" font-size="12" fill="#F8FAFC" text-anchor="middle">watch the arm reach; needs</text>
+    <text x="1137" y="633" font-size="12" fill="#F8FAFC" text-anchor="middle">a display</text>
   </g>
 
   <!-- ============ Legend ============ -->
-  <line x1="24" y1="756" x2="210" y2="756" stroke="#DDDDDD" stroke-width="1"/>
-  <text x="24" y="778" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <line x1="24" y1="756" x2="210" y2="756" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="24" y="778" font-size="12" font-weight="bold" fill="#0F172A">Legend</text>
   <g>
-    <rect x="24" y="790" width="18" height="18" rx="3" fill="#85BBF0"/>
-    <text x="50" y="804" font-size="12" fill="#333333">Code component</text>
+    <rect x="24" y="790" width="18" height="18" rx="3" fill="#DBEAFE"/>
+    <text x="50" y="804" font-size="12" fill="#334155">Code component</text>
 
-    <rect x="200" y="790" width="18" height="18" rx="3" fill="#1168BD"/>
-    <text x="226" y="804" font-size="12" fill="#333333">Generated asset</text>
+    <rect x="200" y="790" width="18" height="18" rx="3" fill="#0F6CBD"/>
+    <text x="226" y="804" font-size="12" fill="#334155">Generated asset</text>
 
-    <rect x="390" y="790" width="18" height="18" rx="3" fill="#999999"/>
-    <text x="416" y="804" font-size="12" fill="#333333">External engine / window</text>
+    <rect x="390" y="790" width="18" height="18" rx="3" fill="#64748B"/>
+    <text x="416" y="804" font-size="12" fill="#334155">External engine / window</text>
 
-    <rect x="620" y="790" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
-    <text x="654" y="804" font-size="12" fill="#333333">Boundary</text>
+    <rect x="620" y="790" width="26" height="18" rx="3" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="654" y="804" font-size="12" fill="#334155">Boundary</text>
 
-    <line x1="760" y1="799" x2="800" y2="799" stroke="#707070" stroke-width="1.5"/>
-    <polygon points="810,799 800,794 800,804" fill="#707070"/>
-    <text x="820" y="804" font-size="12" fill="#333333">Relationship [data]</text>
+    <line x1="760" y1="799" x2="800" y2="799" stroke="#64748B" stroke-width="1.5"/>
+    <polygon points="810,799 800,794 800,804" fill="#64748B"/>
+    <text x="820" y="804" font-size="12" fill="#334155">Relationship [data]</text>
   </g>
-  <text x="24" y="832" font-size="11" fill="#777777">C4 component view · generated from examples/pybullet/arm_ik_control.py, load_robot.py, cad/make_arm_urdf.py, assets/urdf/two_link_arm/two_link_arm.urdf</text>
+  <text x="24" y="832" font-size="11" fill="#475569">C4 component view · generated from examples/pybullet/arm_ik_control.py, load_robot.py, cad/make_arm_urdf.py, assets/urdf/two_link_arm/two_link_arm.urdf</text>
+  <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

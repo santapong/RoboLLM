@@ -1,218 +1,219 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">RoboLLM container architecture</title>
   <desc id="desc">MCP and browser surfaces share one ROS 2 bridge while scanning, CAD, teleoperation, and physical-arm containers remain bounded.</desc>
-  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+  <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 
   <!-- Title -->
-  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">RoboLLM — C4 Level 2: Container Diagram</text>
-  <text x="24" y="58" font-size="12" fill="#555555">Hybrid ROS 2 workbench — human and language-model surfaces share one rclpy bridge</text>
+  <text x="24" y="38" font-size="22" font-weight="700" fill="#0F172A">RoboLLM · Container architecture</text>
+  <text x="24" y="58" font-size="12" fill="#475569">Hybrid ROS 2 workbench — human and language-model surfaces share one rclpy bridge</text>
 
   <!-- System boundary -->
-  <rect x="230" y="90" width="850" height="590" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="246" y="112" font-size="12" font-style="italic" fill="#444444">RoboLLM workbench [github.com/santapong/RoboLLM · branch develop]</text>
+  <rect x="230" y="90" width="850" height="590" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="246" y="112" font-size="12" font-style="italic" fill="#475569">RoboLLM workbench [github.com/santapong/RoboLLM · branch develop]</text>
 
   <!-- ============ Relationships (lines first, under boxes' labels) ============ -->
   <!-- Claude -> mcp server -->
-  <line x1="205" y1="172" x2="250" y2="172" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="260,172 250,167 250,177" fill="#707070"/>
-  <rect x="216" y="147" width="28" height="14" fill="#FFFFFF"/>
-  <text x="230" y="158" font-size="11" fill="#333333" text-anchor="middle">MCP</text>
-  <rect x="209" y="181" width="42" height="14" fill="#FFFFFF"/>
-  <text x="230" y="192" font-size="11" fill="#333333" text-anchor="middle">stdio</text>
+  <line x1="205" y1="172" x2="250" y2="172" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="260,172 250,167 250,177" fill="#64748B"/>
+  <rect x="216" y="147" width="28" height="14" fill="#F8FAFC"/>
+  <text x="230" y="158" font-size="11" fill="#334155" text-anchor="middle">MCP</text>
+  <rect x="209" y="181" width="42" height="14" fill="#F8FAFC"/>
+  <text x="230" y="192" font-size="11" fill="#334155" text-anchor="middle">stdio</text>
 
   <!-- Browser -> web dashboard -->
-  <line x1="1100" y1="172" x2="1060" y2="172" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1050,172 1060,167 1060,177" fill="#707070"/>
-  <rect x="1046" y="147" width="54" height="14" fill="#FFFFFF"/>
-  <text x="1073" y="158" font-size="11" fill="#333333" text-anchor="middle">HTTP/WS</text>
-  <rect x="1052" y="181" width="42" height="14" fill="#FFFFFF"/>
-  <text x="1073" y="192" font-size="11" fill="#333333" text-anchor="middle">:8080</text>
+  <line x1="1100" y1="172" x2="1060" y2="172" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1050,172 1060,167 1060,177" fill="#64748B"/>
+  <rect x="1046" y="147" width="54" height="14" fill="#F8FAFC"/>
+  <text x="1073" y="158" font-size="11" fill="#334155" text-anchor="middle">HTTP/WS</text>
+  <rect x="1052" y="181" width="42" height="14" fill="#F8FAFC"/>
+  <text x="1073" y="192" font-size="11" fill="#334155" text-anchor="middle">:8080</text>
 
   <!-- mcp server -> bridge -->
-  <line x1="387" y1="235" x2="571" y2="297" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="580,300 569,301 572,293" fill="#707070"/>
-  <text x="462" y="258" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">get_bridge()</text>
+  <line x1="387" y1="235" x2="571" y2="297" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="580,300 569,301 572,293" fill="#64748B"/>
+  <text x="462" y="258" font-size="11" font-style="italic" fill="#334155" text-anchor="middle">get_bridge()</text>
 
   <!-- web dashboard -> bridge -->
-  <line x1="922" y1="235" x2="749" y2="297" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="740,300 750,293 752,301" fill="#707070"/>
-  <text x="852" y="258" font-size="11" font-style="italic" fill="#333333" text-anchor="middle">get_bridge()</text>
+  <line x1="922" y1="235" x2="749" y2="297" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="740,300 750,293 752,301" fill="#64748B"/>
+  <text x="852" y="258" font-size="11" font-style="italic" fill="#334155" text-anchor="middle">get_bridge()</text>
 
   <!-- bridge -> ROS 2 / Gazebo -->
-  <line x1="525" y1="355" x2="215" y2="355" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="205,355 215,350 215,360" fill="#707070"/>
-  <text x="365" y="345" font-size="11" fill="#333333" text-anchor="middle">topics · services · actions</text>
+  <line x1="525" y1="355" x2="215" y2="355" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="205,355 215,350 215,360" fill="#64748B"/>
+  <text x="365" y="345" font-size="11" fill="#334155" text-anchor="middle">topics · services · actions</text>
 
   <!-- scan3d -> ROS 2 / Gazebo -->
-  <line x1="260" y1="470" x2="213" y2="406" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="205,395 214,400 207,406" fill="#707070"/>
-  <rect x="225" y="417" width="34" height="14" fill="#FFFFFF"/>
-  <text x="242" y="428" font-size="11" fill="#333333" text-anchor="middle">URDF</text>
+  <line x1="260" y1="470" x2="213" y2="406" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="205,395 214,400 207,406" fill="#64748B"/>
+  <rect x="225" y="417" width="34" height="14" fill="#F8FAFC"/>
+  <text x="242" y="428" font-size="11" fill="#334155" text-anchor="middle">URDF</text>
 
   <!-- cad -> ROS 2 / Gazebo -->
-  <line x1="260" y1="600" x2="155" y2="419" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="150,410 159,416 151,421" fill="#707070"/>
-  <text x="195" y="508" font-size="11" fill="#333333" text-anchor="middle">URDF</text>
+  <line x1="260" y1="600" x2="155" y2="419" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="150,410 159,416 151,421" fill="#64748B"/>
+  <text x="195" y="508" font-size="11" fill="#334155" text-anchor="middle">URDF</text>
 
   <!-- Webcam -> hand-teleop -->
-  <line x1="1100" y1="485" x2="1060" y2="485" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1050,485 1060,480 1060,490" fill="#707070"/>
-  <rect x="1059" y="461" width="34" height="14" fill="#FFFFFF"/>
-  <text x="1076" y="472" font-size="11" fill="#333333" text-anchor="middle">V4L2</text>
-  <rect x="1052" y="493" width="48" height="14" fill="#FFFFFF"/>
-  <text x="1076" y="504" font-size="11" fill="#333333" text-anchor="middle">frames</text>
+  <line x1="1100" y1="485" x2="1060" y2="485" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1050,485 1060,480 1060,490" fill="#64748B"/>
+  <rect x="1059" y="461" width="34" height="14" fill="#F8FAFC"/>
+  <text x="1076" y="472" font-size="11" fill="#334155" text-anchor="middle">V4L2</text>
+  <rect x="1052" y="493" width="48" height="14" fill="#F8FAFC"/>
+  <text x="1076" y="504" font-size="11" fill="#334155" text-anchor="middle">frames</text>
 
   <!-- hardware -> real Uno arm -->
-  <line x1="1040" y1="590" x2="1090" y2="590" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1100,590 1090,585 1090,595" fill="#707070"/>
-  <rect x="1028" y="567" width="74" height="14" fill="#FFFFFF"/>
-  <text x="1065" y="578" font-size="11" fill="#333333" text-anchor="middle">USB serial</text>
-  <rect x="1041" y="597" width="48" height="14" fill="#FFFFFF"/>
-  <text x="1065" y="608" font-size="11" fill="#333333" text-anchor="middle">115200</text>
+  <line x1="1040" y1="590" x2="1090" y2="590" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1100,590 1090,585 1090,595" fill="#64748B"/>
+  <rect x="1028" y="567" width="74" height="14" fill="#F8FAFC"/>
+  <text x="1065" y="578" font-size="11" fill="#334155" text-anchor="middle">USB serial</text>
+  <rect x="1041" y="597" width="48" height="14" fill="#F8FAFC"/>
+  <text x="1065" y="608" font-size="11" fill="#334155" text-anchor="middle">115200</text>
 
   <!-- ============ External actors / systems ============ -->
   <!-- Language-model client -->
   <g>
-    <rect x="25" y="125" width="180" height="95" rx="6" fill="#08427B"/>
-    <text x="115" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">LLM client</text>
-    <text x="115" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[LLM agent · MCP client]</text>
-    <text x="115" y="184" font-size="12" fill="#FFFFFF" text-anchor="middle">Claude / IDE / agent</text>
-    <text x="115" y="199" font-size="12" fill="#FFFFFF" text-anchor="middle">drives the robot tools</text>
+    <rect x="25" y="125" width="180" height="95" rx="6" fill="#0F2742"/>
+    <text x="115" y="149" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">LLM client</text>
+    <text x="115" y="166" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[LLM agent · MCP client]</text>
+    <text x="115" y="184" font-size="12" fill="#F8FAFC" text-anchor="middle">Claude / IDE / agent</text>
+    <text x="115" y="199" font-size="12" fill="#F8FAFC" text-anchor="middle">drives the robot tools</text>
   </g>
 
   <!-- ROS 2 / Gazebo host stack -->
   <g>
-    <rect x="25" y="300" width="180" height="110" rx="6" fill="#999999"/>
-    <text x="115" y="326" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ROS 2 / Gazebo</text>
-    <text x="115" y="343" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Jazzy · host stack]</text>
-    <text x="115" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">TurtleBot3 sim, SLAM,</text>
-    <text x="115" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">Nav2, MoveIt, TF2</text>
-    <text x="115" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">(sim/ launch helpers)</text>
+    <rect x="25" y="300" width="180" height="110" rx="6" fill="#64748B"/>
+    <text x="115" y="326" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">ROS 2 / Gazebo</text>
+    <text x="115" y="343" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Jazzy · host stack]</text>
+    <text x="115" y="362" font-size="12" fill="#F8FAFC" text-anchor="middle">TurtleBot3 sim, SLAM,</text>
+    <text x="115" y="377" font-size="12" fill="#F8FAFC" text-anchor="middle">Nav2, MoveIt, TF2</text>
+    <text x="115" y="392" font-size="12" fill="#F8FAFC" text-anchor="middle">(sim/ launch helpers)</text>
   </g>
 
   <!-- Browser -->
   <g>
-    <rect x="1100" y="125" width="160" height="95" rx="6" fill="#999999"/>
-    <text x="1180" y="149" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Browser</text>
-    <text x="1180" y="166" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[operator UI]</text>
-    <text x="1180" y="184" font-size="12" fill="#FFFFFF" text-anchor="middle">human teleop and</text>
-    <text x="1180" y="199" font-size="12" fill="#FFFFFF" text-anchor="middle">monitoring</text>
+    <rect x="1100" y="125" width="160" height="95" rx="6" fill="#64748B"/>
+    <text x="1180" y="149" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Browser</text>
+    <text x="1180" y="166" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[operator UI]</text>
+    <text x="1180" y="184" font-size="12" fill="#F8FAFC" text-anchor="middle">human teleop and</text>
+    <text x="1180" y="199" font-size="12" fill="#F8FAFC" text-anchor="middle">monitoring</text>
   </g>
 
   <!-- Webcam -->
   <g>
-    <rect x="1100" y="445" width="160" height="80" rx="6" fill="#999999"/>
-    <text x="1180" y="469" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Webcam</text>
-    <text x="1180" y="486" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[V4L2 device]</text>
-    <text x="1180" y="504" font-size="12" fill="#FFFFFF" text-anchor="middle">hand-tracking input</text>
+    <rect x="1100" y="445" width="160" height="80" rx="6" fill="#64748B"/>
+    <text x="1180" y="469" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Webcam</text>
+    <text x="1180" y="486" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[V4L2 device]</text>
+    <text x="1180" y="504" font-size="12" fill="#F8FAFC" text-anchor="middle">hand-tracking input</text>
   </g>
 
   <!-- Real Uno arm -->
   <g>
-    <rect x="1100" y="570" width="160" height="85" rx="6" fill="#999999"/>
-    <text x="1180" y="592" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Real Uno arm</text>
-    <text x="1180" y="609" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[up to 6 servos]</text>
-    <text x="1180" y="627" font-size="12" fill="#FFFFFF" text-anchor="middle">DIY arm driven by</text>
-    <text x="1180" y="642" font-size="12" fill="#FFFFFF" text-anchor="middle">Uno R3 firmware</text>
+    <rect x="1100" y="570" width="160" height="85" rx="6" fill="#64748B"/>
+    <text x="1180" y="592" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Real Uno arm</text>
+    <text x="1180" y="609" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[up to 6 servos]</text>
+    <text x="1180" y="627" font-size="12" fill="#F8FAFC" text-anchor="middle">DIY arm driven by</text>
+    <text x="1180" y="642" font-size="12" fill="#F8FAFC" text-anchor="middle">Uno R3 firmware</text>
   </g>
 
   <!-- ============ Containers inside the boundary ============ -->
   <!-- ros2_mcp_server.py -->
   <g>
-    <rect x="260" y="130" width="255" height="105" rx="6" fill="#1168BD"/>
-    <text x="387" y="154" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ros2_mcp_server.py</text>
-    <text x="387" y="171" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[FastMCP / stdio]</text>
-    <text x="387" y="190" font-size="12" fill="#FFFFFF" text-anchor="middle">22 tools: drive, navigate_to,</text>
-    <text x="387" y="205" font-size="12" fill="#FFFFFF" text-anchor="middle">camera, rosbag, TF2, MoveIt arm,</text>
-    <text x="387" y="220" font-size="12" fill="#FFFFFF" text-anchor="middle">Gazebo spawn/delete, run_ros2</text>
+    <rect x="260" y="130" width="255" height="105" rx="6" fill="#0F6CBD"/>
+    <text x="387" y="154" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">ros2_mcp_server.py</text>
+    <text x="387" y="171" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[FastMCP / stdio]</text>
+    <text x="387" y="190" font-size="12" fill="#F8FAFC" text-anchor="middle">22 tools: drive, navigate_to,</text>
+    <text x="387" y="205" font-size="12" fill="#F8FAFC" text-anchor="middle">camera, rosbag, TF2, MoveIt arm,</text>
+    <text x="387" y="220" font-size="12" fill="#F8FAFC" text-anchor="middle">Gazebo spawn/delete, run_ros2</text>
   </g>
 
   <!-- web dashboard -->
   <g>
-    <rect x="795" y="130" width="255" height="105" rx="6" fill="#1168BD"/>
-    <text x="922" y="154" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">web dashboard</text>
-    <text x="922" y="171" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[FastAPI / WebSocket] :8080</text>
-    <text x="922" y="190" font-size="12" fill="#FFFFFF" text-anchor="middle">Live telemetry, lidar radar,</text>
-    <text x="922" y="205" font-size="12" fill="#FFFFFF" text-anchor="middle">WASD teleop, camera stream,</text>
-    <text x="922" y="220" font-size="12" fill="#FFFFFF" text-anchor="middle">Nav2 goal sending</text>
+    <rect x="795" y="130" width="255" height="105" rx="6" fill="#0F6CBD"/>
+    <text x="922" y="154" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">web dashboard</text>
+    <text x="922" y="171" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[FastAPI / WebSocket] :8080</text>
+    <text x="922" y="190" font-size="12" fill="#F8FAFC" text-anchor="middle">Live telemetry, lidar radar,</text>
+    <text x="922" y="205" font-size="12" fill="#F8FAFC" text-anchor="middle">WASD teleop, camera stream,</text>
+    <text x="922" y="220" font-size="12" fill="#F8FAFC" text-anchor="middle">Nav2 goal sending</text>
   </g>
 
   <!-- robot_bridge.py -->
   <g>
-    <rect x="525" y="300" width="260" height="110" rx="6" fill="#1168BD"/>
-    <text x="655" y="326" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">robot_bridge.py</text>
-    <text x="655" y="343" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Python / rclpy]</text>
-    <text x="655" y="362" font-size="12" fill="#FFFFFF" text-anchor="middle">The ONE shared ROS 2 node:</text>
-    <text x="655" y="377" font-size="12" fill="#FFFFFF" text-anchor="middle">get_bridge() singleton reused</text>
-    <text x="655" y="392" font-size="12" fill="#FFFFFF" text-anchor="middle">by MCP server and dashboard</text>
+    <rect x="525" y="300" width="260" height="110" rx="6" fill="#0F6CBD"/>
+    <text x="655" y="326" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">robot_bridge.py</text>
+    <text x="655" y="343" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Python / rclpy]</text>
+    <text x="655" y="362" font-size="12" fill="#F8FAFC" text-anchor="middle">The ONE shared ROS 2 node:</text>
+    <text x="655" y="377" font-size="12" fill="#F8FAFC" text-anchor="middle">get_bridge() singleton reused</text>
+    <text x="655" y="392" font-size="12" fill="#F8FAFC" text-anchor="middle">by MCP server and dashboard</text>
   </g>
 
   <!-- scan3d -->
   <g>
-    <rect x="260" y="435" width="240" height="110" rx="6" fill="#1168BD"/>
-    <text x="380" y="461" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">scan3d/</text>
-    <text x="380" y="478" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[phone/webcam → mesh]</text>
-    <text x="380" y="497" font-size="12" fill="#FFFFFF" text-anchor="middle">3-D scan: photogrammetry +</text>
-    <text x="380" y="512" font-size="12" fill="#FFFFFF" text-anchor="middle">ChArUco scale → URDF sim</text>
-    <text x="380" y="527" font-size="12" fill="#FFFFFF" text-anchor="middle">parts + print-ready STL</text>
+    <rect x="260" y="435" width="240" height="110" rx="6" fill="#0F6CBD"/>
+    <text x="380" y="461" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">scan3d/</text>
+    <text x="380" y="478" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[phone/webcam → mesh]</text>
+    <text x="380" y="497" font-size="12" fill="#F8FAFC" text-anchor="middle">3-D scan: photogrammetry +</text>
+    <text x="380" y="512" font-size="12" fill="#F8FAFC" text-anchor="middle">ChArUco scale → URDF sim</text>
+    <text x="380" y="527" font-size="12" fill="#F8FAFC" text-anchor="middle">parts + print-ready STL</text>
   </g>
 
   <!-- hand-teleop stacks -->
   <g>
-    <rect x="795" y="435" width="255" height="110" rx="6" fill="#1168BD"/>
-    <text x="922" y="461" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">hand-teleop stacks</text>
-    <text x="922" y="478" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Docker: ros2-arm · Jazzy]</text>
-    <text x="922" y="497" font-size="12" fill="#FFFFFF" text-anchor="middle">hand_follow + gen3_pick_place:</text>
-    <text x="922" y="512" font-size="12" fill="#FFFFFF" text-anchor="middle">MediaPipe hands → IK → MoveIt;</text>
-    <text x="922" y="527" font-size="12" fill="#FFFFFF" text-anchor="middle">own in-container ROS 2, CPU-only</text>
+    <rect x="795" y="435" width="255" height="110" rx="6" fill="#0F6CBD"/>
+    <text x="922" y="461" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">hand-teleop stacks</text>
+    <text x="922" y="478" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Docker: ros2-arm · Jazzy]</text>
+    <text x="922" y="497" font-size="12" fill="#F8FAFC" text-anchor="middle">hand_follow + gen3_pick_place:</text>
+    <text x="922" y="512" font-size="12" fill="#F8FAFC" text-anchor="middle">MediaPipe hands → IK → MoveIt;</text>
+    <text x="922" y="527" font-size="12" fill="#F8FAFC" text-anchor="middle">own in-container ROS 2, CPU-only</text>
   </g>
 
   <!-- cad -->
   <g>
-    <rect x="260" y="565" width="240" height="90" rx="6" fill="#1168BD"/>
-    <text x="380" y="587" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">cad/</text>
-    <text x="380" y="604" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[FreeCAD → URDF]</text>
-    <text x="380" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">parametric CAD parts</text>
-    <text x="380" y="637" font-size="12" fill="#FFFFFF" text-anchor="middle">exported as URDF for sim</text>
+    <rect x="260" y="565" width="240" height="90" rx="6" fill="#0F6CBD"/>
+    <text x="380" y="587" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">cad/</text>
+    <text x="380" y="604" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[FreeCAD → URDF]</text>
+    <text x="380" y="622" font-size="12" fill="#F8FAFC" text-anchor="middle">parametric CAD parts</text>
+    <text x="380" y="637" font-size="12" fill="#F8FAFC" text-anchor="middle">exported as URDF for sim</text>
   </g>
 
   <!-- examples -->
   <g>
-    <rect x="530" y="565" width="240" height="90" rx="6" fill="#1168BD"/>
-    <text x="650" y="587" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">examples/</text>
-    <text x="650" y="604" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[learning path]</text>
-    <text x="650" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">ros2_py 01-10, patrol_bot,</text>
-    <text x="650" y="637" font-size="12" fill="#FFFFFF" text-anchor="middle">pybullet, mujoco, panda_arm</text>
+    <rect x="530" y="565" width="240" height="90" rx="6" fill="#0F6CBD"/>
+    <text x="650" y="587" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">examples/</text>
+    <text x="650" y="604" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[learning path]</text>
+    <text x="650" y="622" font-size="12" fill="#F8FAFC" text-anchor="middle">ros2_py 01-10, patrol_bot,</text>
+    <text x="650" y="637" font-size="12" fill="#F8FAFC" text-anchor="middle">pybullet, mujoco, panda_arm</text>
   </g>
 
   <!-- hardware stack -->
   <g>
-    <rect x="800" y="565" width="240" height="90" rx="6" fill="#1168BD"/>
-    <text x="920" y="587" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">hardware stack</text>
-    <text x="920" y="604" font-size="11" font-style="italic" fill="#FFFFFF" text-anchor="middle">[Pi 5 + Arduino Uno R3]</text>
-    <text x="920" y="622" font-size="12" fill="#FFFFFF" text-anchor="middle">arm_bridge_node + serial text</text>
-    <text x="920" y="637" font-size="12" fill="#FFFFFF" text-anchor="middle">protocol; sim_uno.py fake Uno</text>
+    <rect x="800" y="565" width="240" height="90" rx="6" fill="#0F6CBD"/>
+    <text x="920" y="587" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">hardware stack</text>
+    <text x="920" y="604" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Pi 5 + Arduino Uno R3]</text>
+    <text x="920" y="622" font-size="12" fill="#F8FAFC" text-anchor="middle">robo_arm_driver + arm-fw 2.1</text>
+    <text x="920" y="637" font-size="12" fill="#F8FAFC" text-anchor="middle">validated serial; sim_uno adapter</text>
   </g>
 
   <!-- ============ Legend ============ -->
-  <line x1="24" y1="712" x2="210" y2="712" stroke="#DDDDDD" stroke-width="1"/>
-  <text x="24" y="738" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <line x1="24" y1="712" x2="210" y2="712" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="24" y="738" font-size="12" font-weight="bold" fill="#0F172A">Legend</text>
   <g>
-    <rect x="24" y="752" width="18" height="18" rx="3" fill="#08427B"/>
-    <text x="50" y="766" font-size="12" fill="#333333">Person / LLM agent</text>
+    <rect x="24" y="752" width="18" height="18" rx="3" fill="#0F2742"/>
+    <text x="50" y="766" font-size="12" fill="#334155">Person / LLM agent</text>
 
-    <rect x="210" y="752" width="18" height="18" rx="3" fill="#1168BD"/>
-    <text x="236" y="766" font-size="12" fill="#333333">Container (internal)</text>
+    <rect x="210" y="752" width="18" height="18" rx="3" fill="#0F6CBD"/>
+    <text x="236" y="766" font-size="12" fill="#334155">Container (internal)</text>
 
-    <rect x="400" y="752" width="18" height="18" rx="3" fill="#999999"/>
-    <text x="426" y="766" font-size="12" fill="#333333">External system / device</text>
+    <rect x="400" y="752" width="18" height="18" rx="3" fill="#64748B"/>
+    <text x="426" y="766" font-size="12" fill="#334155">External system / device</text>
 
-    <rect x="610" y="752" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
-    <text x="644" y="766" font-size="12" fill="#333333">System boundary</text>
+    <rect x="610" y="752" width="26" height="18" rx="3" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="644" y="766" font-size="12" fill="#334155">System boundary</text>
 
-    <line x1="790" y1="761" x2="830" y2="761" stroke="#707070" stroke-width="1.5"/>
-    <polygon points="840,761 830,756 830,766" fill="#707070"/>
-    <text x="850" y="766" font-size="12" fill="#333333">Relationship [protocol]</text>
+    <line x1="790" y1="761" x2="830" y2="761" stroke="#64748B" stroke-width="1.5"/>
+    <polygon points="840,761 830,756 830,766" fill="#64748B"/>
+    <text x="850" y="766" font-size="12" fill="#334155">Relationship [protocol]</text>
   </g>
-  <text x="24" y="800" font-size="11" fill="#777777">C4 model · Level 2 (Containers) · RoboLLM · generated from ros2_mcp_server.py, robot_bridge.py, web/, examples/, hardware/, scan3d/, cad/</text>
+  <text x="24" y="800" font-size="11" fill="#475569">C4 model · Level 2 (Containers) · RoboLLM · generated from ros2_mcp_server.py, robot_bridge.py, web/, examples/, hardware/, scan3d/, cad/</text>
+  <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

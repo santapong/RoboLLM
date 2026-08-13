@@ -67,10 +67,14 @@ repeatable operations or acceptance evidence.
 | [`../examples/pybullet/docs/pybullet-architecture.svg`](../examples/pybullet/docs/pybullet-architecture.svg) | Diagram — IK math → PyBullet verification loop. |
 | [`../examples/mujoco/docs/mujoco-architecture.svg`](../examples/mujoco/docs/mujoco-architecture.svg) | Diagram — MJCF string → model/data → step loop. |
 | [`../examples/panda_arm/docs/panda_arm-architecture.svg`](../examples/panda_arm/docs/panda_arm-architecture.svg) | Diagram — the five-demo manipulation pipeline. |
+| [`../examples/humanoid_mirror/docs/humanoid_mirror-architecture.svg`](../examples/humanoid_mirror/docs/humanoid_mirror-architecture.svg) | Diagram — webcam pose through filtering and retargeting to FFW controllers. |
+| [`../examples/talos_mirror/docs/talos_mirror-architecture.svg`](../examples/talos_mirror/docs/talos_mirror-architecture.svg) | Diagram — whole-body TALOS tracking, retargeting, control, and RViz path. |
+| [`../examples/wall_weld/docs/wall_weld-architecture.svg`](../examples/wall_weld/docs/wall_weld-architecture.svg) | Diagram — gesture trigger, raster planner, state machine, MoveIt, and RViz. |
 | [`../hardware/docs/hardware-architecture.svg`](../hardware/docs/hardware-architecture.svg) | Diagram — ROS 2 bridge → serial protocol → Uno → servos. |
 | [`../web/docs/web-architecture.svg`](../web/docs/web-architecture.svg) | Diagram — browser ↔ FastAPI ↔ shared bridge ↔ ROS 2 stack. |
 | [`../scan3d/docs/scan3d-architecture.svg`](../scan3d/docs/scan3d-architecture.svg) | Diagram — capture → visual hull / COLMAP → mesh → URDF. |
 | [`../cad/docs/cad-architecture.svg`](../cad/docs/cad-architecture.svg) | Diagram — freecadcmd build → mesh export → URDF → PyBullet check. |
+| [`brand/robollm-banner.svg`](brand/robollm-banner.svg) | Project banner and control-invariant identity. |
 
 Module READMEs live next to their code: [`../cad/`](../cad/README.md)
 (FreeCAD → URDF), [`../scan3d/`](../scan3d/README.md) (webcam → mesh → URDF),

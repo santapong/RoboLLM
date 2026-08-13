@@ -41,12 +41,20 @@ the environment behind a measured number.
 
 ## Visual language
 
-Architecture SVGs use the same status colors:
+Architecture SVGs use one shared palette:
 
-- blue — implemented or verified in the stated environment;
-- amber — partial, reusable, or awaiting physical acceptance;
-- gray dashed — planned;
-- dark slate — person, device, or external system.
+| Token | Color | Use |
+|---|---|---|
+| Canvas | `#F8FAFC` | Diagram background and light-on-dark text |
+| Ink | `#0F172A` | Titles and primary text |
+| Primary | `#0F6CBD` | Implemented or verified components |
+| Accent | `#38BDF8` | Top rule and small brand details |
+| External | `#64748B` | People, devices, and external systems |
+| Planned | `#E2E8F0` | Future capabilities, normally with a dashed stroke |
+| Gated | `#D97706` | Partial capability or pending physical acceptance |
+
+Every diagram uses the `RoboLLM · <subject>` title pattern, the shared accent
+rule, and `Inter, Segoe UI, Arial, sans-serif` typography.
 
 Diagrams must include an accessible `<title>` and `<desc>`, parse as XML, and
 render without external fonts or assets.

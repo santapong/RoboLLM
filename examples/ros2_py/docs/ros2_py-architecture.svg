@@ -1,171 +1,174 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Helvetica, Arial, sans-serif">
-  <rect x="0" y="0" width="1280" height="840" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM ROS 2 Python learning architecture</title>
+  <desc id="desc">Ten lessons progress from nodes and topics through motion, actions, services, transforms, and perception.</desc>
+  <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 
   <!-- Title -->
-  <text x="24" y="38" font-size="18" font-weight="bold" fill="#000000">ros2_py — 10-lesson rclpy learning path</text>
-  <text x="24" y="58" font-size="12" fill="#555555">Concept-progression map — each lesson adds one ROS 2 primitive · examples/ros2_py/01…10</text>
+  <text x="24" y="38" font-size="22" font-weight="700" fill="#0F172A">RoboLLM · ROS 2 Python learning path</text>
+  <text x="24" y="58" font-size="12" fill="#475569">Concept-progression map — each lesson adds one ROS 2 primitive · examples/ros2_py/01…10</text>
 
   <!-- ============ Tier boundaries ============ -->
-  <rect x="25" y="105" width="675" height="165" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="41" y="125" font-size="12" font-style="italic" fill="#444444">Tier 1 · node basics — no sim, plain rclpy</text>
+  <rect x="25" y="105" width="675" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="41" y="125" font-size="12" font-style="italic" fill="#475569">Tier 1 · node basics — no sim, plain rclpy</text>
 
-  <rect x="745" y="105" width="450" height="165" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="761" y="125" font-size="12" font-style="italic" fill="#444444">Tier 2 · drive the robot — sim/launch_turtlebot.sh</text>
+  <rect x="745" y="105" width="450" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="761" y="125" font-size="12" font-style="italic" fill="#475569">Tier 2 · drive the robot — sim/launch_turtlebot.sh</text>
 
-  <rect x="25" y="355" width="450" height="165" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="41" y="375" font-size="12" font-style="italic" fill="#444444">Tier 3 · actions — Nav2 &amp; MoveIt goals</text>
+  <rect x="25" y="355" width="450" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="41" y="375" font-size="12" font-style="italic" fill="#475569">Tier 3 · actions — Nav2 &amp; MoveIt goals</text>
 
-  <rect x="505" y="355" width="450" height="165" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="521" y="375" font-size="12" font-style="italic" fill="#444444">Tier 4 · services · params · TF2 — no sim, self-testing</text>
+  <rect x="505" y="355" width="450" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="521" y="375" font-size="12" font-style="italic" fill="#475569">Tier 4 · services · params · TF2 — no sim, self-testing</text>
 
-  <rect x="985" y="355" width="225" height="165" rx="6" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="1001" y="375" font-size="12" font-style="italic" fill="#444444">Tier 5 · vision → action</text>
+  <rect x="985" y="355" width="225" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="1001" y="375" font-size="12" font-style="italic" fill="#475569">Tier 5 · vision → action</text>
 
   <!-- ============ Progression arrows ============ -->
   <!-- 01 -> 02 -->
-  <line x1="235" y1="202" x2="255" y2="202" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="265,202 255,197 255,207" fill="#707070"/>
+  <line x1="235" y1="202" x2="255" y2="202" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="265,202 255,197 255,207" fill="#64748B"/>
   <!-- 02 -> 03 -->
-  <line x1="460" y1="202" x2="480" y2="202" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="490,202 480,197 480,207" fill="#707070"/>
+  <line x1="460" y1="202" x2="480" y2="202" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="490,202 480,197 480,207" fill="#64748B"/>
   <!-- 03 -> 04 (into the sim) -->
-  <line x1="685" y1="202" x2="750" y2="202" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="760,202 750,197 750,207" fill="#707070"/>
-  <rect x="680" y="178" width="86" height="14" fill="#FFFFFF"/>
-  <text x="723" y="189" font-size="11" fill="#333333" text-anchor="middle">into the sim</text>
+  <line x1="685" y1="202" x2="750" y2="202" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="760,202 750,197 750,207" fill="#64748B"/>
+  <rect x="680" y="178" width="86" height="14" fill="#F8FAFC"/>
+  <text x="723" y="189" font-size="11" fill="#334155" text-anchor="middle">into the sim</text>
   <!-- 04 -> 05 -->
-  <line x1="955" y1="202" x2="975" y2="202" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="985,202 975,197 975,207" fill="#707070"/>
+  <line x1="955" y1="202" x2="975" y2="202" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="985,202 975,197 975,207" fill="#64748B"/>
 
   <!-- 05 -> 06 snake -->
-  <line x1="1082" y1="255" x2="1082" y2="318" stroke="#707070" stroke-width="1.5"/>
-  <line x1="1082" y1="318" x2="137" y2="318" stroke="#707070" stroke-width="1.5"/>
-  <line x1="137" y1="318" x2="137" y2="390" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="137,400 132,390 142,390" fill="#707070"/>
-  <rect x="450" y="300" width="320" height="14" fill="#FFFFFF"/>
-  <text x="610" y="311" font-size="11" fill="#333333" text-anchor="middle">topics + callbacks mastered → long-running jobs (actions)</text>
+  <line x1="1082" y1="255" x2="1082" y2="318" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="1082" y1="318" x2="137" y2="318" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="137" y1="318" x2="137" y2="390" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="137,400 132,390 142,390" fill="#64748B"/>
+  <rect x="450" y="300" width="320" height="14" fill="#F8FAFC"/>
+  <text x="610" y="311" font-size="11" fill="#334155" text-anchor="middle">topics + callbacks mastered → long-running jobs (actions)</text>
 
   <!-- 06 -> 07 -->
-  <line x1="235" y1="452" x2="255" y2="452" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="265,452 255,447 255,457" fill="#707070"/>
+  <line x1="235" y1="452" x2="255" y2="452" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="265,452 255,447 255,457" fill="#64748B"/>
   <!-- 07 -> 08 -->
-  <line x1="460" y1="452" x2="510" y2="452" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="520,452 510,447 510,457" fill="#707070"/>
+  <line x1="460" y1="452" x2="510" y2="452" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="520,452 510,447 510,457" fill="#64748B"/>
   <!-- 08 -> 09 -->
-  <line x1="715" y1="452" x2="735" y2="452" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="745,452 735,447 735,457" fill="#707070"/>
+  <line x1="715" y1="452" x2="735" y2="452" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="745,452 735,447 735,457" fill="#64748B"/>
   <!-- 09 -> 10 -->
-  <line x1="940" y1="452" x2="990" y2="452" stroke="#707070" stroke-width="1.5"/>
-  <polygon points="1000,452 990,447 990,457" fill="#707070"/>
+  <line x1="940" y1="452" x2="990" y2="452" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="1000,452 990,447 990,457" fill="#64748B"/>
 
   <!-- ============ Lesson boxes (row 1) ============ -->
   <g>
-    <rect x="40" y="150" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="137" y="174" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">01_hello_node.py</text>
-    <text x="137" y="193" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[rclpy · Node · create_timer]</text>
-    <text x="137" y="212" font-size="12" fill="#000000" text-anchor="middle">smallest useful node:</text>
-    <text x="137" y="227" font-size="12" fill="#000000" text-anchor="middle">a 1 s timer that logs</text>
-    <text x="137" y="242" font-size="12" fill="#000000" text-anchor="middle">no sim needed</text>
+    <rect x="40" y="150" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="137" y="174" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">01_hello_node.py</text>
+    <text x="137" y="193" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[rclpy · Node · create_timer]</text>
+    <text x="137" y="212" font-size="12" fill="#0F172A" text-anchor="middle">smallest useful node:</text>
+    <text x="137" y="227" font-size="12" fill="#0F172A" text-anchor="middle">a 1 s timer that logs</text>
+    <text x="137" y="242" font-size="12" fill="#0F172A" text-anchor="middle">no sim needed</text>
   </g>
 
   <g>
-    <rect x="265" y="150" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="362" y="174" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">02_publisher.py</text>
-    <text x="362" y="193" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[create_publisher]</text>
-    <text x="362" y="212" font-size="12" fill="#000000" text-anchor="middle">adds: topic publishing —</text>
-    <text x="362" y="227" font-size="12" fill="#000000" text-anchor="middle">String → /chatter at 2 Hz</text>
-    <text x="362" y="242" font-size="12" fill="#000000" text-anchor="middle">no sim needed</text>
+    <rect x="265" y="150" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="362" y="174" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">02_publisher.py</text>
+    <text x="362" y="193" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[create_publisher]</text>
+    <text x="362" y="212" font-size="12" fill="#0F172A" text-anchor="middle">adds: topic publishing —</text>
+    <text x="362" y="227" font-size="12" fill="#0F172A" text-anchor="middle">String → /chatter at 2 Hz</text>
+    <text x="362" y="242" font-size="12" fill="#0F172A" text-anchor="middle">no sim needed</text>
   </g>
 
   <g>
-    <rect x="490" y="150" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="587" y="174" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">03_subscriber.py</text>
-    <text x="587" y="193" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[create_subscription]</text>
-    <text x="587" y="212" font-size="12" fill="#000000" text-anchor="middle">adds: callback pattern —</text>
-    <text x="587" y="227" font-size="12" fill="#000000" text-anchor="middle">hears /chatter from 02</text>
-    <text x="587" y="242" font-size="12" fill="#000000" text-anchor="middle">no sim (pair with 02)</text>
+    <rect x="490" y="150" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="587" y="174" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">03_subscriber.py</text>
+    <text x="587" y="193" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[create_subscription]</text>
+    <text x="587" y="212" font-size="12" fill="#0F172A" text-anchor="middle">adds: callback pattern —</text>
+    <text x="587" y="227" font-size="12" fill="#0F172A" text-anchor="middle">hears /chatter from 02</text>
+    <text x="587" y="242" font-size="12" fill="#0F172A" text-anchor="middle">no sim (pair with 02)</text>
   </g>
 
   <g>
-    <rect x="760" y="150" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="857" y="174" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">04_drive_square.py</text>
-    <text x="857" y="193" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[geometry_msgs/Twist]</text>
-    <text x="857" y="212" font-size="12" fill="#000000" text-anchor="middle">adds: motion — open-loop</text>
-    <text x="857" y="227" font-size="12" fill="#000000" text-anchor="middle">timed square on /cmd_vel</text>
-    <text x="857" y="242" font-size="12" font-weight="bold" fill="#000000" text-anchor="middle">needs TurtleBot sim</text>
+    <rect x="760" y="150" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="857" y="174" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">04_drive_square.py</text>
+    <text x="857" y="193" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[geometry_msgs/Twist]</text>
+    <text x="857" y="212" font-size="12" fill="#0F172A" text-anchor="middle">adds: motion — open-loop</text>
+    <text x="857" y="227" font-size="12" fill="#0F172A" text-anchor="middle">timed square on /cmd_vel</text>
+    <text x="857" y="242" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">needs TurtleBot sim</text>
   </g>
 
   <g>
-    <rect x="985" y="150" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="1082" y="174" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">05_obstacle_stop.py</text>
-    <text x="1082" y="193" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[LaserScan · sensor QoS]</text>
-    <text x="1082" y="212" font-size="12" fill="#000000" text-anchor="middle">adds: closed loop — /scan</text>
-    <text x="1082" y="227" font-size="12" fill="#000000" text-anchor="middle">gates /cmd_vel at 0.5 m</text>
-    <text x="1082" y="242" font-size="12" font-weight="bold" fill="#000000" text-anchor="middle">needs TurtleBot sim</text>
+    <rect x="985" y="150" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="1082" y="174" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">05_obstacle_stop.py</text>
+    <text x="1082" y="193" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[LaserScan · sensor QoS]</text>
+    <text x="1082" y="212" font-size="12" fill="#0F172A" text-anchor="middle">adds: closed loop — /scan</text>
+    <text x="1082" y="227" font-size="12" fill="#0F172A" text-anchor="middle">gates /cmd_vel at 0.5 m</text>
+    <text x="1082" y="242" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">needs TurtleBot sim</text>
   </g>
 
   <!-- ============ Lesson boxes (row 2) ============ -->
   <g>
-    <rect x="40" y="400" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="137" y="424" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">06_send_nav_goal.py</text>
-    <text x="137" y="443" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[ActionClient · NavigateToPose]</text>
-    <text x="137" y="462" font-size="12" fill="#000000" text-anchor="middle">adds: actions — goal,</text>
-    <text x="137" y="477" font-size="12" fill="#000000" text-anchor="middle">feedback, result stream</text>
-    <text x="137" y="492" font-size="12" font-weight="bold" fill="#000000" text-anchor="middle">needs sim + launch_nav2.sh</text>
+    <rect x="40" y="400" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="137" y="424" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">06_send_nav_goal.py</text>
+    <text x="137" y="443" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[ActionClient · NavigateToPose]</text>
+    <text x="137" y="462" font-size="12" fill="#0F172A" text-anchor="middle">adds: actions — goal,</text>
+    <text x="137" y="477" font-size="12" fill="#0F172A" text-anchor="middle">feedback, result stream</text>
+    <text x="137" y="492" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">needs sim + launch_nav2.sh</text>
   </g>
 
   <g>
-    <rect x="265" y="400" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="362" y="424" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle">07_moveit_joint_goal.py</text>
-    <text x="362" y="443" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[MoveGroup action · OMPL]</text>
-    <text x="362" y="462" font-size="12" fill="#000000" text-anchor="middle">adds: MotionPlanRequest,</text>
-    <text x="362" y="477" font-size="12" fill="#000000" text-anchor="middle">joint goals — Panda arm</text>
-    <text x="362" y="492" font-size="12" font-weight="bold" fill="#000000" text-anchor="middle">needs launch_moveit_panda</text>
+    <rect x="265" y="400" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="362" y="424" font-size="14" font-weight="bold" fill="#0F172A" text-anchor="middle">07_moveit_joint_goal.py</text>
+    <text x="362" y="443" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[MoveGroup action · OMPL]</text>
+    <text x="362" y="462" font-size="12" fill="#0F172A" text-anchor="middle">adds: MotionPlanRequest,</text>
+    <text x="362" y="477" font-size="12" fill="#0F172A" text-anchor="middle">joint goals — Panda arm</text>
+    <text x="362" y="492" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">needs launch_moveit_panda</text>
   </g>
 
   <g>
-    <rect x="520" y="400" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="617" y="424" font-size="14" font-weight="bold" fill="#000000" text-anchor="middle">08_service_and_params.py</text>
-    <text x="617" y="443" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[AddTwoInts srv · parameters]</text>
-    <text x="617" y="462" font-size="12" fill="#000000" text-anchor="middle">adds: request/reply +</text>
-    <text x="617" y="477" font-size="12" fill="#000000" text-anchor="middle">live-tunable parameters</text>
-    <text x="617" y="492" font-size="12" fill="#000000" text-anchor="middle">no sim · self-test (exit 0)</text>
+    <rect x="520" y="400" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="617" y="424" font-size="14" font-weight="bold" fill="#0F172A" text-anchor="middle">08_service_and_params.py</text>
+    <text x="617" y="443" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[AddTwoInts srv · parameters]</text>
+    <text x="617" y="462" font-size="12" fill="#0F172A" text-anchor="middle">adds: request/reply +</text>
+    <text x="617" y="477" font-size="12" fill="#0F172A" text-anchor="middle">live-tunable parameters</text>
+    <text x="617" y="492" font-size="12" fill="#0F172A" text-anchor="middle">no sim · self-test (exit 0)</text>
   </g>
 
   <g>
-    <rect x="745" y="400" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="842" y="424" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">09_tf2_transforms.py</text>
-    <text x="842" y="443" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[TF2 broadcast + lookup]</text>
-    <text x="842" y="462" font-size="12" fill="#000000" text-anchor="middle">adds: frame tree — static</text>
-    <text x="842" y="477" font-size="12" fill="#000000" text-anchor="middle">+ dynamic TF, transforms</text>
-    <text x="842" y="492" font-size="12" fill="#000000" text-anchor="middle">no sim · self-test (exit 0)</text>
+    <rect x="745" y="400" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="842" y="424" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">09_tf2_transforms.py</text>
+    <text x="842" y="443" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[TF2 broadcast + lookup]</text>
+    <text x="842" y="462" font-size="12" fill="#0F172A" text-anchor="middle">adds: frame tree — static</text>
+    <text x="842" y="477" font-size="12" fill="#0F172A" text-anchor="middle">+ dynamic TF, transforms</text>
+    <text x="842" y="492" font-size="12" fill="#0F172A" text-anchor="middle">no sim · self-test (exit 0)</text>
   </g>
 
   <g>
-    <rect x="1000" y="400" width="195" height="105" rx="6" fill="#85BBF0"/>
-    <text x="1097" y="424" font-size="16" font-weight="bold" fill="#000000" text-anchor="middle">10_color_follow.py</text>
-    <text x="1097" y="443" font-size="11" font-style="italic" fill="#000000" text-anchor="middle">[OpenCV · Image → Twist]</text>
-    <text x="1097" y="462" font-size="12" fill="#000000" text-anchor="middle">adds: perceive→decide→act</text>
-    <text x="1097" y="477" font-size="12" fill="#000000" text-anchor="middle">chase the red blob</text>
-    <text x="1097" y="492" font-size="12" font-weight="bold" fill="#000000" text-anchor="middle">--test · live: waffle_pi</text>
+    <rect x="1000" y="400" width="195" height="105" rx="6" fill="#DBEAFE"/>
+    <text x="1097" y="424" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">10_color_follow.py</text>
+    <text x="1097" y="443" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[OpenCV · Image → Twist]</text>
+    <text x="1097" y="462" font-size="12" fill="#0F172A" text-anchor="middle">adds: perceive→decide→act</text>
+    <text x="1097" y="477" font-size="12" fill="#0F172A" text-anchor="middle">chase the red blob</text>
+    <text x="1097" y="492" font-size="12" font-weight="bold" fill="#0F172A" text-anchor="middle">--test · live: waffle_pi</text>
   </g>
 
   <!-- ============ Legend ============ -->
-  <line x1="24" y1="712" x2="210" y2="712" stroke="#DDDDDD" stroke-width="1"/>
-  <text x="24" y="738" font-size="12" font-weight="bold" fill="#000000">Legend</text>
+  <line x1="24" y1="712" x2="210" y2="712" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="24" y="738" font-size="12" font-weight="bold" fill="#0F172A">Legend</text>
   <g>
-    <rect x="24" y="752" width="18" height="18" rx="3" fill="#85BBF0"/>
-    <text x="50" y="766" font-size="12" fill="#333333">Lesson script (component)</text>
+    <rect x="24" y="752" width="18" height="18" rx="3" fill="#DBEAFE"/>
+    <text x="50" y="766" font-size="12" fill="#334155">Lesson script (component)</text>
 
-    <rect x="250" y="752" width="26" height="18" rx="3" fill="none" stroke="#444444" stroke-width="1.5" stroke-dasharray="5,3"/>
-    <text x="284" y="766" font-size="12" fill="#333333">Concept tier</text>
+    <rect x="250" y="752" width="26" height="18" rx="3" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="5,3"/>
+    <text x="284" y="766" font-size="12" fill="#334155">Concept tier</text>
 
-    <line x1="420" y1="761" x2="460" y2="761" stroke="#707070" stroke-width="1.5"/>
-    <polygon points="470,761 460,756 460,766" fill="#707070"/>
-    <text x="480" y="766" font-size="12" fill="#333333">Progression (each step adds one concept)</text>
+    <line x1="420" y1="761" x2="460" y2="761" stroke="#64748B" stroke-width="1.5"/>
+    <polygon points="470,761 460,756 460,766" fill="#64748B"/>
+    <text x="480" y="766" font-size="12" fill="#334155">Progression (each step adds one concept)</text>
 
-    <text x="770" y="766" font-size="12" font-weight="bold" fill="#333333">bold bottom line</text>
-    <text x="878" y="766" font-size="12" fill="#333333">= lesson needs a simulator (launchers in sim/)</text>
+    <text x="770" y="766" font-size="12" font-weight="bold" fill="#334155">bold bottom line</text>
+    <text x="878" y="766" font-size="12" fill="#334155">= lesson needs a simulator (launchers in sim/)</text>
   </g>
-  <text x="24" y="800" font-size="11" fill="#777777">Concept map · generated from examples/ros2_py sources · self-testing lessons: 08, 09, 10 --test (print RESULT and exit 0/1) · run details in TECHNICAL.md</text>
+  <text x="24" y="800" font-size="11" fill="#475569">Concept map · generated from examples/ros2_py sources · self-testing lessons: 08, 09, 10 --test (print RESULT and exit 0/1) · run details in TECHNICAL.md</text>
+  <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

@@ -18,6 +18,10 @@ after the touched demos verifiably run).
   root, module, runbook, architecture, and research pages.
 - Added a repository banner SVG and documentation style guide; vendored
   upstream documents remain untouched.
+- Rebuilt the root README as a portfolio-quality landing page with architecture,
+  capability maturity, quick starts, safety boundaries, and validation guidance.
+- Restyled all 20 repository SVGs with shared typography, semantic colors,
+  accessible titles/descriptions, consistent naming, and a RoboLLM accent rule.
 - Replaced machine-specific `robot-llm-loop` paths with repository-relative or
   `/path/to/RoboLLM` examples.
 

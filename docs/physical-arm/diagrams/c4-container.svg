@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 920" font-family="Inter,Arial,sans-serif" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 920" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">RoboLLM Physical Arm C4 container diagram</title>
   <desc id="desc">Runnable containers from high-level planning through ROS, validated arm driver, firmware, camera, and robot hardware. Colors identify implementation status.</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
     <style>
-      .title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.boundary{fill:#eff6ff;stroke:#2563eb;stroke-width:2;stroke-dasharray:8 5}.impl{fill:#1168bd;stroke:#0c4a6e;stroke-width:2}.partial{fill:#d97706;stroke:#92400e;stroke-width:2}.planned{fill:#64748b;stroke:#334155;stroke-width:2;stroke-dasharray:7 5}.external{fill:#475569;stroke:#1e293b;stroke-width:2}.name{font-size:16px;font-weight:700;fill:white}.type{font-size:11px;font-style:italic;fill:#e2e8f0}.body{font-size:12px;fill:white}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:11px;fill:#334155}.legend{font-size:12px;fill:#0f172a}
+      .title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.boundary{fill:#eff6ff;stroke:#0F6CBD;stroke-width:2;stroke-dasharray:8 5}.impl{fill:#0F6CBD;stroke:#0F2742;stroke-width:2}.partial{fill:#d97706;stroke:#92400e;stroke-width:2}.planned{fill:#64748b;stroke:#334155;stroke-width:2;stroke-dasharray:7 5}.external{fill:#475569;stroke:#1e293b;stroke-width:2}.name{font-size:16px;font-weight:700;fill:white}.type{font-size:11px;font-style:italic;fill:#e2e8f0}.body{font-size:12px;fill:white}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:11px;fill:#334155}.legend{font-size:12px;fill:#0f172a}
     </style>
   </defs>
   <rect width="1500" height="920" fill="#f8fafc"/>
-  <text x="35" y="44" class="title">C4 Level 2 — Physical Arm Containers</text>
+  <text x="35" y="44" class="title">RoboLLM · Physical-arm containers</text>
   <text x="35" y="67" class="sub">Blue = implemented foundation · amber = reusable example/partial integration · gray dashed = planned physical-arm capability</text>
 
   <rect x="25" y="115" width="175" height="105" rx="9" class="external"/>
@@ -72,4 +72,5 @@
   <rect x="280" y="820" width="25" height="18" class="impl"/><text x="314" y="834" class="legend">implemented/tested without hardware</text>
   <rect x="570" y="820" width="25" height="18" class="partial"/><text x="604" y="834" class="legend">reusable example or partial integration</text>
   <rect x="920" y="820" width="25" height="18" class="planned"/><text x="954" y="834" class="legend">planned; acceptance evidence absent</text>
+  <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" font-family="Inter,Arial,sans-serif" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">RoboLLM Physical Arm Kruchten 4 plus 1 architectural view model</title>
   <desc id="desc">Logical, process, development, physical, and scenario views for the physical arm platform, with implementation status.</desc>
   <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
-    <style>.title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.panel{fill:white;stroke:#334155;stroke-width:2}.head{fill:#1168bd}.headText{font-size:18px;font-weight:700;fill:white}.text{font-size:13px;fill:#1e293b}.small{font-size:11px;fill:#475569}.impl{fill:#dbeafe;stroke:#1168bd;stroke-width:1.5}.partial{fill:#ffedd5;stroke:#d97706;stroke-width:1.5}.planned{fill:#e2e8f0;stroke:#64748b;stroke-width:1.5;stroke-dasharray:6 4}.scenario{fill:#fff7ed;stroke:#c2410c;stroke-width:3}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
+    <style>.title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.panel{fill:white;stroke:#334155;stroke-width:2}.head{fill:#0F6CBD}.headText{font-size:18px;font-weight:700;fill:white}.text{font-size:13px;fill:#1e293b}.small{font-size:11px;fill:#475569}.impl{fill:#dbeafe;stroke:#0F6CBD;stroke-width:1.5}.partial{fill:#ffedd5;stroke:#d97706;stroke-width:1.5}.planned{fill:#e2e8f0;stroke:#64748b;stroke-width:1.5;stroke-dasharray:6 4}.scenario{fill:#fff7ed;stroke:#c2410c;stroke-width:3}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
   </defs>
   <rect width="1500" height="1000" fill="#f8fafc"/>
-  <text x="35" y="45" class="title">RoboLLM Physical Arm — Kruchten 4+1 Architectural View Model</text>
+  <text x="35" y="45" class="title">RoboLLM · Physical-arm Kruchten 4+1 model</text>
   <text x="35" y="69" class="sub">The four engineering views are tied together by task scenarios (+1). Status styling prevents planned architecture from being mistaken for delivered code.</text>
 
   <!-- Logical -->
@@ -59,4 +59,5 @@
   <rect x="995" y="795" width="140" height="75" rx="7" class="partial"/><text x="1065" y="823" text-anchor="middle" class="text">Webcam</text><text x="1065" y="845" text-anchor="middle" class="small">later phases</text>
   <line x1="515" y1="833" x2="570" y2="833" stroke="#475569" stroke-width="2"/><text x="520" y="817" class="small">USB serial</text><line x1="730" y1="833" x2="785" y2="833" stroke="#475569" stroke-width="2"/><text x="739" y="817" class="small">PWM</text>
   <text x="750" y="906" text-anchor="middle" class="small">External servo supply + common ground + physical cutoff are hardware safety controls, not software options.</text>
+  <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>
