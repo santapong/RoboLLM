@@ -106,7 +106,7 @@ plus 3 broken `${swerve_meshes_dir}` meshes. Leave it alone.
 | A controller never activates | Two controllers claiming one joint. The four JTCs must stay over **disjoint** joint sets. |
 | IK fails for one arm with a seed that works on the other | `arm_l_joint2` is `0…3.14`, `arm_r_joint2` is `−3.14…0`. Symmetric seeds are out of range on one side. |
 | `cv_bridge` raises `KeyError: 16` | The venv drifted back to numpy 2.x. Rebuild the image — the pin must be a build layer, not a retrofit. |
-| `NotImplementedError: camera mode lands in M4` | You ran `mirror` without `synthetic`. Intentional — see the build plan. |
+| Camera/model open or MediaPipe import error | Live M4 mirroring needs a readable webcam and the `/opt/mpvenv` environment. Use `mirror synthetic` for the camera-free acceptance path. |
 | Robot never moves, node logs nothing | The node is waiting on `/joint_states`. It refuses to publish before seeding, because guessing the start pose is how you get a jump. Check the controllers spawned. |
 | `mirror-accept` reports phantom speed violations | You are on an old copy that timed by callback arrival. DDS bursts make that read ~3× high — see TECHNICAL.md. |
 | `ModuleNotFoundError: No module named 'mediapipe'` | The node is under the system python. Launch via `mirror.launch.py` / `ros2-arm track`, which set `prefix=/opt/mpvenv/bin/python`. Synthetic mode works without it, so this looks like a camera fault but isn't. |

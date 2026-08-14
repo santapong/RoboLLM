@@ -102,7 +102,7 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Mega 2560.
 - Real Mega health check: `hardware/check_arduino.sh` (needs user in `dialout`).
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
-## Status (2026-08-14)
+## Status (2026-08-15)
 Next steps are tiered in ROADMAP.md (spine: bench -> encoders ->
 LeRobot logger -> demos). Gap triggers below stay authoritative.
 Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +
@@ -134,8 +134,10 @@ scan3d BACKLOG (in order — first item gates develop→main for scan3d):
 3. Optional: swap scale_mat.py's hand-rolled COLMAP text parser for
    pycolmap (BSD) if the format ever breaks.
 
-Open gaps: cloud-GPU workflow, tests/CI, RL example,
-live desktop demo (docs/live-session.md).
+Open gates: scan3d physical accuracy, B1 GPU fine-tune/evaluation, physical-arm
+commissioning and measured feedback, and the live desktop demo
+(`docs/live-session.md`). The B1 CPU workflow and native fast CI are prepared;
+neither is evidence of learned-policy or physical-arm completion.
 
 STACK-GAP BACKLOG (mapped 4 Aug 2026 — each with its build trigger; do
 NOT open these fronts early, the trigger is the point):

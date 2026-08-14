@@ -16,7 +16,7 @@ uvicorn
 websockets
 
 # 3D webcam scanning
-opencv-python==4.10.0.84   # last line compatible with numpy 1.26
+opencv-contrib-python==4.10.0.84  # includes ArUco; last line compatible with numpy 1.26
 scikit-image
 trimesh
 

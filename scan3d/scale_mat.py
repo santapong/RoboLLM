@@ -223,7 +223,6 @@ def cmd_solve(args) -> int:
 
 def self_test() -> int:
     """Synthetic cameras look at the board; solve must recover a known scale."""
-    import cv2
     rng = np.random.default_rng(7)
     SCALE = 0.013  # model units per mm: reconstruction is 1/76.9 of real size
     n_corners = (SQUARES_X - 1) * (SQUARES_Y - 1)

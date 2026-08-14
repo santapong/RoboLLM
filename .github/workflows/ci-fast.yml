@@ -26,14 +26,15 @@ jobs:
           # The B1 CPU contracts exercise the real MuJoCo model. Keep this on
           # the ROS-compatible NumPy ABI line; LeRobot stays in its own env.
           pip install -c requirements/ros-constraints.txt \
-            numpy==1.26.4 mujoco==3.10.0 opencv-python-headless==4.10.0.84 \
-            pytest hypothesis ruff pyserial pyyaml
+            numpy==1.26.4 mujoco==3.10.0 \
+            opencv-contrib-python-headless==4.10.0.84 \
+            scipy scikit-image trimesh pytest hypothesis ruff pyserial pyyaml
 
       - name: Ruff (errors only — E9, F)
         run: >-
           ruff check --select E9,F
           src/ apps/ hardware/ ros2/robo_arm_driver/robo_arm_driver/
-          examples/mujoco/ scripts/ tests/unit/
+          examples/mujoco/ scan3d/ scripts/ tests/unit/
 
       - name: Firmware config is synchronized
         run: python hardware/generate_firmware_config.py --check

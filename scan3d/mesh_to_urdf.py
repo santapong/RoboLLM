@@ -12,8 +12,6 @@ Drop the result into PyBullet (examples/pybullet) or a ROS 2 / Gazebo world.
 """
 import argparse
 import os
-import shutil
-
 import trimesh
 
 HERE = os.path.dirname(os.path.abspath(__file__))

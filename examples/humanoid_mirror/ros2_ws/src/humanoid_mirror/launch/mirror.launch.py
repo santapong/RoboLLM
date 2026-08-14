@@ -3,9 +3,9 @@
     ros2-arm mirror synthetic                  scripted whole-body sweep, no camera
     ros2-arm mirror synthetic rviz:=false      headless (what mirror_accept uses)
 
-Camera mode is M4. Until then mirror_node raises NotImplementedError for
-synthetic:=false rather than pretending, so a missing webcam can never be
-mistaken for a missing feature.
+Camera mode is the completed M4 path: synthetic:=false starts MediaPipe body
+tracking and drives the bounded live-mirroring controller. Camera/model errors
+fail loudly; synthetic:=true remains the camera-free acceptance path.
 
 Every node parameter is also a launch argument, per house convention. They are
 forwarded as `-p name:=value` through ros_arguments rather than as a parameters
