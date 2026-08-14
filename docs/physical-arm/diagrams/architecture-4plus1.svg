@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM Physical Arm Kruchten 4 plus 1 architectural view model</title>
+  <title id="title">RoboLLM · Physical-arm Kruchten 4 plus 1 architectural view model</title>
   <desc id="desc">Logical, process, development, physical, and scenario views for the physical arm platform, with implementation status.</desc>
   <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
-    <style>.title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.panel{fill:white;stroke:#334155;stroke-width:2}.head{fill:#0F6CBD}.headText{font-size:18px;font-weight:700;fill:white}.text{font-size:13px;fill:#1e293b}.small{font-size:11px;fill:#475569}.impl{fill:#dbeafe;stroke:#0F6CBD;stroke-width:1.5}.partial{fill:#ffedd5;stroke:#d97706;stroke-width:1.5}.planned{fill:#e2e8f0;stroke:#64748b;stroke-width:1.5;stroke-dasharray:6 4}.scenario{fill:#fff7ed;stroke:#c2410c;stroke-width:3}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
+    <style>.title{font-size:25px;font-weight:700;fill:#0F172A}.sub{font-size:13px;fill:#475569}.panel{fill:#FFFFFF;stroke:#334155;stroke-width:2}.head{fill:#0F6CBD}.headText{font-size:18px;font-weight:700;fill:#F8FAFC}.text{font-size:13px;fill:#1E293B}.small{font-size:11px;fill:#475569}.impl{fill:#DBEAFE;stroke:#0F6CBD;stroke-width:1.5}.partial{fill:#FFEDD5;stroke:#D97706;stroke-width:1.5}.planned{fill:#E2E8F0;stroke:#64748B;stroke-width:1.5;stroke-dasharray:6 4}.scenario{fill:#FFF7ED;stroke:#C2410C;stroke-width:3}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}</style>
   </defs>
-  <rect width="1500" height="1000" fill="#f8fafc"/>
+  <rect width="1500" height="1000" fill="#F8FAFC"/>
   <text x="35" y="45" class="title">RoboLLM · Physical-arm Kruchten 4+1 model</text>
   <text x="35" y="69" class="sub">The four engineering views are tied together by task scenarios (+1). Status styling prevents planned architecture from being mistaken for delivered code.</text>
 
@@ -12,7 +12,7 @@
   <rect x="430" y="105" width="640" height="215" rx="12" class="panel"/><path d="M442 105 H1058 Q1070 105 1070 117 V145 H430 V117 Q430 105 442 105" class="head"/>
   <text x="750" y="132" text-anchor="middle" class="headText">Logical view — responsibilities and safety layers</text>
   <rect x="458" y="173" width="120" height="70" rx="7" class="planned"/><text x="518" y="201" text-anchor="middle" class="text">LLM planner</text><text x="518" y="222" text-anchor="middle" class="small">Phase 5</text>
-  <rect x="600" y="173" width="120" height="70" rx="7" class="partial"/><text x="660" y="201" text-anchor="middle" class="text">Skills / VLA</text><text x="660" y="222" text-anchor="middle" class="small">examples / planned</text>
+  <rect x="600" y="173" width="120" height="70" rx="7" class="partial"/><text x="660" y="201" text-anchor="middle" class="text">Learning path</text><text x="660" y="222" text-anchor="middle" class="small">A2/A3 data ready</text>
   <rect x="742" y="173" width="120" height="70" rx="7" class="partial"/><text x="802" y="201" text-anchor="middle" class="text">ROS / MoveIt</text><text x="802" y="222" text-anchor="middle" class="small">driver ready</text>
   <rect x="884" y="173" width="150" height="70" rx="7" class="impl"/><text x="959" y="201" text-anchor="middle" class="text">Driver + firmware</text><text x="959" y="222" text-anchor="middle" class="small">implemented</text>
   <line x1="578" y1="208" x2="590" y2="208" stroke="#475569" stroke-width="2"/><line x1="720" y1="208" x2="732" y2="208" stroke="#475569" stroke-width="2"/><line x1="862" y1="208" x2="874" y2="208" stroke="#475569" stroke-width="2"/>
@@ -48,7 +48,7 @@
   <text x="570" y="540" class="text">Next: “Mirror my hand without leaving workspace.”</text>
   <text x="570" y="573" class="small">camera → filter → target pose → MoveIt → same safety chain</text>
   <text x="570" y="610" class="text">Final: “Put the red cube in the basket.”</text>
-  <text x="570" y="630" class="small">LLM plan → skill/VLA → verification; planned, not delivered</text>
+  <text x="570" y="630" class="small">A3 sim data verified; skill/VLA execution remains planned</text>
 
   <!-- Physical -->
   <rect x="330" y="720" width="840" height="215" rx="12" class="panel"/><path d="M342 720 H1158 Q1170 720 1170 732 V760 H330 V732 Q330 720 342 720" class="head"/>

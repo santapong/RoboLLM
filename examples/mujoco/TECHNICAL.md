@@ -10,7 +10,7 @@ front camera, and direct LeRobot v3 episode recording. Neither path uses ROS.
 The model is intentionally simple; it proves the data pipeline without
 pretending to be a measured digital twin of the physical arm.
 
-![hello_mujoco.py pipeline](docs/mujoco-architecture.svg)
+![MuJoCo pendulum and A3 dataset pipelines](docs/mujoco-architecture.svg)
 
 ## Component walkthrough
 

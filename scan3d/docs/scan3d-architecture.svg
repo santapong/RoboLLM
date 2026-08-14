@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1040" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM Scan3D architecture</title>
+  <title id="title">RoboLLM · Scan3D architecture</title>
   <desc id="desc">Phone or webcam capture flows through visual-hull or photogrammetry routes into measured meshes, URDF assets, and printable STL files.</desc>
   <rect x="0" y="0" width="1280" height="1040" fill="#F8FAFC"/>
 

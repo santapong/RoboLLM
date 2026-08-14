@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM system context</title>
+  <title id="title">RoboLLM · System context</title>
   <desc id="desc">Human and language-model clients interact with the RoboLLM workbench, webcam, ROS 2 simulation, and physical arm.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 

@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 920" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM Physical Arm C4 container diagram</title>
+  <title id="title">RoboLLM · Physical-arm C4 container diagram</title>
   <desc id="desc">Runnable containers from high-level planning through ROS, validated arm driver, firmware, camera, and robot hardware. Colors identify implementation status.</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
     <style>
-      .title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.boundary{fill:#eff6ff;stroke:#0F6CBD;stroke-width:2;stroke-dasharray:8 5}.impl{fill:#0F6CBD;stroke:#0F2742;stroke-width:2}.partial{fill:#d97706;stroke:#92400e;stroke-width:2}.planned{fill:#64748b;stroke:#334155;stroke-width:2;stroke-dasharray:7 5}.external{fill:#475569;stroke:#1e293b;stroke-width:2}.name{font-size:16px;font-weight:700;fill:white}.type{font-size:11px;font-style:italic;fill:#e2e8f0}.body{font-size:12px;fill:white}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:11px;fill:#334155}.legend{font-size:12px;fill:#0f172a}
+      .title{font-size:25px;font-weight:700;fill:#0F172A}.sub{font-size:13px;fill:#475569}.boundary{fill:#EFF6FF;stroke:#0F6CBD;stroke-width:2;stroke-dasharray:8 5}.impl{fill:#0F6CBD;stroke:#0F2742;stroke-width:2}.partial{fill:#D97706;stroke:#92400E;stroke-width:2}.planned{fill:#E2E8F0;stroke:#64748B;stroke-width:2;stroke-dasharray:7 5}.external{fill:#64748B;stroke:#334155;stroke-width:2}.name{font-size:16px;font-weight:700;fill:#F8FAFC}.type{font-size:11px;font-style:italic;fill:#E2E8F0}.body{font-size:12px;fill:#F8FAFC}.plannedName{font-size:16px;font-weight:700;fill:#0F172A}.plannedType{font-size:11px;font-style:italic;fill:#475569}.plannedBody{font-size:12px;fill:#334155}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:11px;fill:#334155}.legend{font-size:12px;fill:#0F172A}
     </style>
   </defs>
-  <rect width="1500" height="920" fill="#f8fafc"/>
+  <rect width="1500" height="920" fill="#F8FAFC"/>
   <text x="35" y="44" class="title">RoboLLM · Physical-arm containers</text>
   <text x="35" y="67" class="sub">Blue = implemented foundation · amber = reusable example/partial integration · gray dashed = planned physical-arm capability</text>
 
@@ -22,24 +22,24 @@
   <text x="260" y="119" class="sub">RoboLLM physical-arm software system</text>
 
   <rect x="285" y="155" width="230" height="115" rx="9" class="planned"/>
-  <text x="400" y="184" text-anchor="middle" class="name">LLM task planner</text><text x="400" y="204" text-anchor="middle" class="type">[Python / schema output]</text>
-  <text x="400" y="231" text-anchor="middle" class="body">Phase 5 · allowlisted plans</text>
+  <text x="400" y="184" text-anchor="middle" class="plannedName">LLM task planner</text><text x="400" y="204" text-anchor="middle" class="plannedType">[Python / schema output]</text>
+  <text x="400" y="231" text-anchor="middle" class="plannedBody">Phase 5 · allowlisted plans</text>
 
   <rect x="575" y="155" width="230" height="115" rx="9" class="planned"/>
-  <text x="690" y="184" text-anchor="middle" class="name">Skill router</text><text x="690" y="204" text-anchor="middle" class="type">[ROS 2 orchestration]</text>
-  <text x="690" y="231" text-anchor="middle" class="body">classical skill or VLA</text>
+  <text x="690" y="184" text-anchor="middle" class="plannedName">Skill router</text><text x="690" y="204" text-anchor="middle" class="plannedType">[ROS 2 orchestration]</text>
+  <text x="690" y="231" text-anchor="middle" class="plannedBody">classical skill or VLA</text>
 
-  <rect x="865" y="155" width="230" height="115" rx="9" class="planned"/>
-  <text x="980" y="184" text-anchor="middle" class="name">VLA policy</text><text x="980" y="204" text-anchor="middle" class="type">[Learned runtime]</text>
-  <text x="980" y="231" text-anchor="middle" class="body">Phase 4 · logical actions</text>
+  <rect x="865" y="155" width="230" height="115" rx="9" class="partial"/>
+  <text x="980" y="184" text-anchor="middle" class="name">Learning pipeline</text><text x="980" y="204" text-anchor="middle" class="type">[LeRobot / policy runtime]</text>
+  <text x="980" y="231" text-anchor="middle" class="body">A2/A3 data ready; training pending</text>
 
   <rect x="285" y="340" width="230" height="115" rx="9" class="partial"/>
   <text x="400" y="369" text-anchor="middle" class="name">Teleoperation</text><text x="400" y="389" text-anchor="middle" class="type">[MediaPipe + filters]</text>
   <text x="400" y="416" text-anchor="middle" class="body">RViz example exists;</text><text x="400" y="434" text-anchor="middle" class="body">physical integration pending</text>
 
   <rect x="575" y="340" width="230" height="115" rx="9" class="planned"/>
-  <text x="690" y="369" text-anchor="middle" class="name">Perception/world model</text><text x="690" y="389" text-anchor="middle" class="type">[Camera calibration + TF]</text>
-  <text x="690" y="416" text-anchor="middle" class="body">Phase 3 marker-first</text>
+  <text x="690" y="369" text-anchor="middle" class="plannedName">Perception/world model</text><text x="690" y="389" text-anchor="middle" class="plannedType">[Camera calibration + TF]</text>
+  <text x="690" y="416" text-anchor="middle" class="plannedBody">Phase 3 marker-first</text>
 
   <rect x="865" y="340" width="230" height="115" rx="9" class="partial"/>
   <text x="980" y="369" text-anchor="middle" class="name">ROS 2 + MoveIt</text><text x="980" y="389" text-anchor="middle" class="type">[Jazzy / trajectories]</text>
@@ -50,7 +50,7 @@
   <text x="570" y="617" text-anchor="middle" class="body">names · limits · time · velocity</text><text x="570" y="636" text-anchor="middle" class="body">trajectory sampling + status</text>
 
   <rect x="805" y="535" width="270" height="135" rx="9" class="impl"/>
-  <text x="940" y="568" text-anchor="middle" class="name">arm-fw 2.1</text><text x="940" y="590" text-anchor="middle" class="type">[Arduino C++ / serial]</text>
+  <text x="940" y="568" text-anchor="middle" class="name">arm-fw 2.1</text><text x="940" y="590" text-anchor="middle" class="type">[Mega 2560 / serial]</text>
   <text x="940" y="617" text-anchor="middle" class="body">generated hard limits · slew</text><text x="940" y="636" text-anchor="middle" class="body">commissioning lock · watchdog</text>
 
   <rect x="1275" y="525" width="190" height="145" rx="9" class="external"/>

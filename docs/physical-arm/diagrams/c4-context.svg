@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 760" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM Physical Arm C4 system context</title>
+  <title id="title">RoboLLM · Physical-arm C4 system context</title>
   <desc id="desc">People and external systems around the RoboLLM physical arm platform, with the safety boundary between AI goals and servo PWM.</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
     <style>
-      .title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.name{font-size:18px;font-weight:700;fill:white}.type{font-size:12px;font-style:italic;fill:#dbeafe}.body{font-size:13px;fill:white}.external{fill:#64748b;stroke:#334155;stroke-width:2}.system{fill:#0F6CBD;stroke:#0F2742;stroke-width:2}.label{font-size:12px;fill:#334155}.note{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.noteText{font-size:14px;font-weight:700;fill:#9a3412}
+      .title{font-size:25px;font-weight:700;fill:#0F172A}.sub{font-size:13px;fill:#475569}.name{font-size:18px;font-weight:700;fill:#F8FAFC}.type{font-size:12px;font-style:italic;fill:#DBEAFE}.body{font-size:13px;fill:#F8FAFC}.external{fill:#64748B;stroke:#334155;stroke-width:2}.system{fill:#0F6CBD;stroke:#0F2742;stroke-width:2}.label{font-size:12px;fill:#334155}.note{fill:#FFF7ED;stroke:#C2410C;stroke-width:2}.noteText{font-size:14px;font-weight:700;fill:#9A3412}
     </style>
   </defs>
-  <rect width="1280" height="760" fill="#f8fafc"/>
+  <rect width="1280" height="760" fill="#F8FAFC"/>
   <text x="40" y="48" class="title">RoboLLM · Physical-arm system context</text>
-  <text x="40" y="72" class="sub">Architecture baseline · 2026-08-13 · implemented foundation plus explicitly planned capabilities</text>
+  <text x="40" y="72" class="sub">Checkpoint · 2026-08-14 · A2/A3 software ready; physical evidence remains bench-gated</text>
 
   <rect x="60" y="150" width="235" height="145" rx="10" class="external"/>
   <text x="177" y="183" text-anchor="middle" class="name">Human operator</text>
@@ -41,7 +41,7 @@
   <text x="1097" y="236" text-anchor="middle" class="body">Never raw motor commands</text>
 
   <rect x="975" y="445" width="245" height="145" rx="10" class="external"/>
-  <text x="1097" y="478" text-anchor="middle" class="name">6-DOF arm + Arduino</text>
+  <text x="1097" y="478" text-anchor="middle" class="name">6-DOF arm + Mega</text>
   <text x="1097" y="500" text-anchor="middle" class="type">[External device system]</text>
   <text x="1097" y="530" text-anchor="middle" class="body">Firmware limits, watchdog, PWM</text>
   <text x="1097" y="551" text-anchor="middle" class="body">External servo power + cutoff</text>
@@ -53,8 +53,8 @@
   <line x1="840" y1="430" x2="965" y2="505" stroke="#475569" stroke-width="2.5"/><polygon points="965,505 952,502 958,492" fill="#475569"/><text x="850" y="486" class="label">validated actions</text>
   <line x1="975" y1="545" x2="850" y2="470" stroke="#475569" stroke-width="2.5"/><polygon points="850,470 863,473 857,483" fill="#475569"/><text x="860" y="548" class="label">state / status</text>
 
-  <rect x="40" y="670" width="1200" height="55" rx="8" fill="#e2e8f0"/>
-  <text x="640" y="694" text-anchor="middle" class="label">Current truth: Phase 0 software and v0.2.1 driver simulation are verified; physical calibration and Phases 1–5 remain gated.</text>
-  <text x="640" y="714" text-anchor="middle" class="label">See ROADMAP.md for acceptance evidence required before a phase is marked complete.</text>
+  <rect x="40" y="670" width="1200" height="55" rx="8" fill="#E2E8F0"/>
+  <text x="640" y="694" text-anchor="middle" class="label">Current truth: A2/A3 software paths are ready; Phase 0/1 physical evidence remains bench-gated.</text>
+  <text x="640" y="714" text-anchor="middle" class="label">Later arm phases remain planned. See PROJECT_STATUS.md and ROADMAP.md for evidence gates.</text>
   <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

@@ -1,15 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM MuJoCo simulation architecture</title>
-  <desc id="desc">An inline MJCF model is compiled, stepped headlessly or interactively, and inspected through MuJoCo data and viewer APIs.</desc>
+  <title id="title">RoboLLM · MuJoCo simulation architecture</title>
+  <desc id="desc">Two inline MJCF examples share MuJoCo model and data APIs: a pendulum lesson and a scripted 6-DOF arm that records LeRobot v3 video episodes.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 
   <!-- Title -->
   <text x="24" y="38" font-size="22" font-weight="700" fill="#0F172A">RoboLLM · MuJoCo simulation pipeline</text>
-  <text x="24" y="58" font-size="12" fill="#475569">MJCF pendulum quickstart: define a model in XML, compile it, step the physics — headless printout or interactive 3-D viewer</text>
+  <text x="24" y="58" font-size="12" fill="#475569">CPU-only paths: learn model/data/step with a pendulum, then record a scripted 6-DOF arm directly as a LeRobot v3 video dataset</text>
 
   <!-- Process boundary -->
   <rect x="250" y="90" width="780" height="600" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="266" y="112" font-size="12" font-style="italic" fill="#475569">hello_mujoco.py — one Python process, no ROS  [examples/mujoco/hello_mujoco.py]</text>
+  <text x="266" y="112" font-size="12" font-style="italic" fill="#475569">hello_mujoco.py + arm_dataset.py — standalone Python, no ROS  [examples/mujoco/]</text>
 
   <!-- ============ Relationships (lines first) ============ -->
   <!-- Developer -> MODEL_XML -->
@@ -18,7 +18,7 @@
   <rect x="228" y="165" width="50" height="14" fill="#F8FAFC"/>
   <text x="253" y="176" font-size="11" fill="#334155" text-anchor="middle">python3</text>
   <rect x="222" y="199" width="62" height="14" fill="#F8FAFC"/>
-  <text x="253" y="210" font-size="11" fill="#334155" text-anchor="middle">[--view]</text>
+  <text x="253" y="210" font-size="11" fill="#334155" text-anchor="middle">choose path</text>
 
   <!-- MODEL_XML -> MjModel -->
   <line x1="555" y1="192" x2="715" y2="192" stroke="#64748B" stroke-width="1.5"/>
@@ -34,24 +34,24 @@
   <line x1="725" y1="375" x2="509" y2="464" stroke="#64748B" stroke-width="1.5"/>
   <polygon points="500,468 507,460 511,469" fill="#64748B"/>
   <rect x="547" y="405" width="118" height="14" fill="#F8FAFC"/>
-  <text x="606" y="416" font-size="11" fill="#334155" text-anchor="middle">default (no --view)</text>
+  <text x="606" y="416" font-size="11" fill="#334155" text-anchor="middle">mj_step + ctrl targets</text>
 
   <!-- MjData -> viewer loop -->
   <line x1="852" y1="405" x2="852" y2="460" stroke="#64748B" stroke-width="1.5"/>
   <polygon points="852,470 847,460 857,460" fill="#64748B"/>
-  <text x="862" y="440" font-size="11" fill="#334155">--view</text>
+  <text x="862" y="440" font-size="11" fill="#334155">render frame</text>
 
   <!-- headless loop -> Terminal -->
   <line x1="300" y1="517" x2="215" y2="517" stroke="#64748B" stroke-width="1.5"/>
   <polygon points="205,517 215,512 215,522" fill="#64748B"/>
-  <rect x="232" y="493" width="42" height="14" fill="#F8FAFC"/>
-  <text x="253" y="504" font-size="11" fill="#334155" text-anchor="middle">print()</text>
+  <rect x="225" y="493" width="56" height="14" fill="#F8FAFC"/>
+  <text x="253" y="504" font-size="11" fill="#334155" text-anchor="middle">metrics</text>
 
-  <!-- viewer loop -> MuJoCo viewer -->
+  <!-- recorder -> LeRobot dataset -->
   <line x1="980" y1="517" x2="1070" y2="517" stroke="#64748B" stroke-width="1.5"/>
   <polygon points="1080,517 1070,512 1070,522" fill="#64748B"/>
   <rect x="1005" y="493" width="44" height="14" fill="#F8FAFC"/>
-  <text x="1027" y="504" font-size="11" fill="#334155" text-anchor="middle">sync()</text>
+  <text x="1027" y="504" font-size="11" fill="#334155" text-anchor="middle">save</text>
 
   <!-- ============ External actors ============ -->
   <!-- Developer -->
@@ -59,8 +59,8 @@
     <rect x="25" y="140" width="180" height="95" rx="6" fill="#0F2742"/>
     <text x="115" y="164" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Developer</text>
     <text x="115" y="181" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[terminal]</text>
-    <text x="115" y="199" font-size="12" fill="#F8FAFC" text-anchor="middle">runs the quickstart,</text>
-    <text x="115" y="214" font-size="12" fill="#F8FAFC" text-anchor="middle">optionally with --view</text>
+    <text x="115" y="199" font-size="12" fill="#F8FAFC" text-anchor="middle">runs the pendulum lesson</text>
+    <text x="115" y="214" font-size="12" fill="#F8FAFC" text-anchor="middle">or A3 dataset pipeline</text>
   </g>
 
   <!-- Terminal -->
@@ -68,28 +68,28 @@
     <rect x="25" y="470" width="180" height="95" rx="6" fill="#64748B"/>
     <text x="115" y="494" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Terminal</text>
     <text x="115" y="511" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[stdout]</text>
-    <text x="115" y="529" font-size="12" fill="#F8FAFC" text-anchor="middle">swing printout every</text>
-    <text x="115" y="544" font-size="12" fill="#F8FAFC" text-anchor="middle">0.2 s of sim time</text>
+    <text x="115" y="529" font-size="12" fill="#F8FAFC" text-anchor="middle">swing values or policy</text>
+    <text x="115" y="544" font-size="12" fill="#F8FAFC" text-anchor="middle">tracking RMSE</text>
   </g>
 
-  <!-- MuJoCo viewer window -->
+  <!-- LeRobot dataset -->
   <g>
     <rect x="1080" y="470" width="176" height="95" rx="6" fill="#64748B"/>
-    <text x="1168" y="494" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">MuJoCo viewer</text>
-    <text x="1168" y="511" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[GLFW window]</text>
-    <text x="1168" y="529" font-size="12" fill="#F8FAFC" text-anchor="middle">interactive 3-D render;</text>
-    <text x="1168" y="544" font-size="12" fill="#F8FAFC" text-anchor="middle">needs a display</text>
+    <text x="1168" y="494" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">LeRobot v3 dataset</text>
+    <text x="1168" y="511" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[video + Parquet + metadata]</text>
+    <text x="1168" y="529" font-size="12" fill="#F8FAFC" text-anchor="middle">front RGB, state, action,</text>
+    <text x="1168" y="544" font-size="12" fill="#F8FAFC" text-anchor="middle">task + camera lag</text>
   </g>
 
   <!-- ============ Components inside the process ============ -->
   <!-- MODEL_XML -->
   <g>
     <rect x="300" y="140" width="255" height="105" rx="6" fill="#DBEAFE"/>
-    <text x="427" y="164" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">MODEL_XML</text>
-    <text x="427" y="183" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[MJCF · inline XML string]</text>
-    <text x="427" y="202" font-size="12" fill="#0F172A" text-anchor="middle">plane + 1-DOF pendulum: body</text>
-    <text x="427" y="217" font-size="12" fill="#0F172A" text-anchor="middle">'arm' with hinge joint + capsule</text>
-    <text x="427" y="232" font-size="12" fill="#0F172A" text-anchor="middle">geom, gravity 0 0 -9.81</text>
+    <text x="427" y="164" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">Inline MJCF models</text>
+    <text x="427" y="183" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[MODEL_XML · Python strings]</text>
+    <text x="427" y="202" font-size="12" fill="#0F172A" text-anchor="middle">1-DOF pendulum lesson plus</text>
+    <text x="427" y="217" font-size="12" fill="#0F172A" text-anchor="middle">6-DOF serial arm + gripper;</text>
+    <text x="427" y="232" font-size="12" fill="#0F172A" text-anchor="middle">generic geometry, not a digital twin</text>
   </g>
 
   <!-- MjModel -->
@@ -107,29 +107,29 @@
     <rect x="725" y="300" width="255" height="105" rx="6" fill="#DBEAFE"/>
     <text x="852" y="324" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">data — mujoco.MjData</text>
     <text x="852" y="343" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[time-varying state]</text>
-    <text x="852" y="362" font-size="12" fill="#0F172A" text-anchor="middle">qpos, qvel, time for the model;</text>
-    <text x="852" y="377" font-size="12" fill="#0F172A" text-anchor="middle">start raised: data.qpos[0]=1.2</text>
-    <text x="852" y="392" font-size="12" fill="#0F172A" text-anchor="middle">rad on the hinge</text>
+    <text x="852" y="362" font-size="12" fill="#0F172A" text-anchor="middle">qpos, qvel, ctrl, and time;</text>
+    <text x="852" y="377" font-size="12" fill="#0F172A" text-anchor="middle">one state instance per run,</text>
+    <text x="852" y="392" font-size="12" fill="#0F172A" text-anchor="middle">reset between arm episodes</text>
   </g>
 
-  <!-- headless loop -->
+  <!-- physics / policy loop -->
   <g>
     <rect x="300" y="470" width="255" height="105" rx="6" fill="#DBEAFE"/>
-    <text x="427" y="494" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">headless loop (default)</text>
-    <text x="427" y="513" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[mujoco.mj_step]</text>
-    <text x="427" y="532" font-size="12" fill="#0F172A" text-anchor="middle">1000 x mj_step (2 ms steps =</text>
-    <text x="427" y="547" font-size="12" fill="#0F172A" text-anchor="middle">2 s sim); prints t + hinge angle</text>
-    <text x="427" y="562" font-size="12" fill="#0F172A" text-anchor="middle">every 100 steps, then 'done.'</text>
+    <text x="427" y="494" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">Physics / policy loop</text>
+    <text x="427" y="513" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[mujoco.mj_step · 500 Hz]</text>
+    <text x="427" y="532" font-size="12" fill="#0F172A" text-anchor="middle">pendulum free motion or smooth</text>
+    <text x="427" y="547" font-size="12" fill="#0F172A" text-anchor="middle">7-axis scripted targets sampled</text>
+    <text x="427" y="562" font-size="12" fill="#0F172A" text-anchor="middle">at the requested dataset FPS</text>
   </g>
 
-  <!-- viewer loop -->
+  <!-- offscreen recorder -->
   <g>
     <rect x="725" y="470" width="255" height="105" rx="6" fill="#DBEAFE"/>
-    <text x="852" y="494" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">viewer loop (--view)</text>
-    <text x="852" y="513" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[mujoco.viewer.launch_passive]</text>
-    <text x="852" y="532" font-size="12" fill="#0F172A" text-anchor="middle">while viewer.is_running():</text>
-    <text x="852" y="547" font-size="12" fill="#0F172A" text-anchor="middle">mj_step(model, data) then</text>
-    <text x="852" y="562" font-size="12" fill="#0F172A" text-anchor="middle">viewer.sync() each frame</text>
+    <text x="852" y="494" font-size="16" font-weight="bold" fill="#0F172A" text-anchor="middle">Offscreen A3 recorder</text>
+    <text x="852" y="513" font-size="11" font-style="italic" fill="#0F172A" text-anchor="middle">[mujoco.Renderer + LeRobotDataset]</text>
+    <text x="852" y="532" font-size="12" fill="#0F172A" text-anchor="middle">render 320 × 240 front RGB;</text>
+    <text x="852" y="547" font-size="12" fill="#0F172A" text-anchor="middle">add state/action/task frames,</text>
+    <text x="852" y="562" font-size="12" fill="#0F172A" text-anchor="middle">save episode and finalize</text>
   </g>
 
   <!-- ============ Legend ============ -->
@@ -152,6 +152,6 @@
     <polygon points="840,761 830,756 830,766" fill="#64748B"/>
     <text x="850" y="766" font-size="12" fill="#334155">Relationship [label]</text>
   </g>
-  <text x="24" y="800" font-size="11" fill="#475569">C4-style component view · generated from examples/mujoco/hello_mujoco.py · MuJoCo installed into the project venv via requirements-extra.txt (pip package: mujoco)</text>
+  <text x="24" y="800" font-size="11" fill="#475569">C4-style component view · examples/mujoco/{hello_mujoco.py,arm_dataset.py} · A3 write/read verified on CPU with MuJoCo 3.10 + LeRobot 0.6</text>
   <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

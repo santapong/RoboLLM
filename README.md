@@ -210,6 +210,7 @@ RoboLLM/
 | Document | Purpose |
 |---|---|
 | [Documentation hub](docs/README.md) | Index of every first-party document and architecture diagram |
+| [Project checkpoint](docs/PROJECT_STATUS.md) | Current software milestone, physical gates, and next phase |
 | [Architecture](docs/ARCHITECTURE.md) | Workbench C4 context, containers, and hand-teleop components |
 | [Physical-arm architecture](docs/physical-arm/ARCHITECTURE.md) | Safety boundary, driver components, interfaces, and 4+1 views |
 | [Physical-arm roadmap](docs/physical-arm/ROADMAP.md) | Honest Phase 0–5 status and evidence gates |

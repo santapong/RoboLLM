@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM ROS 2 Python learning architecture</title>
+  <title id="title">RoboLLM · ROS 2 Python learning architecture</title>
   <desc id="desc">Ten lessons progress from nodes and topics through motion, actions, services, transforms, and perception.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 

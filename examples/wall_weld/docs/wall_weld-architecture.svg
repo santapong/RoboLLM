@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM wall-weld simulation architecture</title>
+  <title id="title">RoboLLM · Wall-weld simulation architecture</title>
   <desc id="desc">Gesture input triggers or aborts a simulated raster welding state machine with MoveIt collision checks and RViz feedback.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
   <text x="24" y="32" font-size="22" font-weight="700" fill="#0F172A">RoboLLM · Gesture-triggered wall-weld simulation</text>

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM physical-arm hardware architecture</title>
+  <title id="title">RoboLLM · Physical-arm hardware architecture</title>
   <desc id="desc">ROS 2 validates trajectories, the host converts logical radians to raw degrees, and Arduino firmware enforces hard safety limits.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 840" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM browser dashboard architecture</title>
+  <title id="title">RoboLLM · Browser-dashboard architecture</title>
   <desc id="desc">The browser uses HTTP and WebSocket endpoints backed by FastAPI and the shared ROS 2 bridge with deadman and obstacle safety.</desc>
   <rect x="0" y="0" width="1280" height="840" fill="#F8FAFC"/>
 

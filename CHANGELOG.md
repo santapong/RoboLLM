@@ -26,6 +26,11 @@ after the touched demos verifiably run).
 - Made Arduino Mega 2560 the default firmware/check target while preserving an
   Uno compile override.
 - Pin TorchCodec 0.10 for compatibility with CPU-only PyTorch 2.10.
+- Added a single project-checkpoint page for current evidence, physical gates,
+  and the next software phase.
+- Audited all 20 maintained SVGs, normalized their accessible titles and shared
+  typography, and refreshed the MuJoCo and physical-arm status diagrams for
+  A2/A3, Mega 2560, and the current bench gates.
 
 ### Fixed
 

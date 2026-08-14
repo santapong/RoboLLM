@@ -10,6 +10,7 @@ repeatable operations or acceptance evidence.
 | Doc | One line |
 |-----|----------|
 | [`../CHANGELOG.md`](../CHANGELOG.md) | Project changelog — notable changes by date. |
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Current checkpoint — A2/A3 software evidence, physical gates, and the next phase. |
 | [`STYLE_GUIDE.md`](STYLE_GUIDE.md) | Theme, status vocabulary, navigation, and evidence conventions. |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The C4 tour of the workbench: context → containers → components, diagrams + narrative. |
 | [`architecture/c4-context.svg`](architecture/c4-context.svg) | C4 level 1 — humans, language-model clients, ROS 2/Gazebo, and the real arm. |
@@ -65,7 +66,7 @@ repeatable operations or acceptance evidence.
 | [`../examples/ros2_py/docs/ros2_py-architecture.svg`](../examples/ros2_py/docs/ros2_py-architecture.svg) | Diagram — the 10 scripts vs the sim's topic/action surfaces. |
 | [`../examples/colcon_pkg/patrol_bot/docs/patrol_bot-architecture.svg`](../examples/colcon_pkg/patrol_bot/docs/patrol_bot-architecture.svg) | Diagram — package build → install → launch → node flow. |
 | [`../examples/pybullet/docs/pybullet-architecture.svg`](../examples/pybullet/docs/pybullet-architecture.svg) | Diagram — IK math → PyBullet verification loop. |
-| [`../examples/mujoco/docs/mujoco-architecture.svg`](../examples/mujoco/docs/mujoco-architecture.svg) | Diagram — MJCF string → model/data → step loop. |
+| [`../examples/mujoco/docs/mujoco-architecture.svg`](../examples/mujoco/docs/mujoco-architecture.svg) | Diagram — pendulum lesson plus scripted arm → LeRobot v3 dataset. |
 | [`../examples/panda_arm/docs/panda_arm-architecture.svg`](../examples/panda_arm/docs/panda_arm-architecture.svg) | Diagram — the five-demo manipulation pipeline. |
 | [`../examples/humanoid_mirror/docs/humanoid_mirror-architecture.svg`](../examples/humanoid_mirror/docs/humanoid_mirror-architecture.svg) | Diagram — webcam pose through filtering and retargeting to FFW controllers. |
 | [`../examples/talos_mirror/docs/talos_mirror-architecture.svg`](../examples/talos_mirror/docs/talos_mirror-architecture.svg) | Diagram — whole-body TALOS tracking, retargeting, control, and RViz path. |

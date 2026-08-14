@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360" role="img" aria-labelledby="title desc">
-  <title id="title">RoboLLM</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 360" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM · Hybrid robotics workbench</title>
   <desc id="desc">A hybrid robotics workbench connecting perception, planning, validated control, and physical motion.</desc>
   <defs>
     <linearGradient id="flow" x1="0%" y1="0%" x2="100%" y2="0%">
