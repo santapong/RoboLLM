@@ -3,8 +3,8 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../README.md) · [Hardware guide](README.md) · [Arm architecture](../docs/physical-arm/ARCHITECTURE.md) · [Serial protocol](docs/serial_protocol.md)
 
-The Arduino Uno R3 has 2 KB RAM and intentionally runs a small line-oriented
-serial controller, not micro-ROS. ROS 2, trajectory sampling, calibration
+The Arduino Mega 2560 intentionally runs a small line-oriented serial
+controller. ROS 2, trajectory sampling, calibration
 mapping, and host-side validation live in `ros2/robo_arm_driver`. The firmware
 only accepts validated raw targets, enforces the same generated hard limits,
 slews the servos, and de-energizes them when communication stops.
@@ -72,7 +72,7 @@ target for the driver, teleoperation, and future controller tests.
 
 - Arduino CLI is expected at `~/.local/bin/arduino-cli` with the AVR core and
   Servo library installed rootlessly.
-- Opening the Uno serial port toggles DTR and resets it; the host waits 2.5 s.
+- Opening the Mega serial port toggles DTR and resets it; the host waits 2.5 s.
 - ROS 2 Jazzy on Ubuntu 24.04 uses system Python/NumPy ABI; keep the repository
   constraints and use `--system-site-packages` virtual environments.
 - Raspberry Pi 5 and laptop must share `ROS_DOMAIN_ID` when the driver runs on

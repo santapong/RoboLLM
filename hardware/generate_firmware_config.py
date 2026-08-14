@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Uno's safety constants from the canonical joints YAML."""
+"""Generate the arm controller's safety constants from canonical joints YAML."""
 from __future__ import annotations
 
 import argparse

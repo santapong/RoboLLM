@@ -28,7 +28,7 @@ client — calls the workbench’s tools over stdio. The workbench turns both
 kinds of intent into the same robot traffic: ROS 2 topics
 and actions into the **ROS 2 Jazzy + Gazebo** stack (TurtleBot3 sim, SLAM,
 Nav2, MoveIt), and a 115200-baud text serial protocol to the **real DIY arm**
-(Raspberry Pi 5 + Arduino Uno R3). The **webcam** feeds frames in for
+(Raspberry Pi 5 + Arduino Mega 2560). The **webcam** feeds frames in for
 hand-gesture teleop and for the `scan3d/` object scanner. The point of the
 whole system sits on those two left-hand arrows: the human and the LLM are
 peers, driving the exact same robot through the exact same machinery.
@@ -49,7 +49,7 @@ the LLM and the human, with identical safety behavior; a process never spawns
 competing publishers on `/cmd_vel`; and adding a capability means touching one
 file, not re-plumbing ROS in every surface. Around that core: `cad/` and
 `scan3d/` produce URDF models the sim consumes, and the `hardware/` stack
-carries the same bridge idea to the real Uno arm over serial.
+carries the same bridge idea to the real Mega arm over serial.
 
 The **hand-teleop stacks** (`examples/hand_follow` and
 `examples/gen3_pick_place`) are the deliberate exception: they run in their own

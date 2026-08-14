@@ -7,7 +7,7 @@ LLM ↔ robotics learning workbench (learn/research first, product later).
 Owner: santapong. GitHub: `santapong/RoboLLM` (**PUBLIC** — everything
 pushed here is visible to the world; keep secrets/tokens out). Laptop:
 Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic, **no NVIDIA GPU** (heavy sim/RL
-belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
+belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Mega 2560.
 
 ## Architecture
 - `robot_bridge.py` — THE single shared rclpy node (`get_bridge()` singleton,
@@ -58,9 +58,10 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
   `docs/ARCHITECTURE.md` = C4 diagrams + narrative; `docs/README.md` = doc index.
 - `hardware/` + `ros2/robo_arm_driver/` — the REAL arm: fail-closed arm-fw
   2.1 (generated limits, commissioning lock, 750 ms watchdog), canonical
-  config, `JointTrajectory` ROS 2 package, and `sim_uno.py` fake Uno on a pty.
-  `hardware/arm_{serial,bridge_node}.py` are compatibility launchers. Uno R3
-  can't run micro-ROS (2 KB RAM) — text serial is intentional. The physical
+  config, `JointTrajectory` ROS 2 package, and `sim_uno.py` protocol simulator
+  on a pty (legacy filename). `hardware/arm_{serial,bridge_node}.py` are
+  compatibility launchers. The Mega uses a small inspectable text protocol;
+  ROS 2 and motion planning stay on the Pi. The physical
   YAML stays `calibrated: false` until the Phase 0 worksheet is completed.
   Delivery truth + gates: `docs/physical-arm/ROADMAP.md`; physical-arm C4 and
   4+1 SVGs: `docs/physical-arm/ARCHITECTURE.md`.
@@ -78,8 +79,8 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - User shell is zsh but ROS `setup.bash` is bash-only → run verification as
   `bash -c 'source /opt/ros/jazzy/setup.bash && …'`.
 - `TURTLEBOT3_MODEL=waffle_pi` for a camera (default burger = lidar only).
-- Opening the Uno's serial port DTR-resets it → wait ~2.5 s (ArmSerial does).
-- Servo power = external 5–6 V, common GND, NEVER the Uno's 5V pin.
+- Opening the Mega's serial port DTR-resets it → wait ~2.5 s (ArmSerial does).
+- Servo power = external 5–6 V, common GND, NEVER the Mega's 5V pin.
 - Never name an rclpy Node method `handle` (shadows Node.handle).
 - `pkill -f <pattern>` in a compound command can match your own shell — use
   `pkill -f '[p]attern'` in a separate command.
@@ -97,7 +98,7 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - Arm with no hardware: start `sim_uno.py` and the client with
   `ARM_CONFIG=ros2/robo_arm_driver/config/joints.sim.yaml`, then set
   `ARM_PORT=/dev/pts/N` for the client.
-- Real Uno health check: `hardware/check_arduino.sh` (needs user in `dialout`).
+- Real Mega health check: `hardware/check_arduino.sh` (needs user in `dialout`).
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
 ## Status (2026-08-14)
@@ -108,11 +109,12 @@ patrol_bot, CAD arm, scan3d, .mcpb, hardware stack vs sim_uno. scan3d
 print/CAD stack merged to develop (Route C Docker CPU photogrammetry,
 mesh_to_print.py, scale_mat.py ChArUco metric scale, MESHER=poisson;
 all verified on synthetic data only). PENDING user:
-`sudo usermod -aG dialout santapong` + plug the real Uno in → run
+`sudo usermod -aG dialout santapong` + plug the real Mega in → run
 check_arduino.sh (now flashes arm-fw 2.1 — fail-closed configuration plus the measured-state protocol from
 the Phase A convergence, hardware/docs/phaseA-convergence.md; camera_logger
 + acceptance_test are ported and sim-verified; the minimal LeRobot v3 adapter
 is code-ready in an isolated NumPy-2 venv and refuses unmeasured real data;
+the A3 MuJoCo arm writes and reads a real LeRobot v3 video dataset on CPU;
 encoders are still stubbed).
 The physical-arm plan is NOT complete: Phase 0 bench evidence, measured
 URDF/MoveIt, physical webcam mirroring, pick/place, VLA, and the allowlisted

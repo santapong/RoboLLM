@@ -22,7 +22,7 @@
   <rect x="45" y="360" width="425" height="300" rx="12" class="panel"/><path d="M57 360 H458 Q470 360 470 372 V400 H45 V372 Q45 360 57 360" class="head"/>
   <text x="257" y="388" text-anchor="middle" class="headText">Development view — repository ownership</text>
   <text x="75" y="438" class="text">ros2/robo_arm_driver/</text><text x="275" y="438" class="small">canonical host driver</text>
-  <text x="75" y="476" class="text">hardware/firmware/</text><text x="275" y="476" class="small">Uno safety controller</text>
+  <text x="75" y="476" class="text">hardware/firmware/</text><text x="275" y="476" class="small">Mega safety controller</text>
   <text x="75" y="514" class="text">hardware/sim_uno.py</text><text x="275" y="514" class="small">hardware-free contract test</text>
   <text x="75" y="552" class="text">docs/physical-arm/</text><text x="275" y="552" class="small">gates + architecture + bench data</text>
   <text x="75" y="590" class="text">examples/hand_follow/</text><text x="275" y="590" class="small">reusable teleop research</text>
@@ -54,7 +54,7 @@
   <rect x="330" y="720" width="840" height="215" rx="12" class="panel"/><path d="M342 720 H1158 Q1170 720 1170 732 V760 H330 V732 Q330 720 342 720" class="head"/>
   <text x="750" y="748" text-anchor="middle" class="headText">Physical view — deployment topology</text>
   <rect x="365" y="795" width="150" height="75" rx="7" class="partial"/><text x="440" y="823" text-anchor="middle" class="text">Laptop / Pi 5</text><text x="440" y="845" text-anchor="middle" class="small">ROS 2 Jazzy</text>
-  <rect x="580" y="795" width="150" height="75" rx="7" class="impl"/><text x="655" y="823" text-anchor="middle" class="text">Arduino Uno</text><text x="655" y="845" text-anchor="middle" class="small">arm-fw 2.1</text>
+  <rect x="580" y="795" width="150" height="75" rx="7" class="impl"/><text x="655" y="823" text-anchor="middle" class="text">Arduino Mega</text><text x="655" y="845" text-anchor="middle" class="small">arm-fw 2.1</text>
   <rect x="795" y="795" width="150" height="75" rx="7" class="partial"/><text x="870" y="823" text-anchor="middle" class="text">Servo arm</text><text x="870" y="845" text-anchor="middle" class="small">bench pending</text>
   <rect x="995" y="795" width="140" height="75" rx="7" class="partial"/><text x="1065" y="823" text-anchor="middle" class="text">Webcam</text><text x="1065" y="845" text-anchor="middle" class="small">later phases</text>
   <line x1="515" y1="833" x2="570" y2="833" stroke="#475569" stroke-width="2"/><text x="520" y="817" class="small">USB serial</text><line x1="730" y1="833" x2="785" y2="833" stroke="#475569" stroke-width="2"/><text x="739" y="817" class="small">PWM</text>

@@ -49,7 +49,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 ## Two tracks, one shared artifact
 
 - **Sim track — unblocked today** (laptop + rented GPU hours):
-  MuJoCo scene → LeRobot dataset in sim → SmolVLA fine-tune (~450M,
+  MuJoCo scene → LeRobot dataset in sim (**A3 code-ready**) → SmolVLA fine-tune (~450M,
   3090/A100 hours) → break it deliberately and MEASURE the failure.
   Steps 1–3 are table stakes; step 4 is the contribution. Thesis rows:
   failure detection · mid-chunk abort (the G1 capstone's 50/200 Hz split is
@@ -71,7 +71,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 |---|------|-------|-----|
 | A1 | Real encoders into `readEncoderDeg()` (turns on H5 — the novel research axis) | real-arm | bench |
 | A2 | `camera_logger` → LeRobot dataset format (**code ready; real recording waits for encoders**) | both | Claude, code-only |
-| A3 | MuJoCo arm scene + scripted policy + sim episode recording (extends `examples/mujoco/`) | sim | Claude, code-only |
+| A3 | MuJoCo arm scene + scripted policy + sim episode recording (**code ready; CPU write/read verified**) | sim | Claude, code-only |
 
 ### Tier B — the main quests (pick per track)
 | # | Item | Learning payoff |

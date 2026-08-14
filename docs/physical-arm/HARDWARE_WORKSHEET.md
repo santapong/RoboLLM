@@ -20,7 +20,7 @@ labels or generic 0–180° assumptions.
 - Physical power cutoff location/test: **TODO**
 - Arduino USB remains powered when servo power is cut: **TODO**
 
-Never power the servos from the Uno 5 V pin. For first motion, disconnect the
+Never power the servos from the Mega 5 V pin. For first motion, disconnect the
 linkage or lift the horn off the spline, center the unloaded servo at 90°, cut
 servo power, then attach the horn at the intended mechanical zero.
 

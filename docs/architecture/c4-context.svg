@@ -104,7 +104,7 @@
   <g>
     <rect x="720" y="640" width="300" height="130" rx="6" fill="#64748B"/>
     <text x="870" y="668" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Real DIY arm</text>
-    <text x="870" y="686" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Hardware · Pi 5 + Arduino Uno R3]</text>
+    <text x="870" y="686" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Hardware · Pi 5 + Arduino Mega 2560]</text>
     <text x="870" y="708" font-size="12" fill="#F8FAFC" text-anchor="middle">3D-printed servo arm driven
       <tspan x="870" dy="16">over USB serial</tspan>
     </text>

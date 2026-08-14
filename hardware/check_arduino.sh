@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# check_arduino.sh — one-command health check for the Arduino Uno R3.
-# Run it with the Uno plugged into USB:   hardware/check_arduino.sh
+# check_arduino.sh — one-command health check for the arm's Arduino Mega 2560.
+# Run it with the Mega plugged into USB:   hardware/check_arduino.sh
 # It verifies: toolchain -> port -> permissions -> compile -> flash -> talk.
 #
 # Toolchain = arduino-cli (rootless, in ~/.local/bin + ~/.arduino15).
@@ -9,16 +9,17 @@ set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FW="$HERE/firmware/arm_firmware"
 CLI="${ARDUINO_CLI:-$HOME/.local/bin/arduino-cli}"
-FQBN=arduino:avr:uno
+FQBN="${ARDUINO_FQBN:-arduino:avr:mega}"
 PASS=0; FAIL=0
 ok()   { echo "  ✓ $1"; PASS=$((PASS+1)); }
 bad()  { echo "  ✗ $1"; FAIL=$((FAIL+1)); }
 
 echo "[1/6] toolchain"
-if [ -x "$CLI" ] && "$CLI" core list 2>/dev/null | grep -q arduino:avr; then
-  ok "arduino-cli + arduino:avr core installed"
+if [ -x "$CLI" ] && "$CLI" core list 2>/dev/null | grep -q arduino:avr \
+   && "$CLI" lib list 2>/dev/null | grep -q '^Servo '; then
+  ok "arduino-cli + arduino:avr core + Servo library installed"
 else
-  bad "arduino-cli or the AVR core missing — install (no sudo needed):
+  bad "arduino-cli, the AVR core, or Servo library is missing — install (no sudo needed):
       curl -fsSLO https://github.com/arduino/arduino-cli/releases/latest
       then: arduino-cli core install arduino:avr && arduino-cli lib install Servo"
   exit 1
@@ -30,7 +31,7 @@ if [ -n "$PORT" ]; then
   ok "serial port: $PORT"
   "$CLI" board list 2>/dev/null | grep -v '^$' | sed 's/^/      /'
 else
-  bad "no /dev/ttyACM* or /dev/ttyUSB* — is the Uno plugged in? Try another
+  bad "no /dev/ttyACM* or /dev/ttyUSB* — is the Mega plugged in? Try another
       cable (charge-only USB cables have no data lines) and 'dmesg | tail'."
   exit 1
 fi
@@ -68,7 +69,7 @@ fi
 echo "[6/6] talk to firmware (PING + LED blink)"
 if python3 "$HERE/arm_serial.py" ping && python3 "$HERE/arm_serial.py" led 1 \
    && sleep 1 && python3 "$HERE/arm_serial.py" led 0; then
-  ok "firmware answers — the Uno works fine"
+  ok "firmware answers — the Mega works fine"
 else
   bad "no reply from firmware — check baud/port, see hardware/README.md"
   exit 1

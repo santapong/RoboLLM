@@ -41,7 +41,7 @@ The repository serves two connected tracks:
 - **Simulation and learning:** ROS 2 fundamentals, Nav2, MoveIt, PyBullet,
   MuJoCo, webcam teleoperation, gesture-driven manipulation, and dataset work.
 - **Physical deployment:** a fail-closed 6-DOF arm stack built around ROS 2
-  Jazzy, a validated serial driver, Arduino Uno firmware, and explicit bench
+  Jazzy, a validated serial driver, Arduino Mega firmware, and explicit bench
   acceptance gates.
 
 ## Architecture
@@ -91,7 +91,7 @@ See the [workbench C4 tour](docs/ARCHITECTURE.md) and the
 | CAD | Headless FreeCAD → meshes → inertial URDF → PyBullet verification | **Verified headlessly** | [`cad/`](cad/README.md) |
 | 3D scanning | Visual hull and photogrammetry routes to mesh, URDF, and printable STL | **Software ready; optics gated** | [`scan3d/`](scan3d/README.md) |
 | Physical arm | `FollowJointTrajectory`, validation, serial mapping, simulator, and safe firmware | **v0.2.1 simulation-verified; bench-gated** | [`ros2/`](ros2/README.md) |
-| Robot learning | Demonstration logging, VLA experiments, and classical-vs-learned evaluation | **Planned** | [`ROADMAP.md`](ROADMAP.md) |
+| Robot learning | LeRobot demonstration logging plus a scripted MuJoCo arm dataset path | **A2/A3 code-ready; training planned** | [`ROADMAP.md`](ROADMAP.md) |
 | Language planning | Schema-valid plans routed through allowlisted skills and safety checks | **Planned** | [Phase 5](docs/physical-arm/ROADMAP.md#phase-5) |
 
 Status terms are defined in the
@@ -196,7 +196,7 @@ RoboLLM/
 ├── ros2_mcp_server.py       # 22 language-model tools
 ├── web/                     # browser control and telemetry
 ├── ros2/robo_arm_driver/    # validated physical-arm ROS 2 package
-├── hardware/                # Uno firmware, simulator, and bench tools
+├── hardware/                # Mega firmware, protocol simulator, and bench tools
 ├── examples/                # ROS 2, simulation, teleop, and manipulation path
 ├── cad/                     # FreeCAD → URDF → PyBullet
 ├── scan3d/                  # capture → reconstruction → URDF/STL

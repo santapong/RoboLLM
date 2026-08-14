@@ -14,7 +14,9 @@ JointTrajectory (rad) → robo_arm_driver → serial (deg) → arm-fw → PWM
 
 AI code never sends PWM or raw servo angles. The installable ROS package and
 canonical joint configuration live in `ros2/robo_arm_driver/`; this directory
-owns the Uno firmware, simulator, bench tools, and compatibility launchers.
+owns the Mega firmware, protocol simulator, bench tools, and compatibility
+launchers. `sim_uno.py` keeps its legacy filename but simulates the wire
+protocol, not a board-specific electrical model.
 
 ## Start here
 
@@ -26,7 +28,7 @@ owns the Uno firmware, simulator, bench tools, and compatibility launchers.
    sudo usermod -aG dialout "$USER"
    ```
 
-4. Plug in the Uno and run `hardware/check_arduino.sh`.
+4. Plug in the Mega and run `hardware/check_arduino.sh`.
 5. Commission one unloaded or mechanically safe joint at a time.
 
 The physical config starts with `calibrated: false` and 85–95° limits. Normal
@@ -69,6 +71,9 @@ which must remain on NumPy 1.26.4:
 
 ```bash
 python3 -m venv .venv-lerobot
+.venv-lerobot/bin/pip install \
+  torch==2.10.0 torchvision==0.25.0 \
+  --index-url https://download.pytorch.org/whl/cpu
 .venv-lerobot/bin/pip install -r requirements-lerobot.txt
 ```
 
@@ -102,10 +107,10 @@ ARM_PORT=/dev/pts/N python3 hardware/arm_serial.py state
 
 ## Wiring invariant
 
-- Joint signals: Uno pins 3, 5, 6, 9, 10, 11; gripper signal: pin 4.
+- Joint signals: Mega pins 3, 5, 6, 9, 10, 11; gripper signal: pin 4.
 - Servo power: external supply sized from measured stall current.
-- Ground: supply GND ↔ Uno GND ↔ every servo GND.
-- Never power six servos from the Uno 5 V pin.
+- Ground: supply GND ↔ Mega GND ↔ every servo GND.
+- Never power six servos from the Mega 5 V pin.
 
 The protocol reference is `docs/serial_protocol.md`; the ROS interface is
 documented with C4 and 4+1 SVGs in

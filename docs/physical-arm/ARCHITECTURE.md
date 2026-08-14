@@ -3,7 +3,7 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Documentation](../README.md) · [Arm roadmap](ROADMAP.md) · [Hardware worksheet](HARDWARE_WORKSHEET.md)
 
-Status date: **2026-08-13**. This document describes the target architecture
+Status date: **2026-08-14**. This document describes the target architecture
 and labels delivery status explicitly. The Phase 0 software foundation and
 v0.2.1 simulation-verified driver core exist; the physical bench, measured model, autonomous
 manipulation, learned policy, and language planner are not complete.
@@ -79,7 +79,7 @@ evidence in the roadmap.
 | `/arm_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | input | all six named joints, radians, increasing timestamps |
 | `/joint_states` | `sensor_msgs/JointState` | output | logical radians; commanded estimate until encoders exist |
 | `/arm/status` | `std_msgs/String` JSON | output | calibration lock, state source, activity, last error |
-| USB serial | arm-fw 2.1 text | host ↔ Uno | raw degrees, strict limits, request/reply |
+| USB serial | arm-fw 2.1 text | host ↔ Mega | raw degrees, strict limits, request/reply |
 
 `/arm/status` is intentionally lightweight for v0.2.1. The standard action is
 now the primary MoveIt-facing boundary; the topic remains for compatibility.
@@ -90,7 +90,8 @@ available. A typed status message remains future work.
 ## Configuration ownership
 
 `ros2/robo_arm_driver/config/joints.yaml` is the canonical physical-arm record.
-`hardware/generate_firmware_config.py` generates the Uno header from it. CI
+`hardware/generate_firmware_config.py` generates the Mega firmware header from
+it. CI
 rejects drift between the host and firmware copies of limits, home values,
 rates, pins, and timeout.
 
@@ -102,7 +103,7 @@ the only generic 0–180° configuration.
 
 | Decision | Reason |
 |---|---|
-| Plain serial instead of micro-ROS on Uno R3 | The Uno has 2 KB RAM; a small inspectable protocol is more reliable. |
+| Plain serial on the Mega | A small inspectable safety boundary is sufficient; ROS 2 and planning remain on the Pi. |
 | Radians above the driver, degrees below it | One conversion boundary prevents unit drift and AI access to servo coordinates. |
 | Reject instead of clamp | A bad plan must be visible; silent clamping hides unsafe upstream behavior. |
 | Marker-first perception | ArUco/AprilTag and calibrated TF teach the geometry before detector uncertainty is added. |

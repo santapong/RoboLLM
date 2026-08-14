@@ -12,7 +12,7 @@ set -e
 echo "== [1/5] serial permissions =="
 sudo usermod -aG dialout "$USER"
 
-echo "== [2/5] base tools + arduino-cli (flash the Uno from the Pi too) =="
+echo "== [2/5] base tools + arduino-cli (flash the Mega from the Pi too) =="
 sudo apt update
 sudo apt install -y python3-pip python3-serial python3-yaml git curl
 if ! [ -x "$HOME/.local/bin/arduino-cli" ]; then
@@ -42,16 +42,16 @@ else
   echo "ROS 2 Jazzy already present"
 fi
 
-echo "== [4/5] udev rule: Uno always shows up as /dev/arm_uno =="
-sudo tee /etc/udev/rules.d/99-arm-uno.rules >/dev/null <<'EOF'
-SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="arm_uno", MODE="0666"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", SYMLINK+="arm_uno", MODE="0666"
+echo "== [4/5] udev rule: arm controller shows up as /dev/arm_controller =="
+sudo tee /etc/udev/rules.d/99-arm-controller.rules >/dev/null <<'EOF'
+SUBSYSTEM=="tty", ATTRS{idVendor}=="2341", SYMLINK+="arm_controller", MODE="0666"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", SYMLINK+="arm_controller", MODE="0666"
 EOF
 sudo udevadm control --reload-rules
 
 echo "== [5/5] done =="
-echo "Log out/in for the dialout group, plug in the Uno, then:"
+echo "Log out/in for the dialout group, plug in the Mega, then:"
 echo "  cd ~/RoboLLM && bash hardware/check_arduino.sh"
 echo "  cd ~/RoboLLM/ros2 && colcon build --symlink-install"
 echo "  source /opt/ros/jazzy/setup.bash && source ~/RoboLLM/ros2/install/setup.bash"
-echo "  ros2 launch robo_arm_driver driver.launch.py port:=/dev/arm_uno"
+echo "  ros2 launch robo_arm_driver driver.launch.py port:=/dev/arm_controller"

@@ -3,14 +3,12 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Examples](../README.md) · [Documentation](../../docs/README.md) · [Diagram](docs/mujoco-architecture.svg)
 
-`examples/mujoco/` is a single-file MuJoCo quickstart: `hello_mujoco.py` defines
-a one-hinge pendulum directly in MJCF (MuJoCo's XML format, as an inline Python
-string), compiles it with `MjModel.from_xml_string`, and steps the physics. By
-default it runs headless and prints the hinge angle over 2 s of simulated time;
-with `--view` it opens MuJoCo's interactive 3-D viewer instead. It is the
-CPU-only, learn-the-API companion to the repo's cloud story — the same engine
-scales to thousands of GPU-parallel environments via MuJoCo MJX for RL. No ROS
-anywhere in this example: it is pure `import mujoco`.
+`examples/mujoco/` has two bounded CPU examples. `hello_mujoco.py` teaches the
+model/data/step API with a one-hinge pendulum. `arm_dataset.py` adds the A3
+path: an inline 6-DOF arm plus gripper, a smooth scripted policy, an offscreen
+front camera, and direct LeRobot v3 episode recording. Neither path uses ROS.
+The model is intentionally simple; it proves the data pipeline without
+pretending to be a measured digital twin of the physical arm.
 
 ![hello_mujoco.py pipeline](docs/mujoco-architecture.svg)
 
@@ -40,16 +38,23 @@ anywhere in this example: it is pure `import mujoco`.
 | File | Role |
 |---|---|
 | `hello_mujoco.py` | The whole example: MJCF model, compile, headless loop, `--view` viewer loop |
+| `arm_dataset.py` | 6-DOF + gripper MJCF, scripted targets, offscreen camera, LeRobot v3 writer |
 | `../../requirements-extra.txt` | Supplies the `mujoco` pip package (installed into the project venv) |
+| `../../requirements-lerobot.txt` | Isolated NumPy-2 dataset environment; never install in the ROS venv |
 
 ## Interfaces
 
-No ROS topics, services, or parameters — this is a standalone Python script.
+No ROS topics, services, or parameters — these are standalone Python scripts.
 
 | CLI flag | Effect |
 |---|---|
 | *(none)* | Headless: 1000 steps, prints angle every 100 steps, exits |
 | `--view` | Interactive 3-D viewer via `mujoco.viewer.launch_passive` (display required) |
+
+`arm_dataset.py` accepts `--root`, `--repo-id`, `--task`, `--episodes`,
+`--frames`, `--fps`, and `--validate-only`. Its saved vectors are ordered
+`joint1` … `joint6`, `gripper`, matching the hardware logger's learning
+boundary.
 
 ## Run + verify
 
@@ -59,6 +64,13 @@ No ROS topics, services, or parameters — this is a standalone Python script.
 
 .venv/bin/python examples/mujoco/hello_mujoco.py            # prints the swing
 .venv/bin/python examples/mujoco/hello_mujoco.py --view     # 3D viewer window
+
+# Fast A3 policy check (no LeRobot install or dataset write)
+.venv-lerobot/bin/python examples/mujoco/arm_dataset.py --validate-only
+
+# One 5-second, 20 Hz LeRobot v3 episode with rendered front-camera video
+.venv-lerobot/bin/python examples/mujoco/arm_dataset.py \
+  --task "move every arm joint smoothly" --episodes 1 --frames 100 --fps 20
 ```
 
 Expected headless output (verified with mujoco 3.10.0) — the angle starts at
@@ -82,6 +94,13 @@ the `mujoco` wheel is healthy in the venv.
 - **Install with the constraint file.** `mujoco` must not drag numpy to 2.x —
   always `pip install -c constraints.txt` (ROS Jazzy ABI law; see repo
   `CLAUDE.md`).
+- **Keep the dataset environment separate.** LeRobot 0.6 needs NumPy 2.x.
+  Follow `hardware/README.md` to install CPU-only PyTorch before
+  `requirements-lerobot.txt`; the latter pins TorchCodec to the PyTorch-2.10
+  compatible line.
+- **A3 is pipeline evidence, not sim-to-real evidence.** The inline arm has
+  generic links and actuators. Replace it with measured geometry and dynamics
+  only after the physical worksheet exists.
 - **`--view` needs a display** (GLFW). Over SSH/headless it will fail to open a
   window — use the default headless mode there.
 - **MJCF ≠ URDF.** MuJoCo's native format is MJCF; the URDFs produced by

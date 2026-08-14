@@ -1,14 +1,14 @@
 // arm_firmware.ino — arm-fw 2.1: fail-closed 6-DOF arm servo controller.
 //
-// The Uno is a dumb servo controller; all planning/kinematics lives on the host
-// (2 KB RAM can't run micro-ROS — plain serial is the right transport).
+// The Mega is a servo safety controller; all planning/kinematics stays on the
+// host. Plain serial keeps this timing boundary small and inspectable.
 //
 // v2.1 adds generated per-arm limits, a commissioning-only single-joint
 // command, strict invalid-command rejection, and a communication watchdog.
 //
 // Protocol (115200 baud, one command per line, every motion/state command
 // replies with ONE state line):
-//   Pi -> Uno:
+//   Pi -> Mega:
 //     S d0 d1 d2 d3 d4 d5 g   set all targets (calibrated mode only)        -> s
 //     C channel deg            move one joint (commissioning mode only)     -> s
 //     Q                        query state, no motion                        -> s
@@ -17,7 +17,7 @@
 //     X                        e-stop: detach servos (safe, hand-movable)    -> s
 //     P                        ping                                          -> # pong arm-fw 2.1
 //     L 1 | L 0                onboard LED, smoke test without servos        -> # led
-//   Uno -> Pi:
+//   Mega -> Pi:
 //     s d0..d5 g t_ms          MEASURED angles (deg), gripper, millis()
 //     # ...                    comment / banner        ! ...    error
 //
@@ -27,7 +27,7 @@
 // commanded position until real encoders are wired: that stub IS the
 // "commanded state" baseline. Swap it out before recording real datasets.
 //
-// Wiring: servo POWER from an external 5-6 V supply (NOT the Uno's 5V pin),
+// Wiring: servo POWER from an external 5-6 V supply (NOT the Mega's 5V pin),
 // grounds tied together.
 
 #include <Servo.h>
@@ -132,7 +132,7 @@ bool parseSet(char *args) {
   if (g < GMIN || g > GMAX) return false;
   for (uint8_t i = 0; i < NJOINTS; i++) target[i] = tmp[i];
   gTarget = g;
-  attachCommissionJoint((uint8_t)channel);
+  if (!enabled || commissioning_channel != -1) attachAll();
   return true;
 }
 
@@ -147,8 +147,7 @@ bool parseCommission(char *args) {
   if (!parseFloatToken(degreeToken, &degrees)) return false;
   if (degrees < JMIN[channel] || degrees > JMAX[channel]) return false;
   target[channel] = degrees;
-  if (!enabled) attachAll();
-  last_command = millis();
+  attachCommissionJoint((uint8_t)channel);
   return true;
 }
 

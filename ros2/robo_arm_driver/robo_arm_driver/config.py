@@ -203,7 +203,9 @@ def load_arm_config(path: str | os.PathLike[str] | None = None) -> ArmConfig:
         if not 0.0 < joint.max_velocity_deg_s <= 180.0:
             raise ConfigError(f"{context}: max_velocity_deg_s must be in (0, 180]")
         if not 2 <= joint.servo_pin <= 12:
-            raise ConfigError(f"{context}: Uno servo_pin must be in [2, 12]")
+            raise ConfigError(
+                f"{context}: servo_pin must be in [2, 12] for the current wiring profile"
+            )
         joints.append(joint)
 
     if sorted(j.channel for j in joints) != list(range(NJOINTS)):

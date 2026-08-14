@@ -44,14 +44,14 @@ repeatable operations or acceptance evidence.
 | [`../examples/ros2_py/TECHNICAL.md`](../examples/ros2_py/TECHNICAL.md) | The 10 rclpy lessons: per-script internals, topic tables, run + verify. |
 | [`../examples/colcon_pkg/patrol_bot/TECHNICAL.md`](../examples/colcon_pkg/patrol_bot/TECHNICAL.md) | The first real ament_python package: anatomy, params, launch plumbing. |
 | [`../examples/pybullet/TECHNICAL.md`](../examples/pybullet/TECHNICAL.md) | PyBullet quickstart + closed-form 2-link IK on the CAD arm. |
-| [`../examples/mujoco/TECHNICAL.md`](../examples/mujoco/TECHNICAL.md) | MuJoCo pendulum: inline MJCF, headless stepping, the viewer. |
+| [`../examples/mujoco/TECHNICAL.md`](../examples/mujoco/TECHNICAL.md) | MuJoCo pendulum plus scripted 6-DOF LeRobot dataset recording. |
 | [`../examples/panda_arm/TECHNICAL.md`](../examples/panda_arm/TECHNICAL.md) | The five Panda demos layer by layer: FK/IK → serial → vision sort. |
 | [`../examples/hand_follow/TECHNICAL.md`](../examples/hand_follow/TECHNICAL.md) | hand_follow node internals: MediaPipe → One-Euro → IK → 20 Hz stream. |
 | [`../examples/gen3_pick_place/TECHNICAL.md`](../examples/gen3_pick_place/TECHNICAL.md) | Gesture state machine, `/compute_ik` streaming, planning-scene attach/detach. |
 | [`../examples/humanoid_mirror/TECHNICAL.md`](../examples/humanoid_mirror/TECHNICAL.md) | FFW geometry, tracking, retargeting, measured traps, and acceptance evidence. |
 | [`../examples/talos_mirror/TECHNICAL.md`](../examples/talos_mirror/TECHNICAL.md) | TALOS model, QP/classical retargeting, limits, and test harnesses. |
 | [`../examples/wall_weld/TECHNICAL.md`](../examples/wall_weld/TECHNICAL.md) | Fist-triggered autonomous wall welding: raster planner, marker tracking, weld state machine. |
-| [`../hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) | The real Uno arm stack: firmware, serial protocol, driver, ROS 2 bridge. |
+| [`../hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) | The real Mega arm stack: firmware, serial protocol, driver, ROS 2 bridge. |
 | [`physical-arm/ARCHITECTURE.md`](physical-arm/ARCHITECTURE.md) | Physical-arm safety boundary, ROS interfaces, and configuration ownership. |
 | [`physical-arm/HARDWARE_WORKSHEET.md`](physical-arm/HARDWARE_WORKSHEET.md) | Phase 0 bench measurements and commissioning procedure. |
 | [`physical-arm/ROADMAP.md`](physical-arm/ROADMAP.md) | Honest Phase 0–5 status plus v0.1→v1.0 evidence gates. |
@@ -70,7 +70,7 @@ repeatable operations or acceptance evidence.
 | [`../examples/humanoid_mirror/docs/humanoid_mirror-architecture.svg`](../examples/humanoid_mirror/docs/humanoid_mirror-architecture.svg) | Diagram — webcam pose through filtering and retargeting to FFW controllers. |
 | [`../examples/talos_mirror/docs/talos_mirror-architecture.svg`](../examples/talos_mirror/docs/talos_mirror-architecture.svg) | Diagram — whole-body TALOS tracking, retargeting, control, and RViz path. |
 | [`../examples/wall_weld/docs/wall_weld-architecture.svg`](../examples/wall_weld/docs/wall_weld-architecture.svg) | Diagram — gesture trigger, raster planner, state machine, MoveIt, and RViz. |
-| [`../hardware/docs/hardware-architecture.svg`](../hardware/docs/hardware-architecture.svg) | Diagram — ROS 2 bridge → serial protocol → Uno → servos. |
+| [`../hardware/docs/hardware-architecture.svg`](../hardware/docs/hardware-architecture.svg) | Diagram — ROS 2 bridge → serial protocol → Mega → servos. |
 | [`../web/docs/web-architecture.svg`](../web/docs/web-architecture.svg) | Diagram — browser ↔ FastAPI ↔ shared bridge ↔ ROS 2 stack. |
 | [`../scan3d/docs/scan3d-architecture.svg`](../scan3d/docs/scan3d-architecture.svg) | Diagram — capture → visual hull / COLMAP → mesh → URDF. |
 | [`../cad/docs/cad-architecture.svg`](../cad/docs/cad-architecture.svg) | Diagram — freecadcmd build → mesh export → URDF → PyBullet check. |
@@ -78,7 +78,7 @@ repeatable operations or acceptance evidence.
 
 Module READMEs live next to their code: [`../cad/`](../cad/README.md)
 (FreeCAD → URDF), [`../scan3d/`](../scan3d/README.md) (webcam → mesh → URDF),
-[`../hardware/`](../hardware/README.md) (the real Uno arm),
+[`../hardware/`](../hardware/README.md) (the real Mega arm),
 [`../mcpb/`](../mcpb/README.md) (Claude Desktop bundle).
 
 ## Module and operations guides

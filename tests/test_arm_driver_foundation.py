@@ -90,3 +90,14 @@ def test_physical_and_simulation_launch_profiles_are_separate():
     simulation = (launch_dir / "simulation.launch.py").read_text(encoding="utf-8")
     assert '"config" / "joints.yaml"' in physical
     assert '"config" / "joints.sim.yaml"' in simulation
+
+
+def test_mega_firmware_keeps_full_and_commissioning_attach_paths_separate():
+    firmware_dir = ROOT / "hardware" / "firmware" / "arm_firmware"
+    firmware = (firmware_dir / "arm_firmware.ino").read_text(encoding="utf-8")
+    makefile = (firmware_dir / "Makefile").read_text(encoding="utf-8")
+
+    assert "FQBN ?= arduino:avr:mega" in makefile
+    assert "if (!enabled || commissioning_channel != -1) attachAll();" in firmware
+    assert "attachCommissionJoint((uint8_t)channel);" in firmware
+    assert firmware.count("attachCommissionJoint((uint8_t)channel);") == 1

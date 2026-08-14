@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 800" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
   <title id="title">RoboLLM arm driver C4 component diagram</title>
-  <desc id="desc">Components inside robo_arm_driver and their relationship to ROS 2, canonical YAML configuration, simulated Uno, and real firmware.</desc>
+  <desc id="desc">Components inside robo_arm_driver and their relationship to ROS 2, canonical YAML configuration, the protocol simulator, and real Mega firmware.</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#475569"/></marker>
     <style>.title{font-size:25px;font-weight:700;fill:#0f172a}.sub{font-size:13px;fill:#475569}.boundary{fill:#eff6ff;stroke:#0F6CBD;stroke-width:2;stroke-dasharray:8 5}.component{fill:#0F6CBD;stroke:#0F2742;stroke-width:2}.external{fill:#64748b;stroke:#334155;stroke-width:2}.name{font-size:15px;font-weight:700;fill:white}.type{font-size:11px;font-style:italic;fill:#dbeafe}.body{font-size:11px;fill:white}.line{stroke:#475569;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:11px;fill:#334155}.guard{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.guardText{font-size:13px;font-weight:700;fill:#9a3412}</style>

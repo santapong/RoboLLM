@@ -55,10 +55,10 @@ class ArmSerial:
         port = port or os.environ.get("ARM_PORT") or find_arduino_port()
         if port is None:
             raise RuntimeError(
-                "No Arduino found. Plug the Uno in via USB and check "
+                "No Arduino found. Plug the Mega in via USB and check "
                 "`ls /dev/ttyACM*` (you must be in the dialout group).")
         self.ser = serial.Serial(port, baud, timeout=1.0)
-        time.sleep(boot_wait_s)  # opening a real Uno toggles DTR and resets it
+        time.sleep(boot_wait_s)  # opening the USB serial port resets the board
         self.ser.reset_input_buffer()
         self.port = port
 

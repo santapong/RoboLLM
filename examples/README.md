@@ -140,12 +140,14 @@ Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.
 |------|----------|-----------|
 | `pybullet/load_robot.py` | PyBullet | Load a URDF, gravity, stepping physics, joints |
 | `mujoco/hello_mujoco.py` | MuJoCo | MJCF models, the engine behind modern robot-learning |
+| `mujoco/arm_dataset.py` | MuJoCo + LeRobot | Script a 6-DOF policy and record a video dataset |
 
 ```bash
 .venv/bin/python examples/pybullet/load_robot.py            # GUI window
 .venv/bin/python examples/pybullet/load_robot.py --headless # just prints
 .venv/bin/python examples/mujoco/hello_mujoco.py            # prints the swing
 .venv/bin/python examples/mujoco/hello_mujoco.py --view     # 3D viewer
+.venv-lerobot/bin/python examples/mujoco/arm_dataset.py --validate-only
 ```
 Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) · [`mujoco/TECHNICAL.md`](mujoco/TECHNICAL.md) — engine internals, MJCF vs URDF, diagrams.
 

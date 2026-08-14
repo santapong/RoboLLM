@@ -8,7 +8,7 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
-## 2026-08-14 — LeRobot dataset recorder
+## 2026-08-14 — LeRobot recorder, MuJoCo A3, and Mega target
 
 ### Added
 
@@ -18,11 +18,27 @@ after the touched demos verifiably run).
   NumPy 2.x while the ROS Jazzy environment must stay on NumPy 1.26.4.
 - Refuse commanded-state recording by default; the override is explicitly for
   simulation pipeline checks until physical encoders are installed.
+- Added a compact MuJoCo 6-DOF arm plus gripper, smooth scripted policy,
+  offscreen camera, and direct LeRobot v3 simulation recorder.
+
+### Changed
+
+- Made Arduino Mega 2560 the default firmware/check target while preserving an
+  Uno compile override.
+- Pin TorchCodec 0.10 for compatibility with CPU-only PyTorch 2.10.
+
+### Fixed
+
+- Corrected swapped full-arm/commissioning servo attach paths in arm-fw 2.1;
+  the full-set parser previously referenced an undefined channel variable.
 
 ### Verified
 
 - Hardware-free tests cover the official create/add/save/finalize flow, schema,
   float32 vectors, task labels, and BGR-to-RGB camera conversion.
+- A 20-frame rendered episode writes, finalizes, reloads, and decodes through
+  LeRobot 0.6 on CPU; the Mega and optional Uno targets both compile with the
+  Arduino AVR 1.8.8 core and Servo 1.3.0.
 
 ## 2026-08-13 — unified documentation theme
 

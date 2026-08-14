@@ -3,7 +3,7 @@
 #   make upload     -> compile + flash over USB (PORT=/dev/ttyACM0 by default)
 #   make monitor    -> serial monitor at 115200
 CLI  ?= $(HOME)/.local/bin/arduino-cli
-FQBN ?= arduino:avr:uno
+FQBN ?= arduino:avr:mega
 PORT ?= /dev/ttyACM0
 
 all: check-config
