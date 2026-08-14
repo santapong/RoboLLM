@@ -3,12 +3,17 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Examples](../README.md) · [Documentation](../../docs/README.md) · [Diagram](docs/mujoco-architecture.svg)
 
-`examples/mujoco/` has two bounded CPU examples. `hello_mujoco.py` teaches the
+`examples/mujoco/` has two bounded CPU lessons plus the prepared B1 benchmark. `hello_mujoco.py` teaches the
 model/data/step API with a one-hinge pendulum. `arm_dataset.py` adds the A3
 path: an inline 6-DOF arm plus gripper, a smooth scripted policy, an offscreen
 front camera, and direct LeRobot v3 episode recording. Neither path uses ROS.
 The model is intentionally simple; it proves the data pipeline without
 pretending to be a measured digital twin of the physical arm.
+
+The [B1 runbook](B1.md) adds a visual red-target task without replacing A3:
+five seeded reachable goal families, balanced LeRobot train/evaluation splits,
+fixed robustness suites, a fail-closed action-chunk wrapper, CPU baselines and
+fault injection, and a dry-run-first SmolVLA GPU handoff.
 
 ![MuJoCo pendulum and A3 dataset pipelines](docs/mujoco-architecture.svg)
 
@@ -39,6 +44,10 @@ pretending to be a measured digital twin of the physical arm.
 |---|---|
 | `hello_mujoco.py` | The whole example: MJCF model, compile, headless loop, `--view` viewer loop |
 | `arm_dataset.py` | 6-DOF + gripper MJCF, scripted targets, offscreen camera, LeRobot v3 writer |
+| `reaching.py` | Frozen 20 Hz red-target task, seeded goals, success detector, oracle |
+| `reaching_dataset.py` | LeRobot writer, reproducibility manifest, split/video validator |
+| `evaluate_reaching.py` | Policy adapters, safety wrapper, fixed suites, JSON metrics |
+| `B1.md` | Dataset/evaluation interfaces and guarded GPU operations runbook |
 | `../../requirements-extra.txt` | Supplies the `mujoco` pip package (installed into the project venv) |
 | `../../requirements-lerobot.txt` | Isolated NumPy-2 dataset environment; never install in the ROS venv |
 

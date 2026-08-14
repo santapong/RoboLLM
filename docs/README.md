@@ -10,7 +10,7 @@ repeatable operations or acceptance evidence.
 | Doc | One line |
 |-----|----------|
 | [`../CHANGELOG.md`](../CHANGELOG.md) | Project changelog — notable changes by date. |
-| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Current checkpoint — A2/A3 software evidence, physical gates, and the next phase. |
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Current checkpoint — B1 preparation evidence, GPU pause, and unchanged physical gates. |
 | [`STYLE_GUIDE.md`](STYLE_GUIDE.md) | Theme, status vocabulary, navigation, and evidence conventions. |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The C4 tour of the workbench: context → containers → components, diagrams + narrative. |
 | [`architecture/c4-context.svg`](architecture/c4-context.svg) | C4 level 1 — humans, language-model clients, ROS 2/Gazebo, and the real arm. |
@@ -46,6 +46,7 @@ repeatable operations or acceptance evidence.
 | [`../examples/colcon_pkg/patrol_bot/TECHNICAL.md`](../examples/colcon_pkg/patrol_bot/TECHNICAL.md) | The first real ament_python package: anatomy, params, launch plumbing. |
 | [`../examples/pybullet/TECHNICAL.md`](../examples/pybullet/TECHNICAL.md) | PyBullet quickstart + closed-form 2-link IK on the CAD arm. |
 | [`../examples/mujoco/TECHNICAL.md`](../examples/mujoco/TECHNICAL.md) | MuJoCo pendulum plus scripted 6-DOF LeRobot dataset recording. |
+| [`../examples/mujoco/B1.md`](../examples/mujoco/B1.md) | Red-target benchmark, dataset/evaluator interfaces, CPU evidence, and guarded GPU handoff. |
 | [`../examples/panda_arm/TECHNICAL.md`](../examples/panda_arm/TECHNICAL.md) | The five Panda demos layer by layer: FK/IK → serial → vision sort. |
 | [`../examples/hand_follow/TECHNICAL.md`](../examples/hand_follow/TECHNICAL.md) | hand_follow node internals: MediaPipe → One-Euro → IK → 20 Hz stream. |
 | [`../examples/gen3_pick_place/TECHNICAL.md`](../examples/gen3_pick_place/TECHNICAL.md) | Gesture state machine, `/compute_ik` streaming, planning-scene attach/detach. |

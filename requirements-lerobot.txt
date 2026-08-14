@@ -3,7 +3,8 @@
 # On CPU-only Linux, install torch 2.10 + torchvision 0.25 from PyTorch's CPU
 # index first. TorchCodec 0.10 is the compatible decoder for that torch line.
 lerobot[dataset]==0.6.0
+numpy==2.2.6
 mujoco==3.10.0
 torchcodec==0.10.0
-pyserial
-PyYAML
+pyserial==3.5
+PyYAML==6.0.3

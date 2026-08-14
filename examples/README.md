@@ -141,6 +141,8 @@ Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.
 | `pybullet/load_robot.py` | PyBullet | Load a URDF, gravity, stepping physics, joints |
 | `mujoco/hello_mujoco.py` | MuJoCo | MJCF models, the engine behind modern robot-learning |
 | `mujoco/arm_dataset.py` | MuJoCo + LeRobot | Script a 6-DOF policy and record a video dataset |
+| `mujoco/reaching_dataset.py` | MuJoCo + LeRobot | Generate/validate the balanced visual red-target dataset |
+| `mujoco/evaluate_reaching.py` | MuJoCo + SmolVLA adapter | Run fixed suites through the fail-closed policy wrapper |
 
 ```bash
 .venv/bin/python examples/pybullet/load_robot.py            # GUI window
@@ -149,7 +151,7 @@ Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.
 .venv/bin/python examples/mujoco/hello_mujoco.py --view     # 3D viewer
 .venv-lerobot/bin/python examples/mujoco/arm_dataset.py --validate-only
 ```
-Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) · [`mujoco/TECHNICAL.md`](mujoco/TECHNICAL.md) — engine internals, MJCF vs URDF, diagrams.
+Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) · [`mujoco/TECHNICAL.md`](mujoco/TECHNICAL.md) — engine internals, MJCF vs URDF, diagrams. The [B1 runbook](mujoco/B1.md) freezes the reaching benchmark and GPU handoff.
 
 ## The whole map of robot software (where each piece fits)
 - **Middleware**: ROS 2 (Jazzy) — you have it. The nervous system: topics/services/actions.

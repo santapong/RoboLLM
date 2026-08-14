@@ -91,7 +91,7 @@ See the [workbench C4 tour](docs/ARCHITECTURE.md) and the
 | CAD | Headless FreeCAD → meshes → inertial URDF → PyBullet verification | **Verified headlessly** | [`cad/`](cad/README.md) |
 | 3D scanning | Visual hull and photogrammetry routes to mesh, URDF, and printable STL | **Software ready; optics gated** | [`scan3d/`](scan3d/README.md) |
 | Physical arm | `FollowJointTrajectory`, validation, serial mapping, simulator, and safe firmware | **v0.2.1 simulation-verified; bench-gated** | [`ros2/`](ros2/README.md) |
-| Robot learning | LeRobot demonstration logging plus a scripted MuJoCo arm dataset path | **A2/A3 code-ready; training planned** | [`ROADMAP.md`](ROADMAP.md) |
+| Robot learning | Visual red-target task, 50-episode LeRobot recipe, safety evaluator, and guarded SmolVLA handoff | **B1 preparation complete; fine-tune GPU-paused** | [`B1 runbook`](examples/mujoco/B1.md) |
 | Language planning | Schema-valid plans routed through allowlisted skills and safety checks | **Planned** | [Phase 5](docs/physical-arm/ROADMAP.md#phase-5) |
 
 Status terms are defined in the
@@ -216,6 +216,7 @@ RoboLLM/
 | [Physical-arm roadmap](docs/physical-arm/ROADMAP.md) | Honest Phase 0–5 status and evidence gates |
 | [Learning roadmap](ROADMAP.md) | Research priorities, simulation/real tracks, and graduation rules |
 | [Examples](examples/README.md) | Progressive robot-software learning path |
+| [B1 GPU handoff](examples/mujoco/B1.md) | Frozen reaching benchmark, dataset/evaluator CLIs, and dry-run-first training workflow |
 | [Changelog](CHANGELOG.md) | Delivered changes and verification evidence |
 | [Branching workflow](docs/branching.md) | `develop`, `main`, and experiment branch conventions |
 

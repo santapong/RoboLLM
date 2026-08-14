@@ -8,6 +8,33 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-08-15 — B1 preparation complete; learned policy GPU-paused
+
+### Added
+
+- Added the 20 Hz visual red-target task with five balanced, seeded reachable
+  goal families, seven-axis slew-limited actions, and five-frame success gate.
+- Added reproducible 40-train/10-evaluation LeRobot generation, manifests, full
+  video/schema/timing/bounds/split validation, and compact acceptance evidence.
+- Added frozen nominal, camera, lighting, occlusion, and relocation evaluator
+  suites with Oracle, hold, noise, and future SmolVLA policy adapters.
+- Added fail-closed whole-chunk validation and NaN/range/overspeed/camera-loss
+  fault injection, queue flushing, hold-last-safe behavior, and JSON metrics.
+- Added a pinned, non-ROS SmolVLA environment/config plus dry-run-first scripts
+  for preflight, transfer, smoke/full training, evaluation, selection, result
+  retrieval, and recoverable cleanup.
+
+### Verified
+
+- The oracle passed 100/100 fixed seeds and every 20-episode robustness suite;
+  hold/noise baselines remained materially below it.
+- All injected invalid actions were rejected before MuJoCo, and camera loss
+  aborted before one 20 Hz control step.
+- Generated 50 balanced episodes (587 frames), reloaded both isolated splits,
+  and decoded/validated all 587 video frames with LeRobot 0.6 on CPU.
+- No model was downloaded and no GPU or paid infrastructure was used. SmolVLA
+  fine-tuning and the learned-policy study remain paused until GPU access.
+
 ## 2026-08-14 — LeRobot recorder, MuJoCo A3, and Mega target
 
 ### Added

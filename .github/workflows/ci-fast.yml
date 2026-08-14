@@ -20,18 +20,20 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install test deps (numpy stays 1.26.4-pinned; not needed here)
+      - name: Install test deps (ROS-compatible NumPy + pinned MuJoCo)
         run: |
           python -m pip install --upgrade pip
-          # constraints.txt guards the numpy 1.26.4 ABI law even though these
-          # pure-python tests don't import numpy.
-          pip install -c constraints.txt pytest hypothesis ruff pyserial pyyaml
+          # The B1 CPU contracts exercise the real MuJoCo model. Keep this on
+          # the ROS-compatible NumPy ABI line; LeRobot stays in its own env.
+          pip install -c constraints.txt \
+            numpy==1.26.4 mujoco==3.10.0 opencv-python-headless==4.10.0.84 \
+            pytest hypothesis ruff pyserial pyyaml
 
       - name: Ruff (errors only — E9, F)
         run: >-
           ruff check --select E9,F
           robot_bridge.py ros2_mcp_server.py web/server.py hardware/
-          ros2/robo_arm_driver/robo_arm_driver/ tests/
+          ros2/robo_arm_driver/robo_arm_driver/ examples/mujoco/ scripts/ tests/
 
       - name: Firmware config is synchronized
         run: python hardware/generate_firmware_config.py --check
