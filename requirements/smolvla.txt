@@ -1,0 +1,9 @@
+# Isolated GPU-only environment for the deferred B1 fine-tune. Never install
+# this into the ROS Jazzy venv (which is constrained to NumPy 1.26.4).
+lerobot[smolvla]==0.6.0
+numpy==2.2.6
+mujoco==3.10.0
+torch==2.10.0
+torchvision==0.25.0
+torchcodec==0.10.0
+PyYAML==6.0.3

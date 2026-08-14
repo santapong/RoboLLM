@@ -48,8 +48,8 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 
 ## Two tracks, one shared artifact
 
-- **Sim track — unblocked today** (laptop + rented GPU hours):
-  MuJoCo scene → LeRobot dataset in sim (**A3 code-ready**) → SmolVLA fine-tune (~450M,
+- **Sim track — prepared; GPU-paused** (laptop + rented GPU hours):
+  MuJoCo scene → LeRobot dataset in sim (**B1 preparation CPU-verified**) → SmolVLA fine-tune (~450M,
   3090/A100 hours) → break it deliberately and MEASURE the failure.
   Steps 1–3 are table stakes; step 4 is the contribution. Thesis rows:
   failure detection · mid-chunk abort (the G1 capstone's 50/200 Hz split is
@@ -76,7 +76,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 ### Tier B — the main quests (pick per track)
 | # | Item | Learning payoff |
 |---|------|-----------------|
-| B1 | Sim ladder steps 2–4: sim dataset → SmolVLA fine-tune (rented GPU) → measured failure study | L4, evaluation rigor; the thesis seed |
+| B1 | **Preparation complete:** task/dataset/evaluator/GPU handoff CPU-verified. **Completion paused—GPU required:** SmolVLA fine-tune + frozen-suite learned-policy study | L4, evaluation rigor; the thesis seed |
 | B2 | Phase B demo collection via hand-teleop on scanned objects (30–50 episodes) | L2+L4 data; diversity-kit lessons → graduates to RLM |
 | B3 | G1 locomotion capstone (private research brief: MuJoCo G1 + ros2_control + Nav2, phase-gated) | L3; brings EKF + Nav2 + BTs in on their triggers |
 

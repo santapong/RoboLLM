@@ -3,8 +3,8 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../README.md) · [Documentation](README.md) · [Roadmap](../ROADMAP.md) · [Architecture](ARCHITECTURE.md)
 
-Status date: **2026-08-14** · Branch: **`develop`** · Software milestone:
-**A3 complete**.
+Status date: **2026-08-15** · Branch: **`develop`** · Software milestone:
+**B1 preparation complete; learned-policy work paused—GPU required**.
 
 This page is the short, honest answer to “what phase is RoboLLM in now?” It
 separates reproducible software evidence from work that needs the physical arm.
@@ -13,34 +13,43 @@ separates reproducible software evidence from work that needs the physical arm.
 
 | Track | Status | Evidence | Next gate |
 |---|---|---|---|
+| Repository organization | **Complete** | Shared code, apps, config, dependencies, operations, and tests have canonical ownership; compatibility launchers preserve existing commands | Enforce the placement contract in review |
 | Shared dataset boundary (A2) | **Code-ready** | LeRobot v3 camera/state/action/task recorder; commanded state is refused by default | Real encoders and accepted demonstrations |
 | Simulation dataset path (A3) | **Verified on CPU** | Scripted 6-DOF MuJoCo arm writes, reloads, and decodes a LeRobot v3 video episode | B1 policy fine-tuning and measured failure study |
+| B1 benchmark preparation | **Complete on CPU** | Frozen visual target task; 50 balanced episodes/587 decoded frames; fixed suites; 100/100 oracle; safety faults rejected | Train and evaluate a real SmolVLA checkpoint on GPU |
+| B1 SmolVLA fine-tune/study | **Paused—GPU required** | Pinned local-only configuration and guarded transfer/train/evaluate/retrieve workflow; all commands dry-run verified | Provision GPU, explicitly confirm training, retrieve compact results |
 | Arduino controller | **Code-ready** | Mega 2560 is the default; arm-fw 2.1 compiles with AVR core 1.8.8 and Servo 1.3.0 | Flash, wiring, cutoff, and unloaded commissioning |
 | Physical Phase 0 | **Bench-gated** | Fail-closed profile, generated limits, watchdog, simulator, and worksheet exist | Record electrical/mechanical measurements and repeatable HOME evidence |
 | Physical Phase 1 | **Simulation-verified; bench-gated** | ROS 2 trajectory action, validation, serial PTY, state/status, success/cancel/rejection tests | Measured URDF, MoveIt execution, and five repeatable poses |
 | Physical Phases 2–5 | **Planned / reusable examples only** | Teleoperation, manipulation, and planning examples exist elsewhere in the repository | Promote one phase at a time after the preceding physical gate passes |
 
-## What “A3 complete” means
+## What “B1 preparation complete” means
 
-`examples/mujoco/arm_dataset.py` provides one deliberately small pipeline:
+The original A3 joint-wave pipeline remains intact. B1 adds a separate frozen
+visual target-reaching benchmark:
 
 ```text
-inline 6-DOF arm MJCF + gripper
+inline 6-DOF arm MJCF + gripper + red target
               ↓
-smooth deterministic joint policy
+five seeded goal families + oracle demonstrations
               ↓
 MuJoCo physics + offscreen front camera
               ↓
-LeRobot v3 video + state + action + task
+40 train + 10 evaluation LeRobot v3 episodes
               ↓
-reload and decode acceptance check
+decode/integrity/split validation + frozen policy suites
 ```
 
-The accepted CPU run recorded 20 frames at 20 Hz, reloaded one episode, decoded
-the `3 × 240 × 320` front-camera frame, and preserved seven-element state and
-action vectors. The five-second policy validation measured **0.0856 rad RMSE**.
-This proves the simulation-to-dataset plumbing, not physical accuracy or policy
-quality.
+The accepted CPU run generated **50 episodes** balanced at 10 per goal family,
+reloaded isolated train/evaluation splits, and decoded all **587 rendered video
+frames**. The oracle succeeded on **100/100 fixed seeds** and on each frozen
+20-episode robustness suite. Hold/noise policies remained materially below the
+oracle. NaN, out-of-range, and overspeed actions were rejected before MuJoCo;
+camera dropout aborted before one 20 Hz control step.
+
+This proves benchmark plumbing, task solvability, and evaluator refusal
+behavior. It does not prove learned-policy quality, physical accuracy, or
+sim-to-real transfer. See the [B1 runbook](../examples/mujoco/B1.md).
 
 ## Hardware boundary
 
@@ -60,14 +69,14 @@ Before physical movement:
 The authoritative bench checklist remains
 [`physical-arm/HARDWARE_WORKSHEET.md`](physical-arm/HARDWARE_WORKSHEET.md).
 
-## Next software phase
+## Remaining B1 gate
 
-The next unblocked software milestone is **B1**:
-
-1. Generate a larger, task-specific simulation dataset.
-2. Fine-tune a small policy such as SmolVLA on rented GPU capacity.
-3. Evaluate success, error, latency, and unsafe outputs on fixed scenarios.
-4. Deliberately introduce failures and measure detection, refusal, and abort.
+The design and CPU preparation are finished. B1 is intentionally not marked
+complete until a compatible `lerobot/smolvla_base` fine-tune is trained for the
+checked 20,000-step configuration and its 5k/10k/20k candidates are evaluated
+on the frozen suites. That work requires a GPU and explicit execution flags.
+No model download, paid compute, W&B run, Hub upload, or learned-policy claim
+was made during preparation.
 
 This work must remain behind the same deterministic validator used by classical
 trajectories. It does not remove or weaken the physical Phase 0/1 gates.

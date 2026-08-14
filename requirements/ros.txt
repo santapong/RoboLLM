@@ -1,0 +1,25 @@
+# Extra Python packages (beyond ROS 2's own) used by this project.
+# Install into the project venv (which sees system rclpy via --system-site-packages):
+#     .venv/bin/python -m pip install -r requirements/ros.txt
+#
+# IMPORTANT: numpy is pinned to 1.26.x to match the numpy ROS 2 Jazzy was built
+# against. Do NOT let another package upgrade it to 2.x — that breaks rclpy.
+numpy==1.26.4
+
+# physical arm host driver
+pyserial
+PyYAML
+
+# web dashboard
+fastapi
+uvicorn
+websockets
+
+# 3D webcam scanning
+opencv-python==4.10.0.84   # last line compatible with numpy 1.26
+scikit-image
+trimesh
+
+# CPU physics-sim examples
+pybullet
+mujoco

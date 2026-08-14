@@ -1,9 +1,2 @@
-# Isolated dataset environment. Do not install this in the ROS Jazzy venv:
-# LeRobot 0.6 requires NumPy 2.x, while ROS Jazzy here requires NumPy 1.26.4.
-# On CPU-only Linux, install torch 2.10 + torchvision 0.25 from PyTorch's CPU
-# index first. TorchCodec 0.10 is the compatible decoder for that torch line.
-lerobot[dataset]==0.6.0
-mujoco==3.10.0
-torchcodec==0.10.0
-pyserial
-PyYAML
+# Compatibility include. Prefer requirements/lerobot.txt in new commands.
+-r requirements/lerobot.txt

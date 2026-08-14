@@ -117,10 +117,10 @@
   </g>
 
   <!-- ============ Containers inside the boundary ============ -->
-  <!-- ros2_mcp_server.py -->
+  <!-- apps/mcp/server.py -->
   <g>
     <rect x="260" y="130" width="255" height="105" rx="6" fill="#0F6CBD"/>
-    <text x="387" y="154" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">ros2_mcp_server.py</text>
+    <text x="387" y="154" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">apps/mcp/server.py</text>
     <text x="387" y="171" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[FastMCP / stdio]</text>
     <text x="387" y="190" font-size="12" fill="#F8FAFC" text-anchor="middle">22 tools: drive, navigate_to,</text>
     <text x="387" y="205" font-size="12" fill="#F8FAFC" text-anchor="middle">camera, rosbag, TF2, MoveIt arm,</text>
@@ -137,10 +137,10 @@
     <text x="922" y="220" font-size="12" fill="#F8FAFC" text-anchor="middle">Nav2 goal sending</text>
   </g>
 
-  <!-- robot_bridge.py -->
+  <!-- src/robollm/bridge.py -->
   <g>
     <rect x="525" y="300" width="260" height="110" rx="6" fill="#0F6CBD"/>
-    <text x="655" y="326" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">robot_bridge.py</text>
+    <text x="655" y="326" font-size="16" font-weight="bold" fill="#F8FAFC" text-anchor="middle">src/robollm/bridge.py</text>
     <text x="655" y="343" font-size="11" font-style="italic" fill="#F8FAFC" text-anchor="middle">[Python / rclpy]</text>
     <text x="655" y="362" font-size="12" fill="#F8FAFC" text-anchor="middle">The ONE shared ROS 2 node:</text>
     <text x="655" y="377" font-size="12" fill="#F8FAFC" text-anchor="middle">get_bridge() singleton reused</text>
@@ -214,6 +214,6 @@
     <polygon points="840,761 830,756 830,766" fill="#64748B"/>
     <text x="850" y="766" font-size="12" fill="#334155">Relationship [protocol]</text>
   </g>
-  <text x="24" y="800" font-size="11" fill="#475569">C4 model · Level 2 (Containers) · RoboLLM · generated from ros2_mcp_server.py, robot_bridge.py, web/, examples/, hardware/, scan3d/, cad/</text>
+  <text x="24" y="800" font-size="11" fill="#475569">C4 model · Level 2 (Containers) · RoboLLM · generated from apps/, src/robollm/, examples/, hardware/, scan3d/, cad/</text>
   <rect x="0" y="0" width="100%" height="6" fill="#38BDF8"/>
 </svg>

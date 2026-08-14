@@ -1,0 +1,308 @@
+{
+  "acceptance": {
+    "all_invalid_actions_rejected": true,
+    "baselines_materially_below_oracle": true,
+    "camera_dropout_aborts_within_one_tick": true,
+    "oracle_at_least_95_of_100": true
+  },
+  "baselines": {
+    "hold": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.8128805953638284,
+        "final_mean": 0.4392570746853678,
+        "min_mean": 0.4372035781493274
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 3.107635000560549,
+        "mean": 0.09965066301720071,
+        "p50": 0.06380999911925755,
+        "p95": 0.2561105009590392
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "hold",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 0.0,
+      "successes": 0,
+      "suite": "nominal"
+    },
+    "noise": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.49886410786984003,
+        "final_mean": 0.39652618731762057,
+        "min_mean": 0.22550383428501258
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 0.5793479995190864,
+        "mean": 0.11982010849715152,
+        "p50": 0.07447000007232418,
+        "p95": 0.3155428986246988
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "noise",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 0.0,
+      "successes": 0,
+      "suite": "nominal"
+    }
+  },
+  "faults": {
+    "camera_dropout": {
+      "aborts": 1,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.16499099504900802,
+        "final_mean": 0.16499099504900802,
+        "min_mean": 0.16499099504900802
+      },
+      "episodes": 1,
+      "fault": "camera_dropout",
+      "inference_latency_ms": {
+        "max": 0.020568999389070086,
+        "mean": 0.020568999389070086,
+        "p50": 0.020568999389070086,
+        "p95": 0.020568999389070086
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 0.0,
+      "successes": 0,
+      "suite": "nominal"
+    },
+    "nan": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.0025890882326471106,
+        "final_mean": 0.0025890882326471106,
+        "min_mean": 0.0025890882326471106
+      },
+      "episodes": 1,
+      "fault": "nan",
+      "inference_latency_ms": {
+        "max": 0.0921240007301094,
+        "mean": 0.06870581802848558,
+        "p50": 0.06724500053678639,
+        "p95": 0.09211199994751951
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 1,
+      "rejections": 1,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 1,
+      "suite": "nominal"
+    },
+    "out_of_range": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.0025890882326471106,
+        "final_mean": 0.0025890882326471106,
+        "min_mean": 0.0025890882326471106
+      },
+      "episodes": 1,
+      "fault": "out_of_range",
+      "inference_latency_ms": {
+        "max": 0.3864719983539544,
+        "mean": 0.14176154499264984,
+        "p50": 0.10041600035037845,
+        "p95": 0.30629299908468965
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 1,
+      "rejections": 1,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 1,
+      "suite": "nominal"
+    },
+    "overspeed": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.0025890882326471106,
+        "final_mean": 0.0025890882326471106,
+        "min_mean": 0.0025890882326471106
+      },
+      "episodes": 1,
+      "fault": "overspeed",
+      "inference_latency_ms": {
+        "max": 0.15574099961668253,
+        "mean": 0.06483763619061475,
+        "p50": 0.05299599979480263,
+        "p95": 0.11547600024641724
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 1,
+      "rejections": 1,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 1,
+      "suite": "nominal"
+    }
+  },
+  "fixed_seed_oracle": {
+    "episodes": 100,
+    "success_rate": 1.0,
+    "successes": 100
+  },
+  "schema": "robollm.b1.cpu-acceptance.v1",
+  "status": "B1 preparation: complete",
+  "suites": {
+    "camera_shift": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.01953020111305275,
+        "final_mean": 0.009985037454482404,
+        "min_mean": 0.009010139270028035
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 0.4061540003021946,
+        "mean": 0.10486096228355012,
+        "p50": 0.07482199907826725,
+        "p95": 0.2628533009556122
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 20,
+      "suite": "camera_shift"
+    },
+    "lighting": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.02293780370621168,
+        "final_mean": 0.009761971684793633,
+        "min_mean": 0.008703897021238279
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 0.4735509992315201,
+        "mean": 0.10409996228868085,
+        "p50": 0.0779430010879878,
+        "p95": 0.25131000074907206
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 20,
+      "suite": "lighting"
+    },
+    "nominal": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.024918972372467933,
+        "final_mean": 0.010765702066952643,
+        "min_mean": 0.009592582043908952
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 0.44178800089866854,
+        "mean": 0.10514347400203405,
+        "p50": 0.07356599962804466,
+        "p95": 0.2734935495936951
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 20,
+      "suite": "nominal"
+    },
+    "occlusion": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.02463678973489796,
+        "final_mean": 0.009698943999440776,
+        "min_mean": 0.008541300884737967
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 0.3708770000230288,
+        "mean": 0.11282650629251126,
+        "p50": 0.07864299914217554,
+        "p95": 0.2778134008622146
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 20,
+      "suite": "occlusion"
+    },
+    "target_relocation": {
+      "aborts": 0,
+      "checkpoint": null,
+      "end_effector_error_m": {
+        "final_max": 0.02170268171687854,
+        "final_mean": 0.010088622180185091,
+        "min_mean": 0.009139617401621886
+      },
+      "episodes": 20,
+      "fault": "none",
+      "inference_latency_ms": {
+        "max": 0.467739999294281,
+        "mean": 0.12938141876513995,
+        "p50": 0.09602050067769596,
+        "p95": 0.29525510008170386
+      },
+      "invalid_commands_reaching_env": 0,
+      "policy_adapter": "oracle",
+      "recoveries": 0,
+      "rejections": 0,
+      "schema": "robollm.b1.evaluation.v1",
+      "seed": 70000,
+      "success_rate": 1.0,
+      "successes": 20,
+      "suite": "target_relocation"
+    }
+  },
+  "valid": true
+}

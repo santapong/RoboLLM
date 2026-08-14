@@ -12,10 +12,10 @@ name: ci-container
 #   * Security (this is a PUBLIC repo): GitHub explicitly recommends never
 #     wiring self-hosted runners to pull_request in a public repo — a PR runs
 #     attacker-controlled code, and here that code is maximally privileged
-#     (ci/run_scenario.sh drives the PR's own launcher, which starts containers
+#     (scripts/ci/run_scenario.sh drives the PR's own launcher, which starts containers
 #     with --net=host --pid=host -v /dev:/dev as root == host compromise).
 #   * A pull_request trigger would also queue these jobs against a runner that
-#     may not be attached, blocking every PR that touches examples/** or ci/**.
+#     may not be attached, blocking every PR that touches examples/** or scripts/ci/**.
 # The maintainer runs this by hand (Actions -> ci-container -> Run workflow)
 # from a trusted checkout, after ensuring a self-hosted runner is online.
 
@@ -68,14 +68,14 @@ jobs:
             bash -lc 'source /opt/ros/jazzy/setup.bash;
                       python3 -m pytest -q -p no:cacheprovider \
                         src/gen3_pick_place/test/test_hand_pick_place.py'
-      - name: robot_bridge in-process rclpy tests (tests_ros, in-container)
+      - name: shared bridge in-process rclpy tests (integration, in-container)
         run: |
           docker run --rm --net=host --ipc=host --ulimit core=0 \
             -e ROS_DOMAIN_ID -e ROS_LOCALHOST_ONLY -e PYTHONDONTWRITEBYTECODE=1 \
             -v "$PWD:/repo" -w /repo \
             "$IMAGE" \
             bash -lc 'source /opt/ros/jazzy/setup.bash;
-                      python3 -m pytest -q -p no:cacheprovider tests_ros/'
+                      PYTHONPATH=/repo/src python3 -m pytest -q -p no:cacheprovider tests/integration/ros/'
       - name: Restore checkout ownership (root-owned build/caches -> runner)
         if: always()
         run: |
@@ -114,16 +114,16 @@ jobs:
           docker pull "$IMAGE"
           docker tag "$IMAGE" ros2-arm:jazzy
       - name: Run scenario ${{ matrix.scenario }}
-        run: ci/run_scenario.sh ${{ matrix.scenario }}
+        run: scripts/ci/run_scenario.sh ${{ matrix.scenario }}
       - name: Upload RESULT JSON + logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: result-${{ matrix.scenario }}
           path: |
-            ci/results/${{ matrix.scenario }}.json
-            ci/results/${{ matrix.scenario }}.meter.log
-            ci/results/${{ matrix.scenario }}.stack.log
+            artifacts/ci-results/${{ matrix.scenario }}.json
+            artifacts/ci-results/${{ matrix.scenario }}.meter.log
+            artifacts/ci-results/${{ matrix.scenario }}.stack.log
           if-no-files-found: warn
       - name: Restore checkout ownership (root-owned build artifacts -> runner)
         if: always()

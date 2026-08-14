@@ -1,127 +1,16 @@
-#!/usr/bin/env python3
-"""web/server.py — an easy browser dashboard for the ROS 2 robot.
+"""Compatibility ASGI import for :mod:`apps.dashboard.server`."""
 
-Run it, open http://localhost:8080, and you get live telemetry, a lidar radar,
-the camera view, WASD/on-screen teleop (obstacle-safe), the topic list, and
-one-click Nav2 goals. It reuses robot_bridge.py — the same code the MCP server
-uses — so you and Claude drive the exact same robot.
-
-Safety:
-  - binds 127.0.0.1 by default (localhost only). To expose on your LAN, set
-    HOST=0.0.0.0 AND a shared token: ROBOT_TOKEN=secret  (control endpoints then
-    require ?token=secret; the page embeds it automatically when you load it
-    from this server).
-
-Launch: web/run-web.sh
-"""
 from __future__ import annotations
 
-import asyncio
-import os
+import sys
+from pathlib import Path
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query
-from fastapi.responses import HTMLResponse, Response
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+_ROOT = Path(__file__).resolve().parents[1]
+_SRC = _ROOT / "src"
+for _path in (_ROOT, _SRC):
+    if str(_path) not in sys.path:
+        sys.path.insert(0, str(_path))
 
-from robot_bridge import get_bridge
+from apps.dashboard.server import app
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-STATIC = os.path.join(HERE, "static")
-TOKEN = os.environ.get("ROBOT_TOKEN", "")   # empty = no auth (fine for localhost)
-
-app = FastAPI(title="robot-llm-loop dashboard")
-bridge = get_bridge("claude_web_bridge")
-
-
-def check(token: str) -> None:
-    if TOKEN and token != TOKEN:
-        raise HTTPException(status_code=401, detail="bad or missing token")
-
-
-class Vel(BaseModel):
-    linear: float = 0.0
-    angular: float = 0.0
-
-
-class Goal(BaseModel):
-    x: float
-    y: float
-    yaw_deg: float = 0.0
-
-
-class Safe(BaseModel):
-    enabled: bool = True
-    min_obstacle_m: float = 0.35
-
-
-@app.get("/", response_class=HTMLResponse)
-def index() -> HTMLResponse:
-    # inject the token so the page's fetches authenticate automatically
-    with open(os.path.join(STATIC, "index.html")) as f:
-        html = f.read().replace("__TOKEN__", TOKEN)
-    return HTMLResponse(html)
-
-
-@app.get("/api/topics")
-def topics() -> list[dict[str, str]]:
-    return [{"topic": n, "type": ",".join(t)}
-            for n, t in bridge.get_topic_names_and_types()]
-
-
-@app.post("/api/cmd")
-def cmd(v: Vel, token: str = Query("")) -> dict[str, str]:
-    check(token)
-    bridge.set_velocity(v.linear, v.angular)
-    return {"ok": "set"}
-
-
-@app.post("/api/stop")
-def stop(token: str = Query("")) -> dict[str, str]:
-    check(token)
-    bridge.stop()
-    return {"ok": "stopped"}
-
-
-@app.post("/api/nav")
-def nav(g: Goal, token: str = Query("")) -> dict[str, str]:
-    check(token)
-    return {"result": bridge.navigate_to(g.x, g.y, g.yaw_deg, timeout_s=1.0) or "sent"}
-
-
-@app.post("/api/safe")
-def safe(s: Safe, token: str = Query("")) -> dict[str, str]:
-    check(token)
-    bridge.safe_mode = s.enabled
-    bridge.min_obstacle_m = s.min_obstacle_m
-    return {"safe_mode": str(bridge.safe_mode), "min_obstacle_m": str(bridge.min_obstacle_m)}
-
-
-@app.get("/api/camera")
-def camera() -> Response:
-    """Latest camera frame as JPEG (204 if no camera / no image yet)."""
-    jpg = bridge.camera_jpeg_bytes()
-    if jpg is None:
-        return Response(status_code=204)
-    return Response(content=jpg, media_type="image/jpeg")
-
-
-@app.websocket("/ws")
-async def telemetry(ws: WebSocket) -> None:
-    """Push pose + laser + radar ~10x/s so the dashboard stays live."""
-    await ws.accept()
-    try:
-        while True:
-            await ws.send_json({"pose": bridge.pose(),
-                                "laser": bridge.laser_summary(),
-                                "radar": bridge.laser_radar(36),
-                                "safe": {"on": bridge.safe_mode, "min": bridge.min_obstacle_m}})
-            await asyncio.sleep(0.1)
-    except WebSocketDisconnect:
-        return
-    except Exception:
-        return
-
-
-if os.path.isdir(STATIC):
-    app.mount("/static", StaticFiles(directory=STATIC), name="static")
+__all__ = ["app"]

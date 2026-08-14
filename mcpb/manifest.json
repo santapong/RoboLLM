@@ -11,12 +11,12 @@
   },
   "server": {
     "type": "python",
-    "entry_point": "server/ros2_mcp_server.py",
+    "entry_point": "server/apps/mcp/entrypoint.py",
     "mcp_config": {
       "command": "bash",
       "args": [
         "-c",
-        "source \"${user_config.ros_setup}\" && export PYTHONPATH=\"${__dirname}/server/lib:${__dirname}/server:$PYTHONPATH\" && export TURTLEBOT3_MODEL=\"${user_config.turtlebot3_model}\" && exec python3 \"${__dirname}/server/ros2_mcp_server.py\""
+        "source \"${user_config.ros_setup}\" && export PYTHONPATH=\"${__dirname}/server/lib:${__dirname}/server:$PYTHONPATH\" && export TURTLEBOT3_MODEL=\"${user_config.turtlebot3_model}\" && exec python3 \"${__dirname}/server/apps/mcp/entrypoint.py\""
       ],
       "env": {}
     }

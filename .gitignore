@@ -10,8 +10,8 @@ build/
 install/
 log/
 # CI scenario outputs (stack logs embed the local user/host name — keep out of
-# this PUBLIC repo; regenerate with ci/run_scenario.sh)
-ci/results/
+# this PUBLIC repo; regenerate with scripts/ci/run_scenario.sh)
+artifacts/ci-results/
 # hypothesis example DB (self-ignores via its own .gitignore; belt-and-suspenders)
 .hypothesis/
 # editor / os
@@ -29,6 +29,11 @@ assets/bags/
 # local learning datasets (large and may contain personal camera footage)
 datasets/
 episodes/
+# Local learned-policy outputs (only compact summaries under examples/ are tracked)
+artifacts/
+checkpoints/
+outputs/train/
+*.safetensors
 # large binary assets (keep small ones; comment out to version meshes)
 assets/**/*.stl
 assets/**/*.dae

@@ -20,7 +20,7 @@ The LLM angle (see `docs/handfollow-inception.md` for the full researched
 theory): the 20 Hz control loop is deliberately classical/deterministic — an
 LLM belongs in a *supervisory* role only (ROSA/MCP pattern: "stop following",
 "half speed" via `/follow_enable` + parameters), never inside the loop. That
-supervisory layer is this repo's natural next step via `ros2_mcp_server.py`.
+supervisory layer is this repo's natural next step via `apps/mcp/server.py`.
 
 ## Layout
 

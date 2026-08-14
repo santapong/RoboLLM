@@ -1,0 +1,2 @@
+# Compatibility include. Prefer requirements/smolvla.txt in new commands.
+-r requirements/smolvla.txt

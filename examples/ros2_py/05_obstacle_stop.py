@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """05 · Reactive control: drive forward, STOP before hitting a wall.
 
-Needs the sim running:  ~/Desktop/robot-llm-loop/sim/launch_turtlebot.sh
+Needs the sim running: scripts/launch/simulation/turtlebot.sh
 Concepts: combining a subscription (/scan) with a publisher (/cmd_vel) — this is
 the heart of a robot behavior. "Closed loop": what we sense changes what we do.
 

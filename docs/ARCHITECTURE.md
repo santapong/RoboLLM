@@ -37,11 +37,12 @@ peers, driving the exact same robot through the exact same machinery.
 
 ![C4 level 2 — container diagram](architecture/c4-container.svg)
 
-Inside the boundary, every control surface converges on **`robot_bridge.py`**.
+Inside the boundary, every control surface converges on
+**`src/robollm/bridge.py`**.
 `get_bridge()` is a module-level singleton: the first call inits rclpy, builds
 the one `Bridge` node, and starts a daemon spin thread; everything after that
-reuses it. The MCP server (`ros2_mcp_server.py`, FastMCP over stdio, 22 tools)
-and the web dashboard (`web/`, FastAPI + WebSocket on :8080) are both thin
+reuses it. The MCP server (`apps/mcp/server.py`, FastMCP over stdio, 22 tools)
+and the web dashboard (`apps/dashboard/`, FastAPI + WebSocket on :8080) are both thin
 layers over this same module — which is why there is **one** bridge node and
 not a node per feature. A robot helper written once (deadman teleop watchdog,
 speed caps, Nav2 goal sending, camera capture) is instantly available to both
@@ -131,7 +132,7 @@ it; `/box_reset` respawns it.
   [`hand_follow`](../examples/hand_follow/TECHNICAL.md),
   [`gen3_pick_place`](../examples/gen3_pick_place/TECHNICAL.md) — plus
   [`hardware/TECHNICAL.md`](../hardware/TECHNICAL.md) for the real arm stack,
-  [`web/TECHNICAL.md`](../web/TECHNICAL.md) for the dashboard,
+  [`apps/dashboard/TECHNICAL.md`](../apps/dashboard/TECHNICAL.md) for the dashboard,
   [`scan3d/TECHNICAL.md`](../scan3d/TECHNICAL.md) for the webcam scanner, and
   [`cad/TECHNICAL.md`](../cad/TECHNICAL.md) for the FreeCAD → URDF pipeline;
   internals, topic/param tables, and per-module architecture diagrams.

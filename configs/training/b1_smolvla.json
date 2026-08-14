@@ -1,0 +1,23 @@
+{
+  "schema": "robollm.b1.smolvla-training.v1",
+  "model": "lerobot/smolvla_base",
+  "dataset_repo_id": "local/robollm-red-target-train",
+  "dataset_root": "datasets/b1-red-target/train",
+  "manifest": "datasets/b1-red-target/manifest.json",
+  "output_dir": "artifacts/b1-smolvla",
+  "steps": 20000,
+  "smoke_steps": 10,
+  "checkpoint_steps": [5000, 10000, 20000],
+  "save_freq": 5000,
+  "batch_size": 64,
+  "num_workers": 4,
+  "seed": 20260814,
+  "device": "cuda",
+  "wandb": false,
+  "push_to_hub": false,
+  "save_checkpoint_to_hub": false,
+  "local_artifacts_only": true,
+  "instruction": "touch the red target",
+  "fps": 20,
+  "action_shape": [7]
+}

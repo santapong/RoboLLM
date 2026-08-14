@@ -88,7 +88,7 @@ cp -r examples/colcon_pkg/patrol_bot ~/ros2_ws/src/
 cd ~/ros2_ws && colcon build --packages-select patrol_bot
 source install/setup.bash
 
-# with the TurtleBot3 sim up (sim/launch_turtlebot.sh):
+# with the TurtleBot3 sim up (scripts/launch/simulation/turtlebot.sh):
 ros2 launch patrol_bot patrol.launch.py side_m:=0.6 laps:=2
 # or directly, with any parameter:
 ros2 run patrol_bot patrol --ros-args -p side_m:=0.6 -p speed:=0.2

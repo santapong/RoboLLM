@@ -20,11 +20,11 @@ required on any machine that runs this.
 ## Claude Code (what you use)
 You already have it registered at **user scope** (works everywhere):
 ```bash
-claude mcp add --scope user ros2 -- /path/to/RoboLLM/run-server.sh
+claude mcp add --scope user ros2 -- /path/to/RoboLLM/scripts/launch/mcp.sh
 ```
 The repo also ships `../.mcp.json` for **project scope** — anyone who opens this
 folder in Claude Code gets the `ros2` server after a one-time approval prompt. It
-points at `run-server.sh` (which sources ROS 2 + the venv). Nothing else to do.
+points at `scripts/launch/mcp.sh` (which sources ROS 2 + the venv). Nothing else to do.
 
 ## Claude Desktop (the .mcpb you asked for)
 Build the bundle:
@@ -40,7 +40,8 @@ What the bundle contains:
 ros2-bridge.mcpb (zip)
 ├── manifest.json          # v0.4; command sources ROS then runs the server
 └── server/
-    ├── ros2_mcp_server.py  robot_bridge.py
+    ├── apps/mcp/entrypoint.py  apps/mcp/server.py
+    ├── robollm/bridge.py  robollm/gazebo_world.py
     └── lib/                # vendored `mcp` SDK (rclpy comes from ROS at runtime)
 ```
 
@@ -52,5 +53,5 @@ share the bundle, hand someone the file from `dist/` (or force-add it to git).
   Windows Desktop install would need a platform override in `manifest.json`.
 - The vendored `mcp` wheel is built for this machine's Python (3.12, x86_64). If
   you move the bundle to a very different Python/arch, rebuild it there.
-- Editing tools? Edit `../ros2_mcp_server.py`, then rerun `build_mcpb.sh` (it
+- Editing tools? Edit `../apps/mcp/server.py`, then rerun `build_mcpb.sh` (it
   copies the current server code in) and reinstall.

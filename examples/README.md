@@ -32,7 +32,7 @@ The concepts every ROS 2 robot is built from. No sim needed for 01–03.
 | `09_tf2_transforms.py` | **TF2**: broadcast a transform tree, convert points between frames — self-contained, verified |
 | `10_color_follow.py` | **Vision→action**: chase a red object via the camera. `--test` verifies the math without a sim; live needs `waffle_pi` |
 
-04–06 and live-10 need the sim running: `sim/launch_turtlebot.sh` (own terminal;
+04–06 and live-10 need the sim running: `scripts/launch/simulation/turtlebot.sh` (own terminal;
 `TURTLEBOT3_MODEL=waffle_pi` for the camera). 01–03, 08, 09, and `10 --test` run
 with no sim at all. Introspect anything live with the MCP `run_ros2` tool or the
 CLI, e.g. `ros2 topic echo /scan --once`, `ros2 interface show sensor_msgs/msg/LaserScan`.
@@ -113,24 +113,24 @@ Technical: [`wall_weld/TECHNICAL.md`](wall_weld/TECHNICAL.md) — state machine,
 Build a map, navigate it, and move an arm — the three pillars beyond teleop.
 | Terminal command | What it does |
 |------------------|--------------|
-| `sim/launch_slam.sh` | **SLAM** (cartographer): drive around to build a map, then save it |
-| `sim/launch_nav2.sh [map.yaml]` | **Nav2**: load the map & plan paths (set 2D Pose Estimate first) |
-| `sim/launch_moveit_panda.sh` | **MoveIt**: Panda arm + RViz (self-contained, no Gazebo) |
+| `scripts/launch/simulation/slam.sh` | **SLAM** (cartographer): drive around to build a map, then save it |
+| `scripts/launch/simulation/nav2.sh [map.yaml]` | **Nav2**: load the map & plan paths (set 2D Pose Estimate first) |
+| `scripts/launch/simulation/moveit_panda.sh` | **MoveIt**: Panda arm + RViz (self-contained, no Gazebo) |
 
 Typical flow:
 ```bash
 # Terminal 1: sim   ·   Terminal 2: SLAM
-sim/launch_turtlebot.sh
-sim/launch_slam.sh
+scripts/launch/simulation/turtlebot.sh
+scripts/launch/simulation/slam.sh
 # drive around (web dashboard :8080 / teleop / ask Claude) until the map is full, then:
 ros2 run nav2_map_server map_saver_cli -f ~/map
 # Terminal 2 now: navigation with your map
-sim/launch_nav2.sh ~/map.yaml
+scripts/launch/simulation/nav2.sh ~/map.yaml
 # set "2D Pose Estimate" in RViz, then:
 .venv/bin/python examples/ros2_py/06_send_nav_goal.py --x 1.5 --y 0.5   # (or ask Claude, or "Nav2 Goal")
 
 # Manipulation (separate, no sim needed):
-sim/launch_moveit_panda.sh
+scripts/launch/simulation/moveit_panda.sh
 .venv/bin/python examples/ros2_py/07_moveit_joint_goal.py --pose ready
 ```
 
@@ -141,6 +141,8 @@ Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.
 | `pybullet/load_robot.py` | PyBullet | Load a URDF, gravity, stepping physics, joints |
 | `mujoco/hello_mujoco.py` | MuJoCo | MJCF models, the engine behind modern robot-learning |
 | `mujoco/arm_dataset.py` | MuJoCo + LeRobot | Script a 6-DOF policy and record a video dataset |
+| `mujoco/reaching_dataset.py` | MuJoCo + LeRobot | Generate/validate the balanced visual red-target dataset |
+| `mujoco/evaluate_reaching.py` | MuJoCo + SmolVLA adapter | Run fixed suites through the fail-closed policy wrapper |
 
 ```bash
 .venv/bin/python examples/pybullet/load_robot.py            # GUI window
@@ -149,7 +151,7 @@ Learn robot dynamics / URDFs / RL locally; scale to GPU sim on your cloud later.
 .venv/bin/python examples/mujoco/hello_mujoco.py --view     # 3D viewer
 .venv-lerobot/bin/python examples/mujoco/arm_dataset.py --validate-only
 ```
-Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) · [`mujoco/TECHNICAL.md`](mujoco/TECHNICAL.md) — engine internals, MJCF vs URDF, diagrams.
+Technical: [`pybullet/TECHNICAL.md`](pybullet/TECHNICAL.md) · [`mujoco/TECHNICAL.md`](mujoco/TECHNICAL.md) — engine internals, MJCF vs URDF, diagrams. The [B1 runbook](mujoco/B1.md) freezes the reaching benchmark and GPU handoff.
 
 ## The whole map of robot software (where each piece fits)
 - **Middleware**: ROS 2 (Jazzy) — you have it. The nervous system: topics/services/actions.

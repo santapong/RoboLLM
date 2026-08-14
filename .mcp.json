@@ -2,7 +2,7 @@
   "mcpServers": {
     "ros2": {
       "type": "stdio",
-      "command": "${CLAUDE_PROJECT_DIR}/run-server.sh",
+      "command": "${CLAUDE_PROJECT_DIR}/scripts/launch/mcp.sh",
       "args": []
     }
   }

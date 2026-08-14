@@ -10,11 +10,12 @@ repeatable operations or acceptance evidence.
 | Doc | One line |
 |-----|----------|
 | [`../CHANGELOG.md`](../CHANGELOG.md) | Project changelog — notable changes by date. |
-| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Current checkpoint — A2/A3 software evidence, physical gates, and the next phase. |
+| [`PROJECT_STATUS.md`](PROJECT_STATUS.md) | Current checkpoint — B1 preparation evidence, GPU pause, and unchanged physical gates. |
+| [`PROJECT_STRUCTURE.md`](PROJECT_STRUCTURE.md) | Canonical directory ownership, placement rules, and compatibility paths. |
 | [`STYLE_GUIDE.md`](STYLE_GUIDE.md) | Theme, status vocabulary, navigation, and evidence conventions. |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | The C4 tour of the workbench: context → containers → components, diagrams + narrative. |
 | [`architecture/c4-context.svg`](architecture/c4-context.svg) | C4 level 1 — humans, language-model clients, ROS 2/Gazebo, and the real arm. |
-| [`architecture/c4-container.svg`](architecture/c4-container.svg) | C4 level 2 — the runnable pieces and the one shared `robot_bridge.py` node. |
+| [`architecture/c4-container.svg`](architecture/c4-container.svg) | C4 level 2 — the runnable pieces and the one shared `robollm.bridge` node. |
 | [`architecture/c4-component-handteleop.svg`](architecture/c4-component-handteleop.svg) | C4 level 3 — inside the hand-teleop pipeline (MediaPipe → IK → 20 Hz trajectory). |
 | [`live-session.md`](live-session.md) | Guided ~30 min demo playbook: observe, spawn, drive, map, navigate, and move an arm through MCP. |
 | [`branching.md`](branching.md) | Branch tiers: `main` (stable) / `develop` (daily) / `experiment/*` (throwaway). |
@@ -46,6 +47,7 @@ repeatable operations or acceptance evidence.
 | [`../examples/colcon_pkg/patrol_bot/TECHNICAL.md`](../examples/colcon_pkg/patrol_bot/TECHNICAL.md) | The first real ament_python package: anatomy, params, launch plumbing. |
 | [`../examples/pybullet/TECHNICAL.md`](../examples/pybullet/TECHNICAL.md) | PyBullet quickstart + closed-form 2-link IK on the CAD arm. |
 | [`../examples/mujoco/TECHNICAL.md`](../examples/mujoco/TECHNICAL.md) | MuJoCo pendulum plus scripted 6-DOF LeRobot dataset recording. |
+| [`../examples/mujoco/B1.md`](../examples/mujoco/B1.md) | Red-target benchmark, dataset/evaluator interfaces, CPU evidence, and guarded GPU handoff. |
 | [`../examples/panda_arm/TECHNICAL.md`](../examples/panda_arm/TECHNICAL.md) | The five Panda demos layer by layer: FK/IK → serial → vision sort. |
 | [`../examples/hand_follow/TECHNICAL.md`](../examples/hand_follow/TECHNICAL.md) | hand_follow node internals: MediaPipe → One-Euro → IK → 20 Hz stream. |
 | [`../examples/gen3_pick_place/TECHNICAL.md`](../examples/gen3_pick_place/TECHNICAL.md) | Gesture state machine, `/compute_ik` streaming, planning-scene attach/detach. |
@@ -60,7 +62,7 @@ repeatable operations or acceptance evidence.
 | [`physical-arm/diagrams/c4-container.svg`](physical-arm/diagrams/c4-container.svg) | Physical arm C4 level 2 — delivered, partial, and planned runtime containers. |
 | [`physical-arm/diagrams/c4-component-driver.svg`](physical-arm/diagrams/c4-component-driver.svg) | Physical arm C4 level 3 — validated driver components. |
 | [`physical-arm/diagrams/architecture-4plus1.svg`](physical-arm/diagrams/architecture-4plus1.svg) | Logical, process, development, physical, and scenario (+1) views. |
-| [`../web/TECHNICAL.md`](../web/TECHNICAL.md) | The dashboard internals: FastAPI + WebSocket over the shared bridge, endpoint tables. |
+| [`../apps/dashboard/TECHNICAL.md`](../apps/dashboard/TECHNICAL.md) | The dashboard internals: FastAPI + WebSocket over the shared bridge, endpoint tables. |
 | [`../scan3d/TECHNICAL.md`](../scan3d/TECHNICAL.md) | Webcam scanner internals: visual hull vs COLMAP routes, mesh → URDF tail. |
 | [`../cad/TECHNICAL.md`](../cad/TECHNICAL.md) | FreeCAD → URDF pipeline: headless build, joint-frame discipline, PyBullet verify. |
 | [`../examples/ros2_py/docs/ros2_py-architecture.svg`](../examples/ros2_py/docs/ros2_py-architecture.svg) | Diagram — the 10 scripts vs the sim's topic/action surfaces. |
@@ -72,7 +74,7 @@ repeatable operations or acceptance evidence.
 | [`../examples/talos_mirror/docs/talos_mirror-architecture.svg`](../examples/talos_mirror/docs/talos_mirror-architecture.svg) | Diagram — whole-body TALOS tracking, retargeting, control, and RViz path. |
 | [`../examples/wall_weld/docs/wall_weld-architecture.svg`](../examples/wall_weld/docs/wall_weld-architecture.svg) | Diagram — gesture trigger, raster planner, state machine, MoveIt, and RViz. |
 | [`../hardware/docs/hardware-architecture.svg`](../hardware/docs/hardware-architecture.svg) | Diagram — ROS 2 bridge → serial protocol → Mega → servos. |
-| [`../web/docs/web-architecture.svg`](../web/docs/web-architecture.svg) | Diagram — browser ↔ FastAPI ↔ shared bridge ↔ ROS 2 stack. |
+| [`../apps/dashboard/docs/web-architecture.svg`](../apps/dashboard/docs/web-architecture.svg) | Diagram — browser ↔ FastAPI ↔ shared bridge ↔ ROS 2 stack. |
 | [`../scan3d/docs/scan3d-architecture.svg`](../scan3d/docs/scan3d-architecture.svg) | Diagram — capture → visual hull / COLMAP → mesh → URDF. |
 | [`../cad/docs/cad-architecture.svg`](../cad/docs/cad-architecture.svg) | Diagram — freecadcmd build → mesh export → URDF → PyBullet check. |
 | [`brand/robollm-banner.svg`](brand/robollm-banner.svg) | Project banner and control-invariant identity. |

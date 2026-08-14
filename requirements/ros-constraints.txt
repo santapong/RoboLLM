@@ -1,0 +1,15 @@
+# Version constraints that MUST hold for ROS 2 Jazzy to keep working in the venv.
+# ROS 2 Jazzy is built against numpy 1.26.x; numpy 2.x breaks rclpy message
+# conversions. Always install with this constraints file so a transitive dep
+# can't silently upgrade numpy:
+#
+#     .venv/bin/python -m pip install -c requirements/ros-constraints.txt <anything>
+#
+numpy==1.26.4
+
+# opencv-contrib-python 5.x hard-requires numpy>=2, so an unpinned install
+# (mediapipe declares BOTH numpy and opencv-contrib-python unpinned) drags
+# numpy 2.x in through the back door even when numpy itself is pinned here.
+# Symptom when it slips: cv_bridge raises `KeyError: 16` at first use, because
+# its C extension was compiled against numpy 1.x.
+opencv-contrib-python<5

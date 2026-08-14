@@ -8,14 +8,21 @@
 set -e
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(dirname "$HERE")"
-PY="$ROOT/.venv/bin/python"
+PY="${PYTHON:-$ROOT/.venv/bin/python}"
+if [[ ! -x "$PY" ]]; then
+  PY="$(command -v python3)"
+fi
 STAGE="$HERE/build"
 DIST="$HERE/dist"
 
 echo "[1/4] stage server code"
-rm -rf "$STAGE"; mkdir -p "$STAGE/server" "$DIST"
+rm -rf "$STAGE"; mkdir -p "$STAGE/server/apps/mcp" "$STAGE/server/robollm" "$DIST"
 cp "$HERE/manifest.json" "$STAGE/manifest.json"
-cp "$ROOT/ros2_mcp_server.py" "$ROOT/robot_bridge.py" "$ROOT/gazebo_world.py" "$STAGE/server/"
+cp "$ROOT/apps/__init__.py" "$STAGE/server/apps/"
+cp "$ROOT/apps/mcp/__init__.py" "$ROOT/apps/mcp/entrypoint.py" \
+  "$ROOT/apps/mcp/server.py" "$STAGE/server/apps/mcp/"
+cp "$ROOT/src/robollm/__init__.py" "$ROOT/src/robollm/bridge.py" \
+  "$ROOT/src/robollm/gazebo_world.py" "$STAGE/server/robollm/"
 
 echo "[2/4] vendor the mcp SDK into server/lib (rclpy stays from ROS)"
 "$PY" -m pip install --quiet --target "$STAGE/server/lib" "mcp==1.28.1"
