@@ -48,8 +48,8 @@ fault injection, and a dry-run-first SmolVLA GPU handoff.
 | `reaching_dataset.py` | LeRobot writer, reproducibility manifest, split/video validator |
 | `evaluate_reaching.py` | Policy adapters, safety wrapper, fixed suites, JSON metrics |
 | `B1.md` | Dataset/evaluation interfaces and guarded GPU operations runbook |
-| `../../requirements-extra.txt` | Supplies the `mujoco` pip package (installed into the project venv) |
-| `../../requirements-lerobot.txt` | Isolated NumPy-2 dataset environment; never install in the ROS venv |
+| `../../requirements/ros.txt` | Supplies the `mujoco` pip package (installed into the project venv) |
+| `../../requirements/lerobot.txt` | Isolated NumPy-2 dataset environment; never install in the ROS venv |
 
 ## Interfaces
 
@@ -68,8 +68,8 @@ boundary.
 ## Run + verify
 
 ```bash
-# one-time: mujoco comes from requirements-extra.txt (numpy stays pinned)
-.venv/bin/python -m pip install -c constraints.txt -r requirements-extra.txt
+# one-time: mujoco comes from requirements/ros.txt (numpy stays pinned)
+.venv/bin/python -m pip install -c requirements/ros-constraints.txt -r requirements/ros.txt
 
 .venv/bin/python examples/mujoco/hello_mujoco.py            # prints the swing
 .venv/bin/python examples/mujoco/hello_mujoco.py --view     # 3D viewer window
@@ -101,11 +101,11 @@ the `mujoco` wheel is healthy in the venv.
 ## Gotchas
 
 - **Install with the constraint file.** `mujoco` must not drag numpy to 2.x —
-  always `pip install -c constraints.txt` (ROS Jazzy ABI law; see repo
+  always `pip install -c requirements/ros-constraints.txt` (ROS Jazzy ABI law; see repo
   `CLAUDE.md`).
 - **Keep the dataset environment separate.** LeRobot 0.6 needs NumPy 2.x.
   Follow `hardware/README.md` to install CPU-only PyTorch before
-  `requirements-lerobot.txt`; the latter pins TorchCodec to the PyTorch-2.10
+  `requirements/lerobot.txt`; the latter pins TorchCodec to the PyTorch-2.10
   compatible line.
 - **A3 is pipeline evidence, not sim-to-real evidence.** The inline arm has
   generic links and actuators. Replace it with measured geometry and dynamics

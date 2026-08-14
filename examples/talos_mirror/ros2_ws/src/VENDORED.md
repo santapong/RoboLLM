@@ -84,7 +84,7 @@ packages first, then run the acceptance command against the installed
 overlay:
 
 ```bash
-docker run --rm -v /home/santapong/RoboLLM:/work ros2-arm:jazzy bash -c '
+docker run --rm -v /path/to/RoboLLM:/work ros2-arm:jazzy bash -c '
   source /opt/ros/jazzy/setup.bash
   cd /work/examples/talos_mirror/ros2_ws
   colcon build --packages-select talos_description_inertial talos_description_calibration pal_urdf_utils talos_description

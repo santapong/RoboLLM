@@ -10,6 +10,15 @@ after the touched demos verifiably run).
 
 ## 2026-08-15 — B1 preparation complete; learned policy GPU-paused
 
+### Changed
+
+- Reorganized the full repository around `src/robollm`, `apps`, `configs`,
+  `requirements`, categorized `scripts`, and split unit/ROS integration tests.
+- Preserved established ROS packages, examples, hardware, CAD, and scan
+  domains; retained small compatibility launchers for existing user commands.
+- Updated CI, MCP bundle packaging, dependency paths, runbooks, architecture
+  references, and a checked project-structure contract for the new layout.
+
 ### Added
 
 - Added the 20 Hz visual red-target task with five balanced, seeded reachable

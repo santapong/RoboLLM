@@ -5,8 +5,8 @@ This is the low-level version of the MCP `navigate_to` tool — learn how a ROS 
 *action* works: send a goal, get accepted/rejected, stream feedback, await result.
 
 Prereqs (three terminals):
-  1) sim/launch_turtlebot.sh
-  2) sim/launch_nav2.sh   (Nav2 + a map; set the initial pose in RViz first!)
+  1) scripts/launch/simulation/turtlebot.sh
+  2) scripts/launch/simulation/nav2.sh (Nav2 + a map; set the initial pose in RViz first!)
   3) this script:  .venv/bin/python examples/ros2_py/06_send_nav_goal.py --x 1.5 --y 0.5
 
 Concepts: ActionClient, NavigateToPose, goal handles, feedback callbacks.
@@ -28,7 +28,7 @@ class NavGoal(Node):
     def go(self, x, y, yaw_deg):
         self.get_logger().info("waiting for Nav2 action server…")
         if not self.client.wait_for_server(timeout_sec=5.0):
-            self.get_logger().error("Nav2 not available — is sim/launch_nav2.sh running?")
+            self.get_logger().error("Nav2 unavailable — is scripts/launch/simulation/nav2.sh running?")
             return
         goal = NavigateToPose.Goal()
         goal.pose.header.frame_id = "map"

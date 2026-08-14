@@ -7,7 +7,7 @@ this shows what those wrappers do underneath: build a MotionPlanRequest with
 joint constraints, send it, let OMPL plan, execute the trajectory.
 
 Prereqs (two terminals):
-  1) sim/launch_moveit_panda.sh        # brings up move_group + RViz (Panda)
+  1) scripts/launch/simulation/moveit_panda.sh # brings up move_group + RViz (Panda)
   2) .venv/bin/python examples/ros2_py/07_moveit_joint_goal.py --pose ready
 
 Watch the arm move in the RViz window.
@@ -37,7 +37,7 @@ class ArmGoal(Node):
     def move(self, group: str, targets: list[float]):
         self.get_logger().info("waiting for move_group…")
         if not self.client.wait_for_server(timeout_sec=8.0):
-            self.get_logger().error("move_group not available — run sim/launch_moveit_panda.sh")
+            self.get_logger().error("move_group unavailable — run scripts/launch/simulation/moveit_panda.sh")
             return
 
         constraints = Constraints()

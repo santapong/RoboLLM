@@ -13,6 +13,7 @@ separates reproducible software evidence from work that needs the physical arm.
 
 | Track | Status | Evidence | Next gate |
 |---|---|---|---|
+| Repository organization | **Complete** | Shared code, apps, config, dependencies, operations, and tests have canonical ownership; compatibility launchers preserve existing commands | Enforce the placement contract in review |
 | Shared dataset boundary (A2) | **Code-ready** | LeRobot v3 camera/state/action/task recorder; commanded state is refused by default | Real encoders and accepted demonstrations |
 | Simulation dataset path (A3) | **Verified on CPU** | Scripted 6-DOF MuJoCo arm writes, reloads, and decodes a LeRobot v3 video episode | B1 policy fine-tuning and measured failure study |
 | B1 benchmark preparation | **Complete on CPU** | Frozen visual target task; 50 balanced episodes/587 decoded frames; fixed suites; 100/100 oracle; safety faults rejected | Train and evaluate a real SmolVLA checkpoint on GPU |

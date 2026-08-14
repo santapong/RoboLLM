@@ -37,7 +37,7 @@ def _dataset_type(dataset_class: Any | None = None):
         from lerobot.datasets import LeRobotDataset
     except ImportError as exc:
         raise RuntimeError(
-            "Install requirements-lerobot.txt in .venv-lerobot before recording"
+            "Install requirements/lerobot.txt in .venv-lerobot before recording"
         ) from exc
     return LeRobotDataset
 

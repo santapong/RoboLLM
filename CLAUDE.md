@@ -10,13 +10,13 @@ Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic, **no NVIDIA GPU** (heavy sim/RL
 belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Mega 2560.
 
 ## Architecture
-- `robot_bridge.py` — THE single shared rclpy node (`get_bridge()` singleton,
+- `src/robollm/bridge.py` — THE single shared rclpy node (`get_bridge()` singleton,
   background spin thread). Both the MCP server and the web dashboard use it.
-- `ros2_mcp_server.py` — FastMCP stdio server, 22 tools (drive, navigate_to,
+- `apps/mcp/server.py` — FastMCP stdio server, 22 tools (drive, navigate_to,
   camera, rosbag, TF2, MoveIt move_arm, Gazebo spawn/delete/reset via
-  `gazebo_world.py`, run_ros2, …). Registered in `.mcp.json` → `run-server.sh`.
+  `src/robollm/gazebo_world.py`, run_ros2, …). Registered in `.mcp.json` → `scripts/launch/mcp.sh`.
   **Editing MCP/bridge code requires restarting Claude Code to reload.**
-- `web/` — FastAPI dashboard, `web/run-web.sh` → http://localhost:8080
+- `apps/dashboard/` — FastAPI dashboard, `scripts/launch/dashboard.sh` → http://localhost:8080
   (127.0.0.1 by default; LAN: `HOST=0.0.0.0 ROBOT_TOKEN=secret`).
 - `examples/` — learning path: ros2_py 01–10, pybullet (IK on the CAD arm),
   mujoco, colcon_pkg/patrol_bot (real ament_python package), panda_arm
@@ -53,8 +53,9 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Mega 2560.
   (e) both FFW arms are geometrically IDENTICAL — only limits mirror).
 - `cad/` — FreeCAD→URDF pipeline (runs headless via `freecadcmd`).
 - `scan3d/` — webcam → visual hull mesh → URDF (CPU-only; COLMAP dense = cloud).
-- `sim/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda);
-  root `launch_all.sh`. `docs/live-session.md` = guided 30-min demo playbook;
+- `scripts/launch/` — launch scripts (TurtleBot3 Gazebo, SLAM, Nav2, MoveIt Panda,
+  dashboard, and MCP); root commands are compatibility forwarders.
+  `docs/live-session.md` = guided 30-min demo playbook;
   `docs/ARCHITECTURE.md` = C4 diagrams + narrative; `docs/README.md` = doc index.
 - `hardware/` + `ros2/robo_arm_driver/` — the REAL arm: fail-closed arm-fw
   2.1 (generated limits, commissioning lock, 750 ms watchdog), canonical
@@ -68,11 +69,11 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Mega 2560.
 
 ## Environment gotchas (learned the hard way — do not rediscover)
 - **numpy MUST stay 1.26.4** (ROS Jazzy ABI; 2.x breaks rclpy). Always
-  `pip install -c constraints.txt`. Venv is `--system-site-packages`.
+  `pip install -c requirements/ros-constraints.txt`. Venv is `--system-site-packages`.
   The sneaky path in: mediapipe declares BOTH numpy and
   opencv-contrib-python unpinned, and pip resolves opencv to 5.x, which
   hard-requires numpy>=2 — so pinning numpy alone is NOT enough. Pin
-  `opencv-contrib-python<5` too (it's in constraints.txt). Symptom when it
+  `opencv-contrib-python<5` too (it's in `requirements/ros-constraints.txt`). Symptom when it
   slips: `cv_bridge` raises `KeyError: 16`. Must be fixed in the Docker
   BUILD LAYER — downgrading numpy inside a populated venv corrupts it
   ("numpy._core.multiarray failed to import").
@@ -90,11 +91,11 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Mega 2560.
   `~/.arduino15`; Arduino IDE 2.x at `~/.local/opt/arduino-ide` (launcher adds
   `--no-sandbox` for Ubuntu 24.04 AppArmor). Do NOT `apt install arduino`.
 - `.mcpb` bundle (mcpb/) is for Claude DESKTOP; Claude CODE uses `.mcp.json`.
-  build_mcpb.sh must copy gazebo_world.py and keep `*.dist-info`.
+  build_mcpb.sh must copy the `apps/mcp` and `robollm` packages and keep `*.dist-info`.
 
 ## Verify / run
 - Quick MCP smoke test: ask Claude `list_topics` (needs a sim running).
-- Sim: `sim/launch_turtlebot.sh` (own terminal, display needed).
+- Sim: `scripts/launch/simulation/turtlebot.sh` (own terminal, display needed).
 - Arm with no hardware: start `sim_uno.py` and the client with
   `ARM_CONFIG=ros2/robo_arm_driver/config/joints.sim.yaml`, then set
   `ARM_PORT=/dev/pts/N` for the client.

@@ -74,7 +74,7 @@ python3 -m venv .venv-lerobot
 .venv-lerobot/bin/pip install \
   torch==2.10.0 torchvision==0.25.0 \
   --index-url https://download.pytorch.org/whl/cpu
-.venv-lerobot/bin/pip install -r requirements-lerobot.txt
+.venv-lerobot/bin/pip install -r requirements/lerobot.txt
 ```
 
 After encoders are installed and `state_source: measured` is configured:

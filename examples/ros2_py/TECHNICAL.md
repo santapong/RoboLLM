@@ -72,13 +72,13 @@ bash -c 'source /opt/ros/jazzy/setup.bash && python3 examples/ros2_py/01_hello_n
 Sim lessons (each launcher in its own terminal, display needed):
 
 ```bash
-sim/launch_turtlebot.sh                                        # for 04, 05
+scripts/launch/simulation/turtlebot.sh                         # for 04, 05
 .venv/bin/python examples/ros2_py/04_drive_square.py
 
-sim/launch_nav2.sh          # for 06 — set the initial pose in RViz first!
+scripts/launch/simulation/nav2.sh # for 06 — set the initial pose in RViz first!
 .venv/bin/python examples/ros2_py/06_send_nav_goal.py --x 1.5 --y 0.5
 
-sim/launch_moveit_panda.sh                                     # for 07
+scripts/launch/simulation/moveit_panda.sh                      # for 07
 .venv/bin/python examples/ros2_py/07_moveit_joint_goal.py --pose ready
 ```
 
@@ -91,13 +91,13 @@ Headless smoke test (no sim, no display; each prints `RESULT: PASS`, exit 0):
 ```
 
 Live lesson 10 needs a camera model: `TURTLEBOT3_MODEL=waffle_pi
-sim/launch_turtlebot.sh`, then run 10 without `--test` and drop something red in
+scripts/launch/simulation/turtlebot.sh`, then run 10 without `--test` and drop something red in
 front of the robot in Gazebo.
 
 ## Gotchas
 
 - **numpy must stay 1.26.4** (ROS Jazzy ABI) — install with
-  `pip install -c constraints.txt`; the venv is `--system-site-packages`.
+  `pip install -c requirements/ros-constraints.txt`; the venv is `--system-site-packages`.
 - `/scan` is best-effort: subscribe with `qos_profile_sensor_data` (as 05/10 do)
   or you will silently receive nothing.
 - The default `burger` model has no camera — lesson 10 live requires

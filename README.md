@@ -15,7 +15,7 @@ letting an LLM or learned policy bypass deterministic safety controls.
 
 [Overview](#overview) · [Architecture](#architecture) ·
 [Capabilities](#capabilities) · [Quick start](#quick-start) ·
-[Physical arm](#physical-arm) · [Documentation](#documentation) ·
+[Physical arm](#physical-arm) · [Project structure](#repository-structure) · [Documentation](#documentation) ·
 [Validation](#validation)
 
 > [!IMPORTANT]
@@ -31,7 +31,7 @@ RoboLLM is organized around four engineering principles:
 
 | Principle | What it means in this repository |
 |---|---|
-| **One robot boundary** | The MCP server and browser dashboard share `robot_bridge.py`; physical-arm commands converge on `robo_arm_driver`. |
+| **One robot boundary** | The MCP server and browser dashboard share `src/robollm/bridge.py`; physical-arm commands converge on `robo_arm_driver`. |
 | **AI proposes, safety decides** | Language and learned systems produce structured goals. ROS 2 validation, motion planning, firmware limits, and watchdogs decide what executes. |
 | **Simulation is evidence, not hardware proof** | Every example names its environment. A successful RViz demo does not mark a physical-arm phase complete. |
 | **Measure before claiming** | Acceptance tools record timing, error, state provenance, and success rates rather than relying on visual impressions. |
@@ -50,11 +50,11 @@ The repository serves two connected tracks:
 
 The workbench has two control surfaces and one shared ROS 2 bridge:
 
-- `ros2_mcp_server.py` exposes 22 MCP tools for graph inspection, sensing,
+- `apps/mcp/server.py` exposes 22 MCP tools for graph inspection, sensing,
   navigation, manipulation, simulation-world control, and rosbag workflows.
-- `web/server.py` exposes browser teleoperation and telemetry through FastAPI
+- `apps/dashboard/server.py` exposes browser teleoperation and telemetry through FastAPI
   and WebSocket endpoints.
-- `robot_bridge.py` owns the shared `rclpy` node, publishers, subscribers,
+- `src/robollm/bridge.py` owns the shared `rclpy` node, publishers, subscribers,
   action clients, speed limits, obstacle checks, and deadman behavior.
 
 The physical arm uses a stricter chain:
@@ -83,8 +83,8 @@ See the [workbench C4 tour](docs/ARCHITECTURE.md) and the
 
 | Area | Capability | Evidence state | Entry point |
 |---|---|---|---|
-| LLM ↔ ROS 2 | 22 MCP tools for sensing, motion, Nav2, MoveIt, bags, TF2, and Gazebo objects | **Verified in simulation** | [`ros2_mcp_server.py`](ros2_mcp_server.py) |
-| Human control | Browser telemetry, lidar radar, camera stream, WASD teleop, and navigation goals | **Verified in simulation** | [`web/`](web/TECHNICAL.md) |
+| LLM ↔ ROS 2 | 22 MCP tools for sensing, motion, Nav2, MoveIt, bags, TF2, and Gazebo objects | **Verified in simulation** | [`apps/mcp/server.py`](apps/mcp/server.py) |
+| Human control | Browser telemetry, lidar radar, camera stream, WASD teleop, and navigation goals | **Verified in simulation** | [`apps/dashboard/`](apps/dashboard/TECHNICAL.md) |
 | Robot software | Ten ROS 2 lessons plus packaged, navigation, manipulation, and humanoid examples | **Verified by example** | [`examples/`](examples/README.md) |
 | Hand teleoperation | MediaPipe → filtering → workspace mapping → IK → 20 Hz trajectory | **Verified in RViz** | [`hand_follow`](examples/hand_follow/README.md) |
 | Gesture manipulation | Fist/open-palm state machine with MoveIt scene attach/detach | **Verified in RViz** | [`gen3_pick_place`](examples/gen3_pick_place/README.md) |
@@ -119,37 +119,37 @@ cd RoboLLM
 
 python3 -m venv --system-site-packages .venv
 .venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -r requirements-extra.txt
+.venv/bin/python -m pip install -c requirements/ros-constraints.txt -r requirements/ros.txt
 ```
 
 `--system-site-packages` lets the virtual environment reuse ROS 2’s system
-`rclpy` installation. `constraints.txt` keeps NumPy on the repository’s
+`rclpy` installation. `requirements/ros-constraints.txt` keeps NumPy on the repository’s
 ROS-compatible ABI line.
 
 ### Launch the TurtleBot3 workbench
 
 ```bash
-./launch_all.sh
+scripts/launch/all.sh
 ```
 
 This opens TurtleBot3 simulation and the dashboard at
 <http://localhost:8080>. Individual launch helpers are also available:
 
 ```bash
-sim/launch_turtlebot.sh
-sim/launch_slam.sh
-sim/launch_nav2.sh /path/to/map.yaml
-sim/launch_moveit_panda.sh
+scripts/launch/simulation/turtlebot.sh
+scripts/launch/simulation/slam.sh
+scripts/launch/simulation/nav2.sh /path/to/map.yaml
+scripts/launch/simulation/moveit_panda.sh
 ```
 
 ### Connect an MCP client
 
 The repository includes `.mcp.json`. An MCP client launched from the repository
-can register `run-server.sh` as the `ros2` server. Claude Code can also install
+registers the canonical `scripts/launch/mcp.sh` as the `ros2` server. Claude Code can also install
 it at user scope:
 
 ```bash
-claude mcp add --scope user ros2 -- /absolute/path/to/RoboLLM/run-server.sh
+claude mcp add --scope user ros2 -- /absolute/path/to/RoboLLM/scripts/launch/mcp.sh
 ```
 
 Try: “List ROS 2 topics”, “Show the nearest obstacle”, or “Navigate to
@@ -192,18 +192,22 @@ and [Phase 0–5 delivery matrix](docs/physical-arm/ROADMAP.md).
 
 ```text
 RoboLLM/
-├── robot_bridge.py          # shared ROS 2 node used by MCP and web
-├── ros2_mcp_server.py       # 22 language-model tools
-├── web/                     # browser control and telemetry
+├── apps/                    # MCP and browser dashboard applications
+├── src/robollm/             # shared ROS 2 and Gazebo runtime code
+├── configs/                 # checked training/runtime configuration
+├── requirements/            # isolated ROS, LeRobot, and SmolVLA environments
+├── scripts/                 # launch, CI, learning, and setup operations
+├── tests/                   # unit and ROS integration suites
 ├── ros2/robo_arm_driver/    # validated physical-arm ROS 2 package
 ├── hardware/                # Mega firmware, protocol simulator, and bench tools
 ├── examples/                # ROS 2, simulation, teleop, and manipulation path
 ├── cad/                     # FreeCAD → URDF → PyBullet
 ├── scan3d/                  # capture → reconstruction → URDF/STL
-├── sim/                     # Gazebo, SLAM, Nav2, and MoveIt launch helpers
-├── tests/                   # native fast suite
 └── docs/                    # architecture, runbooks, status, and diagrams
 ```
+
+See the [project structure contract](docs/PROJECT_STRUCTURE.md) for ownership
+rules and the compatibility paths retained for existing commands.
 
 ## Documentation
 
@@ -211,6 +215,7 @@ RoboLLM/
 |---|---|
 | [Documentation hub](docs/README.md) | Index of every first-party document and architecture diagram |
 | [Project checkpoint](docs/PROJECT_STATUS.md) | Current software milestone, physical gates, and next phase |
+| [Project structure](docs/PROJECT_STRUCTURE.md) | Canonical directory ownership and compatibility policy |
 | [Architecture](docs/ARCHITECTURE.md) | Workbench C4 context, containers, and hand-teleop components |
 | [Physical-arm architecture](docs/physical-arm/ARCHITECTURE.md) | Safety boundary, driver components, interfaces, and 4+1 views |
 | [Physical-arm roadmap](docs/physical-arm/ROADMAP.md) | Honest Phase 0–5 status and evidence gates |
@@ -227,11 +232,11 @@ configuration, and native tests:
 
 ```bash
 ruff check --select E9,F \
-  robot_bridge.py ros2_mcp_server.py web/server.py hardware/ \
-  ros2/robo_arm_driver/robo_arm_driver/ tests/
+  src/ apps/ hardware/ ros2/robo_arm_driver/robo_arm_driver/ \
+  examples/mujoco/ scripts/ tests/unit/
 
 python hardware/generate_firmware_config.py --check
-pytest tests/ -q
+pytest tests/unit/ -q
 ```
 
 Hardware-dependent ROS 2 builds, Arduino compilation/flashing, camera behavior,

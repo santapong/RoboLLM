@@ -10,7 +10,7 @@ Self-test (no sim, verifies the vision math on a synthetic image):
     .venv/bin/python examples/ros2_py/10_color_follow.py --test
 
 Live (needs a camera model — burger has none):
-    TURTLEBOT3_MODEL=waffle_pi sim/launch_turtlebot.sh     # terminal 1
+    TURTLEBOT3_MODEL=waffle_pi scripts/launch/simulation/turtlebot.sh     # terminal 1
     .venv/bin/python examples/ros2_py/10_color_follow.py   # terminal 2
 Then drop something red in front of the robot in Gazebo and watch it chase.
 """

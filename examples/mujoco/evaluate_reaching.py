@@ -117,7 +117,7 @@ class SmolVLAPolicyAdapter:
             from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy
         except ImportError as exc:
             raise RuntimeError(
-                "Install requirements-smolvla.txt in its isolated GPU environment"
+                "Install requirements/smolvla.txt in its isolated GPU environment"
             ) from exc
         self.torch = torch
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

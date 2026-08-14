@@ -18,6 +18,12 @@ import sys
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
 
+# Canonical src-layout package. Compatibility wrappers at the repository root
+# remain for old commands, but tests exercise the maintained implementation.
+_SRC_DIR = os.path.join(_ROOT, "src")
+if _SRC_DIR not in sys.path:
+    sys.path.insert(0, _SRC_DIR)
+
 # Shim 1 — vendored gesture-SM test directory.
 _GESTURE_TEST_DIR = os.path.join(
     _ROOT, "examples", "gen3_pick_place", "ros2_ws", "src",

@@ -86,7 +86,7 @@ class LeRobotRecorder:
         except ImportError as exc:
             raise RuntimeError(
                 "LeRobot is not installed. Create .venv-lerobot and install "
-                "requirements-lerobot.txt; do not install it in the ROS venv."
+                "requirements/lerobot.txt; do not install it in the ROS venv."
             ) from exc
         return LeRobotDataset
 

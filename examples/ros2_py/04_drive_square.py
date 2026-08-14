@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """04 · Make the TurtleBot drive in a square (open-loop timed control).
 
-Needs the sim running:  ~/Desktop/robot-llm-loop/sim/launch_turtlebot.sh
+Needs the sim running: scripts/launch/simulation/turtlebot.sh
 Concepts: publishing geometry_msgs/Twist to /cmd_vel, sequencing motions with time.
 This is "open loop" — no feedback — so the square will drift. 05 does it better.
 """

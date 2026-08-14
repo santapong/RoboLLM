@@ -16,10 +16,10 @@ previous one.
 ## Setup (2 terminals + Claude Code)
 ```bash
 # Terminal 1 — simulator (keep it visible, you'll watch the robot)
-TURTLEBOT3_MODEL=waffle_pi /path/to/RoboLLM/sim/launch_turtlebot.sh
+TURTLEBOT3_MODEL=waffle_pi /path/to/RoboLLM/scripts/launch/simulation/turtlebot.sh
 
 # Terminal 2 — browser dashboard (optional but fun: you watch telemetry live)
-/path/to/RoboLLM/web/run-web.sh     # → http://localhost:8080
+/path/to/RoboLLM/scripts/launch/dashboard.sh     # → http://localhost:8080
 ```
 Then restart the MCP client in `/path/to/RoboLLM` so the `ros2` server
 (22 tools) is fresh.
@@ -61,21 +61,21 @@ Expect: `spawn_object` + a camera shot with the red box visible in it.
 
 ## Stage 6 — map & navigate (add Terminal 3)
 ```bash
-/path/to/RoboLLM/sim/launch_slam.sh          # Terminal 3
+/path/to/RoboLLM/scripts/launch/simulation/slam.sh          # Terminal 3
 ```
 - *"Drive a slow exploration pattern and tell me the map status every so often.
   Stop when it's mostly explored."* (Claude: `drive` + `get_map_status`)
 - Save the map, then swap SLAM for Nav2:
   ```bash
   ros2 run nav2_map_server map_saver_cli -f ~/map    # then Ctrl-C SLAM
-  /path/to/RoboLLM/sim/launch_nav2.sh        # set 2D Pose Estimate in RViz!
+  /path/to/RoboLLM/scripts/launch/simulation/nav2.sh        # set 2D Pose Estimate in RViz!
   ```
 - *"Navigate to x=0.5, y=0.5 and confirm with the transform where you ended up."*
   (Claude: `navigate_to` + `get_transform("map", "base_link")`)
 
 ## Stage 7 — the arm (separate demo, no Gazebo needed)
 ```bash
-/path/to/RoboLLM/sim/launch_moveit_panda.sh   # can replace Stages 1–6
+/path/to/RoboLLM/scripts/launch/simulation/moveit_panda.sh   # can replace Stages 1–6
 ```
 - *"Read the arm's joint states, then move it to a ready pose."*
   (Claude: `get_joint_states` + `move_arm('panda_joint1=0, panda_joint2=-0.785,

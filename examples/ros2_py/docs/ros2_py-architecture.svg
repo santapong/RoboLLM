@@ -12,7 +12,7 @@
   <text x="41" y="125" font-size="12" font-style="italic" fill="#475569">Tier 1 · node basics — no sim, plain rclpy</text>
 
   <rect x="745" y="105" width="450" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
-  <text x="761" y="125" font-size="12" font-style="italic" fill="#475569">Tier 2 · drive the robot — sim/launch_turtlebot.sh</text>
+  <text x="761" y="125" font-size="12" font-style="italic" fill="#475569">Tier 2 · drive the robot — scripts/launch/simulation/turtlebot.sh</text>
 
   <rect x="25" y="355" width="450" height="165" rx="6" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8,5"/>
   <text x="41" y="375" font-size="12" font-style="italic" fill="#475569">Tier 3 · actions — Nav2 &amp; MoveIt goals</text>

@@ -65,5 +65,5 @@ For the repeatable success/cancel/rejection probe, run this in a third sourced
 terminal after the simulator and launch file are active:
 
 ```bash
-python3 tests_ros/arm_driver_action_probe.py
+python3 tests/integration/ros/arm_driver_action_probe.py
 ```
