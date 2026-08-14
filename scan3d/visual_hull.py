@@ -67,7 +67,7 @@ def main():
     print(f"{len(files)} frames | background: {'yes' if bg is not None else 'no'}")
 
     # 1) silhouettes + geometry estimate (rotation-axis column, base row, extents)
-    masks, centroids, bottoms, tops, halfw = [], [], [], [], []
+    masks, centroids, bottoms, tops = [], [], [], []
     for f in files:
         img = cv2.imread(f)
         m = silhouette(img, bg)

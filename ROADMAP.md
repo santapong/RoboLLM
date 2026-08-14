@@ -12,7 +12,7 @@ start being deliverables.
 
 The execution status for the DIY physical arm is tracked separately in
 [`docs/physical-arm/ROADMAP.md`](docs/physical-arm/ROADMAP.md). As of
-2026-08-13, only the Phase 0 software foundation and v0.2 driver core are
+2026-08-15, only the Phase 0 software foundation and v0.2 driver core are
 implemented; later physical-arm phases are not marked complete by the presence
 of related simulation examples.
 

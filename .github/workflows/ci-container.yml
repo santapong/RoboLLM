@@ -75,7 +75,8 @@ jobs:
             -v "$PWD:/repo" -w /repo \
             "$IMAGE" \
             bash -lc 'source /opt/ros/jazzy/setup.bash;
-                      PYTHONPATH=/repo/src python3 -m pytest -q -p no:cacheprovider tests/integration/ros/'
+                      PYTHONPATH=/repo/src:${PYTHONPATH} \
+                        python3 -m pytest -q -p no:cacheprovider tests/integration/ros/'
       - name: Restore checkout ownership (root-owned build/caches -> runner)
         if: always()
         run: |

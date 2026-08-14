@@ -12,47 +12,82 @@ pinned), CPU-only and RViz-based (no Gazebo, no GPU, no hardware).
 
 ![talos_mirror component diagram](docs/talos_mirror-architecture.svg)
 
-STATUS: skeleton only -- section stubs below name the gotchas the c2-qp (M5)
-review surfaced (traps to avoid, not yet written up). Full write-up is a
-docs-phase task; each stub is a placeholder for a full explanation in the
-style of ../humanoid_mirror/TECHNICAL.md (root cause, symptom, fix, and the
-test/check that now catches it), not the explanation itself.
+These notes record the failure modes surfaced during the M5 review, together
+with the shipped fix or the remaining limitation and the check that makes it
+visible.
 
 ## Leg asin-branch discontinuity
 
-TODO: retarget.py's `_pick_gimbal` ACOS-vs-ASIN branch-labelling trap (an
-earlier asin form cost 24 deg of round-trip error on the leg solver because
-its second branch silently jumped onto the physically different acos-branch
-solution between adjacent search samples) -- see `_pick_gimbal`'s own
-docstring for the derivation in the meantime.
+`_pick_gimbal` must return two solutions whose branch identities remain stable
+while the outer one-dimensional search moves between samples. The earlier
+ASIN form was correct at an isolated point, but its `pi - x` solution wrapped
+at ±pi and silently changed physical branches between adjacent samples. The
+residual therefore jumped, manufacturing roots and hiding real ones; the leg
+round-trip error reached 24 degrees.
+
+The implementation now derives the inner angle as
+`psi ± acos(a_z / hypot(w_y, w_z))`, then solves the outer angle with two
+`atan2` terms. Those two ACOS labels remain stable across the search. The
+random round-trip section of `retarget-bench` is the regression gate and
+requires each arm and leg to remain below one degree.
 
 ## Bench kwargs-int-key trap
 
-TODO: retarget-bench's landmark-dict construction gotcha (kwargs vs.
-integer-keyed dicts) that produced a false pass/fail signal before it was
-caught.
+MediaPipe landmark constants are integers, while Python keyword names are
+strings. A helper such as `_pose(LEFT_ELBOW=...)` therefore inserts the literal
+string key `"LEFT_ELBOW"`; it does not replace integer key `13`. The intended
+test pose stays neutral, so known-answer checks can report misleading results
+without exercising the motion they name.
+
+`retarget_bench.py` now accepts overrides only as a positional dictionary,
+for example `_pose({LEFT_ELBOW: (...)})`. Each discriminating case also asserts
+that its own pose produces a non-trivial expected direction, and mutation-kill
+checks prove the mirror-law cases carry signal.
 
 ## Diagonal-step 1-DOF knee residual
 
-TODO: `solve_leg_hip_knee`'s free-axis-swap workaround (hip YAW swept
-instead of hip pitch, unlike the arm's shoulder/elbow decomposition) still
-leaves a small residual on a diagonal (non-sagittal, non-lateral) stepping
-motion -- see that function's own docstring for the geometric argument in
-the meantime.
+The arm can sweep humeral yaw because its elbow offset is nearly parallel to
+that axis. Applying the same decomposition to a leg sweeps hip pitch against a
+thigh vector perpendicular to it, passing through a true gimbal singularity
+near a horizontal high step. That produced 24–30 degree errors.
+
+`solve_leg_hip_knee` instead sweeps the outer hip-yaw joint. For every sample,
+`_hip_exact_pair` solves roll and pitch exactly from the thigh direction; the
+remaining one-dimensional residual is the shin's out-of-plane component. A
+24-step bisection is intentionally retained because the 12-step arm setting
+amplifies error near hip pitch ±90 degrees. Diagonal left/right step cases and
+the random leg round-trip gate expose the remaining numerical residual rather
+than treating sagittal-only motion as sufficient.
 
 ## Head yaw sign-degeneracy under clamp
 
-TODO: `_head_angles`'s yaw = atan2(head_dir_y, head_dir_x) loses a
-well-defined sign once `HEAD_YAW_LIMITS` clamps it near the range boundary,
-under a specific combination of gain and observed pitch.
+Yaw is computed with `atan2(head_dir_y, head_dir_x)`, multiplied by the yaw
+gain, and then clamped. Once two different observations saturate at the same
+`HEAD_YAW_LIMITS` boundary, the command no longer preserves their angular
+magnitude; near the ±pi branch cut a noisy direction can also change the raw
+angle's sign before clamping. This is an observability/saturation limitation,
+not evidence of extra range in the robot, so the controller stays bounded.
+
+The head-turn acceptance case uses a tight window around the mirror law's
+reference command instead of checking only `yaw < 0`: both known bad mirror
+mutations keep that sign but produce a different magnitude, often at the
+clamp. A future continuity policy would need an unwrapped angle and previous
+command as state; the current direct mapper deliberately does not claim that.
 
 ## Launcher single-quote bash -c trap
 
-TODO: the `bash -c '...'` sourcing convention this repo's verification
-commands use (`source /opt/ros/jazzy/setup.bash && ...`) breaks silently if
-a single quote appears anywhere inside the quoted command -- house
-convention, not specific to this package, but talos_mirror's longer launch
-invocations make it easy to hit by accident.
+The launcher passes a multi-line script inside one single-quoted
+`bash -c '...'` argument so it can source ROS before executing the requested
+command. A literal apostrophe anywhere inside that block, including in a shell
+comment, terminates the outer quote. The resulting parser error is commonly
+reported at a later `fi`, which makes an innocent comment look like a control-
+flow defect.
+
+The launcher comments inside that block avoid apostrophes and call out the
+constraint next to the unconditional TALOS rebuild. Keep dynamic commands in
+the positional argument after `--` (`exec "${@:-bash}"`) instead of
+interpolating them into the quoted script. `bash -n docker/ros2-arm` is the
+cheap regression check after launcher edits.
 
 ## CPU profile (measured, 27 Jul 2026)
 
@@ -144,10 +179,17 @@ config/launch-level cut, and is out of scope here.
 
 ## Stale root-owned install/ masking builds
 
-TODO: a container run that leaves `ros2_ws/build/`, `ros2_ws/install/`, or
-`__pycache__/` owned by root (root-in-container writing into a bind-mounted
-host `ros2_ws/`) makes a subsequent `colcon build` -- or even a plain
-`python -m py_compile` from the host -- fail with a permission error that
-reads as a code problem rather than an ownership one; the fix is reclaiming
-ownership (or rebuilding clean), not editing the source that happened to be
-open at the time.
+The container bind-mounts the host `ros2_ws/`. A root process can therefore
+leave `build/`, `install/`, `log/`, or `__pycache__/` entries that the host user
+cannot replace. A later `colcon build` or even `python -m py_compile` then fails
+with a permission error that can be mistaken for a source defect. A stale
+`install/` is worse: the live ROS stack can continue importing old code while
+source-only tests pass.
+
+The TALOS launcher rebuilds the actively developed packages on every run, and
+`diff_replay.py` compares the source and installed Python files before it
+reports benchmark results. If ownership is already wrong, stop the container,
+restore those generated directories to the host user (or remove and rebuild
+them with correct ownership), source the new `install/setup.bash`, and rerun
+the parity check. Do not change working source merely to work around generated
+file permissions.
