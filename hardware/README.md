@@ -60,6 +60,29 @@ Review both the YAML and generated header before flashing.
 | `check_arduino.sh` | toolchain, port, compile, flash, ping, and LED check |
 | `acceptance_test.py` | state/motion/camera synchronization bench check |
 | `camera_logger.py` | synchronized image/state/action episode logger |
+| `lerobot_logger.py` | minimal one-camera LeRobot v3 demonstration recorder |
+
+## LeRobot dataset recording
+
+LeRobot 0.6 needs NumPy 2.x, so keep it separate from the ROS Jazzy venv,
+which must remain on NumPy 1.26.4:
+
+```bash
+python3 -m venv .venv-lerobot
+.venv-lerobot/bin/pip install -r requirements-lerobot.txt
+```
+
+After encoders are installed and `state_source: measured` is configured:
+
+```bash
+ARM_PORT=/dev/ttyACM0 .venv-lerobot/bin/python hardware/lerobot_logger.py \
+  --task "pick up the blue block" --steps 150 --fps 15
+```
+
+The recorder writes LeRobot's standard video, Parquet, task, and metadata
+layout under `datasets/robollm-arm/`. It refuses commanded-state data by
+default so an open-loop servo target cannot be mislabeled as a measurement.
+Use `--allow-commanded-state` only for a simulation pipeline check.
 
 ## Simulation without hardware
 

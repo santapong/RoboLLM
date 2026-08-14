@@ -1,6 +1,6 @@
 """pytest bootstrap for the native (no-ROS) fast gate.
 
-Two sys.path shims, no copied code:
+Small sys.path shims, no copied code:
 
 1. The 14 gesture-state-machine unit tests already live, vendored, at
    examples/gen3_pick_place/ros2_ws/src/gen3_pick_place/test/test_gesture_sm.py
@@ -37,3 +37,8 @@ if _ARM_IK_DIR not in sys.path:
 _ROBO_ARM_DRIVER_DIR = os.path.join(_ROOT, "ros2", "robo_arm_driver")
 if _ROBO_ARM_DRIVER_DIR not in sys.path:
     sys.path.insert(0, _ROBO_ARM_DRIVER_DIR)
+
+# Shim 4 — physical-arm host tools (camera and LeRobot adapters).
+_HARDWARE_DIR = os.path.join(_ROOT, "hardware")
+if _HARDWARE_DIR not in sys.path:
+    sys.path.insert(0, _HARDWARE_DIR)

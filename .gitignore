@@ -1,5 +1,6 @@
 # python / venv
 .venv/
+.venv-lerobot/
 __pycache__/
 *.pyc
 *.egg-info/
@@ -25,6 +26,9 @@ mcpb/dist/
 assets/scan/
 # rosbag recordings (large)
 assets/bags/
+# local learning datasets (large and may contain personal camera footage)
+datasets/
+episodes/
 # large binary assets (keep small ones; comment out to version meshes)
 assets/**/*.stl
 assets/**/*.dae

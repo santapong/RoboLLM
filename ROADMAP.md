@@ -70,7 +70,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 | # | Item | Track | Who |
 |---|------|-------|-----|
 | A1 | Real encoders into `readEncoderDeg()` (turns on H5 — the novel research axis) | real-arm | bench |
-| A2 | `camera_logger` → LeRobot dataset format | both | Claude, code-only |
+| A2 | `camera_logger` → LeRobot dataset format (**code ready; real recording waits for encoders**) | both | Claude, code-only |
 | A3 | MuJoCo arm scene + scripted policy + sim episode recording (extends `examples/mujoco/`) | sim | Claude, code-only |
 
 ### Tier B — the main quests (pick per track)

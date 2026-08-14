@@ -100,7 +100,7 @@ belongs on cloud). Real hardware: DIY arm = Raspberry Pi 5 + Arduino Uno R3.
 - Real Uno health check: `hardware/check_arduino.sh` (needs user in `dialout`).
 - Examples self-test with no sim: 08, 09, 10 (`--test`).
 
-## Status (2026-08-13)
+## Status (2026-08-14)
 Next steps are tiered in ROADMAP.md (spine: bench -> encoders ->
 LeRobot logger -> demos). Gap triggers below stay authoritative.
 Done & verified headless: dashboard, 22 MCP tools, examples 01–10 +
@@ -111,7 +111,9 @@ all verified on synthetic data only). PENDING user:
 `sudo usermod -aG dialout santapong` + plug the real Uno in → run
 check_arduino.sh (now flashes arm-fw 2.1 — fail-closed configuration plus the measured-state protocol from
 the Phase A convergence, hardware/docs/phaseA-convergence.md; camera_logger
-+ acceptance_test are ported and sim-verified; encoders still stubbed).
++ acceptance_test are ported and sim-verified; the minimal LeRobot v3 adapter
+is code-ready in an isolated NumPy-2 venv and refuses unmeasured real data;
+encoders are still stubbed).
 The physical-arm plan is NOT complete: Phase 0 bench evidence, measured
 URDF/MoveIt, physical webcam mirroring, pick/place, VLA, and the allowlisted
 LLM planner remain gated in `docs/physical-arm/ROADMAP.md`.

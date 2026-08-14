@@ -3,7 +3,7 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Documentation](../README.md) · [Architecture](ARCHITECTURE.md) · [Hardware worksheet](HARDWARE_WORKSHEET.md)
 
-Status date: **2026-08-13**.
+Status date: **2026-08-14**.
 
 This track implements **RoboLLM — A Hybrid Classical and Learning-Based
 Manipulation Platform for Language-Guided Robotics**. The repository-wide
@@ -18,7 +18,7 @@ record for the one physical arm.
 | Phase 1 | ROS 2 physical control | **Partial — v0.2.1 simulation-verified** | `robo_arm_driver` builds on Jazzy; standard `FollowJointTrajectory` success/cancel/rejection, compatibility topic, `/joint_states`, validation, status, serial PTY, and sim launch exist. No deployment-workstation, measured URDF, MoveIt hardware execution, or five-pose bench evidence yet. |
 | Phase 2 | Webcam human mirroring | **Reusable simulation example only** | `examples/hand_follow` proves MediaPipe → filtering → IK → trajectory in RViz. It is not calibrated or safety-accepted on this arm. |
 | Phase 3 | Autonomous vision pick/place | **Not started on the physical arm** | Gesture/MoveIt examples exist, but marker detection, camera calibration, base-camera TF, grasp state machine, and 20-trial physical report are absent. |
-| Phase 4 | VLA / robot learning | **Not started** | Camera/state logger groundwork exists. No accepted physical demonstrations, LeRobot dataset, trained policy, or classical-vs-learned evaluation. |
+| Phase 4 | VLA / robot learning | **Logger ready; data pending** | A minimal LeRobot v3 recorder is hardware-free tested and refuses unmeasured state by default. No accepted physical demonstrations, trained policy, or classical-vs-learned evaluation exists. |
 | Phase 5 | LLM robot planner | **Not started for this arm** | The repository has generic MCP/LLM tools, but no physical-arm skill schema, allowlist validator, world-state gate, or end-to-end language task. |
 
 Therefore the project does **not** yet finish every phase in the proposed plan.
@@ -107,8 +107,10 @@ without creating a second software stack.
 
 ### Phase 4
 
-- [ ] Dataset schema records synchronized frames, honest state, action,
-  gripper, instruction, and timestamps.
+- [x] LeRobot v3 schema records synchronized frames, honest state, action,
+  gripper, instruction, and camera lag; commanded-state recording is an
+  explicit simulation-only override.
+- [ ] A physical dataset is recorded after encoder state is available.
 - [ ] Demonstrations pass quality checks before training.
 - [ ] Fixed-task policy is tested in simulation before physical deployment.
 - [ ] Learned actions cross the same safety validator as classical actions.

@@ -1,0 +1,5 @@
+# Isolated dataset environment. Do not install this in the ROS Jazzy venv:
+# LeRobot 0.6 requires NumPy 2.x, while ROS Jazzy here requires NumPy 1.26.4.
+lerobot[dataset]==0.6.0
+pyserial
+PyYAML

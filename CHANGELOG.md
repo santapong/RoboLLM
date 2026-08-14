@@ -8,6 +8,22 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-08-14 — LeRobot dataset recorder
+
+### Added
+
+- Added a minimal LeRobot v3 recorder for one front camera, six arm joints,
+  gripper state/action, task text, and camera/state synchronization lag.
+- Added an isolated LeRobot dependency environment because LeRobot 0.6 needs
+  NumPy 2.x while the ROS Jazzy environment must stay on NumPy 1.26.4.
+- Refuse commanded-state recording by default; the override is explicitly for
+  simulation pipeline checks until physical encoders are installed.
+
+### Verified
+
+- Hardware-free tests cover the official create/add/save/finalize flow, schema,
+  float32 vectors, task labels, and BGR-to-RGB camera conversion.
+
 ## 2026-08-13 — unified documentation theme
 
 ### Changed
