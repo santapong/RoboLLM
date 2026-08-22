@@ -10,6 +10,13 @@ Complete this at the bench before changing `calibrated: false` to `true`.
 Photograph the wiring and write measured values here; do not rely on servo
 labels or generic 0–180° assumptions.
 
+## Controller (recorded 2026-08-23)
+
+- Board: Arduino Mega 2560 clone, CH340 USB-serial (`1a86:7523`), enumerates as `/dev/ttyUSB0`
+- Firmware: arm-fw 2.1 flashed with `hardware/check_arduino.sh` — 6/6 checks, `pong arm-fw 2.1`, LED OK
+- Toolchain: arduino-cli 1.5.1 + arduino:avr 1.8.8 + Servo 1.3.0 (rootless, `~/.local/bin`)
+- Arm: 6-DOF servo arm, mechanically assembled; servo wiring pending (pins 3,5,6,9,10,11 + gripper 4)
+
 ## Power and cutoff
 
 - Servo model(s): **TODO**

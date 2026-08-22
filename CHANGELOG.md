@@ -8,6 +8,16 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-08-23 — Physical arm: Mega flashed, bench commissioning begins
+
+### Changed
+
+- Flashed arm-fw 2.1 onto the real Arduino Mega 2560 (CH340, `/dev/ttyUSB0`)
+  with `hardware/check_arduino.sh`: 6/6 checks, PING and LED verified.
+  Recorded the controller facts in the hardware worksheet and ticked the
+  real-toolchain flash gate in the physical-arm roadmap. The 6-DOF arm is
+  assembled; servo wiring and Phase 0 calibration are next.
+
 ## 2026-08-15 — B1 preparation complete; learned policy GPU-paused
 
 ### Changed

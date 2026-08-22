@@ -3,7 +3,7 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Documentation](../README.md) · [Architecture](ARCHITECTURE.md) · [Hardware worksheet](HARDWARE_WORKSHEET.md)
 
-Status date: **2026-08-14**.
+Status date: **2026-08-23**.
 
 This track implements **RoboLLM — A Hybrid Classical and Learning-Based
 Manipulation Platform for Language-Guided Robotics**. The repository-wide
@@ -84,7 +84,7 @@ without creating a second software stack.
 - [x] ROS 2 Jazzy container build, launch, action feedback/success,
   cancellation, and invalid-goal rejection pass against the PTY protocol simulator.
 - [ ] ROS 2 Jazzy package builds and launches on the deployment machine.
-- [ ] Arduino firmware compiles/flashes with the real toolchain.
+- [x] Arduino firmware compiles/flashes with the real toolchain (2026-08-23: arm-fw 2.1 flashed to a CH340 Mega 2560 on `/dev/ttyUSB0` via `check_arduino.sh`, 6/6 checks, PING + LED verified; servos not yet wired).
 - [ ] RViz and physical motion agree in joint direction.
 - [ ] Measured URDF represents joint origins, axes, links, and gripper.
 - [ ] MoveIt plans and executes HOME plus five repeatable target poses.
