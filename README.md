@@ -8,6 +8,8 @@
 [![Arm driver](https://img.shields.io/badge/arm%20driver-v0.2.1-D97706)](ros2/README.md)
 [![Stage](https://img.shields.io/badge/stage-research%20platform-475569)](ROADMAP.md)
 
+> Built by [Santapong Sondhi](https://resume.draveniq.dev) — more projects and field notes at [resume.draveniq.dev](https://resume.draveniq.dev).
+
 **RoboLLM is a learning-first robotics platform for building and evaluating
 language-guided manipulation systems.** It connects ROS 2, simulation,
 perception, teleoperation, robot learning, and a low-cost physical arm without
