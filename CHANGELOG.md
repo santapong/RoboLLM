@@ -8,6 +8,20 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-08-24 — scan3d: physical validation (S1) started, parked at capture
+
+### Changed
+
+- Generated the ChArUco scale mat (`scan3d/scale_mat.py make`, A4 landscape
+  @300 DPI) and saved it to `assets/scan/scale_mat.png` (git-ignored;
+  regenerate with the same command). Docker images `colmap/colmap` and
+  `openmvs/openmvs-ubuntu` verified present on the Kali box.
+- Parked awaiting the physical steps: print the mat at 100% and verify the
+  30 mm square, calliper-measure a matte textured object, orbit 40–80 phone
+  photos on the mat (plus a KIRI Engine baseline scan of the same object),
+  then run `scan3d/reconstruct_cpu.sh` and compare the STL against callipers
+  (target ~1–2%). This validation still gates scan3d `develop` → `main`.
+
 ## 2026-08-23 — Physical arm: Mega flashed, bench commissioning begins
 
 ### Changed
