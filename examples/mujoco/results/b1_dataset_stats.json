@@ -1,0 +1,56 @@
+{
+  "chunk_size": 20,
+  "manifest": "datasets/b1-red-target-v2/manifest.json",
+  "schema": "robollm.b1.dataset-stats.v1",
+  "splits": {
+    "evaluation": {
+      "chunk_padding_ratio": 0.3144,
+      "episode_frames": {
+        "max": 84,
+        "mean": 30.08,
+        "median": 28.0,
+        "min": 10
+      },
+      "episodes": 100,
+      "expert": "noisy",
+      "expert_noise_scale": 1.75,
+      "expert_success_rate": 1.0,
+      "family_counts": {
+        "front_high": 20,
+        "front_low": 20,
+        "left": 20,
+        "near": 20,
+        "right": 20
+      },
+      "frames": 3008
+    },
+    "train": {
+      "chunk_padding_ratio": 0.3103,
+      "episode_frames": {
+        "max": 79,
+        "mean": 30.39,
+        "median": 28.0,
+        "min": 11
+      },
+      "episodes": 400,
+      "expert": "noisy",
+      "expert_noise_scale": 1.75,
+      "expert_success_rate": 1.0,
+      "family_counts": {
+        "front_high": 80,
+        "front_low": 80,
+        "left": 80,
+        "near": 80,
+        "right": 80
+      },
+      "frames": 12155
+    }
+  },
+  "training_shape": {
+    "batch_size": 64,
+    "effective_epochs": 105.3,
+    "sample_draws": 1280000,
+    "steps": 20000,
+    "train_frames": 12155
+  }
+}

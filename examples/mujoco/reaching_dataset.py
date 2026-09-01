@@ -17,14 +17,15 @@ import numpy as np
 from arm_dataset import dataset_features, record_dataset
 from reaching import (
     ACTION_SLEW,
+    DEFAULT_EXPERT_NOISE,
     FAMILY_NAMES,
     FPS,
     INSTRUCTION,
     MAX_FRAMES,
-    OracleExpert,
     ReachingEnv,
     actuator_bounds,
     episode_specs,
+    make_expert,
 )
 
 MANIFEST_SCHEMA = "robollm.b1.dataset-manifest.v1"
@@ -116,6 +117,8 @@ def record_reaching_split(
     height: int = 240,
     width: int = 320,
     dataset_class: Any | None = None,
+    expert: str = "oracle",
+    expert_noise: float = DEFAULT_EXPERT_NOISE,
 ) -> dict[str, Any]:
     if frames <= 0 or frames > MAX_FRAMES:
         raise ValueError(f"frames must be between 1 and {MAX_FRAMES}")
@@ -131,13 +134,15 @@ def record_reaching_split(
         use_videos=True,
     )
     env = ReachingEnv(height=height, width=width, render=True)
-    expert = OracleExpert()
+    expert_name = expert
+    expert = make_expert(expert_name, expert_noise)
     episode_rows: list[dict[str, Any]] = []
     successes = 0
 
     try:
         for spec in specs:
             observation = env.reset(spec)
+            expert.reset(spec)
             succeeded = False
             error = env.error_m
             recorded = 0
@@ -181,6 +186,8 @@ def record_reaching_split(
         "repo_id": split_repo_id,
         "root": str(root),
         "base_seed": seed,
+        "expert": expert_name,
+        "expert_noise_scale": expert_noise if expert_name == "noisy" else None,
         "episode_count": count,
         "frame_count": sum(row["frame_count"] for row in episode_rows),
         "episodes": episode_rows,
@@ -188,6 +195,7 @@ def record_reaching_split(
     _write_manifest(manifest_file, manifest)
     return {
         "split": split,
+        "expert": expert_name,
         "episodes": count,
         "frames": sum(row["frame_count"] for row in episode_rows),
         "successes": successes,
@@ -365,6 +373,13 @@ def main() -> int:
     parser.add_argument("--manifest", default="datasets/b1-red-target/manifest.json")
     parser.add_argument("--repo-id", default="local/robollm-red-target")
     parser.add_argument("--frames", type=int, default=MAX_FRAMES)
+    parser.add_argument(
+        "--expert",
+        choices=("oracle", "noisy"),
+        default="oracle",
+        help="Data-collection expert. 'oracle' reproduces the frozen 50-episode set.",
+    )
+    parser.add_argument("--expert-noise", type=float, default=DEFAULT_EXPERT_NOISE)
     parser.add_argument("--validate", action="store_true")
     args = parser.parse_args()
 
@@ -387,6 +402,8 @@ def main() -> int:
             seed=args.seed,
             repo_id=args.repo_id,
             frames=args.frames,
+            expert=args.expert,
+            expert_noise=args.expert_noise,
         )
     print("RESULT:" + json.dumps(metrics, sort_keys=True))
     return 0 if metrics.get("valid", True) else 1

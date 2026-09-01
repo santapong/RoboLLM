@@ -11,16 +11,16 @@
       "checkpoint": null,
       "end_effector_error_m": {
         "final_max": 0.8128805953638284,
-        "final_mean": 0.4392570746853678,
-        "min_mean": 0.4372035781493274
+        "final_mean": 0.439257076040549,
+        "min_mean": 0.43720357951142425
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 3.107635000560549,
-        "mean": 0.09965066301720071,
-        "p50": 0.06380999911925755,
-        "p95": 0.2561105009590392
+        "max": 0.3210780014342163,
+        "mean": 0.04866813896842359,
+        "p50": 0.04335000085120555,
+        "p95": 0.07362505039054668
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "hold",
@@ -36,17 +36,17 @@
       "aborts": 0,
       "checkpoint": null,
       "end_effector_error_m": {
-        "final_max": 0.49886410786984003,
-        "final_mean": 0.39652618731762057,
-        "min_mean": 0.22550383428501258
+        "final_max": 0.4988641078696728,
+        "final_mean": 0.3965261903719259,
+        "min_mean": 0.2255038373058104
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 0.5793479995190864,
-        "mean": 0.11982010849715152,
-        "p50": 0.07447000007232418,
-        "p95": 0.3155428986246988
+        "max": 0.2631979987199884,
+        "mean": 0.060734292474080576,
+        "p50": 0.05474750105349813,
+        "p95": 0.08923190089262789
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "noise",
@@ -71,10 +71,10 @@
       "episodes": 1,
       "fault": "camera_dropout",
       "inference_latency_ms": {
-        "max": 0.020568999389070086,
-        "mean": 0.020568999389070086,
-        "p50": 0.020568999389070086,
-        "p95": 0.020568999389070086
+        "max": 0.020282001059968024,
+        "mean": 0.020282001059968024,
+        "p50": 0.020282001059968024,
+        "p95": 0.020282001059968024
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -90,17 +90,17 @@
       "aborts": 0,
       "checkpoint": null,
       "end_effector_error_m": {
-        "final_max": 0.0025890882326471106,
-        "final_mean": 0.0025890882326471106,
-        "min_mean": 0.0025890882326471106
+        "final_max": 0.002589088232663315,
+        "final_mean": 0.002589088232663315,
+        "min_mean": 0.002589088232663315
       },
       "episodes": 1,
       "fault": "nan",
       "inference_latency_ms": {
-        "max": 0.0921240007301094,
-        "mean": 0.06870581802848558,
-        "p50": 0.06724500053678639,
-        "p95": 0.09211199994751951
+        "max": 0.09927599967340939,
+        "mean": 0.06764363570255227,
+        "p50": 0.05947599856881425,
+        "p95": 0.09545200009597465
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -116,17 +116,17 @@
       "aborts": 0,
       "checkpoint": null,
       "end_effector_error_m": {
-        "final_max": 0.0025890882326471106,
-        "final_mean": 0.0025890882326471106,
-        "min_mean": 0.0025890882326471106
+        "final_max": 0.002589088232663315,
+        "final_mean": 0.002589088232663315,
+        "min_mean": 0.002589088232663315
       },
       "episodes": 1,
       "fault": "out_of_range",
       "inference_latency_ms": {
-        "max": 0.3864719983539544,
-        "mean": 0.14176154499264984,
-        "p50": 0.10041600035037845,
-        "p95": 0.30629299908468965
+        "max": 0.10720499994931743,
+        "mean": 0.06289309120885181,
+        "p50": 0.0579309999011457,
+        "p95": 0.08615650040155742
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -142,17 +142,17 @@
       "aborts": 0,
       "checkpoint": null,
       "end_effector_error_m": {
-        "final_max": 0.0025890882326471106,
-        "final_mean": 0.0025890882326471106,
-        "min_mean": 0.0025890882326471106
+        "final_max": 0.002589088232663315,
+        "final_mean": 0.002589088232663315,
+        "min_mean": 0.002589088232663315
       },
       "episodes": 1,
       "fault": "overspeed",
       "inference_latency_ms": {
-        "max": 0.15574099961668253,
-        "mean": 0.06483763619061475,
-        "p50": 0.05299599979480263,
-        "p95": 0.11547600024641724
+        "max": 0.22699400142300874,
+        "mean": 0.09635799936156465,
+        "p50": 0.06146300074760802,
+        "p95": 0.2034954995906446
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -178,16 +178,16 @@
       "checkpoint": null,
       "end_effector_error_m": {
         "final_max": 0.01953020111305275,
-        "final_mean": 0.009985037454482404,
-        "min_mean": 0.009010139270028035
+        "final_mean": 0.009985032770394347,
+        "min_mean": 0.00901013458590163
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 0.4061540003021946,
-        "mean": 0.10486096228355012,
-        "p50": 0.07482199907826725,
-        "p95": 0.2628533009556122
+        "max": 0.23108499954105355,
+        "mean": 0.06576372399048443,
+        "p50": 0.0594669982092455,
+        "p95": 0.09456740008317865
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -204,16 +204,16 @@
       "checkpoint": null,
       "end_effector_error_m": {
         "final_max": 0.02293780370621168,
-        "final_mean": 0.009761971684793633,
-        "min_mean": 0.008703897021238279
+        "final_mean": 0.009761970407759913,
+        "min_mean": 0.008703895744228845
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 0.4735509992315201,
-        "mean": 0.10409996228868085,
-        "p50": 0.0779430010879878,
-        "p95": 0.25131000074907206
+        "max": 0.47526599882985465,
+        "mean": 0.07763237252631264,
+        "p50": 0.06254400068428367,
+        "p95": 0.14495000068563965
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -229,17 +229,17 @@
       "aborts": 0,
       "checkpoint": null,
       "end_effector_error_m": {
-        "final_max": 0.024918972372467933,
-        "final_mean": 0.010765702066952643,
-        "min_mean": 0.009592582043908952
+        "final_max": 0.024918972372415,
+        "final_mean": 0.010765698221367545,
+        "min_mean": 0.009592578198265325
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 0.44178800089866854,
-        "mean": 0.10514347400203405,
-        "p50": 0.07356599962804466,
-        "p95": 0.2734935495936951
+        "max": 0.3316389993415214,
+        "mean": 0.06731671124600389,
+        "p50": 0.058466499467613176,
+        "p95": 0.10353265024605206
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -256,16 +256,16 @@
       "checkpoint": null,
       "end_effector_error_m": {
         "final_max": 0.02463678973489796,
-        "final_mean": 0.009698943999440776,
-        "min_mean": 0.008541300884737967
+        "final_mean": 0.009698940524110149,
+        "min_mean": 0.00854129740940414
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 0.3708770000230288,
-        "mean": 0.11282650629251126,
-        "p50": 0.07864299914217554,
-        "p95": 0.2778134008622146
+        "max": 0.13423400014289655,
+        "mean": 0.06494067793979434,
+        "p50": 0.05857799988007173,
+        "p95": 0.09600060075172222
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",
@@ -282,16 +282,16 @@
       "checkpoint": null,
       "end_effector_error_m": {
         "final_max": 0.02170268171687854,
-        "final_mean": 0.010088622180185091,
-        "min_mean": 0.009139617401621886
+        "final_mean": 0.010088627108316834,
+        "min_mean": 0.009139622329757933
       },
       "episodes": 20,
       "fault": "none",
       "inference_latency_ms": {
-        "max": 0.467739999294281,
-        "mean": 0.12938141876513995,
-        "p50": 0.09602050067769596,
-        "p95": 0.29525510008170386
+        "max": 0.3876570008287672,
+        "mean": 0.0773098589787777,
+        "p50": 0.06190950080053881,
+        "p95": 0.14066215153434314
       },
       "invalid_commands_reaching_env": 0,
       "policy_adapter": "oracle",

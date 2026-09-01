@@ -1,5 +1,5 @@
 {
-  "decoded_video_frames": 587,
+  "decoded_video_frames": 15163,
   "dependencies": {
     "lerobot": "0.6.0",
     "mujoco": "3.10.0",
@@ -8,27 +8,27 @@
     "torch": "2.10.0+cpu",
     "torchcodec": "0.10.0"
   },
-  "episodes": 50,
+  "episodes": 500,
   "errors": [],
   "family_counts": {
-    "front_high": 10,
-    "front_low": 10,
-    "left": 10,
-    "near": 10,
-    "right": 10
+    "front_high": 100,
+    "front_low": 100,
+    "left": 100,
+    "near": 100,
+    "right": 100
   },
   "fps": 20,
-  "frames": 587,
+  "frames": 15163,
   "git_commit": "16a481835321a7ec704707ca1926283d83c640c2",
   "git_dirty": true,
   "instruction": "touch the red target",
   "maximum_episode_frames_allowed": 100,
-  "maximum_episode_frames_observed": 16,
+  "maximum_episode_frames_observed": 84,
   "schema": "robollm.b1.dataset-acceptance.v1",
   "splits": [
     "evaluation",
     "train"
   ],
-  "successful_expert_episodes": 50,
+  "successful_expert_episodes": 500,
   "valid": true
 }

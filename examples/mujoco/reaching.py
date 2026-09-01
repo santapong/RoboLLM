@@ -25,6 +25,16 @@ SUCCESS_DISTANCE_M = 0.03
 SUCCESS_FRAMES = 5
 ACTION_SLEW = np.asarray([0.10] * 6 + [0.08], dtype=np.float64)
 
+# Data-collection expert noise (see NoisyExpert). These affect the recorded
+# trajectory only; the task contract above is unchanged.
+# 1.75 is the tuned value: 100% expert success and no episode truncated at the
+# frame cap over 100 seeds, at 2.6x the oracle's trajectory length. 2.0 reaches
+# 48-frame episodes but truncates 2%, which would clone failed demonstrations.
+DEFAULT_EXPERT_NOISE = 1.75
+EXPERT_NOISE_SEED_OFFSET = 424_242
+# Interior margin held away from the actuator bounds, matching make_episode_spec.
+BOUNDS_MARGIN = 0.02
+
 # Targets are derived from these reachable arm postures, then receive small
 # seeded Cartesian jitter.  The gripper remains half-open in every family.
 GOAL_FAMILIES: dict[str, np.ndarray] = {
@@ -338,6 +348,9 @@ class ReachingEnv:
 class OracleExpert:
     """Privileged reachable-posture expert used only to generate/prove data."""
 
+    def reset(self, spec: EpisodeSpec) -> None:
+        """No-op: the oracle is stateless and fully determined by the spec."""
+
     def action(self, env: ReachingEnv) -> np.ndarray:
         if env.spec is None:
             raise RuntimeError("reset the environment before requesting an action")
@@ -346,13 +359,64 @@ class OracleExpert:
         return slew_limit(desired, env.last_action).astype(np.float32)
 
 
+class NoisyExpert:
+    """Same privileged goal, deliberately imperfect path.
+
+    The oracle drives straight down the slew limit, so every state it records
+    already lies on the optimal path and a policy cloned from it has never seen
+    a recovery.  This expert perturbs the goal posture with seeded noise scaled
+    by the *remaining* per-joint distance, so the arm wanders while it is far
+    away and quiets down as it arrives — the episode still settles inside the
+    5-frame success window, but the dataset gains off-optimal states paired
+    with the corrective action that fixes them.
+
+    The task boundary is untouched: the emitted command is clamped to actuator
+    bounds and slew-limited exactly like the oracle's, so `ReachingEnv.step`
+    validates it identically.
+    """
+
+    def __init__(self, scale: float = DEFAULT_EXPERT_NOISE) -> None:
+        if scale < 0.0:
+            raise ValueError("expert noise scale must be non-negative")
+        self.scale = float(scale)
+        self._rng = np.random.default_rng(0)
+
+    def reset(self, spec: EpisodeSpec) -> None:
+        # Offset keeps this stream independent of the spec's own jitter draws.
+        self._rng = np.random.default_rng(spec.seed + EXPERT_NOISE_SEED_OFFSET)
+
+    def action(self, env: ReachingEnv) -> np.ndarray:
+        if env.spec is None:
+            raise RuntimeError("reset the environment before requesting an action")
+        desired = np.asarray(env.spec.goal_state, dtype=np.float64)
+        sigma = self.scale * np.abs(desired - env.last_action)
+        desired = desired + self._rng.normal(0.0, np.maximum(sigma, 0.0))
+        # Hold the same interior margin make_episode_spec uses. Clamping hard to
+        # the actuator bound lets the float32 cast below round a hair outside it,
+        # and ReachingEnv.step checks bounds without tolerance.
+        low, high = actuator_bounds(env.model)
+        desired = np.clip(desired, low + BOUNDS_MARGIN, high - BOUNDS_MARGIN)
+        return slew_limit(desired, env.last_action).astype(np.float32)
+
+
+EXPERTS = {"oracle": OracleExpert, "noisy": NoisyExpert}
+
+
+def make_expert(name: str = "oracle", scale: float = DEFAULT_EXPERT_NOISE):
+    """Build a data-collection expert by name."""
+    if name not in EXPERTS:
+        raise ValueError(f"unknown expert {name!r}; choose from {sorted(EXPERTS)}")
+    return NoisyExpert(scale) if name == "noisy" else OracleExpert()
+
+
 def run_oracle_episode(
-    spec: EpisodeSpec, max_frames: int = MAX_FRAMES
+    spec: EpisodeSpec, max_frames: int = MAX_FRAMES, expert: object | None = None
 ) -> dict[str, object]:
     env = ReachingEnv(render=False)
-    expert = OracleExpert()
+    expert = OracleExpert() if expert is None else expert
     try:
         env.reset(spec)
+        expert.reset(spec)
         min_error = env.error_m
         success = False
         frames = 0
@@ -374,6 +438,8 @@ def run_oracle_episode(
 
 __all__ = [
     "ACTION_SLEW",
+    "DEFAULT_EXPERT_NOISE",
+    "EXPERTS",
     "FAMILY_NAMES",
     "FPS",
     "GOAL_FAMILIES",
@@ -383,6 +449,7 @@ __all__ = [
     "SUCCESS_DISTANCE_M",
     "SUCCESS_FRAMES",
     "EpisodeSpec",
+    "NoisyExpert",
     "OracleExpert",
     "ReachingEnv",
     "SuccessDetector",
@@ -390,6 +457,7 @@ __all__ = [
     "build_reaching_model",
     "episode_specs",
     "make_episode_spec",
+    "make_expert",
     "run_oracle_episode",
     "slew_limit",
 ]

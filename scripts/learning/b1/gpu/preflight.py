@@ -23,9 +23,9 @@ def load_config(path: Path) -> dict[str, Any]:
     expected = {
         "schema": EXPECTED_SCHEMA,
         "model": "lerobot/smolvla_base",
-        "dataset_repo_id": "local/robollm-red-target-train",
-        "dataset_root": "datasets/b1-red-target/train",
-        "manifest": "datasets/b1-red-target/manifest.json",
+        "dataset_repo_id": "local/robollm-red-target-v2-train",
+        "dataset_root": "datasets/b1-red-target-v2/train",
+        "manifest": "datasets/b1-red-target-v2/manifest.json",
         "output_dir": "artifacts/b1-smolvla",
         "steps": 20_000,
         "checkpoint_steps": REQUIRED_CHECKPOINTS,
@@ -37,6 +37,8 @@ def load_config(path: Path) -> dict[str, Any]:
         "fps": 20,
         "action_shape": [7],
         "instruction": "touch the red target",
+        "chunk_size": 20,
+        "n_action_steps": 10,
     }
     mismatches = {
         key: {"expected": value, "actual": config.get(key)}

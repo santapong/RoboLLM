@@ -1,9 +1,9 @@
 {
   "schema": "robollm.b1.smolvla-training.v1",
   "model": "lerobot/smolvla_base",
-  "dataset_repo_id": "local/robollm-red-target-train",
-  "dataset_root": "datasets/b1-red-target/train",
-  "manifest": "datasets/b1-red-target/manifest.json",
+  "dataset_repo_id": "local/robollm-red-target-v2-train",
+  "dataset_root": "datasets/b1-red-target-v2/train",
+  "manifest": "datasets/b1-red-target-v2/manifest.json",
   "output_dir": "artifacts/b1-smolvla",
   "steps": 20000,
   "smoke_steps": 10,
@@ -19,5 +19,9 @@
   "local_artifacts_only": true,
   "instruction": "touch the red target",
   "fps": 20,
-  "action_shape": [7]
+  "action_shape": [7],
+  "chunk_size": 20,
+  "n_action_steps": 10,
+  "expert": "noisy",
+  "expert_noise_scale": 1.75
 }

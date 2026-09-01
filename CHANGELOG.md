@@ -8,6 +8,59 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-01 — B1: environment revived, benchmark rescaled, GPU gate priced
+
+### Fixed
+
+- Repointed the `.venv-lerobot` / `.venv-b1` interpreter symlinks at
+  `/usr/bin/python3.13`. Both venvs were created from the unversioned
+  `/usr/bin/python`, which the distribution moved to 3.14 — LeRobot 0.6.0 does
+  not support 3.14, so every B1 command failed on import while the 161 installed
+  packages were in fact intact.
+- `NoisyExpert` holds a 0.02 rad interior margin away from the actuator bounds.
+  Clamping hard to the bound let the `float32` cast round a hair outside it, and
+  `ReachingEnv.step` checks bounds with no tolerance. Covered by a regression
+  test that fails against the unmargined version.
+- `gpu/evaluate.sh` now writes each candidate to
+  `artifacts/b1-results/by-checkpoint/<step:06d>/`, which is where
+  `select_checkpoint.py` looks. It previously wrote all suites flat, so the
+  5k/10k/20k candidates overwrote each other and the selector found nothing —
+  a failure that would only have surfaced on the rented GPU. The step is derived
+  from the checkpoint path (forcing base 10; `printf %06d` reads `010000` as
+  octal and would have written to `004096`).
+
+### Added
+
+- `NoisyExpert` and `make_expert()` in `examples/mujoco/reaching.py`, selected by
+  `reaching_dataset.py --expert {oracle,noisy} --expert-noise N`. It perturbs the
+  goal posture with seeded noise scaled by the remaining per-joint distance, so
+  trajectories wander while far from the target and settle on arrival. Tuned to
+  1.75: 100% expert success and zero truncated episodes over 100 seeds, at 2.6x
+  the oracle's trajectory length. The emitted command is still clamped and
+  slew-limited, so the frozen task boundary is unchanged.
+- `scripts/learning/b1/dataset_stats.py` — episode-length distribution, action
+  chunk padding ratio, and effective training epochs for a manifest.
+- `examples/mujoco/B1-GPU-GATE.md` — the priced go/no-go for the fine-tune, with
+  the measured before/after table and the full `--execute` sequence.
+- Acceptance artifacts `b1_dataset_acceptance_v2.json` and `b1_dataset_stats.json`.
+
+### Changed
+
+- The B1 training target is the new **v2 dataset** (`datasets/b1-red-target-v2`,
+  `local/robollm-red-target-v2`): 400 train + 100 evaluation episodes,
+  **15,163 decoded frames** against the frozen set's 587, families balanced,
+  splits seed- and target-isolated. The frozen 50-episode recipe stays the
+  default and still reproduces 474 / 113 / 587 frames and `valid: true`.
+- `configs/training/b1_smolvla.json` pins `chunk_size=20` / `n_action_steps=10`,
+  sized from the measured ~30-frame episodes rather than left at SmolVLA's
+  50-step default, which was 87% padding on v1 and allowed exactly one inference
+  per episode. `chunk_size` sizes only action query tokens, never a learned
+  parameter, so `smolvla_base` weights still load cleanly. `train.py` passes both
+  flags and `preflight.py` asserts them.
+- Regenerated `b1_cpu_acceptance.json` and `b1_dataset_acceptance.json`. All four
+  acceptance booleans still hold and every measured value is identical to the
+  2026-08-15 run apart from float noise below 1e-9.
+
 ## 2026-08-24 — scan3d: physical validation (S1) started, parked at capture
 
 ### Changed

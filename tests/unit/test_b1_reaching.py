@@ -24,12 +24,14 @@ from reaching import (
     INSTRUCTION,
     SUCCESS_DISTANCE_M,
     EpisodeSpec,
+    NoisyExpert,
     OracleExpert,
     ReachingEnv,
     SuccessDetector,
     actuator_bounds,
     episode_specs,
     make_episode_spec,
+    make_expert,
     run_oracle_episode,
     slew_limit,
 )
@@ -209,3 +211,71 @@ def test_episode_spec_json_fields_include_privileged_reproduction_data():
         "goal_state",
     }
     assert isinstance(spec, EpisodeSpec)
+
+
+def test_noisy_expert_emits_only_actions_the_task_boundary_accepts():
+    """Regression: high noise used to clamp onto the exact actuator bound, and
+    the float32 cast then rounded a hair outside it.  ReachingEnv.step checks
+    bounds with no tolerance, so the expert must hold an interior margin."""
+    env = ReachingEnv(render=False)
+    try:
+        low, high = actuator_bounds(env.model)
+        for scale in (0.0, 1.75, 3.0, 8.0):
+            expert = NoisyExpert(scale)
+            for spec in episode_specs(4, 555, "train"):
+                env.reset(spec)
+                expert.reset(spec)
+                for _ in range(25):
+                    previous = env.last_action.copy()
+                    action = expert.action(env)
+                    assert np.all(action >= low) and np.all(action <= high)
+                    assert np.all(np.abs(action - previous) <= ACTION_SLEW + 1e-6)
+                    env.step(action)  # raises if the boundary rejects it
+    finally:
+        env.close()
+
+
+def test_noisy_expert_is_seed_deterministic_and_differs_from_the_oracle():
+    spec = make_episode_spec(4321, "left")
+    runs = []
+    for _ in range(2):
+        env = ReachingEnv(render=False)
+        expert = NoisyExpert(1.75)
+        try:
+            env.reset(spec)
+            expert.reset(spec)
+            runs.append([expert.action(env) for _ in range(6)])
+        finally:
+            env.close()
+    assert np.allclose(runs[0], runs[1])
+
+    env = ReachingEnv(render=False)
+    try:
+        env.reset(spec)
+        oracle = OracleExpert()
+        oracle.reset(spec)
+        straight = [oracle.action(env) for _ in range(6)]
+    finally:
+        env.close()
+    assert not np.allclose(runs[0], straight)
+
+
+def test_noisy_expert_lengthens_trajectories_without_losing_success():
+    specs = episode_specs(20, 10_000, "train")
+    oracle = [run_oracle_episode(spec) for spec in specs]
+    noisy = [
+        run_oracle_episode(spec, expert=make_expert("noisy", 1.75)) for spec in specs
+    ]
+    assert all(row["success"] for row in noisy)
+    assert np.mean([row["frames"] for row in noisy]) > 2 * np.mean(
+        [row["frames"] for row in oracle]
+    )
+
+
+def test_make_expert_rejects_unknown_names():
+    assert isinstance(make_expert("oracle"), OracleExpert)
+    assert isinstance(make_expert("noisy"), NoisyExpert)
+    with pytest.raises(ValueError):
+        make_expert("teleop")
+    with pytest.raises(ValueError):
+        NoisyExpert(-1.0)

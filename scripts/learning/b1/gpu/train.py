@@ -38,6 +38,11 @@ def main() -> int:
         f"--output_dir={output}",
         f"--job_name=robollm_b1_{args.mode}",
         f"--seed={config['seed']}",
+        # Sized from the recorded data, not left at SmolVLA's 50-step default:
+        # episodes average ~30 frames, so a 50-step chunk would be 64% padding
+        # and every episode would fit in a single inference.
+        f"--policy.chunk_size={config['chunk_size']}",
+        f"--policy.n_action_steps={config['n_action_steps']}",
         "--policy.device=cuda",
         "--policy.push_to_hub=false",
         "--save_checkpoint_to_hub=false",
