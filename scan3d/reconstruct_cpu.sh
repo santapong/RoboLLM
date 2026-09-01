@@ -54,8 +54,20 @@ MR() { docker run --rm --init -v "$SESS:/work" -w /work --entrypoint "" "$OPENMV
 
 # --- 1. Sparse SfM (COLMAP, CPU SIFT) --------------------------------------
 step "[1/7] COLMAP feature extraction"
+# Route E (turntable, fixed camera): if masks/ exists, tell COLMAP to ignore the
+# static room. Without this a fixed camera reconstructs the room and discards the
+# rotating object as a moving outlier. Absent masks/, the phone-orbit path below
+# is byte-identical to what it always was.
+MASK_ARGS=()
+if [[ -d "$SESS/masks" ]] && compgen -G "$SESS/masks/*.png" >/dev/null; then
+  NM=$(find "$SESS/masks" -name '*.png' | wc -l)
+  echo "Route E: $NM masks found → --ImageReader.mask_path"
+  [[ $NM -eq $N ]] || echo "WARNING: $NM masks for $N images — COLMAP silently ignores an image whose mask is missing"
+  MASK_ARGS=(--ImageReader.mask_path /work/masks)
+fi
 CR colmap feature_extractor --database_path /work/colmap.db --image_path /work/images \
    --ImageReader.camera_model OPENCV --ImageReader.single_camera 1 \
+   "${MASK_ARGS[@]}" \
    --SiftExtraction.use_gpu 0
 
 step "[2/7] COLMAP matching"
@@ -68,11 +80,23 @@ CR colmap mapper --database_path /work/colmap.db --image_path /work/images --out
 step "[3b/7] export text model + solve metric scale (ChArUco mat, best-effort)"
 mkdir -p "$SESS/sparse_txt"
 CR colmap model_converter --input_path /work/sparse/0 --output_path /work/sparse_txt --output_type TXT
-if python3 -c 'import cv2, numpy' 2>/dev/null; then
-  python3 "$HERE/scale_mat.py" solve --session "$SESS" \
+# System python3 is not guaranteed to carry cv2 (it did not, after the 3.14
+# rolling upgrade), and silently skipping this step costs the ChArUco metric
+# scale that the S1 accuracy gate depends on. Search instead of assuming.
+SCALE_PY=""
+for CAND in "${SCAN3D_PYTHON:-}" "$HERE/../.venv/bin/python" "$HERE/../.venv-lerobot/bin/python" python3; do
+  [[ -n "$CAND" ]] || continue
+  if command -v "$CAND" >/dev/null 2>&1 && "$CAND" -c 'import cv2, numpy' 2>/dev/null; then
+    SCALE_PY="$CAND"; break
+  fi
+done
+if [[ -n "$SCALE_PY" ]]; then
+  echo "scale solve using: $SCALE_PY"
+  "$SCALE_PY" "$HERE/scale_mat.py" solve --session "$SESS" \
     || echo "no scale mat found — pass --height-mm to mesh_to_print.py instead"
 else
-  echo "python3-opencv not available — skipping scale solve (use --height-mm)"
+  echo "WARNING: no interpreter with cv2 found (tried \$SCAN3D_PYTHON, ../.venv, ../.venv-lerobot, python3)."
+  echo "         Skipping metric scale — you must pass --height-mm to mesh_to_print.py."
 fi
 
 step "[4/7] COLMAP undistortion"

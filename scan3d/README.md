@@ -18,6 +18,25 @@ Two ways to get a 3D mesh from your (bad, that's fine!) laptop webcam. Both feed
                                        └─ scale_mat.py ─▶ scale.json ─────────┘  (true mm)
 ```
 
+> **Capture contract, route limits and phase acceptance: [SDD.md](SDD.md).**
+> Read it before a scan session — it says what each route structurally cannot
+> recover, so a bad capture is avoided rather than diagnosed afterwards.
+
+## Getting photos off your phone
+
+Images must arrive **without recompression**. Chat apps (LINE, WhatsApp,
+Telegram outside document mode) re-encode and downscale, which destroys the
+high-frequency detail COLMAP's SIFT keypoints are built from — and the failure
+only shows up much later as a sparse model that will not converge.
+
+```bash
+adb pull /sdcard/DCIM/Camera/ ~/Pictures/<object>/    # Android, USB debugging
+```
+
+Or mount the phone over USB in "File transfer" mode and copy `DCIM/Camera`.
+Cloud sync works if it preserves originals. Check the count and the pixel
+dimensions after transfer.
+
 ## A. CPU visual hull — works on this laptop today
 Best for a quick, watertight solid. Cannot capture concavities (a cup looks full).
 
@@ -59,6 +78,28 @@ mm-per-unit against the recovered camera poses, and writes
 `scale.json` — after which `mesh_to_print.py` needs no `--height-mm`.
 If your printout measured e.g. 29.5 mm, re-solve with
 `python3 scale_mat.py solve --session ../assets/scan/mug --square-mm 29.5`.
+
+## E. Turntable photogrammetry — fixed camera, real fidelity
+
+Route C needs a *moving camera and a static scene*. If you would rather leave the
+camera on the desk and turn the object, Route E masks the static room away first;
+COLMAP then solves the rotating object as if the camera had orbited it.
+
+```bash
+../.venv-lerobot/bin/python capture.py --background            # empty scene FIRST
+../.venv-lerobot/bin/python capture.py --turntable 36 --session mug
+../.venv-lerobot/bin/python masks.py --session mug             # -> masks/
+./reconstruct_cpu.sh mug                                       # picks masks/ up
+```
+
+`reconstruct_cpu.sh` adds `--ImageReader.mask_path` only when `masks/` exists, so
+the phone-orbit route is unchanged. Put the ChArUco mat **on** the turntable to
+keep metric scale — it then stays static relative to the object — and make sure
+the mask covers it.
+
+**Do not hold the object and spin it.** `silhouette()` keeps the largest blob, so
+your hand is absorbed into the object, and Route A's carving angle is assumed
+from the frame index rather than measured. Release it onto a turntable.
 
 ## B. Photogrammetry — higher fidelity (needs a GPU for the dense step)
 COLMAP recovers camera poses + geometry from overlapping photos. Sparse runs on
@@ -107,8 +148,11 @@ python3 mesh_to_print.py ../assets/scan/mug/mug_photo.ply --height-mm 95 --smoot
 ## Files
 | File | Role |
 |------|------|
+| `SDD.md` | **Normative** capture contract, route limits, phase acceptance |
 | `capture.py` | Webcam capture: snapshots or turntable; `--background` for cutout |
+| `segmentation.py` | `silhouette()` — the one object/background split, shared by Routes A and E |
 | `visual_hull.py` | CPU silhouette carving → watertight mesh (`.obj`/`.ply`) |
+| `masks.py` | Route E: `silhouette()` → COLMAP masks so a fixed camera can solve a turntable |
 | `reconstruct.sh` | COLMAP photogrammetry (sparse on CPU, dense on GPU) |
 | `reconstruct_cpu.sh` | Full photogrammetry in Docker: COLMAP sparse + OpenMVS dense, CPU-only |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |

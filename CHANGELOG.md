@@ -8,6 +8,50 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-01 — scan3d: capture SDD, and Route E (turntable photogrammetry)
+
+### Added
+
+- `scan3d/SDD.md` — the normative capture and route specification, written
+  before the measurements exist so a disappointing result stays reportable:
+  per-route capture contract, what each route structurally *cannot* recover, the
+  no-recompression transfer contract, the Route E mask interface, per-phase
+  acceptance, and the results schema. Diagram at `scan3d/docs/scan3d-routes.svg`,
+  hand-authored to `docs/STYLE_GUIDE.md`.
+- **Route E — turntable photogrammetry** (`scan3d/masks.py` +
+  `--ImageReader.mask_path` in `reconstruct_cpu.sh`). Route C solves a static
+  scene with a moving camera; a fixed camera watching a rotating object is the
+  inverse and reconstructs the room instead. Masking the static background makes
+  the relative motion equivalent to an orbiting camera. Masks follow COLMAP's
+  contract — `<image filename>.png`, same dimensions, zero-intensity ignored —
+  and are verified against it on a synthetic session.
+- `scan3d/segmentation.py` — `silhouette()` extracted from `visual_hull.py` so
+  Routes A and E share one segmentation. It depends on cv2 and numpy only;
+  `visual_hull.py` also needs trimesh and skimage, which are not installed
+  wherever masks are generated. Both callers provably reference the same
+  function object.
+
+### Fixed
+
+- `reconstruct_cpu.sh` searches `$SCAN3D_PYTHON`, `../.venv`, `../.venv-lerobot`
+  then `python3` for an interpreter carrying cv2, instead of assuming `python3`
+  has it. It no longer does — the 3.14 rolling upgrade removed it — and the
+  previous code silently skipped the ChArUco solve, losing the metric scale the
+  scan3d accuracy gate is measured with.
+
+### Changed
+
+- `scan3d/README.md` gains the phone-transfer runbook (and the prohibition on
+  chat apps, which recompress and destroy SIFT features) and the Route E
+  walkthrough; `TECHNICAL.md` gains the Route E gotchas, including the open
+  question that OpenMVS densification still sees masked-out background.
+
+### Notes
+
+Route E is **built but not yet validated on real optics** — no physical scan has
+been run. Phases 1–3 of the capture plan are operator-gated on the printed
+ChArUco mat, callipers, a matte object and a turntable.
+
 ## 2026-09-01 — B1: environment revived, benchmark rescaled, GPU gate priced
 
 ### Fixed

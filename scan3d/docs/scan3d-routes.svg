@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">RoboLLM · Scan3D capture routes</title>
+  <desc id="desc">Four capture routes turn a real object into a mesh. A phone orbiting the object feeds Route C as stills or video. A webcam with a fixed camera and a turntable feeds Route A shape-from-silhouette, and the planned Route E which adds background masks so COLMAP can solve a rotating object. All routes converge on the shared Route D print tail and the URDF export.</desc>
+  <rect x="0" y="0" width="1200" height="700" fill="#F8FAFC"/>
+  <rect x="0" y="0" width="1200" height="4" fill="#38BDF8"/>
+
+  <text x="24" y="42" font-size="22" font-weight="700" fill="#0F172A">RoboLLM · Scan3D capture routes</text>
+  <text x="24" y="63" font-size="12" fill="#475569">Which capture gives which mesh — and what each route structurally cannot recover. Route D is the shared print tail, not a capture route.</text>
+
+  <!-- ============ Column headings ============ -->
+  <text x="28" y="100" font-size="11" font-weight="700" fill="#475569">DEVICE</text>
+  <text x="250" y="100" font-size="11" font-weight="700" fill="#475569">CAPTURE ROUTE</text>
+  <text x="700" y="100" font-size="11" font-weight="700" fill="#475569">SHARED TAIL</text>
+
+  <!-- ============ Devices ============ -->
+  <rect x="28" y="150" width="150" height="64" rx="6" fill="#64748B"/>
+  <text x="103" y="178" font-size="14" font-weight="700" fill="#F8FAFC" text-anchor="middle">Phone</text>
+  <text x="103" y="197" font-size="11" fill="#E2E8F0" text-anchor="middle">camera moves</text>
+
+  <rect x="28" y="424" width="150" height="64" rx="6" fill="#64748B"/>
+  <text x="103" y="452" font-size="14" font-weight="700" fill="#F8FAFC" text-anchor="middle">Webcam</text>
+  <text x="103" y="471" font-size="11" fill="#E2E8F0" text-anchor="middle">camera fixed + turntable</text>
+
+  <!-- ============ Route C — stills ============ -->
+  <rect x="250" y="118" width="380" height="88" rx="6" fill="#0F6CBD"/>
+  <text x="266" y="144" font-size="14" font-weight="700" fill="#F8FAFC">Route C · phone orbit, stills</text>
+  <text x="266" y="164" font-size="11" fill="#E2E8F0">reconstruct_cpu.sh — COLMAP + OpenMVS, all CPU</text>
+  <text x="266" y="181" font-size="11" fill="#E2E8F0">40–80 photos · 2–3 height rings · ≥60% overlap</text>
+  <text x="266" y="197" font-size="11" font-style="italic" fill="#BAE6FD">scale: ChArUco mat · recovers concavities</text>
+
+  <!-- ============ Route C — video ============ -->
+  <rect x="250" y="222" width="380" height="88" rx="6" fill="#0F6CBD"/>
+  <text x="266" y="248" font-size="14" font-weight="700" fill="#F8FAFC">Route C · phone orbit, video</text>
+  <text x="266" y="268" font-size="11" fill="#E2E8F0">same pipeline — ffmpeg -vf fps=2 ingest (~40 s → ~80 frames)</text>
+  <text x="266" y="285" font-size="11" fill="#E2E8F0">easiest capture; motion blur + compression cost detail</text>
+  <text x="266" y="301" font-size="11" font-style="italic" fill="#BAE6FD">scale: ChArUco mat · penalty vs stills is measured, not assumed</text>
+
+  <!-- ============ Route A ============ -->
+  <rect x="250" y="392" width="380" height="88" rx="6" fill="#D97706"/>
+  <text x="266" y="418" font-size="14" font-weight="700" fill="#F8FAFC">Route A · turntable, visual hull</text>
+  <text x="266" y="438" font-size="11" fill="#FEF3C7">visual_hull.py — shape-from-silhouette, needs background.jpg</text>
+  <text x="266" y="455" font-size="11" fill="#FEF3C7">angle ASSUMED from frame index: needs an even, closed 360°</text>
+  <text x="266" y="471" font-size="11" font-style="italic" fill="#FDE68A">scale: --height-mm · CANNOT see concavities</text>
+
+  <!-- ============ Route E ============ -->
+  <rect x="250" y="496" width="380" height="88" rx="6" fill="#E2E8F0" stroke="#64748B" stroke-width="1.5" stroke-dasharray="8,5"/>
+  <text x="266" y="522" font-size="14" font-weight="700" fill="#0F172A">Route E · turntable, photogrammetry</text>
+  <text x="266" y="542" font-size="11" fill="#334155">reconstruct_cpu.sh + --ImageReader.mask_path</text>
+  <text x="266" y="559" font-size="11" fill="#334155">masks from visual_hull.silhouette() hide the static room</text>
+  <text x="266" y="575" font-size="11" font-style="italic" fill="#475569">scale: mat on the turntable, else --height-mm</text>
+
+  <!-- ============ Shared tail ============ -->
+  <rect x="700" y="196" width="240" height="80" rx="6" fill="#0F6CBD"/>
+  <text x="820" y="224" font-size="14" font-weight="700" fill="#F8FAFC" text-anchor="middle">Route D · mesh_to_print.py</text>
+  <text x="820" y="244" font-size="11" fill="#E2E8F0" text-anchor="middle">watertight, true-scale STL</text>
+  <text x="820" y="261" font-size="11" fill="#E2E8F0" text-anchor="middle">inherits scale.json</text>
+
+  <rect x="700" y="330" width="240" height="80" rx="6" fill="#0F6CBD"/>
+  <text x="820" y="358" font-size="14" font-weight="700" fill="#F8FAFC" text-anchor="middle">mesh_to_urdf.py</text>
+  <text x="820" y="378" font-size="11" fill="#E2E8F0" text-anchor="middle">sim part for MoveIt / PyBullet</text>
+  <text x="820" y="395" font-size="11" fill="#E2E8F0" text-anchor="middle">collision + visual meshes</text>
+
+  <!-- ============ Arrows: devices to routes ============ -->
+  <line x1="178" y1="172" x2="240" y2="162" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="250,160 240,156 241,166" fill="#64748B"/>
+  <line x1="178" y1="196" x2="240" y2="262" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="250,270 240,266 246,258" fill="#64748B"/>
+
+  <line x1="178" y1="446" x2="240" y2="436" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="250,434 240,430 241,440" fill="#64748B"/>
+  <line x1="178" y1="470" x2="240" y2="536" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="250,544 240,540 246,532" fill="#64748B"/>
+
+  <!-- ============ Arrows: routes converge on the tail ============ -->
+  <line x1="630" y1="162" x2="686" y2="222" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="630" y1="266" x2="686" y2="234" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="630" y1="436" x2="686" y2="250" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="630" y1="540" x2="686" y2="262" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="700,240 686,232 686,250" fill="#64748B"/>
+  <line x1="820" y1="276" x2="820" y2="320" stroke="#64748B" stroke-width="1.5"/>
+  <polygon points="820,330 815,320 825,320" fill="#64748B"/>
+  <text x="668" y="212" font-size="11" fill="#334155" text-anchor="middle">.ply</text>
+
+  <!-- ============ The rejected idea ============ -->
+  <rect x="700" y="470" width="470" height="114" rx="6" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="716" y="494" font-size="12" font-weight="700" fill="#D97706">Not a route: holding the object and spinning it</text>
+  <text x="716" y="515" font-size="11" fill="#334155">Route C solves a STATIC scene with a MOVING camera. A fixed camera with a</text>
+  <text x="716" y="532" font-size="11" fill="#334155">moving object is the inverse — it reconstructs the room and discards the object.</text>
+  <text x="716" y="549" font-size="11" fill="#334155">Route A keeps only the largest blob, so a hand is carved into the mesh, and an</text>
+  <text x="716" y="566" font-size="11" fill="#334155">uneven spin breaks its assumed angle. Release the object onto a turntable.</text>
+
+  <!-- ============ Legend ============ -->
+  <rect x="24" y="628" width="16" height="12" rx="2" fill="#0F6CBD"/>
+  <text x="48" y="639" font-size="11" fill="#334155">Implemented</text>
+  <rect x="148" y="628" width="16" height="12" rx="2" fill="#D97706"/>
+  <text x="172" y="639" font-size="11" fill="#334155">Bench-gated — needs real optics</text>
+  <rect x="392" y="628" width="16" height="12" rx="2" fill="#E2E8F0" stroke="#64748B" stroke-dasharray="4,3"/>
+  <text x="416" y="639" font-size="11" fill="#334155">Planned — not built</text>
+  <text x="24" y="664" font-size="11" font-style="italic" fill="#475569">Route B (COLMAP + CUDA dense) is omitted: same capture contract as Route C, but its dense stage needs a GPU box this laptop does not have.</text>
+  <text x="24" y="682" font-size="11" fill="#475569">Spec: scan3d/SDD.md · Palette: docs/STYLE_GUIDE.md</text>
+</svg>

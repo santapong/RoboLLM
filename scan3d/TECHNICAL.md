@@ -55,7 +55,9 @@ ROS 2 / Gazebo world.
 | File | Role |
 |------|------|
 | `capture.py` | Webcam capture: snapshots, `--turntable N`, `--background` cutout reference |
+| `segmentation.py` | `silhouette()` — absdiff vs `background.jpg` + Otsu + largest blob; cv2/numpy only, shared by Routes A and E |
 | `visual_hull.py` | CPU silhouette carving → watertight `.obj`/`.ply` mesh |
+| `masks.py` | Route E: writes `masks/<image>.png` (object 255, background 0) for `--ImageReader.mask_path` |
 | `reconstruct.sh` | COLMAP photogrammetry: sparse locally, prints GPU dense steps |
 | `reconstruct_cpu.sh` | Route C: COLMAP sparse + OpenMVS dense, CPU-only, Docker |
 | `mesh_to_urdf.py` | Any mesh → URDF link (visual + convex collision + inertia) |
@@ -155,3 +157,22 @@ Route B: `sudo apt install colmap`, capture 30–60 overlapping snapshots
 - Scans are git-ignored (large/personal), and `assets/**/*.stl` in `.gitignore`
   also catches the URDF part's STL meshes — only the `.urdf` itself gets
   committed; re-run `mesh_to_urdf.py` to regenerate the meshes after a clone.
+
+## Route E gotchas (turntable photogrammetry)
+
+- COLMAP names masks after the **full image filename plus `.png`**
+  (`frame_0007.jpg` → `frame_0007.jpg.png`) and ignores **zero-intensity**
+  pixels. Object 255, background 0.
+- An image whose mask is missing is **silently skipped** by COLMAP, not flagged.
+  `reconstruct_cpu.sh` warns when the mask count and image count disagree.
+- Masks constrain **sparse SfM only**. OpenMVS `DensifyPointCloud` still sees
+  background pixels in the undistorted images, so the dense cloud can carry room
+  geometry the mask excluded from the sparse model. Unresolved — measure it
+  before assuming the mesh is clean.
+- A leaky mask readmits static background features, which pin the solution to a
+  zero-baseline configuration where nothing triangulates. `background.jpg` is
+  effectively mandatory here; the HSV fallback is a coin flip on a turntable.
+- `reconstruct_cpu.sh` searches `$SCAN3D_PYTHON`, `../.venv`, `../.venv-lerobot`,
+  then `python3` for an interpreter carrying cv2, because system `python3` lost
+  cv2 at the 3.14 rolling upgrade and a silent skip costs the ChArUco metric
+  scale that the accuracy gate depends on.
