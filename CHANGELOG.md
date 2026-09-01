@@ -33,6 +33,14 @@ after the touched demos verifiably run).
 
 ### Fixed
 
+- `scale_mat.py make` now embeds a PNG `pHYs` chunk declaring 300 DPI. The mat's
+  pixels were always exactly A4-at-300-DPI, but `cv2.imwrite` writes no `pHYs`,
+  and a PNG without one is assumed to be 72 DPI — which reads the mat as
+  ~1237x875 mm. A print dialog would then tile it across pages or silently
+  "fit to page" at an unknown scale, so the 30 mm square the mat exists to
+  provide would not have been 30 mm. The instruction printed on the mat itself,
+  "PRINT AT 100%", was not followable. Regenerated; ImageMagick now reports a
+  296.9 x 210.0 mm print size and the board still detects 24/24 corners.
 - `reconstruct_cpu.sh` searches `$SCAN3D_PYTHON`, `../.venv`, `../.venv-lerobot`
   then `python3` for an interpreter carrying cv2, instead of assuming `python3`
   has it. It no longer does — the 3.14 rolling upgrade removed it — and the

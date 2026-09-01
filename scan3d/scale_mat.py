@@ -42,6 +42,36 @@ def get_board(square_mm: float):
     return board
 
 
+def _embed_png_dpi(path: Path, dpi: int) -> None:
+    """Insert a pHYs chunk so the PNG declares its real print size.
+
+    cv2.imwrite writes no pHYs, and a PNG without one is assumed to be 72 DPI —
+    which reads this A4 mat as ~1237x875 mm. A print dialog then either tiles it
+    over several pages or silently "fits to page" at an unknown scale, and the
+    30 mm square this whole mat exists to provide is no longer 30 mm.
+    """
+    import struct
+    import zlib
+
+    ppm = round(dpi / 0.0254)  # PNG unit 1 is pixels per metre
+    body = b"pHYs" + struct.pack(">IIB", ppm, ppm, 1)
+    chunk = struct.pack(">I", 9) + body + struct.pack(">I", zlib.crc32(body))
+
+    data = bytearray(path.read_bytes())
+    i = 8  # past the signature
+    while i < len(data):
+        length = struct.unpack(">I", data[i : i + 4])[0]
+        kind = data[i + 4 : i + 8]
+        if kind == b"pHYs":  # already present: replace in place
+            data[i : i + 12 + length] = chunk
+            break
+        if kind in (b"IDAT", b"IEND"):  # must appear before the pixel data
+            data[i:i] = chunk
+            break
+        i += 12 + length
+    path.write_bytes(bytes(data))
+
+
 def cmd_make(args) -> int:
     import cv2
     dpi = 300
@@ -59,6 +89,7 @@ def cmd_make(args) -> int:
                 (x0, y0 - 20), cv2.FONT_HERSHEY_SIMPLEX, 1.2, 0, 2)
     out = Path(args.out)
     cv2.imwrite(str(out), page)
+    _embed_png_dpi(out, dpi)
     print(f"wrote {out} ({page.shape[1]}x{page.shape[0]} px @ {dpi} DPI, A4 landscape)")
     print("Print at 100% scale, measure one square, keep the mat FLAT and in-frame.")
     return 0
