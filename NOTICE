@@ -1,0 +1,12 @@
+RoboLLM
+Copyright 2026 Santapong Sondhi
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this repository except in compliance with the License. A copy of the
+License is in the LICENSE file at the repository root.
+
+Third-party material vendored into this repository keeps its own license file
+next to the files it covers (for example the PAL Robotics TALOS descriptions
+under examples/talos_mirror/ros2_ws/src/, Apache-2.0, see VENDORED.md there).
+Per-module attribution and citation lists live next to the module that uses
+them (for example sim/vla-bed/NOTICES.md and sim/vla-bed/REFERENCES.md).

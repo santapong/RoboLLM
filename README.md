@@ -7,6 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB)](https://www.python.org/)
 [![Arm driver](https://img.shields.io/badge/arm%20driver-v0.2.1-D97706)](ros2/README.md)
 [![Stage](https://img.shields.io/badge/stage-research%20platform-475569)](ROADMAP.md)
+[![License](https://img.shields.io/badge/license-Apache--2.0-2563EB)](LICENSE)
 
 > Built by [Santapong Sondhi](https://resume.draveniq.dev) — more projects and field notes at [resume.draveniq.dev](https://resume.draveniq.dev).
 
@@ -254,3 +255,11 @@ environment. See [branching workflow](docs/branching.md) for the exact policy.
 RoboLLM is a learning and research repository. Product-shaped tools graduate to
 the separate RLM track only when they are useful independently of the lessons
 that produced them.
+
+## License
+
+RoboLLM is licensed under the [Apache License, Version 2.0](LICENSE); see
+[NOTICE](NOTICE) for attribution. Vendored third-party material keeps its own
+license file next to the files it covers, and each module that builds on
+external models, datasets, or tools lists them in a `NOTICES.md` and cites them
+in a `REFERENCES.md` beside its code.

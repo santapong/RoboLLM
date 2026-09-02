@@ -8,6 +8,17 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-03 — Apache-2.0 license
+
+### Added
+
+- Repository-wide `LICENSE` (Apache License, Version 2.0), `NOTICE`, the
+  `license` field in `pyproject.toml`, and a README license section. The
+  repository was public without any license, which by default reserved all
+  rights; the per-module `NOTICES.md` / `REFERENCES.md` attribution pattern is
+  introduced at the same time so third-party models, datasets, and tools are
+  cited where they are used.
+
 ## 2026-09-01 — scan3d: capture SDD, and Route E (turntable photogrammetry)
 
 ### Added
