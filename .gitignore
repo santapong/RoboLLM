@@ -43,3 +43,10 @@ assets/**/*.mp4
 !assets/**/.gitkeep
 # claude harness — personal overrides stay local
 .claude/settings.local.json
+
+# sim/vla-bed (SDD §12): upstream Menagerie checkout and generated/compiled scene stay out of the repo
+sim/vla-bed/assets/
+sim/vla-bed/scene/*.generated.xml
+sim/vla-bed/.venv/
+sim/vla-bed/results/**/*.mp4
+MUJOCO_LOG.TXT

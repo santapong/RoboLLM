@@ -1,0 +1,57 @@
+{
+  "schema": "robollm.vla-bed.p0-gate.v1",
+  "verdict": "PASS",
+  "host": {
+    "hostname": "santapong",
+    "machine": "x86_64",
+    "cpu": "158",
+    "os": "Linux-7.1.5+kali-amd64-x86_64-with-glibc2.42",
+    "python": "3.13.14",
+    "mujoco": "3.10.0",
+    "MUJOCO_GL": "egl"
+  },
+  "model": {
+    "name": "robollm_vla_bed_ur5e_2f85",
+    "nq": 14,
+    "nu": 7,
+    "nbody": 23,
+    "ngeom": 59,
+    "timestep_s": 0.002,
+    "menagerie_commit": "e4049d0a3bfd58d2a3081614e6777d4007e3f86a"
+  },
+  "frame": {
+    "shape": [
+      224,
+      224,
+      3
+    ],
+    "mean": 76.25,
+    "std": 32.6,
+    "red_target_pixels": 33,
+    "thresholds": {
+      "mean": 8.0,
+      "std": 12.0,
+      "red_pixels": 20
+    },
+    "ok": true
+  },
+  "timing": {
+    "cold_start_s": 0.579,
+    "build_and_compile_s": 0.442,
+    "first_render_s": 0.04,
+    "render_fps_224": 102.0,
+    "physics_steps_per_s": 35518.0,
+    "physics_realtime_factor": 71.0,
+    "steps_measured": 5000,
+    "frames_measured": 60
+  },
+  "physics": {
+    "finite_after_steps": true,
+    "ee_pos_after_steps": [
+      -0.134,
+      0.4898,
+      0.3214
+    ]
+  },
+  "measured_at": "2026-09-03T00:37:37+0700"
+}

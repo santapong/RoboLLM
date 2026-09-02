@@ -3,7 +3,7 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Bed README](README.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md) · [Style guide](../../docs/STYLE_GUIDE.md)
 
-**Status: Planned.** This document is normative. It defines the simulation
+**Status: Planned; Phase 0 Verified** on the Pi and the workstation, 3 Sep 2026 (evidence in `results/p0/`). This document is normative. It defines the simulation
 bed, where each process runs, what every interface carries, what evidence
 closes each phase, and what the bed structurally cannot show. It is written
 **before** any of it exists, so that a disappointing measurement is reportable
@@ -30,7 +30,7 @@ and the action space.
 | **EE** | End effector: the tool frame at the UR5e wrist, or the 2F-85 fingertip frame once the gripper is attached. |
 | **Frozen suite** | B1's evaluation method: seeded goal families, fixed episode count, success rate with a confidence interval, per-family breakdown. |
 | **Lockstep** | The simulation advances only when the client asks for a step. Wall-clock latency never changes what the policy sees. |
-| Status words | **Planned / Code-ready / Bench-gated / Verified** exactly as defined in [`../../docs/STYLE_GUIDE.md`](../../docs/STYLE_GUIDE.md). Nothing in this bed is Verified today. |
+| Status words | **Planned / Code-ready / Bench-gated / Verified** exactly as defined in [`../../docs/STYLE_GUIDE.md`](../../docs/STYLE_GUIDE.md). Phase 0 is Verified on both machines (3 Sep 2026); everything after it is Planned. |
 
 ## 1. Questions this bed answers
 
@@ -107,9 +107,11 @@ non-default `host=` is itself a Phase 0 check.
 | Pi RAM free | 11 GB of 16 GB | measured, Pi, 2 Sep 2026 |
 | Pi disk free | 81 GB on the SD card | measured, Pi, 2 Sep 2026; the exFAT Seagate is not used for venvs (no symlinks) |
 | Pi containers already running | 22 (n8n, monitoring, Excalidraw, ROS 2, databases) | measured, Pi, 2 Sep 2026; the bed runs under `nice` |
-| Route M install | < 2 GB | estimated: MuJoCo + mink + viser wheels + Menagerie clone |
+| Route M install | ~0.6 GB venv + 46 MB sparse Menagerie clone | measured, Pi, 3 Sep 2026 |
 | Route O install | 4.5 GB, 1.76 GB RSS, ~1 core | measured, workstation, 1 Sep 2026 |
-| MuJoCo steps/s, UR5e, Pi | **unmeasured** | Phase 0 reports it; the bed does not assume real time |
+| MuJoCo physics, UR5e + 2F-85 (nq 14, 59 geoms), Pi | **13,444 steps/s = 26.9× real time**; 224×224 EGL render 18.1 fps; cold start 1.8 s | measured, Pi 5 (`nice -n 10`, EGL on Mesa V3D), 3 Sep 2026, `results/p0/santapong-dev/bench.json` |
+| Same, workstation | 35,518 steps/s = 71× real time; render 102 fps; cold start 0.58 s | measured, i3-9100 + UHD 630 EGL, 3 Sep 2026, `results/p0/santapong/bench.json` |
+| Viewer from the workstation | scene at 1.00× real time, 60 fps in the browser, ~2.8 MB page, WebGL on the workstation's Intel GPU | measured, 3 Sep 2026, `results/p0/santapong-dev/viewer-from-workstation.jpg` |
 | SmolVLA CPU inference | **unmeasured**; one public report ≈ 10 s per chunk on a laptop | Phase 2 reports seconds per chunk on the workstation |
 
 **Fallback, recorded in advance:** if G0 fails on the Pi after both renderer
@@ -120,17 +122,18 @@ role in that case, and Q-A is answered "no" with the failing line quoted.
 
 | Component | File (planned) | Status | Depends on |
 |---|---|---|---|
-| Pi environment | `sim/vla-bed/requirements.txt`, `scripts/pi_setup.sh` | Planned | Python 3.13 venv, pins in §11 |
-| Menagerie checkout | git-ignored `sim/vla-bed/assets/mujoco_menagerie/` at the pinned commit | Planned | `git clone` + `git checkout <sha>` |
-| Scene overlay | `sim/vla-bed/scene/ur5e_red_target.xml` | Planned | Menagerie UR5e + 2F-85 |
+| Pi environment | `sim/vla-bed/requirements.txt`, `scripts/pi_setup.sh` | **Verified** (Pi, 3 Sep 2026) | Python 3.13 venv, pins in §11 |
+| Menagerie checkout | git-ignored `sim/vla-bed/assets/mujoco_menagerie/` at the pinned commit (sparse: UR5e + 2F-85 only) | **Verified** (both machines) | `scripts/pi_setup.sh` |
+| Scene overlay | `sim/vla-bed/scene/build_scene.py` — composes Menagerie's `scene.xml` + `2f85.xml` in memory with `MjSpec.attach` at `attachment_site`, adds the `front` camera and the mocap red target; `--export` writes a git-ignored compiled XML for inspection | **Verified** (both machines) | Menagerie UR5e + 2F-85 |
 | Expert | `sim/vla-bed/expert.py` (oracle + noisy, mink IK) | Planned | mink, scene |
 | Safety wrapper | `sim/vla-bed/safety.py` | Planned | scene limits |
 | Recorder | `sim/vla-bed/record.py` (reuses `examples/mujoco/arm_dataset.py::dataset_features` shape and `reaching_dataset.py` manifests) | Planned | LeRobot 0.6.0 |
-| Viewer | `sim/vla-bed/viewer.py` | Planned | mjviser |
+| Viewer | `sim/vla-bed/viewer.py` | **Verified** (Pi → workstation browser, 3 Sep 2026) | mjviser |
 | Sim server | `sim/vla-bed/sim_server.py` | Planned | pyzmq |
 | Policy runner + evaluator | `sim/vla-bed/policy_runner.py`, `evaluate.py` (reuses `examples/mujoco/evaluate_reaching.py` suite logic) | Planned | LeRobot, ZeroMQ |
 | OXE replayer | `sim/vla-bed/oxe_replay.py`, `configs/oxe_ur5_map.yaml` | Planned | `lerobot/berkeley_autolab_ur5`, mink |
 | GPU gate | `sim/vla-bed/GPU-GATE.md`, `configs/training/vla_bed_smolvla.json` | Planned | pattern of `examples/mujoco/B1-GPU-GATE.md` |
+| Phase 0 gate | `sim/vla-bed/p0_gate.py` → `results/p0/<host>/{frame.png,bench.json}` | **Verified** | scene, PIL |
 | Route O world + controller | `sim/vla-bed/route_o/` | Planned, optional | OmniSim unmodified |
 
 ## 6. Interfaces
@@ -231,7 +234,7 @@ Every phase names its machine. A phase without a number is not done.
 
 | Phase | What | Gate / evidence | Time box | On fail |
 |---|---|---|---|---|
-| **P0** | Pi venv with the §11 pins; Menagerie at the pinned commit; overlay scene with camera; `MUJOCO_GL=egl` render; viewer on a free port bound to the tailnet IP; fill pins and ports into `NOTICES.md` | **G0:** `results/p0/frame.png` non-black and showing the arm; `results/p0/bench.json` with cold-start s, steps/s, render fps (Pi); browser on the workstation shows the scene | ½ session | `MUJOCO_GL=osmesa` (`libosmesa6`); if that also fails, the workstation hosts everything (§4 fallback) |
+| **P0** | Pi venv with the §11 pins; Menagerie at the pinned commit; overlay scene with camera; `MUJOCO_GL=egl` render; viewer on a free port bound to the tailnet IP; fill pins and ports into `NOTICES.md` | **G0 — Verified 3 Sep 2026.** Pi: EGL worked first try; `results/p0/santapong-dev/` (frame mean 75.8, std 32.5, 33 red pixels; 13,444 steps/s; 18.1 fps). Workstation: `results/p0/santapong/`. Browser on the workstation showed the running scene from the Pi (`viewer-from-workstation.jpg`). OSMesa fallback was not needed | ½ session (used) | — |
 | **P1** | Port the task: red target, oracle and noisy expert through mink in EE space, safety wrapper, limits tuned | Oracle success 100 % over 5 families × 20 seeds on the Pi; limits of §6.2 finalised; viewer shows it | 1 session | — |
 | **P2** | Record v1 and v2 on the Pi; `--validate`; `rsync` to the workstation; SmolVLA-base CPU seconds-per-chunk measured on the workstation | Manifests `valid: true`; frame counts and chunk-padding % reported like B1; CPU s/chunk recorded | 1–2 sessions | — |
 | **P2b** (optional) | LIBERO-spatial calibration of the evaluation plumbing in a separate venv, N = 10 per task, against the SmolVLA paper's reported numbers | Within the paper's range, or the deviation explained | overnight CPU | Skip; not on the critical path |
@@ -302,7 +305,9 @@ Pins (from `pip index` on the workstation, 3 Sep 2026; frozen at P0 into
 | `mink` | 1.3.0 | latest at time of writing |
 | `pyzmq` | 27.2.0 | `aarch64` wheels available |
 | `lerobot[smolvla]` | 0.6.0 | repo pin; Python 3.13 venv (3.14 is unsupported) |
-| MuJoCo Menagerie | `e4049d0` (2026-09-01) | candidate; confirmed or moved at P0 |
+| MuJoCo Menagerie | `e4049d0` (2026-09-01) | confirmed at P0 (3 Sep 2026) |
+| `msgpack` | 1.2.2 | ZeroMQ payloads (P5) |
+| `numpy`, `pillow` | ≥2.0, ≥10 (resolved 2.5.2, 12.3.0 on 3 Sep 2026) | floating on purpose; frozen only if a phase needs it |
 
 ## 12. Provenance and attribution
 

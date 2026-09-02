@@ -17,13 +17,15 @@ our own files, cite everything, redistribute nothing that is not needed.**
 | Component | Version / pin | License | Copyright | How the bed uses it | Obligation, and how it is met |
 |---|---|---|---|---|---|
 | MuJoCo | 3.10.0 | Apache-2.0 | DeepMind Technologies | pip dependency (physics, offscreen renderer) | Cite `todorov2012mujoco`. Not redistributed. |
-| MuJoCo Menagerie (repository) | commit `e4049d0` 2026-09-01 *(P0)* | Apache-2.0 | 2022 DeepMind Technologies Limited | `git clone` into a git-ignored `assets/` directory | Cite `menagerie2022github`. Not redistributed. |
+| MuJoCo Menagerie (repository) | commit `e4049d0` 2026-09-01 (confirmed at P0, 3 Sep 2026; sparse checkout of the two model directories, 46 MB) | Apache-2.0 | 2022 DeepMind Technologies Limited | `git clone` into a git-ignored `assets/` directory | Cite `menagerie2022github`. Not redistributed. |
 | Menagerie `universal_robots_ur5e` | same commit | BSD-3-Clause | 2018 ROS-Industrial Consortium | `<include>`d unmodified by our overlay scene | Not redistributed, so no notice duty. If vendored: copy the model `LICENSE` beside it (see `examples/talos_mirror/ros2_ws/src/VENDORED.md`); never use the ROS-Industrial name to promote this work. |
 | Menagerie `robotiq_2f85` | same commit | BSD-2-Clause | 2013 ROS-Industrial | `<attach>`ed unmodified by our overlay scene | As above. |
 | mink | 1.3.0 | Apache-2.0 | Kevin Zakka | pip dependency (differential IK for the expert and the OXE replayer) | Cite `Zakka_Mink_Python_inverse_2026`. Not redistributed. |
 | viser | 1.1.0 | Apache-2.0 | The viser authors | pip dependency (browser transport for the viewer) | Cite `yi2025viser`. Not redistributed. |
 | mjviser | 0.0.14 | Apache-2.0 | 2025 The mjlab Developers | pip dependency (MuJoCo scene in the browser) | Cite `mjviser2026github`. Not redistributed. |
 | pyzmq | 27.2.0 | BSD-3-Clause / LGPL (libzmq) | The pyzmq and ZeroMQ authors | pip dependency (lockstep sim server) | Not redistributed. |
+| msgpack | 1.2.2 | Apache-2.0 | Inada Naoki and contributors | pip dependency (ZeroMQ payloads) | Not redistributed. |
+| NumPy, Pillow | 2.5.2, 12.3.0 (floating) | BSD-3-Clause; MIT-CMU (HPND) | NumPy Developers; Jeffrey A. Clark and contributors | pip dependencies | Not redistributed. |
 | LeRobot | 0.6.0 (`lerobot[smolvla]`) | Apache-2.0 | The HuggingFace Inc. team | pip dependency (dataset format, SmolVLA policy, training and evaluation) | Cite `cadene2024lerobot` and `cadenelerobot`. Not redistributed. |
 | SmolVLA weights `lerobot/smolvla_base` | model card revision at P4 | **No license tag on the model card** (3 Sep 2026) | LeRobot / Hugging Face | starting checkpoint for fine-tuning | **Open item.** Ask on the model card or a LeRobot issue. Fine-tuned checkpoints are research artefacts and are **not published** until this closes. Cite `shukor2025smolvla`. |
 | SmolVLM2-500M-Video-Instruct | as pulled by LeRobot | Apache-2.0 | Hugging Face TB | base VLM inside SmolVLA | Cite `smolvlm2_500m_video_instruct`. |
@@ -61,7 +63,7 @@ typeface, brand artwork under `resources/branding/`).
 
 | Service | Port | Bound to |
 |---|---|---|
-| Viewer (viser websocket + static client) | to be chosen with `ss -ltnp`; **not 8080** | Pi tailnet IP only |
-| Sim server (ZeroMQ REQ/REP) | to be chosen | Pi tailnet IP only |
+| Viewer (viser websocket + static client) | **8090** (free on 3 Sep 2026; 8080 is nginx) | `100.74.8.82` (Pi tailnet IP) only — verified with `ss -ltnp`: `LISTEN 100.74.8.82:8090` |
+| Sim server (ZeroMQ REQ/REP) | **5555** (free on 3 Sep 2026; bound at P5) | Pi tailnet IP only |
 
 Neither service authenticates. No Funnel route, no LAN-wide bind.

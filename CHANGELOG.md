@@ -8,6 +8,29 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-03 — UR5e VLA sim bed: Phase 0 verified on the Pi
+
+### Added
+
+- `sim/vla-bed/scene/build_scene.py` — composes the bed's scene in memory from
+  the unmodified MuJoCo Menagerie files (UR5e `scene.xml`, `2f85.xml` attached
+  at `attachment_site` with `MjSpec.attach`), adds the fixed `front` camera and
+  the mocap red target. Nothing upstream is edited or vendored.
+- `sim/vla-bed/p0_gate.py` — gate G0: renders the 224×224 front frame, checks it
+  is non-black and shows the target, benchmarks physics and rendering, writes
+  `results/p0/<host>/{frame.png,bench.json}` and exits non-zero on FAIL.
+- `sim/vla-bed/viewer.py` — mjviser in library mode, our loop owns physics,
+  binds to one address only. `scripts/pi_setup.sh` + `requirements.txt` — venv,
+  pins, sparse Menagerie clone at the pinned commit.
+
+### Verified
+
+- **G0 passes on the Raspberry Pi 5** (aarch64, Debian 13, EGL on Mesa V3D,
+  `nice -n 10`): 13,444 physics steps/s (26.9× real time), 18.1 fps at 224²,
+  cold start 1.8 s. Workstation: 35,518 steps/s, 102 fps. The viewer served
+  from the Pi's tailnet address renders in the workstation browser at 1.00×
+  real time, 60 fps. Evidence under `sim/vla-bed/results/p0/`.
+
 ## 2026-09-03 — UR5e VLA sim bed: specification (experiment/ur5e-vla-bed)
 
 ### Added
