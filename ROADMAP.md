@@ -56,6 +56,11 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
   the same pattern) · safety/refusal.
 - **Real-arm track — bench-gated**: bench afternoon → encoders → collect
   demos via hand-teleop → Phase B imitation (ACT/DP) → Phase C VLA.
+- **Sim track, second bed — Planned** (`sim/vla-bed/SDD.md`): a Menagerie UR5e in
+  MuJoCo served from the always-on Pi and viewed in a browser (mjviser), with
+  end-effector-delta actions aligned to the Open X-Embodiment UR5 dataset in
+  LeRobot format. Same task, recorder, GPU gate and evaluator as B1; adds the
+  cross-embodiment row (DIY arm vs UR5e). OmniSim stays optional (Route O).
 - Shared: the **LeRobot-format logger** (A2) — both tracks record into it.
 
 ## Tiers (re-tier when a Tier S item lands)
@@ -79,6 +84,7 @@ Cross-cutting: **perception** (scan3d done; SLAM triggered) and
 | B1 | **Preparation complete:** task/dataset/evaluator/GPU handoff CPU-verified. **Completion paused—GPU required:** SmolVLA fine-tune + frozen-suite learned-policy study | L4, evaluation rigor; the thesis seed |
 | B2 | Phase B demo collection via hand-teleop on scanned objects (30–50 episodes) | L2+L4 data; diversity-kit lessons → graduates to RLM |
 | B3 | G1 locomotion capstone (private research brief: MuJoCo G1 + ros2_control + Nav2, phase-gated) | L3; brings EKF + Nav2 + BTs in on their triggers |
+| B4 | **UR5e VLA sim bed** (`sim/vla-bed/SDD.md`, `experiment/ur5e-vla-bed`): Pi-hosted MuJoCo UR5e + mjviser viewer, OXE-aligned EE actions, SmolVLA fine-tune behind the same priced GPU gate as B1. **Planned; gated by P0** (camera frame on the Pi) | L4, cross-embodiment transfer + evaluation rigor; second simulator only if Route O passes its own gate |
 
 ### Tier C — triggered, not scheduled
 RTAB-Map SLAM (first live-map need / G1 Phase 3) · EKF odom fusion (G1

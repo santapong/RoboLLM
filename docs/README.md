@@ -64,6 +64,8 @@ repeatable operations or acceptance evidence.
 | [`physical-arm/diagrams/architecture-4plus1.svg`](physical-arm/diagrams/architecture-4plus1.svg) | Logical, process, development, physical, and scenario (+1) views. |
 | [`../apps/dashboard/TECHNICAL.md`](../apps/dashboard/TECHNICAL.md) | The dashboard internals: FastAPI + WebSocket over the shared bridge, endpoint tables. |
 | [`../scan3d/TECHNICAL.md`](../scan3d/TECHNICAL.md) | Webcam scanner internals: visual hull vs COLMAP routes, mesh → URDF tail. |
+| [`../sim/vla-bed/SDD.md`](../sim/vla-bed/SDD.md) | UR5e VLA sim bed specification: Pi-hosted MuJoCo, mjviser viewer, OXE-aligned actions, phase gates, limits. |
+| [`../sim/vla-bed/NOTICES.md`](../sim/vla-bed/NOTICES.md) | Third-party licenses, pins, and attribution obligations for the sim bed (with `REFERENCES.md` BibTeX). |
 | [`../cad/TECHNICAL.md`](../cad/TECHNICAL.md) | FreeCAD → URDF pipeline: headless build, joint-frame discipline, PyBullet verify. |
 | [`../examples/ros2_py/docs/ros2_py-architecture.svg`](../examples/ros2_py/docs/ros2_py-architecture.svg) | Diagram — the 10 scripts vs the sim's topic/action surfaces. |
 | [`../examples/colcon_pkg/patrol_bot/docs/patrol_bot-architecture.svg`](../examples/colcon_pkg/patrol_bot/docs/patrol_bot-architecture.svg) | Diagram — package build → install → launch → node flow. |
@@ -76,6 +78,7 @@ repeatable operations or acceptance evidence.
 | [`../hardware/docs/hardware-architecture.svg`](../hardware/docs/hardware-architecture.svg) | Diagram — ROS 2 bridge → serial protocol → Mega → servos. |
 | [`../apps/dashboard/docs/web-architecture.svg`](../apps/dashboard/docs/web-architecture.svg) | Diagram — browser ↔ FastAPI ↔ shared bridge ↔ ROS 2 stack. |
 | [`../scan3d/docs/scan3d-architecture.svg`](../scan3d/docs/scan3d-architecture.svg) | Diagram — capture → visual hull / COLMAP → mesh → URDF. |
+| [`../sim/vla-bed/docs/vla-bed-topology.svg`](../sim/vla-bed/docs/vla-bed-topology.svg) | Diagram — Pi sim server (MuJoCo, mink, recorder, mjviser, ZeroMQ) ↔ workstation client (browser, policy, GPU gate). |
 | [`../cad/docs/cad-architecture.svg`](../cad/docs/cad-architecture.svg) | Diagram — freecadcmd build → mesh export → URDF → PyBullet check. |
 | [`brand/robollm-banner.svg`](brand/robollm-banner.svg) | Project banner and control-invariant identity. |
 
@@ -93,6 +96,7 @@ Module READMEs live next to their code: [`../cad/`](../cad/README.md)
 | [`../CLAUDE.md`](../CLAUDE.md) | Public maintainer/agent context and repository invariants. |
 | [`../cad/README.md`](../cad/README.md) | Run the FreeCAD → URDF → PyBullet reference pipeline. |
 | [`../scan3d/README.md`](../scan3d/README.md) | Capture and reconstruct an object using the available scan routes. |
+| [`../sim/vla-bed/README.md`](../sim/vla-bed/README.md) | UR5e VLA sim bed: what it is, why not OmniSim on the Pi, phase gates at a glance. |
 | [`../hardware/README.md`](../hardware/README.md) | Commission the DIY arm without bypassing calibration locks. |
 | [`../hardware/docs/serial_protocol.md`](../hardware/docs/serial_protocol.md) | arm-fw 2.1 wire contract and error behavior. |
 | [`../hardware/docs/phaseA-convergence.md`](../hardware/docs/phaseA-convergence.md) | Historical convergence decisions and remaining research gates. |

@@ -8,6 +8,30 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-03 — UR5e VLA sim bed: specification (experiment/ur5e-vla-bed)
+
+### Added
+
+- `sim/vla-bed/SDD.md` — normative specification for a second sim bed, written
+  before anything runs: a Menagerie UR5e + Robotiq 2F-85 in MuJoCo served from
+  the Raspberry Pi, viewed in a browser through mjviser, driven from the
+  workstation over a ZeroMQ lockstep contract; B1's task, recorder, GPU gate and
+  evaluator reused; end-effector-delta actions chosen so simulated demos align
+  with `lerobot/berkeley_autolab_ur5` (Open X-Embodiment). Phase gates P0–P5,
+  limits, results schema, cost ledger and pins. Diagram at
+  `sim/vla-bed/docs/vla-bed-topology.svg`, hand-authored to `docs/STYLE_GUIDE.md`.
+- `sim/vla-bed/REFERENCES.md` and `sim/vla-bed/NOTICES.md` — BibTeX for every
+  upstream tool, model and dataset, and the license/attribution register
+  (MuJoCo, Menagerie BSD models, mink, viser, mjviser, LeRobot, SmolVLA, the
+  CC-BY-4.0 UR5 dataset, OmniSim's Apache-2.0 + trademark terms).
+
+### Decided
+
+- OmniSim is **not** forked. It cannot run on the Pi without a Qt patch, its
+  CPU physics is far slower than MuJoCo for a 6-DoF arm, and its camera path
+  is unproven headless; it remains an optional Route O on x86, and the ARM64
+  build fix is contributed upstream (DCO-signed) instead.
+
 ## 2026-09-03 — Apache-2.0 license
 
 ### Added
