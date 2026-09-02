@@ -45,7 +45,7 @@ and the action space.
 
 | Route | Physics | Embodiment | Viewer | Server host | Status | Why it is here |
 |---|---|---|---|---|---|---|
-| **M** | MuJoCo 3.10.0 | Menagerie `universal_robots_ur5e` + `robotiq_2f85` | mjviser (browser) | Pi | **Planned** | Native `aarch64` wheels resolve on the Pi (measured 2 Sep 2026); pure-Python viewer; same engine as B1 |
+| **M** | MuJoCo 3.10.0 | Menagerie `universal_robots_ur5e` + `robotiq_2f85` | mjviser (browser) | Pi | **Phase 0 Verified** (3 Sep 2026); P1–P5 Planned | Native `aarch64` wheels run on the Pi at 26.9× real time (measured 3 Sep 2026); pure-Python viewer; same engine as B1 |
 | **O** | OmniSim v8.1.x (Newton on Warp, CPU) | OmniSim UR5e PROTO | OmniSim `--stream=w3d` (browser) | Workstation only | **Planned, optional** | Vendor asked for feedback; a second simulator is a real cross-bed measurement |
 
 ### 2.1 Evaluated and rejected (kept so nobody re-evaluates them)
@@ -86,7 +86,7 @@ simulators", which Route O adds only if it passes its own gate.
 
 | Process | Host | Binds | Talks to | Notes |
 |---|---|---|---|---|
-| `scene/` overlay MJCF | Pi | — | — | `<include>`s Menagerie's `ur5e.xml` unchanged; adds the 2F-85 via `<attach>`, a fixed front camera, the red target, lights |
+| `scene/build_scene.py` overlay | Pi | — | — | loads Menagerie's `scene.xml` and `2f85.xml` unchanged with `MjSpec`, attaches the gripper at `attachment_site`, adds the fixed front camera and the mocap red target; adopts the gripper's elliptic cone / impratio 10 |
 | `expert.py` + `record.py` | Pi | — | MuJoCo in-process | Recording never crosses the network; datasets are `rsync`ed to the workstation afterwards |
 | `viewer.py` (mjviser `ViserMujocoScene`) | Pi | tailnet IP, one free TCP port (**not 8080**, taken by nginx) | browser on the workstation | Viewer only; the physics loop is ours |
 | `sim_server.py` (ZeroMQ REQ/REP) | Pi | tailnet IP, one free TCP port | `policy_runner.py` | Needed only for closed-loop evaluation (P5) |
