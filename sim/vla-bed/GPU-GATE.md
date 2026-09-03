@@ -46,19 +46,29 @@ If the total exceeds the cap, disable in the order plastic → chunkwise →
 gripper (edit `enabled` in `gpu/config.json`) before `full.sh` starts. Write the
 measured it/s and the decision into this file.
 
-## RunPod session
+## RunPod session (runpodctl 2.12.0, installed rootless in `~/.local/bin`, 4 Sep 2026)
 
-Pod: RTX 4090, the official PyTorch template (CUDA 12.x, Python ≥ 3.11), a
-**30 GB volume at `/workspace`** (survives a stop; storage still bills), your
-ssh public key added in RunPod settings. Connect with the pod's direct address
-(`--host root@POD_IP --port PORT`) or the proxy (`--host PODID@ssh.runpod.io`).
-No RunPod API key is stored or committed anywhere in this repo.
+Authentication is the owner's: `runpodctl doctor` (interactive: pastes the API key
+from https://console.runpod.io/user/settings into `~/.runpod/config.toml` and
+registers `~/.ssh/id_ed25519.pub` with the account). No key is stored in this
+repo. The plugin's rule: a real key first, because the MCP's OAuth alone leaves
+the CLI blocked.
+
+Pod: official template **`runpod-torch-v280`** (`runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`,
+CUDA 12.8), one **RTX 4090**, secure cloud, **30 GB volume at `/workspace`**
+(survives a stop; storage still bills), 20 GB container disk, ssh on. Creation is
+the first billed action and happens only on the owner's go.
 
 ```bash
-# workstation
+# workstation — create, wait for ssh, read the connection details
+runpodctl gpu list | grep -i 4090                      # id + current price
+runpodctl pod create --name vla-bed --template-id runpod-torch-v280 \
+    --gpu-id "NVIDIA GeForce RTX 4090" --volume-in-gb 30 --container-disk-in-gb 20 \
+    --ports 22/tcp --ssh --wait --wait-timeout 10m
+runpodctl pod get <pod-id>                             # ssh host + port (direct) — or `runpodctl ssh info <pod-id>`
 sim/vla-bed/gpu/transfer.sh --host root@POD_IP --port PORT --remote-root /workspace/robollm --execute
 
-# pod
+# pod (over ssh)
 cd /workspace/robollm
 python3 -m venv .venv-gpu && . .venv-gpu/bin/activate
 pip install -r sim/vla-bed/requirements-record.txt      # lerobot 0.6.0 + smolvla extras, mujoco, mink, pyyaml
@@ -73,7 +83,8 @@ done
 # workstation
 sim/vla-bed/gpu/download.sh --host root@POD_IP --port PORT --remote-root /workspace/robollm --execute
 sim/vla-bed/gpu/cleanup.sh  --host root@POD_IP --port PORT --remote-root /workspace/robollm --execute
-# then STOP the pod, verify the download, TERMINATE the pod (the volume bills until then)
+runpodctl pod stop <pod-id>        # GPU billing stops; verify the download
+runpodctl pod terminate <pod-id>   # the volume bills until this
 ```
 
 `cleanup.sh` moves the remote directory into a sibling `.robollm-trash`
