@@ -1,6 +1,6 @@
 # GPU gate — Phase 4 fine-tune of SmolVLA on the UR5e bed
 
-**Status: PREPARED — every free check is green; awaiting the owner's go** (4 Sep 2026 01:20). This is the priced
+**Status: Route K (Kaggle, free) is live — waiting for the user's smoke-notebook table; RunPod stays the fallback** (4 Sep 2026 02:10). Nothing billed. This is the priced
 go/no-go for the first spend of the bed. Everything free has been run; the
 rented session is a script; the smoke step measures the real cost before the
 priced command starts. Nothing below is executed without `--execute`.
@@ -45,6 +45,39 @@ held-out suite (`gpu/select_checkpoint.py`), never by loss (R11).
 If the total exceeds the cap, disable in the order plastic → chunkwise →
 gripper (edit `enabled` in `gpu/config.json`) before `full.sh` starts. Write the
 measured it/s and the decision into this file.
+
+## Route K — Kaggle first (free)
+
+The objective (SDD Q-B) needs *a* GPU for a few hours, not a rented 4090. Kaggle
+gives 30 GPU-hours a week on a T4 x2 or P100, 12-hour sessions with background
+execution, and the user's account is phone-verified. Files: `kaggle/README.md`,
+`kaggle/make_bundle.sh` (45 MB private dataset `vla-bed-v2`), `kaggle/smoke.ipynb`,
+`kaggle/train.ipynb`, `gpu/kaggle_import.sh`.
+
+**What the smoke measures** (≈ 15 min of quota): three 10-step timings —
+bfloat16 as LeRobot ships it (the VLM is loaded in bfloat16, hard-coded;
+T4/P100 have no native bfloat16), the frozen VLM cast to float16
+(`--vlm-dtype float16`), and a smaller batch — plus the renderer (EGL or OSMesa),
+a 5-episode oracle control, and a 2-episode SmolVLA rollout for GPU inference
+latency. Its last cell prints:
+
+| trial | steps/s | VRAM GB | 5k h | 10k h | 20k h | fits 8 h? |
+|---|---|---|---|---|---|---|
+| bf16-b32 | *measured* | | | | | |
+| fp16-b32 | *measured* | | | | | |
+| bf16-b16 | *measured* | | | | | |
+
+**Decision rule.** Route K goes if some trial fits **10k steps + evaluation of
+4 checkpoints × 100 episodes inside 8 h** (5k steps is the reduced unit if only
+that fits). Then `train.ipynb` runs one run per session with `MAX_HOURS` stopping
+training early enough to evaluate and pack: `baseline` first, then `gripper`,
+`chunkwise`, `plastic` within the weekly quota. Cost $0; calendar cost about a
+week. **RunPod** (below) if nothing fits 8 h, or Kaggle refuses a GPU twice.
+Either way: checkpoints chosen by closed-loop success (R11), never published.
+
+**Kaggle limits that shaped the notebooks.** A version killed at 12 h keeps no
+output, so the run is sized from the smoke, never guessed; the 20 GB output cap
+means only the selected checkpoint is packed; no Kaggle API token is needed.
 
 ## RunPod session (runpodctl 2.12.0, installed rootless in `~/.local/bin`, 4 Sep 2026)
 

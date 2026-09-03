@@ -128,8 +128,12 @@ sampled window at train time (`labels.py`, exact inverses) and their statistics 
 the normaliser, so the checkpoint unnormalises into the same representation the
 evaluator inverts. The frozen suite is the v2 evaluation split (100 held-out seeds):
 oracle 100/100 (Wilson [0.963, 1.0]), hold 0/100, and the Pi reproduces every episode
-row bit for bit. The priced session (RunPod 4090, four runs, est. $4–7, cap $16) is
-written out step by step in [`GPU-GATE.md`](GPU-GATE.md).
+row bit for bit. The GPU route is **Kaggle first (free)**: [`kaggle/README.md`](kaggle/README.md) is the
+user's checklist, `kaggle/smoke.ipynb` measures steps/s on the free T4/P100 (no native
+bfloat16 there, so a float16 cast of the frozen VLM is timed too), `kaggle/train.ipynb`
+runs one fine-tune per session with a wall-clock guard and evaluates it in place. RunPod
+(4090, est. $2–4 for the baseline, cap $16) is the fallback, written out in
+[`GPU-GATE.md`](GPU-GATE.md).
 
 **SmolVLA-base on this CPU** (`cpu_bench.json`): 36.0 s median per 50-action chunk
 (p95 50.9 s) with the checkpoint's three 512×512 camera slots and 10 flow steps on

@@ -12,6 +12,8 @@ after the touched demos verifiably run).
 
 ### Added
 
+- **Route K (Kaggle, free)** — `sim/vla-bed/kaggle/{README.md,make_bundle.sh,smoke.ipynb,train.ipynb}`, `gpu/kaggle_import.sh`; `gpu/train.py` gains `--dataset-root/--output-root/--steps/--batch-size/--save-freq`, a wall-clock `--max-hours` guard (`StepClock`, steps/s in `run_record.json`) and `--vlm-dtype float16` (cast of the frozen VLM for GPUs without native bfloat16); `gpu/preflight.py --dataset-root`; `runpodctl` route kept as the fallback.
+
 - `sim/vla-bed/labels.py` — train-time action-label representations
   (gripper-frame, chunk-wise cumulative) with exact inverses; `gpu/config.json`
   (runs baseline / gripper / chunkwise / plastic), `gpu/train.py` (LeRobot's

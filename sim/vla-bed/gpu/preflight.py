@@ -14,8 +14,10 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import os
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 
 BED_DIR = Path(__file__).resolve().parents[1]
@@ -80,18 +82,26 @@ def check_environment(config: dict, execute: bool, min_disk_gb: float) -> dict:
     }
 
 
-def check_datasets(config: dict, execute: bool) -> dict:
-    manifest = ROOT / config["dataset"]["manifest"]
+def check_datasets(config: dict, execute: bool, dataset_root: Path | None = None) -> dict:
+    base = Path(dataset_root) if dataset_root else None  # a copy of datasets/vla-bed/v2 elsewhere (Kaggle input)
+    manifest = (base / "manifest.json") if base else ROOT / config["dataset"]["manifest"]
     if not manifest.exists():
         return {"valid": False, "errors": [f"missing dataset manifest: {manifest}"]}
-    result = ds.validate_dataset(manifest, decode_video=execute) if execute else ds.validate_manifest(manifest)
     data = json.loads(manifest.read_text())
+    if base:  # the manifest's roots are the recording machine's; point them at the copy
+        for split, entry in data["splits"].items():
+            entry["root"] = str(base / split)
+        patched = manifest.parent / "manifest.local.json" if os.access(manifest.parent, os.W_OK) else Path(tempfile.gettempdir()) / "vla-bed-manifest.local.json"
+        patched.write_text(json.dumps(data))
+        manifest = patched
+    result = ds.validate_dataset(manifest, decode_video=execute) if execute else ds.validate_manifest(manifest)
     errors = list(result.get("errors", []))
     for split in ("train", "evaluation"):
         entry = data["splits"].get(split, {})
         if entry.get("repo_id") != config["dataset"][f"{split}_repo_id"]:
             errors.append(f"{split} repo_id does not match the manifest")
-        if Path(entry.get("root", "")).resolve() != (ROOT / config["dataset"][f"{split}_root"]).resolve():
+        expected = (base / split) if base else ROOT / config["dataset"][f"{split}_root"]
+        if Path(entry.get("root", "")).resolve() != expected.resolve():
             errors.append(f"{split} root does not match the manifest")
     if result.get("clean_label_faults", 0):
         errors.append(f"{result['clean_label_faults']} clean-label faults")
@@ -117,10 +127,11 @@ def main() -> int:
     parser.add_argument("--config", type=Path, default=CONFIG_FILE)
     parser.add_argument("--min-disk-gb", type=float, default=30.0)
     parser.add_argument("--execute", action="store_true")
+    parser.add_argument("--dataset-root", type=Path, default=None, help="a copy of datasets/vla-bed/v2 (e.g. /kaggle/input/vla-bed-v2/v2)")
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     env = check_environment(config, args.execute, args.min_disk_gb)
-    data = check_datasets(config, args.execute)
+    data = check_datasets(config, args.execute, args.dataset_root)
     runs = check_runs(config)
     result = {
         "schema": "robollm.vla-bed.gpu-preflight.v1",
