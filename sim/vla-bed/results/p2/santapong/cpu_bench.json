@@ -73,21 +73,29 @@
     6
   ],
   "timing_s": {
-    "load": 15.58,
+    "load": 18.29,
     "runs": 10,
-    "preprocess_median": 0.0006,
-    "predict_median": 35.9514,
+    "preprocess_median": 0.0005,
+    "predict_median": 19.46,
     "postprocess_median": 0.0,
-    "total_median": 35.9519,
-    "total_p95": 50.8718,
-    "total_min": 29.3964
+    "total_median": 19.4605,
+    "total_p95": 29.3049,
+    "total_min": 18.6857
   },
   "implied_control_hz": {
-    "1": 0.028,
-    "10": 0.278,
-    "50": 1.391
+    "1": 0.051,
+    "10": 0.514,
+    "50": 2.569
   },
   "bed_control_hz": 20,
   "lockstep_note": "In the bed the simulator only advances on request, so this latency slows wall-clock, never the policy's view (SDD \u00a70).",
-  "measured_at": "2026-09-03T22:58:25+0700"
+  "resources": {
+    "peak_rss_mb": 3478.5,
+    "cpu_user_s": 876.9,
+    "cpu_system_s": 3.2,
+    "threads": 19,
+    "cpus_online": 4,
+    "wall_clock": "2026-09-04T06:47:55+0700"
+  },
+  "measured_at": "2026-09-04T06:47:55+0700"
 }

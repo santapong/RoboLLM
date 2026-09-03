@@ -126,6 +126,7 @@ non-default `host=` is itself a Phase 0 check.
 | Viewer from the workstation | scene at 1.00× real time, 60 fps in the browser, ~2.8 MB page, WebGL on the workstation's Intel GPU | measured, 3 Sep 2026, `results/p0/santapong-dev/viewer-from-workstation.jpg` |
 | P1 gate wall time (200 rendered episodes + 100 label-check episodes) | workstation **254 s**; Pi **536 s** under `nice -n 10` | measured, 3 Sep 2026, `results/p1/<host>/summary.json` |
 | RAM, SmolVLA inference process (LIBERO calibration, CPU) | **3.09 GB resident, 3.74 GB peak**, 8.4 GB virtual, 20 threads, ≈ 2 cores busy; the full 50-rollout run took **7.00 h** (504 s per rollout) | measured from `/proc` on the workstation, 3–4 Sep 2026 |
+| RAM, SmolVLA-base CPU bench (P2, re-run 4 Sep 2026 idle) | **3.40 GB peak RSS**, 19 threads, median ≈36 s per chunk | `results/p2/santapong/cpu_bench.json` |
 | RAM, OXE replay (MuJoCo + mink + PIL) | **0.60 GB peak**, 69 s CPU for 486 s wall, 15 threads | measured, `results/p3/santapong/summary.json` |
 | RAM, SmolVLA fine-tune on CPU (2 steps, batch 2, expert only) | **3.44 GB peak** (baseline), **3.48 GB** (chunk-wise labels); 176–250 s per step under a load average of 14–18 | measured 4 Sep 2026, `artifacts/vla-bed/*/cpu-smoke/run_record.json` (git-ignored) |
 | Evaluator, scripted controls, 100 episodes | workstation **113 s** (oracle) / **417 s** (hold), 0.41 GB peak; Pi **163 s** / **653 s**, 0.40 GB peak; episode rows bit-identical on both policies |
