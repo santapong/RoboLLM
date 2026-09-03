@@ -427,7 +427,7 @@ stay git-ignored.
 | Item | Amount | When |
 |---|---|---|
 | Money spent on Phase 4 | **$0.00** | as of 4 Sep 2026 |
-| Kaggle GPU quota used | smoke versions 2–4: ≈ 0.15 h (0 s + 143 s + 360 s) | 4 Sep 2026 |
+| Kaggle GPU quota used | smoke versions 2–5: ≈ 0.30 h (0 + 143 + 360 + 571 s) | 4 Sep 2026 |
 | Kaggle GPU quota planned | baseline session ≈ 3.9 h training + evaluation ≤ 8 h; each variant ≤ 8 h (weekly cap 30 h) | quota hours are logged here like money |
 | RunPod fallback | est. $2–4 baseline-only, $4–7 all four, cap $16 | only if Route K fails the 8 h rule |
 

@@ -20,14 +20,16 @@ Right panel: **Add Input** → your dataset `vla-bed-v2`; Settings → Accelerat
 **GPU T4 x2** (P100 if T4 is unavailable); **Internet ON**. Run all.
 The last cell prints the projection table and `DECISION:`; paste it into the session.
 
-## Training (one run per session, unattended)
+## Training (one run per session, unattended) — then `eval.ipynb`
 
 Import `train.ipynb`, same inputs and settings. Edit the first cell from the
 projection table (`RUN`, `STEPS`, `BATCH`, `VLM_DTYPE`, `SAVE_EVERY`), then
-**Save Version → Save & Run All (Commit)**. It trains, evaluates every
-checkpoint on the 100 held-out episodes, runs the variations and probes on the
-last, selects by closed-loop success, and packs results + the selected
-checkpoint into `vla-bed-<run>-output.zip` (Output tab). Back on the workstation:
+**Save Version → Save & Run All (Commit)**. It trains, scores the last checkpoint on 50 nominal episodes, and packs **all**
+checkpoints into `vla-bed-<run>-output.zip` (Output tab). Then import `eval.ipynb`,
+add the dataset **and** the train notebook's output as inputs (Add Input → Notebook
+output), and run it: every checkpoint on the 100 held-out episodes, variations and
+probes on the last, selection by closed-loop success, packed as `vla-bed-<run>-eval.zip`.
+Why two sessions: MuJoCo on Kaggle's CPU costs ≈ 66 s per failing episode (smoke v5). Back on the workstation:
 
     sim/vla-bed/gpu/kaggle_import.sh ~/Downloads/vla-bed-baseline-output.zip <sha256 printed by the notebook>
 

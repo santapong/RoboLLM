@@ -72,9 +72,7 @@ torch 2.10.0+cu128, LeRobot 0.6.0, repo `52107c6`.** Preflight on the box: 14,42
 frames decoded, 0 clean-label faults, `smolvla_base` revision `c83c316`. Clone +
 install took 45 s; each 10-step trial includes model load. bfloat16 runs 3.5×
 slower than float16 on the T4 (no native bfloat16 there), as expected. Peak RSS
-4.0 GB. Renderer: EGL OK. The evaluator did not run in v4 (Menagerie models were
-not cloned in the notebook — fixed in v5), so the evaluation latency column of the
-projection used its 1 s/chunk placeholder.
+4.0 GB. Renderer: EGL OK. Version 5 (570 s) repeated the timings (fp16-b32 **0.763**, bf16-b32 0.214, bf16-b16 0.393 steps/s) with the Menagerie clone in place: oracle 5/5 on the box, and the 10-step checkpoint ran 2 episodes through the evaluator at **0.54 s per chunk** on the GPU. **MuJoCo stepping on Kaggle's 4 vCPUs is ≈ 15× slower than the workstation (≈ 66 s per 100-frame episode vs 4 s)**, so the full suite cannot share an 8 h session with training: `train.ipynb` scores only the last checkpoint on 50 episodes and packs all checkpoints; `eval.ipynb` runs the full suite from that output in its own session.
 
 **DECISION (printed by the notebook): Route K with fp16-b32, 10k steps.**
 
