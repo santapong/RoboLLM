@@ -23,7 +23,7 @@ and the action space.
 
 | Term | Meaning in this document |
 |---|---|
-| **Kaggle (Route K)** | Free notebook GPU: T4 x2 (2 × 16 GB) or P100 (16 GB), 30 GPU-hours/week, 12-hour sessions, background execution; phone-verified account. First choice for the P4 fine-tune; sized by a 10-step smoke because a version killed at 12 h keeps no output. | measured 4 Sep 2026 by the smoke notebook (pending) |
+| **Kaggle (Route K)** | Free notebook GPU: T4 x2 (2 × 16 GB) or P100 (16 GB), 30 GPU-hours/week, 12-hour sessions, background execution; phone-verified account. First choice for the P4 fine-tune; sized by a 10-step smoke because a version killed at 12 h keeps no output. **Measured 4 Sep 2026 (T4 15.6 GB): 0.72 steps/s at batch 32 with the frozen VLM cast to float16 (0.20 in bfloat16, which the T4 emulates), 4.9 GB VRAM, 45 s install.** | `GPU-GATE.md` Route K table; `results/p5/<kaggle-host>/` after the run |
 | **RunPod (fallback)** | RTX 4090 pod via `runpodctl` 2.12.0, template `runpod-torch-v280`, 30 GB volume; $0.35–0.70/h. Used only if Kaggle cannot fit 10k steps + evaluation in 8 h. | `GPU-GATE.md` |
 | **Pi** | Raspberry Pi 5, `aarch64`, Debian 13, 16 GB RAM, 4 cores, always on; already hosts the physical arm's ROS 2 side. Reached over the tailnet or LAN (`ssh pi-tailscale` / `pi-lan`). |
 | **Workstation** | The x86_64 desktop (Kali, i3-9100, 31 GB RAM, Intel UHD 630, no NVIDIA GPU). Runs the browser, the policy, training-data staging, and Route O. |
@@ -427,7 +427,8 @@ stay git-ignored.
 | Item | Amount | When |
 |---|---|---|
 | Money spent on Phase 4 | **$0.00** | as of 4 Sep 2026 |
-| Kaggle GPU quota planned | smoke ≈ 0.25 h; baseline session ≤ 8 h; each variant ≤ 8 h (weekly cap 30 h) | quota hours are logged here like money |
+| Kaggle GPU quota used | smoke versions 2–4: ≈ 0.15 h (0 s + 143 s + 360 s) | 4 Sep 2026 |
+| Kaggle GPU quota planned | baseline session ≈ 3.9 h training + evaluation ≤ 8 h; each variant ≤ 8 h (weekly cap 30 h) | quota hours are logged here like money |
 | RunPod fallback | est. $2–4 baseline-only, $4–7 all four, cap $16 | only if Route K fails the 8 h rule |
 
 | Item | Cost | Basis |

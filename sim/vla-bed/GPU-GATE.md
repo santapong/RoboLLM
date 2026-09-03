@@ -1,6 +1,6 @@
 # GPU gate — Phase 4 fine-tune of SmolVLA on the UR5e bed
 
-**Status: Route K (Kaggle, free) is live — waiting for the user's smoke-notebook table; RunPod stays the fallback** (4 Sep 2026 02:10). Nothing billed. This is the priced
+**Status: Route K (Kaggle, free) MEASURED and chosen — fp16 VLM, batch 32, 10k steps fits a session; the baseline training run is next** (4 Sep 2026 03:05). Nothing billed; Kaggle quota used so far ≈ 9 min. This is the priced
 go/no-go for the first spend of the bed. Everything free has been run; the
 rented session is a script; the smoke step measures the real cost before the
 priced command starts. Nothing below is executed without `--execute`.
@@ -63,9 +63,20 @@ latency. Its last cell prints:
 
 | trial | steps/s | VRAM GB | 5k h | 10k h | 20k h | fits 8 h? |
 |---|---|---|---|---|---|---|
-| bf16-b32 | *measured* | | | | | |
-| fp16-b32 | *measured* | | | | | |
-| bf16-b16 | *measured* | | | | | |
+| bf16-b32 (as LeRobot ships it) | 0.203 | 5.9 | 6.9 | 13.7 | 27.4 | 5k only |
+| **fp16-b32** (frozen VLM cast to float16) | **0.716** | 4.9 | 1.9 | **3.9** | 7.8 | **10k** |
+| bf16-b16 | 0.351 | 3.6 | 4.0 | 7.9 | 15.8 | 5k only |
+
+**Measured 4 Sep 2026, Kaggle version 4 of `santapongsondhi/smoke`, Tesla T4 15.6 GB,
+torch 2.10.0+cu128, LeRobot 0.6.0, repo `52107c6`.** Preflight on the box: 14,423
+frames decoded, 0 clean-label faults, `smolvla_base` revision `c83c316`. Clone +
+install took 45 s; each 10-step trial includes model load. bfloat16 runs 3.5×
+slower than float16 on the T4 (no native bfloat16 there), as expected. Peak RSS
+4.0 GB. Renderer: EGL OK. The evaluator did not run in v4 (Menagerie models were
+not cloned in the notebook — fixed in v5), so the evaluation latency column of the
+projection used its 1 s/chunk placeholder.
+
+**DECISION (printed by the notebook): Route K with fp16-b32, 10k steps.**
 
 **Decision rule.** Route K goes if some trial fits **10k steps + evaluation of
 4 checkpoints × 100 episodes inside 8 h** (5k steps is the reduced unit if only
