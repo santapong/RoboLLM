@@ -3,7 +3,7 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Bed README](README.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md) · [Style guide](../../docs/STYLE_GUIDE.md)
 
-**Status: Planned; Phases 0 and 1 Verified** on the Pi and the workstation, 3 Sep 2026 (evidence in `results/p0/`, `results/p1/`). This document is normative. It defines the simulation
+**Status: Planned; Phases 0–2 Verified** (P0–P1 on both machines, P2 on the workstation), 3 Sep 2026 (evidence in `results/p0/`, `results/p1/`, `results/p2/`). This document is normative. It defines the simulation
 bed, where each process runs, what every interface carries, what evidence
 closes each phase, and what the bed structurally cannot show. It is written
 **before** any of it exists, so that a disappointing measurement is reportable
@@ -34,7 +34,7 @@ and the action space.
 | **Progress score** | 1 on success; 0.5 if the EE ever came within 2× the success threshold (6 cm); else 0. Partial credit as in ZETA (2609.02546), rule R8 of §14. |
 | **Spec family** | One safety clause with a threshold and a severity anchor K. S1–S5 reject before execution; S6–S7 measure after. SafeVLA-Bench pattern (2606.00773), rule R7. |
 | **Clean label / executed action** | `action` is the clean expert action that is recorded; `action.executed` is what was applied — noisy for the noisy expert. DART (1703.09327) and Zhang et al. (2507.09061), rule R4. |
-| Status words | **Planned / Code-ready / Bench-gated / Verified** exactly as defined in [`../../docs/STYLE_GUIDE.md`](../../docs/STYLE_GUIDE.md). Phases 0 and 1 are Verified on both machines (3 Sep 2026); everything after them is Planned. |
+| Status words | **Planned / Code-ready / Bench-gated / Verified** exactly as defined in [`../../docs/STYLE_GUIDE.md`](../../docs/STYLE_GUIDE.md). Phases 0–1 are Verified on both machines and Phase 2 on the workstation (3 Sep 2026); everything after them is Planned. |
 
 ## 1. Questions this bed answers
 
@@ -49,7 +49,7 @@ and the action space.
 
 | Route | Physics | Embodiment | Viewer | Server host | Status | Why it is here |
 |---|---|---|---|---|---|---|
-| **M** | MuJoCo 3.10.0 | Menagerie `universal_robots_ur5e` + `robotiq_2f85` | mjviser (browser) | Pi | **Phases 0–1 Verified** (3 Sep 2026); P2–P5 Planned | Native `aarch64` wheels run on the Pi at 26.9× real time (measured 3 Sep 2026); pure-Python viewer; same engine as B1 |
+| **M** | MuJoCo 3.10.0 | Menagerie `universal_robots_ur5e` + `robotiq_2f85` | mjviser (browser) | Pi | **Phases 0–2 Verified** (3 Sep 2026); P3–P5 Planned | Native `aarch64` wheels run on the Pi at 26.9× real time (measured 3 Sep 2026); pure-Python viewer; same engine as B1 |
 | **O** | OmniSim v8.1.x (Newton on Warp, CPU) | OmniSim UR5e PROTO | OmniSim `--stream=w3d` (browser) | Workstation only | **Planned, optional** | Vendor asked for feedback; a second simulator is a real cross-bed measurement |
 
 ### 2.1 Evaluated and rejected (kept so nobody re-evaluates them)
@@ -97,7 +97,7 @@ evaluates a state-free variant as well.
 | Process | Host | Binds | Talks to | Notes |
 |---|---|---|---|---|
 | `scene/build_scene.py` overlay | Pi | — | — | loads Menagerie's `scene.xml` and `2f85.xml` unchanged with `MjSpec`, attaches the gripper at `attachment_site`, adds the fixed front camera and the mocap red target; adopts the gripper's elliptic cone / impratio 10 |
-| `expert.py` + `record.py` | Pi | — | MuJoCo in-process | Recording never crosses the network; datasets are `rsync`ed to the workstation afterwards |
+| `expert.py` + `record.py` | **Workstation** (`.venv-lerobot` + mink) | — | MuJoCo in-process | Amended 3 Sep 2026: lerobot 0.6.0's torch 2.10 / torchcodec 0.10 pairing has no aarch64 wheels (only torch 2.14 + torchcodec 0.16 resolve on the Pi), and P1 showed both machines produce bit-identical episodes, so recording moved to the workstation with no change to the data. The Pi keeps the viewer and the P5 server |
 | `viewer.py` (mjviser `ViserMujocoScene`) | Pi | tailnet IP, one free TCP port (**not 8080**, taken by nginx) | browser on the workstation | Viewer only; the physics loop is ours |
 | `sim_server.py` (ZeroMQ REQ/REP) | Pi | tailnet IP, one free TCP port | `policy_runner.py` | Needed only for closed-loop evaluation (P5) |
 | `policy_runner.py` + `evaluate.py` | Workstation | — | `sim_server.py` | SmolVLA on CPU, or a checkpoint trained on the rented GPU |
@@ -123,7 +123,8 @@ non-default `host=` is itself a Phase 0 check.
 | Same, workstation | 35,518 steps/s = 71× real time; render 102 fps; cold start 0.58 s | measured, i3-9100 + UHD 630 EGL, 3 Sep 2026, `results/p0/santapong/bench.json` |
 | Viewer from the workstation | scene at 1.00× real time, 60 fps in the browser, ~2.8 MB page, WebGL on the workstation's Intel GPU | measured, 3 Sep 2026, `results/p0/santapong-dev/viewer-from-workstation.jpg` |
 | P1 gate wall time (200 rendered episodes + 100 label-check episodes) | workstation **254 s**; Pi **536 s** under `nice -n 10` | measured, 3 Sep 2026, `results/p1/<host>/summary.json` |
-| SmolVLA CPU inference | **unmeasured**; one public report ≈ 10 s per chunk on a laptop | Phase 2 reports seconds per chunk on the workstation |
+| Recording throughput (render + IK + AV1 encode) | ≈ 1.2 s per episode; v2 train 400 episodes in 468 s; 47 MB per 500-episode recipe on disk | measured, workstation, 3 Sep 2026, manifests under `datasets/vla-bed/` |
+| SmolVLA-base CPU inference, workstation | **36.0 s median per 50-action chunk** (p95 50.9 s, min 29.4 s), 4 torch threads, three 512×512 camera slots, 10 flow-matching steps, 6-dim SO-100 state; implied refresh 0.03 Hz (n_action_steps 1), 0.28 Hz (10), 1.4 Hz (50) against the bed's 20 Hz | measured, i3-9100, 3 Sep 2026, `results/p2/santapong/cpu_bench.json`; lockstep makes this a wall-clock cost only. A one-camera fine-tune should cost roughly a third of the vision tokens (estimate, not measured) |
 
 **Fallback, recorded in advance:** if G0 fails on the Pi after both renderer
 options, every process above runs on the workstation unchanged. The Pi has no
@@ -142,7 +143,10 @@ role in that case, and Q-A is answered "no" with the failing line quoted.
 | Environment | `sim/vla-bed/env.py`: `BedEnv` (B1 observation keys, state[14], variations nominal / camera_shift / lighting / target_relocation), `run_episode` | **Verified** | scene, expert, safety |
 | Statistics | `sim/vla-bed/stats.py`: Wilson interval, episode bootstrap | **Verified** (unit tests) | — |
 | Phase 1 gate | `sim/vla-bed/p1_gate.py` → `results/p1/<host>/summary.json` | **Verified** | env, families |
-| Recorder | `sim/vla-bed/record.py` + `dataset.py` (features from `env.dataset_features()`, manifests in the pattern of `reaching_dataset.py`). B1's `validate_dataset` hard-codes a `(7,)` state (`examples/mujoco/reaching_dataset.py:318`), so the bed carries its own validator | Planned | LeRobot 0.6.0 |
+| Recorder + validator | `sim/vla-bed/dataset.py` (recipes v1/v2/v2b, LeRobot v3 writer, manifest `robollm.vla-bed.dataset-manifest.v1`, validator with the offline S1–S4 clean-label check, summary with chunk-padding and distance-to-target coverage), `record.py` CLI | **Verified** (workstation, 3 Sep 2026) | LeRobot 0.6.0, ffmpeg libsvtav1 |
+| CPU bench | `sim/vla-bed/cpu_bench.py` → `results/p2/<host>/cpu_bench.json`; batch built from the checkpoint's `input_features`; processor device overridden to CPU (the checkpoint pins `cuda`; B1's adapter lacks this override) | **Verified** | `lerobot/smolvla_base` |
+| Phase 2 gate | `sim/vla-bed/p2_gate.py` → `results/p2/<host>/dataset_acceptance.json` | **Verified** | dataset.py |
+| LIBERO calibration (P2b) | `sim/vla-bed/libero_calibration.md`, `scripts/libero_calib.sh`, `.venv-libero` | Planned → see §8 | `lerobot/smolvla_libero`, hf-libero |
 | Viewer | `sim/vla-bed/viewer.py` | **Verified** (Pi → workstation browser, 3 Sep 2026) | mjviser |
 | Sim server | `sim/vla-bed/sim_server.py` | Planned | pyzmq |
 | Policy runner + evaluator | `sim/vla-bed/policy_runner.py`, `evaluate.py` (reuses `examples/mujoco/evaluate_reaching.py` suite logic) | Planned | LeRobot, ZeroMQ |
@@ -322,8 +326,8 @@ Every phase names its machine. A phase without a number is not done.
 |---|---|---|---|---|
 | **P0** | Pi venv with the §11 pins; Menagerie at the pinned commit; overlay scene with camera; `MUJOCO_GL=egl` render; viewer on a free port bound to the tailnet IP; fill pins and ports into `NOTICES.md` | **G0 — Verified 3 Sep 2026.** Pi: EGL worked first try; `results/p0/santapong-dev/` (frame mean 75.8, std 32.5, 33 red pixels; 13,444 steps/s; 18.1 fps). Workstation: `results/p0/santapong/`. Browser on the workstation showed the running scene from the Pi (`viewer-from-workstation.jpg`). OSMesa fallback was not needed | ½ session (used) | — |
 | **P1** | Port the task: red target, oracle and noisy expert through mink in EE space, safety wrapper, limits tuned | **G1 — Verified 3 Sep 2026.** 20 cells × 5 seeds = 100 evaluation episodes per expert, identical results on both machines. Oracle **(SR 100, Safety 100, SBU 0, VSI 0)**, Wilson 95 % ≥ 0.963, mean 25.3 frames [23.6, 27.2]; noisy σ = 0.5× limit **(100, 100, 0, 0)**, 29.7 frames [27.5, 32.0], 0 clean-label faults, length ratio 1.17. `results/p1/santapong/` (workstation, 254 s) and `results/p1/santapong-dev/` (Pi, 536 s). 26 unit tests green | 1 session (used) | — |
-| **P2** | Record v1 (50 ep) and v2 (400/100) on the Pi at σ = 0.5× plus a 0.25× variant of v2; `--validate` checks every clean label against S1–S5; `rsync` to the workstation; SmolVLA-base CPU seconds-per-chunk measured on the workstation | Manifests `valid: true`; frame counts and chunk-padding % reported like B1; CPU s/chunk recorded; state-coverage statistic (distance-to-target histogram) per σ | 1–2 sessions | — |
-| **P2b** (optional) | LIBERO-spatial calibration of the evaluation plumbing in a separate venv, N = 10 per task, against the SmolVLA paper's reported numbers | Within the paper's range, or the deviation explained | overnight CPU | Skip; not on the critical path |
+| **P2** | Record v1 (40/10), v2 (400/100, σ = 0.5×) and v2b (400/100, σ = 0.25×) with one clean episode in five; `--validate` re-checks every clean label and executed action against S1–S4; SmolVLA-base CPU seconds-per-chunk | **G2 — Verified 3 Sep 2026** (workstation, `results/p2/santapong/dataset_acceptance.json`). v1 1,261 frames; **v2 11,506 + 2,917 frames**, mean 28.8 / 29.2 frames (max 61), chunk padding 27.0 % @20 / 44.4 % @50; **v2b 10,735 + 2,721 frames**, mean 26.8 / 27.2 (max 55), padding 28.3 % / 47.1 %. Every split 100 % success, **0 clean-label faults, 0 executed-action faults**, all 29,140 video frames decode. Noisy episodes are only 1.09× longer than clean ones at σ = 0.5× and equal at 0.25×; mean distance-to-target over recorded frames 0.151 m (clean) vs 0.137 m (noisy). Recording ≈ 1.2 s per episode incl. AV1 encoding (v2 train 468 s). CPU bench: 36.0 s per chunk (§4) | 1–2 sessions (used ½) | — |
+| **P2b** | LIBERO-Spatial calibration of the evaluation plumbing: `lerobot/smolvla_libero` (Apache-2.0) in `.venv-libero`, CPU, `n_action_steps` = 10, against the paper's Spatial 90 % at 10 trials per task (2506.01844, Table 2; its protocol refreshes every step on GPU). Runbook `libero_calibration.md` | Within the paper's Wilson band (≈ [82.6, 94.5] at n = 100), or the deviation explained; per-rollout wall time recorded from a one-episode probe first | overnight CPU; 5 episodes per task if a rollout exceeds 10 min | Report the shortfall; the bed's own P5 numbers stand on their own protocol |
 | **P3** | OXE replay: 3–5 episodes of `lerobot/berkeley_autolab_ur5` loaded by episode index, EE deltas integrated, mink IK on the sim UR5e, side-by-side video | Max EE tracking error per episode reported; `configs/oxe_ur5_map.yaml` committed with the verified mapping | 1 session | P4 does not depend on it |
 | **P4** | `GPU-GATE.md` priced go/no-go; `smoke_train.sh` first; 20 k-step fine-tune on v2. Training-time variants (config flags, one run each only if budget allows): chunk-wise deltas (R1), gripper-frame deltas (R3), `n_action_steps ≤ chunk_size/2` (R1); optional co-training with OXE-UR5 at mixing ratios {natural, 0.1, 0.3} with a `sim:` / `real:` prefix in the task string as the domain tag (R9) | Checkpoint, training curve, cost line; **checkpoint not published** until the weights-license item in §12 closes | user's go, est. $8–16 | — |
 | **P5** | `sim_server.py` on the Pi; policy on the workstation; frozen suite (the P1 schedule, seeds shared by every policy); cross-embodiment check against the B1 DIY-arm checkpoint; **blank-image probe** (success must collapse, else the policy runs on state alone, R6) and a **state-free** variant (R3) | Quadruple (SR, Safety, SBU, VSI) with Wilson CIs, progress score, per-family breakdown; report under `sim/vla-bed/results/` in the §9 schema | 1 session | — |
@@ -394,7 +398,8 @@ Pins (from `pip index` on the workstation, 3 Sep 2026; frozen at P0 into
 | `viser` | 1.1.0 | pulled by mjviser |
 | `mink` | 1.3.0 | latest at time of writing; pulls `qpsolvers` 4.13.0 + `daqp` 0.9.1 (the QP solver used) |
 | `pyzmq` | 27.2.0 | `aarch64` wheels available |
-| `lerobot[smolvla]` | 0.6.0 | repo pin; Python 3.13 venv (3.14 is unsupported) |
+| `lerobot[smolvla]` | 0.6.0 | repo pin; Python 3.13 venv (3.14 is unsupported); pulls `transformers` 5.5.4, `accelerate` 1.14.0, `num2words` 0.5.14 (`requirements-record.txt`) |
+| `.venv-libero` (P2b only) | `lerobot[smolvla,libero]==0.6.0`, torch 2.10.0+cpu, torchcodec 0.10.0, hf-libero 0.1.4, robosuite 1.4.0, **mujoco 3.8.1** | separate venv because hf-libero pins mujoco < 3.10; needs `CMAKE_POLICY_VERSION_MINIMUM=3.5` on CMake 4 and a pre-written `~/.libero/config.yaml` |
 | MuJoCo Menagerie | `e4049d0` (2026-09-01) | confirmed at P0 (3 Sep 2026) |
 | `msgpack` | 1.2.2 | ZeroMQ payloads (P5) |
 | `numpy`, `pillow` | ≥2.0, ≥10 (resolved 2.5.2, 12.3.0 on 3 Sep 2026) | floating on purpose; frozen only if a phase needs it |
@@ -424,10 +429,12 @@ full table with copyright lines is [`NOTICES.md`](NOTICES.md); the BibTeX is
   is copied beside it, following `examples/talos_mirror/ros2_ws/src/VENDORED.md`.
 - **`lerobot/berkeley_autolab_ur5`** is CC-BY-4.0. Replay videos and any
   checkpoint co-trained on it are derivatives and carry the attribution.
-- **SmolVLA weights** (`lerobot/smolvla_base`) carry **no license tag** on the
-  model card, while the base VLM (SmolVLM2-500M) and the LeRobot code are
-  Apache-2.0. Open item: ask on the model card or a LeRobot issue. Until it
-  closes, fine-tuned checkpoints are used for research and **not published**.
+- **SmolVLA weights** (`lerobot/smolvla_base`, revision `c83c3163`, downloaded
+  3 Sep 2026 for the CPU measurement) carry **no license tag** on the model
+  card, while the base VLM (SmolVLM2-500M) and the LeRobot code are Apache-2.0.
+  Open item: ask on the model card or a LeRobot issue. Until it closes,
+  fine-tuned checkpoints are used for research and **not published**. The P2b
+  checkpoint `lerobot/smolvla_libero` is Apache-2.0 and is only evaluated.
 - **mink, viser, mjviser, LeRobot, MuJoCo** are Apache-2.0 pip dependencies;
   each is cited.
 - **Design rules** (§14) cite the eight papers read on 3 Sep 2026 through alphaXiv:

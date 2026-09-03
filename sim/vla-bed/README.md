@@ -3,8 +3,8 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Specification](SDD.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md)
 
-**Status: Phases 0 and 1 Verified** on the Pi and the workstation (3 Sep 2026);
-Phases 2–5 are Planned. The [specification](SDD.md) was written first, on
+**Status: Phases 0–2 Verified** (P0–P1 on the Pi and the workstation, P2 on the
+workstation, 3 Sep 2026); Phases 3–5 are Planned; the P2b LIBERO calibration is running. The [specification](SDD.md) was written first, on
 purpose, so every number below had a gate it was measured against.
 
 ## What it is
@@ -73,13 +73,41 @@ Results were identical on the workstation and the Pi, episode by episode. Design
 rules behind the expert, the safety spec families and the action frame are cited
 in the specification's §14.
 
+## Phase 2 evidence (3 Sep 2026, workstation)
+
+```bash
+uv pip install --python .venv-lerobot/bin/python -r sim/vla-bed/requirements-record.txt
+MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --split train   # and evaluation; v1, v2b likewise
+.venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --validate
+.venv-lerobot/bin/python sim/vla-bed/cpu_bench.py
+.venv-lerobot/bin/python sim/vla-bed/p2_gate.py
+```
+
+| Recipe | Expert, σ | Episodes (train / eval) | Frames | Success | Mean length | Padding @20 / @50 |
+|---|---|---|---|---|---|---|
+| v1 | oracle | 40 / 10 | 1,023 / 238 | 100 % | 25.6 / 23.8 | 29.9 % / 48.9 % |
+| v2 | noisy, 0.5× limit (20 % clean) | 400 / 100 | 11,506 / 2,917 | 100 % | 28.8 / 29.2 | 27.0 % / 44.4 % |
+| v2b | noisy, 0.25× limit (20 % clean) | 400 / 100 | 10,735 / 2,721 | 100 % | 26.8 / 27.2 | 28.3 % / 47.1 % |
+
+Every clean label and every executed action passes S1–S4 offline (0 faults); all
+video frames decode. Each frame stores the clean label as `action` and the applied
+action as `action.executed`. Datasets live under `datasets/vla-bed/` (git-ignored);
+the acceptance record is `results/p2/santapong/dataset_acceptance.json`.
+
+**SmolVLA-base on this CPU** (`cpu_bench.json`): 36.0 s median per 50-action chunk
+(p95 50.9 s) with the checkpoint's three 512×512 camera slots and 10 flow steps on
+4 threads — 0.28 Hz observation refresh at `n_action_steps` = 10. Lockstep means
+this only costs wall-clock in the bed. Recording ran on the workstation because
+lerobot 0.6.0's torch/torchcodec pairing has no aarch64 wheels; P1 showed the Pi
+produces identical episodes.
+
 ## Phase gates at a glance
 
 | Phase | Gate |
 |---|---|
 | P0 | **Verified** — non-black camera frame rendered on the Pi; steps/s recorded; browser on the workstation shows the scene |
 | P1 | **Verified** — oracle and noisy expert both (SR 100, Safety 100, SBU 0, VSI 0) over 100 episodes on 20 IK-verified cells, identical on both machines; `results/p1/` |
-| P2 | v1/v2 datasets valid; SmolVLA CPU seconds-per-chunk measured |
+| P2 | **Verified** — v1, v2 (σ 0.5×) and v2b (σ 0.25×) valid, 100 % success, 0 clean-label faults over 29,140 frames; SmolVLA-base 36.0 s per chunk on this CPU; `results/p2/` |
 | P3 | OXE UR5 episode replayed on the sim UR5e; joint/quaternion map committed |
 | P4 | priced GPU gate; fine-tune; checkpoint kept private until the weights-license item closes |
 | P5 | closed-loop success rate with confidence intervals; cross-embodiment row against B1 |

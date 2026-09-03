@@ -8,6 +8,38 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-03 — UR5e VLA sim bed: Phase 2 verified (datasets, validator, CPU bench)
+
+### Added
+
+- `sim/vla-bed/dataset.py` + `record.py` — LeRobot v3 recorder for recipes v1
+  (oracle 40/10), v2 (noisy σ = 0.5× limit, 400/100, one clean episode in five)
+  and v2b (σ = 0.25×). Each frame stores the clean expert label as `action`, the
+  applied action as `action.executed`, and the episode σ; frames pair the
+  observation the expert acted on with its action. Validator re-checks S1–S4 on
+  both action vectors from the recorded EE position, σ per episode, frame and
+  timestamp contiguity, video decode; summary reports chunk padding and the
+  distance-to-target coverage per σ.
+- `sim/vla-bed/cpu_bench.py` — SmolVLA-base inference cost from the checkpoint's
+  own input features; `p2_gate.py`; `requirements-record.txt`;
+  `libero_calibration.md` + `scripts/libero_calib.sh` (P2b, separate
+  `.venv-libero`); `tests/unit/test_vla_bed_dataset.py` (fake LeRobot dataset).
+
+### Verified
+
+- **G2 PASS** on the workstation: v2 11,506 + 2,917 frames, v2b 10,735 + 2,721,
+  v1 1,261; every split 100 % success; 0 clean-label and 0 executed-action
+  faults; all 29,140 frames decode. ≈ 1.2 s per recorded episode.
+
+### Measured
+
+- **SmolVLA-base on the i3-9100 CPU: 36.0 s median per 50-action chunk** (p95
+  50.9 s, 4 threads, three 512×512 camera slots, 10 flow steps) → 0.03 / 0.28 /
+  1.4 Hz refresh at n_action_steps 1 / 10 / 50. The checkpoint's processor
+  pipelines pin `device='cuda'` and need an explicit CPU override (B1's adapter
+  lacks it). Recording moved to the workstation: lerobot 0.6.0's torch 2.10 +
+  torchcodec 0.10 pairing has no aarch64 wheels.
+
 ## 2026-09-03 — UR5e VLA sim bed: Phase 1 verified (expert, safety, goal families)
 
 ### Added

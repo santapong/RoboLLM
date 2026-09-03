@@ -1,0 +1,553 @@
+{
+  "schema": "robollm.vla-bed.dataset-acceptance.v1",
+  "phase": "P2",
+  "verdict": "PASS",
+  "checks": {
+    "v1_present": true,
+    "v1_valid": true,
+    "v1_clean_labels_pass": true,
+    "v1_train_success_ge_1.0": true,
+    "v1_evaluation_success_ge_1.0": true,
+    "v2_present": true,
+    "v2_valid": true,
+    "v2_clean_labels_pass": true,
+    "v2_train_success_ge_0.95": true,
+    "v2_evaluation_success_ge_0.95": true,
+    "v2b_present": true,
+    "v2b_valid": true,
+    "v2b_clean_labels_pass": true,
+    "v2b_train_success_ge_0.95": true,
+    "v2b_evaluation_success_ge_0.95": true,
+    "cpu_bench_present": true
+  },
+  "host": "santapong",
+  "dependencies": {
+    "python": "3.13.14",
+    "numpy": "2.2.6",
+    "mujoco": "3.10.0",
+    "mink": "1.3.0",
+    "lerobot": "0.6.0",
+    "torch": "2.10.0+cpu",
+    "torchcodec": "0.10.0",
+    "transformers": "5.5.4"
+  },
+  "recipes": {
+    "v1": {
+      "present": true,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "frames_checked": 1261,
+        "decoded_video_frames": 1261,
+        "clean_label_faults": 0,
+        "executed_action_faults": 0,
+        "splits": {
+          "train": {
+            "frames_checked": 1023,
+            "episodes": 40
+          },
+          "evaluation": {
+            "frames_checked": 238,
+            "episodes": 10
+          }
+        }
+      },
+      "summary": {
+        "recipe": "v1",
+        "splits": {
+          "train": {
+            "episodes": 40,
+            "frames": 1023,
+            "success_rate": 1.0,
+            "episode_len_mean": 25.575,
+            "episode_len_max": 47,
+            "chunk_padding_percent": {
+              "20": 29.9,
+              "50": 48.9
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 40,
+                "frames": 1023,
+                "success_rate": 1.0,
+                "episode_len_mean": 25.575,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    160,
+                    119,
+                    156,
+                    315,
+                    267,
+                    6
+                  ]
+                },
+                "distance_to_target_mean_m": 0.13754279992472027
+              }
+            },
+            "wall_s": 39.0
+          },
+          "evaluation": {
+            "episodes": 10,
+            "frames": 238,
+            "success_rate": 1.0,
+            "episode_len_mean": 23.8,
+            "episode_len_max": 30,
+            "chunk_padding_percent": {
+              "20": 33.9,
+              "50": 52.4
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 10,
+                "frames": 238,
+                "success_rate": 1.0,
+                "episode_len_mean": 23.8,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    40,
+                    31,
+                    36,
+                    80,
+                    51,
+                    0
+                  ]
+                },
+                "distance_to_target_mean_m": 0.12066804862893786
+              }
+            },
+            "wall_s": 9.0
+          }
+        }
+      }
+    },
+    "v2": {
+      "present": true,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "frames_checked": 14423,
+        "decoded_video_frames": 14423,
+        "clean_label_faults": 0,
+        "executed_action_faults": 0,
+        "splits": {
+          "train": {
+            "frames_checked": 11506,
+            "episodes": 400
+          },
+          "evaluation": {
+            "frames_checked": 2917,
+            "episodes": 100
+          }
+        }
+      },
+      "summary": {
+        "recipe": "v2",
+        "splits": {
+          "train": {
+            "episodes": 400,
+            "frames": 11506,
+            "success_rate": 1.0,
+            "episode_len_mean": 28.765,
+            "episode_len_max": 61,
+            "chunk_padding_percent": {
+              "20": 27.0,
+              "50": 44.4
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 80,
+                "frames": 2145,
+                "success_rate": 1.0,
+                "episode_len_mean": 26.8125,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    321,
+                    248,
+                    300,
+                    578,
+                    677,
+                    21
+                  ]
+                },
+                "distance_to_target_mean_m": 0.1511456557955844
+              },
+              "0.5": {
+                "episodes": 320,
+                "frames": 9361,
+                "success_rate": 1.0,
+                "episode_len_mean": 29.253125,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    1280,
+                    1170,
+                    1457,
+                    3173,
+                    2184,
+                    97
+                  ]
+                },
+                "distance_to_target_mean_m": 0.13676949026866114
+              }
+            },
+            "wall_s": 467.7
+          },
+          "evaluation": {
+            "episodes": 100,
+            "frames": 2917,
+            "success_rate": 1.0,
+            "episode_len_mean": 29.17,
+            "episode_len_max": 59,
+            "chunk_padding_percent": {
+              "20": 25.6,
+              "50": 43.9
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 20,
+                "frames": 569,
+                "success_rate": 1.0,
+                "episode_len_mean": 28.45,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    80,
+                    62,
+                    78,
+                    149,
+                    179,
+                    21
+                  ]
+                },
+                "distance_to_target_mean_m": 0.16195722603502824
+              },
+              "0.5": {
+                "episodes": 80,
+                "frames": 2348,
+                "success_rate": 1.0,
+                "episode_len_mean": 29.35,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    320,
+                    290,
+                    361,
+                    813,
+                    543,
+                    21
+                  ]
+                },
+                "distance_to_target_mean_m": 0.13583494872981688
+              }
+            },
+            "wall_s": 123.0
+          }
+        }
+      }
+    },
+    "v2b": {
+      "present": true,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "frames_checked": 13456,
+        "decoded_video_frames": 13456,
+        "clean_label_faults": 0,
+        "executed_action_faults": 0,
+        "splits": {
+          "train": {
+            "frames_checked": 10735,
+            "episodes": 400
+          },
+          "evaluation": {
+            "frames_checked": 2721,
+            "episodes": 100
+          }
+        }
+      },
+      "summary": {
+        "recipe": "v2b",
+        "splits": {
+          "train": {
+            "episodes": 400,
+            "frames": 10735,
+            "success_rate": 1.0,
+            "episode_len_mean": 26.8375,
+            "episode_len_max": 55,
+            "chunk_padding_percent": {
+              "20": 28.3,
+              "50": 47.1
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 80,
+                "frames": 2145,
+                "success_rate": 1.0,
+                "episode_len_mean": 26.8125,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    321,
+                    248,
+                    300,
+                    578,
+                    677,
+                    21
+                  ]
+                },
+                "distance_to_target_mean_m": 0.1511456557955844
+              },
+              "0.25": {
+                "episodes": 320,
+                "frames": 8590,
+                "success_rate": 1.0,
+                "episode_len_mean": 26.84375,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    1280,
+                    1053,
+                    1302,
+                    2863,
+                    2003,
+                    89
+                  ]
+                },
+                "distance_to_target_mean_m": 0.1356641568926521
+              }
+            },
+            "wall_s": 434.5
+          },
+          "evaluation": {
+            "episodes": 100,
+            "frames": 2721,
+            "success_rate": 1.0,
+            "episode_len_mean": 27.21,
+            "episode_len_max": 50,
+            "chunk_padding_percent": {
+              "20": 26.1,
+              "50": 45.6
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 20,
+                "frames": 569,
+                "success_rate": 1.0,
+                "episode_len_mean": 28.45,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    80,
+                    62,
+                    78,
+                    149,
+                    179,
+                    21
+                  ]
+                },
+                "distance_to_target_mean_m": 0.16195722603502824
+              },
+              "0.25": {
+                "episodes": 80,
+                "frames": 2152,
+                "success_rate": 1.0,
+                "episode_len_mean": 26.9,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    320,
+                    255,
+                    328,
+                    730,
+                    499,
+                    20
+                  ]
+                },
+                "distance_to_target_mean_m": 0.13512715959802227
+              }
+            },
+            "wall_s": 105.1
+          }
+        }
+      }
+    }
+  },
+  "cpu_bench": {
+    "schema": "robollm.vla-bed.cpu-bench.v1",
+    "checkpoint": "lerobot/smolvla_base",
+    "host": {
+      "hostname": "santapong",
+      "machine": "x86_64",
+      "cpu": "Intel(R) Core(TM) i3-9100 CPU @ 3.60GHz",
+      "python": "3.13.14",
+      "torch": "2.10.0+cpu",
+      "threads": 4
+    },
+    "config": {
+      "chunk_size": 50,
+      "n_action_steps": 50,
+      "max_state_dim": 32,
+      "max_action_dim": 32,
+      "resize_imgs_with_padding": [
+        512,
+        512
+      ],
+      "num_steps": 10,
+      "vlm": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
+    },
+    "input_features": {
+      "observation.state": [
+        "STATE",
+        [
+          6
+        ]
+      ],
+      "observation.images.camera1": [
+        "VISUAL",
+        [
+          3,
+          256,
+          256
+        ]
+      ],
+      "observation.images.camera2": [
+        "VISUAL",
+        [
+          3,
+          256,
+          256
+        ]
+      ],
+      "observation.images.camera3": [
+        "VISUAL",
+        [
+          3,
+          256,
+          256
+        ]
+      ]
+    },
+    "batch_built_from": {
+      "image_keys": [
+        "observation.images.camera1",
+        "observation.images.camera2",
+        "observation.images.camera3"
+      ],
+      "state_key": "observation.state",
+      "state_dim_used": 6,
+      "frame": "/home/santapong/RoboLLM/sim/vla-bed/results/p1/santapong/oracle_front_high_0_final.png",
+      "frame_hw": [
+        224,
+        224
+      ]
+    },
+    "action_chunk_shape": [
+      1,
+      50,
+      6
+    ],
+    "timing_s": {
+      "load": 15.58,
+      "runs": 10,
+      "preprocess_median": 0.0006,
+      "predict_median": 35.9514,
+      "postprocess_median": 0.0,
+      "total_median": 35.9519,
+      "total_p95": 50.8718,
+      "total_min": 29.3964
+    },
+    "implied_control_hz": {
+      "1": 0.028,
+      "10": 0.278,
+      "50": 1.391
+    },
+    "bed_control_hz": 20,
+    "lockstep_note": "In the bed the simulator only advances on request, so this latency slows wall-clock, never the policy's view (SDD \u00a70).",
+    "measured_at": "2026-09-03T22:58:25+0700"
+  },
+  "wall_s": 137.2,
+  "measured_at": "2026-09-03T23:26:54+0700"
+}

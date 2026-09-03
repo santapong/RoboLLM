@@ -1,0 +1,93 @@
+{
+  "schema": "robollm.vla-bed.cpu-bench.v1",
+  "checkpoint": "lerobot/smolvla_base",
+  "host": {
+    "hostname": "santapong",
+    "machine": "x86_64",
+    "cpu": "Intel(R) Core(TM) i3-9100 CPU @ 3.60GHz",
+    "python": "3.13.14",
+    "torch": "2.10.0+cpu",
+    "threads": 4
+  },
+  "config": {
+    "chunk_size": 50,
+    "n_action_steps": 50,
+    "max_state_dim": 32,
+    "max_action_dim": 32,
+    "resize_imgs_with_padding": [
+      512,
+      512
+    ],
+    "num_steps": 10,
+    "vlm": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct"
+  },
+  "input_features": {
+    "observation.state": [
+      "STATE",
+      [
+        6
+      ]
+    ],
+    "observation.images.camera1": [
+      "VISUAL",
+      [
+        3,
+        256,
+        256
+      ]
+    ],
+    "observation.images.camera2": [
+      "VISUAL",
+      [
+        3,
+        256,
+        256
+      ]
+    ],
+    "observation.images.camera3": [
+      "VISUAL",
+      [
+        3,
+        256,
+        256
+      ]
+    ]
+  },
+  "batch_built_from": {
+    "image_keys": [
+      "observation.images.camera1",
+      "observation.images.camera2",
+      "observation.images.camera3"
+    ],
+    "state_key": "observation.state",
+    "state_dim_used": 6,
+    "frame": "/home/santapong/RoboLLM/sim/vla-bed/results/p1/santapong/oracle_front_high_0_final.png",
+    "frame_hw": [
+      224,
+      224
+    ]
+  },
+  "action_chunk_shape": [
+    1,
+    50,
+    6
+  ],
+  "timing_s": {
+    "load": 15.58,
+    "runs": 10,
+    "preprocess_median": 0.0006,
+    "predict_median": 35.9514,
+    "postprocess_median": 0.0,
+    "total_median": 35.9519,
+    "total_p95": 50.8718,
+    "total_min": 29.3964
+  },
+  "implied_control_hz": {
+    "1": 0.028,
+    "10": 0.278,
+    "50": 1.391
+  },
+  "bed_control_hz": 20,
+  "lockstep_note": "In the bed the simulator only advances on request, so this latency slows wall-clock, never the policy's view (SDD \u00a70).",
+  "measured_at": "2026-09-03T22:58:25+0700"
+}
