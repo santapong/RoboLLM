@@ -98,7 +98,7 @@ the acceptance record is `results/p2/santapong/dataset_acceptance.json`.
 
 `lerobot/smolvla_libero` on `libero_spatial`, 10 tasks × 5 episodes, `n_action_steps=10`,
 camera mapping as in `scripts/libero_calib.sh`: **41/50 = 82 %** (Wilson 95 % [0.692, 0.902]),
-per task 0: 5/5, 1: 5/5, 2: 5/5, 3: 5/5, 4: 5/5, 5: 5/5, 6: 5/5, 7: 5/5, 8: 4/5, 9: 4/5, 10: 0/5, 11: 0/5, 12: 4/5, 13: 4/5, 14: 4/5, 15: 4/5, 16: 4/5, 17: 4/5, 18: 5/5, 19: 5/5; 7.0 h wall, 504 s per rollout. The published SmolVLA-0.45B Spatial
+per task 0: 5/5, 1: 5/5, 2: 5/5, 3: 5/5, 4: 4/5, 5: 0/5, 6: 4/5, 7: 4/5, 8: 4/5, 9: 5/5; 7.0 h wall, 504 s per rollout. The published SmolVLA-0.45B Spatial
 score is 90 at 10 trials per task on a GPU, inside the interval: the same evaluator path
 reproduces a published number within its uncertainty. Videos and `eval_info.json` under
 `results/p2b/full/` (videos git-ignored).
