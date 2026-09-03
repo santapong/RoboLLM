@@ -111,6 +111,26 @@ about z plus a 0.28 m lift, the sim UR5e tracks all five real pose trajectories 
 drifts 2–9 cm, 2.5–5× less than without the measured gain. Side-by-side PNGs and
 `summary.json` are under `results/p3/santapong/`. Peak RAM 0.60 GB.
 
+## Phase 4 pre-checks (4 Sep 2026, workstation + Pi) — zero spend
+
+```bash
+.venv-lerobot/bin/python sim/vla-bed/gpu/train.py --run baseline --mode cpu-smoke --execute   # 2 steps on CPU
+.venv-lerobot/bin/python sim/vla-bed/gpu/train.py --run chunkwise --mode cpu-smoke --execute  # the label transform too
+MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/evaluate.py --policy oracle             # control: 100/100
+MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/evaluate.py --policy hold               # control: 0/100
+.venv-lerobot/bin/python sim/vla-bed/gpu/preflight.py                                       # dry run
+```
+
+`lerobot/smolvla_base` accepts the bed's 14-dim state, 7-dim action and one camera
+(renamed to `camera1`) without surgery; only the action expert trains (100 M of 450 M
+parameters). The chunk-wise and gripper-frame label representations are applied to each
+sampled window at train time (`labels.py`, exact inverses) and their statistics reach
+the normaliser, so the checkpoint unnormalises into the same representation the
+evaluator inverts. The frozen suite is the v2 evaluation split (100 held-out seeds):
+oracle 100/100 (Wilson [0.963, 1.0]), hold 0/100, and the Pi reproduces every episode
+row bit for bit. The priced session (RunPod 4090, four runs, est. $4–7, cap $16) is
+written out step by step in [`GPU-GATE.md`](GPU-GATE.md).
+
 **SmolVLA-base on this CPU** (`cpu_bench.json`): 36.0 s median per 50-action chunk
 (p95 50.9 s) with the checkpoint's three 512×512 camera slots and 10 flow steps on
 4 threads — 0.28 Hz observation refresh at `n_action_steps` = 10. Lockstep means
@@ -126,7 +146,7 @@ produces identical episodes.
 | P1 | **Verified** — oracle and noisy expert both (SR 100, Safety 100, SBU 0, VSI 0) over 100 episodes on 20 IK-verified cells, identical on both machines; `results/p1/` |
 | P2 | **Verified** — v1, v2 (σ 0.5×) and v2b (σ 0.25×) valid, 100 % success, 0 clean-label faults over 29,140 frames; SmolVLA-base 36.0 s per chunk on this CPU; `results/p2/` |
 | P3 | **Verified** — five real UR5 episodes replayed on the sim UR5e: state tracking ≤ 1.2 cm mean / ≤ 0.4 cm final; the action frame turned out to be a rotated teleop frame with a 0.61 controller gain, measured from the data; `configs/oxe_ur5_map.yaml`, `results/p3/` |
-| P4 | priced GPU gate; fine-tune; checkpoint kept private until the weights-license item closes |
+| P4 | **Prepared, awaiting the owner's go** — free pre-checks passed on both machines (see below); the rented session is scripted in `GPU-GATE.md` |
 | P5 | closed-loop success rate with confidence intervals; cross-embodiment row against B1 |
 
 Full table, limits, interfaces and the honesty rules: [`SDD.md`](SDD.md).

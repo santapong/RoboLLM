@@ -278,3 +278,40 @@ upstream key. License and attribution obligations are in
   note          = {Used for: per-dataset 1st-99th quantile action normalisation, single-arm EE-control filter, Berkeley Autolab UR5 at 1.2 percent of the OXE mixture (App. A)}
 }
 ```
+
+## Fine-tuning recipe (read 4 Sep 2026, SDD §14 R10–R12)
+
+```bibtex
+@misc{lin2024datascaling,
+  title         = {Data Scaling Laws in Imitation Learning for Robotic Manipulation},
+  author        = {Fanqi Lin and Yingdong Hu and Pingyue Sheng and Chuan Wen and Jiacheng You and Yang Gao},
+  year          = {2024},
+  eprint        = {2410.18647},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2410.18647},
+  note          = {ICLR 2025. Used for: R10 — success scales as a power law in environments/objects, not demonstrations; ~50 demos per environment-object pair saturate; validation MSE is a weak proxy}
+}
+
+@misc{seo2026bcpdcontrol,
+  title         = {Behavior Cloning Under PD Control: A Finite-Horizon Theory of Gain-Dependent Error Amplification},
+  author        = {Junghoon Seo},
+  year          = {2026},
+  eprint        = {2604.14484},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2604.14484},
+  note          = {Used for: R11 — closed-loop failure is bounded by controller amplification × validation loss; the lowest-loss gain regime failed most (robosuite PickPlaceCan, 3 seeds); select checkpoints by closed-loop success; the bed's gain probe}
+}
+
+@misc{ferchau2026lora,
+  title         = {On the Efficiency of LoRA Fine-Tuning for Vision-Language-Action Models in Industrial Robotic Manipulation},
+  author        = {Finn Ferchau and Daniel Pommer and Cristian Axenie},
+  year          = {2026},
+  eprint        = {2607.10172},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2607.10172},
+  note          = {Used for: R12 — freezing the VLM collapsed pi0's task progress on a real UR5e (0.15 vs 0.76, 20 rollouts/task, 200 demos/task); LoRA r=32 with the vision encoder trained matched full fine-tuning at 10.8 GiB; the bed's `plastic` run and its lr 2.5e-5}
+}
+```

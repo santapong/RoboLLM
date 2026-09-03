@@ -8,6 +8,28 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-04 — UR5e VLA sim bed: Phase 4 prepared (priced GPU gate, zero spend so far)
+
+### Added
+
+- `sim/vla-bed/labels.py` — train-time action-label representations
+  (gripper-frame, chunk-wise cumulative) with exact inverses; `gpu/config.json`
+  (runs baseline / gripper / chunkwise / plastic), `gpu/train.py` (LeRobot's
+  trainer in-process with the label wrapper and a std floor for the never-moving
+  gripper channel), `gpu/preflight.py`, the session scripts
+  (`transfer/smoke/full/eval_all/download/cleanup.sh`, `select_checkpoint.py`),
+  `evaluate.py` (frozen suite, oracle/hold/smolvla, quadruple + Wilson +
+  bootstrap, blank-image and gain probes), `GPU-GATE.md`, unit tests.
+
+### Measured (free)
+
+- `lerobot/smolvla_base` fine-tunes on the bed's features as-is (2-step CPU
+  smokes, baseline and chunk-wise, exit 0; 3.4–3.5 GB peak RSS).
+- Controls on the 100 held-out seeds: oracle 100/100, hold 0/100; the Pi
+  reproduces every episode row bit for bit.
+- Design rules R10–R12 from Lin 2410.18647, Seo 2604.14484, Ferchau 2607.10172;
+  the sim-vs-real controller-amplification limit recorded in SDD §10.
+
 ## 2026-09-04 — UR5e VLA sim bed: Phase 3 verified (Open X-Embodiment UR5 replay)
 
 ### Added

@@ -1,0 +1,112 @@
+{
+  "schema": "robollm.vla-bed.phase-summary.v1",
+  "phase": "P5",
+  "route": "M",
+  "host": {
+    "hostname": "santapong",
+    "machine": "x86_64",
+    "python": "3.13.14",
+    "MUJOCO_GL": "egl"
+  },
+  "task": "touch the red target",
+  "embodiment": "ur5e+2f85",
+  "schedule": {
+    "manifest": "datasets/vla-bed/v2/manifest.json",
+    "recipe": "v2",
+    "split": "evaluation",
+    "base_seed": 10000,
+    "episodes": 1,
+    "cells": 20,
+    "variation": "nominal",
+    "fps": 20,
+    "max_frames": 100
+  },
+  "limits": {
+    "xyz_step_m": 0.01,
+    "rpy_step_rad": 0.05
+  },
+  "policy": {
+    "name": "smolvla",
+    "label": "smoke-load-test",
+    "checkpoint": "artifacts/vla-bed/baseline/cpu-smoke/checkpoints/000002/pretrained_model",
+    "representation": "identity",
+    "n_action_steps": 10,
+    "gain": 1.0,
+    "blank_image": false
+  },
+  "smoke-load-test": {
+    "n": 1,
+    "success_rate": 0.0,
+    "safety": 0.0,
+    "sbu": 0.0,
+    "vsi": 1.0,
+    "ci95_wilson_success": [
+      0.0,
+      0.7934506882081973
+    ],
+    "ci95_wilson_safety": [
+      0.0,
+      0.7934506882081973
+    ],
+    "progress_mean": 0.0,
+    "progress_ci95_bootstrap": [
+      0.0,
+      0.0
+    ],
+    "episode_len_mean": 100.0,
+    "episode_len_ci95_bootstrap": [
+      100.0,
+      100.0
+    ],
+    "chunks_mean": 10.0,
+    "latency_s_mean": 89.1088,
+    "final_error_m_mean": 0.23045,
+    "per_family_success": {
+      "front_high": 0.0
+    },
+    "per_family_n": {
+      "front_high": 1
+    },
+    "faults": {
+      "rejected": {
+        "S2_xyz_step": 83,
+        "S3_rpy_step": 3
+      },
+      "measured": {}
+    }
+  },
+  "episodes": {
+    "smoke-load-test": [
+      {
+        "seed": 1000010000,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.23045,
+        "min_error_m": 0.12089,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 83,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 1.0,
+        "latency_s_mean": 89.1088
+      }
+    ]
+  },
+  "wall_s": 895.0,
+  "resources": {
+    "peak_rss_mb": 3740.2,
+    "cpu_user_s": 949.4,
+    "cpu_system_s": 8.8,
+    "threads": 21,
+    "cpus_online": 4,
+    "wall_clock": "2026-09-04T01:10:30+0700"
+  },
+  "measured_at": "2026-09-04T01:10:30+0700"
+}

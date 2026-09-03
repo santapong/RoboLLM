@@ -71,3 +71,7 @@ typeface, brand artwork under `resources/branding/`).
 | Sim server (ZeroMQ REQ/REP) | **5555** (free on 3 Sep 2026; bound at P5) | Pi tailnet IP only |
 
 Neither service authenticates. No Funnel route, no LAN-wide bind.
+
+## Fine-tuned checkpoints (Phase 4)
+
+Checkpoints written under `artifacts/vla-bed/` (git-ignored) derive from `lerobot/smolvla_base`, whose weights carry no licence tag (SDD §12). They are **not published** and must not be pushed to any hub; the rented host's copy is moved to trash by `gpu/cleanup.sh` and the pod terminated. Evaluation JSONs under `results/p5/` contain no weights.
