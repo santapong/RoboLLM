@@ -21,6 +21,7 @@ our own files, cite everything, redistribute nothing that is not needed.**
 | Menagerie `universal_robots_ur5e` | same commit | BSD-3-Clause | 2018 ROS-Industrial Consortium | `<include>`d unmodified by our overlay scene | Not redistributed, so no notice duty. If vendored: copy the model `LICENSE` beside it (see `examples/talos_mirror/ros2_ws/src/VENDORED.md`); never use the ROS-Industrial name to promote this work. |
 | Menagerie `robotiq_2f85` | same commit | BSD-2-Clause | 2013 ROS-Industrial | `<attach>`ed unmodified by our overlay scene | As above. |
 | mink | 1.3.0 | Apache-2.0 | Kevin Zakka | pip dependency (differential IK for the expert and the OXE replayer) | Cite `Zakka_Mink_Python_inverse_2026`. Not redistributed. |
+| qpsolvers, daqp | 4.13.0, 0.9.1 | LGPL-3.0 (qpsolvers), MIT (daqp) | Stéphane Caron and contributors; Daniel Arnström | pulled by mink; daqp is the QP solver behind `solve_ik` | Not redistributed. |
 | viser | 1.1.0 | Apache-2.0 | The viser authors | pip dependency (browser transport for the viewer) | Cite `yi2025viser`. Not redistributed. |
 | mjviser | 0.0.14 | Apache-2.0 | 2025 The mjlab Developers | pip dependency (MuJoCo scene in the browser) | Cite `mjviser2026github`. Not redistributed. |
 | pyzmq | 27.2.0 | BSD-3-Clause / LGPL (libzmq) | The pyzmq and ZeroMQ authors | pip dependency (lockstep sim server) | Not redistributed. |

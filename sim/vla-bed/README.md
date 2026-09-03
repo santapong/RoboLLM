@@ -3,8 +3,8 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Specification](SDD.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md)
 
-**Status: Phase 0 Verified** on the Pi and the workstation (3 Sep 2026);
-Phases 1–5 are Planned. The [specification](SDD.md) was written first, on
+**Status: Phases 0 and 1 Verified** on the Pi and the workstation (3 Sep 2026);
+Phases 2–5 are Planned. The [specification](SDD.md) was written first, on
 purpose, so every number below had a gate it was measured against.
 
 ## What it is
@@ -54,12 +54,31 @@ Menagerie files (UR5e `scene.xml` + `2f85.xml` attached at `attachment_site`);
 
 Files: `results/p0/santapong-dev/` (Pi) and `results/p0/santapong/` (workstation).
 
+## Phase 1 evidence (3 Sep 2026)
+
+```bash
+.venv/bin/python families.py --freeze     # IK-verify the 20 cells → configs/families.json
+MUJOCO_GL=egl .venv/bin/python p1_gate.py   # oracle + noisy expert, 100 episodes each
+```
+
+| | Oracle | Noisy expert (σ = 0.5 × per-step limit) |
+|---|---|---|
+| (SR, Safety, SBU, VSI) | (100, 100, 0, 0) | (100, 100, 0, 0) |
+| Wilson 95 % on success | [0.963, 1.0] | [0.963, 1.0] |
+| Mean episode length (frames, 20 Hz) | 25.3 [23.6, 27.2] | 29.7 [27.5, 32.0] |
+| Clean-label faults | — | 0 |
+| Gate wall time | workstation 254 s · Pi 536 s | (both experts, rendered) |
+
+Results were identical on the workstation and the Pi, episode by episode. Design
+rules behind the expert, the safety spec families and the action frame are cited
+in the specification's §14.
+
 ## Phase gates at a glance
 
 | Phase | Gate |
 |---|---|
 | P0 | **Verified** — non-black camera frame rendered on the Pi; steps/s recorded; browser on the workstation shows the scene |
-| P1 | oracle expert 100 % on five goal families through mink IK |
+| P1 | **Verified** — oracle and noisy expert both (SR 100, Safety 100, SBU 0, VSI 0) over 100 episodes on 20 IK-verified cells, identical on both machines; `results/p1/` |
 | P2 | v1/v2 datasets valid; SmolVLA CPU seconds-per-chunk measured |
 | P3 | OXE UR5 episode replayed on the sim UR5e; joint/quaternion map committed |
 | P4 | priced GPU gate; fine-tune; checkpoint kept private until the weights-license item closes |

@@ -8,6 +8,34 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-03 — UR5e VLA sim bed: Phase 1 verified (expert, safety, goal families)
+
+### Added
+
+- `sim/vla-bed/families.py` — five goal families × 2×2 cells = 20 seeded cells,
+  train/evaluation seed isolation, IK-verified list in `configs/families.json`.
+- `sim/vla-bed/expert.py` — mink differential-IK controller (commanded-pose
+  integrator, bias-force-compensated servos), oracle expert, and a noisy expert
+  that executes noise but records the clean label (DART / Zhang et al.).
+- `sim/vla-bed/safety.py` — spec families S1–S7 with severity depth and the
+  (SR, Safety, SBU, VSI) quadruple (SafeVLA-Bench pattern); `stats.py` — Wilson
+  and bootstrap intervals; `env.py` — `BedEnv` with B1's observation keys,
+  state[14], four variations; `p1_gate.py`; 26 unit tests (skip without mink).
+- SDD §14 "Design rules from the literature": nine rules with protocol and numbers
+  from eight papers read through alphaXiv; `REFERENCES.md` +8 BibTeX entries.
+
+### Verified
+
+- **G1 passes on both machines with identical results**: oracle and noisy expert
+  (100, 100, 0, 0) over 100 evaluation episodes on 20 cells; mean 25.3 / 29.7
+  frames; zero clean-label faults. Workstation 254 s, Pi 536 s under `nice`.
+
+### Measured
+
+- Menagerie's UR5e position servos sag ≈ 0.017 rad under gravity; re-planning a
+  1 cm delta from the sagged pose crept at < 1 mm per step. Fixed by bias-force
+  compensation on the arm joints plus integrating deltas on the commanded pose.
+
 ## 2026-09-03 — UR5e VLA sim bed: Phase 0 verified on the Pi
 
 ### Added
