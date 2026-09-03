@@ -50,3 +50,6 @@ sim/vla-bed/scene/*.generated.xml
 sim/vla-bed/.venv/
 sim/vla-bed/results/**/*.mp4
 MUJOCO_LOG.TXT
+# LIBERO calibration videos/logs (results JSON is committed)
+sim/vla-bed/results/p2b/full/videos/
+sim/vla-bed/results/p2b/*.log

@@ -25,6 +25,11 @@ after the touched demos verifiably run).
 
 ### Measured (free)
 
+- P2b LIBERO calibration finished: `lerobot/smolvla_libero` scores 41/50 = 82 % on
+  `libero_spatial` (Wilson [0.692, 0.902]) on this CPU in 7.0 h, versus the published 90 —
+  inside the interval.
+- Kaggle smoke (free T4): float16 VLM 0.76 steps/s at batch 32 (bfloat16 0.21), evaluator and
+  renderer working on the box; baseline training launched there.
 - `lerobot/smolvla_base` fine-tunes on the bed's features as-is (2-step CPU
   smokes, baseline and chunk-wise, exit 0; 3.4–3.5 GB peak RSS).
 - Controls on the 100 held-out seeds: oracle 100/100, hold 0/100; the Pi

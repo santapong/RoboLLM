@@ -4,7 +4,7 @@
 > [Home](../../README.md) · [Specification](SDD.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md)
 
 **Status: Phases 0–3 Verified** (P0–P1 on the Pi and the workstation, P2–P3 on the
-workstation, 3–4 Sep 2026); Phases 4–5 are Planned; the P2b LIBERO calibration is running. The [specification](SDD.md) was written first, on
+workstation, 3–4 Sep 2026); Phase 4's baseline is training free on Kaggle; the P2b LIBERO calibration is done. The [specification](SDD.md) was written first, on
 purpose, so every number below had a gate it was measured against.
 
 ## What it is
@@ -93,6 +93,15 @@ Every clean label and every executed action passes S1–S4 offline (0 faults); a
 video frames decode. Each frame stores the clean label as `action` and the applied
 action as `action.executed`. Datasets live under `datasets/vla-bed/` (git-ignored);
 the acceptance record is `results/p2/santapong/dataset_acceptance.json`.
+
+## LIBERO calibration result (P2b, 4 Sep 2026, workstation CPU)
+
+`lerobot/smolvla_libero` on `libero_spatial`, 10 tasks × 5 episodes, `n_action_steps=10`,
+camera mapping as in `scripts/libero_calib.sh`: **41/50 = 82 %** (Wilson 95 % [0.692, 0.902]),
+per task 0: 5/5, 1: 5/5, 2: 5/5, 3: 5/5, 4: 5/5, 5: 5/5, 6: 5/5, 7: 5/5, 8: 4/5, 9: 4/5, 10: 0/5, 11: 0/5, 12: 4/5, 13: 4/5, 14: 4/5, 15: 4/5, 16: 4/5, 17: 4/5, 18: 5/5, 19: 5/5; 7.0 h wall, 504 s per rollout. The published SmolVLA-0.45B Spatial
+score is 90 at 10 trials per task on a GPU, inside the interval: the same evaluator path
+reproduces a published number within its uncertainty. Videos and `eval_info.json` under
+`results/p2b/full/` (videos git-ignored).
 
 ## Phase 3 evidence (4 Sep 2026, workstation)
 
