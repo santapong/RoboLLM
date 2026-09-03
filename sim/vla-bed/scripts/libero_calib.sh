@@ -32,6 +32,9 @@ common=(
   --policy.n_action_steps="$N_ACTION_STEPS"
   --eval.batch_size=1
   --eval.use_async_envs=false
+  # The LeRobot LIBERO checkpoints expect camera1..3; the env exposes agentview + wrist.
+  # Mapping them onto camera1/camera2 satisfies the subset rule and SmolVLA masks camera3.
+  --env.camera_name_mapping="${LIBERO_CAMERA_MAP:-{\"agentview_image\": \"camera1\", \"robot0_eye_in_hand_image\": \"camera2\"}}"
 )
 
 case "$MODE" in
