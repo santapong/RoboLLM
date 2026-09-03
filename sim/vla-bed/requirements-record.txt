@@ -2,7 +2,8 @@
 # Installed on top of .venv-lerobot (Python 3.13, NumPy 2, lerobot 0.6.0, torch CPU):
 #   uv pip install --python .venv-lerobot/bin/python -r sim/vla-bed/requirements-record.txt
 # The Pi does not record (no torch/torchcodec pairing for lerobot 0.6.0 on aarch64).
-lerobot[smolvla]==0.6.0
+lerobot[smolvla,dataset]==0.6.0   # [dataset] brings PyAV (av) — LeRobot's dataset module refuses to import without it
+av>=14
 mink==1.3.0
 daqp
 msgpack==1.2.2
