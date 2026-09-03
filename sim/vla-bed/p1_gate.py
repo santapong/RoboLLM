@@ -26,6 +26,7 @@ from PIL import Image  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import families  # noqa: E402
+import resources  # noqa: E402
 from env import FPS, INSTRUCTION, MAX_FRAMES, BedEnv, run_episode  # noqa: E402
 from expert import DEFAULT_NOISE_FRACTION, STEP_LIMITS, make_expert  # noqa: E402
 from safety import SafetyWrapper, quadruple  # noqa: E402
@@ -144,6 +145,7 @@ def main() -> int:
         "s6_self_collision_measurable": env.s6_measurable,
         "menagerie_commit": build_scene.MENAGERIE_COMMIT,
         "wall_s_total": round(time.perf_counter() - t0, 1),
+        "resources": resources.snapshot(),
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "oracle": {k: v for k, v in oracle.items() if k != "episodes"},
         "noisy": {k: v for k, v in noisy.items() if k != "episodes"},

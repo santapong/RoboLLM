@@ -1,0 +1,116 @@
+schema: robollm.vla-bed.oxe-ur5-map.v1
+repo_id: lerobot/berkeley_autolab_ur5
+fps: 5
+verified: true
+state:
+  layout: '[x, y, z, qx, qy, qz, qw, gripper_is_closed] = robot_state[6:14] (Octo
+    transform); base frame'
+  xyz:
+  - 0
+  - 3
+  quat:
+  - 3
+  - 7
+  quat_order: xyzw
+  quat_norm_mean: 1.0
+  tool_z_axis_mean_under_xyzw:
+  - 0.009
+  - 0.002
+  - -0.98
+  gripper: 7
+  gripper_values:
+  - 0.0
+  - 1.0
+  xyz_min:
+  - 0.197
+  - -0.276
+  - -0.205
+  xyz_max:
+  - 0.661
+  - 0.385
+  - 0.205
+action:
+  layout: '[dx, dy, dz, droll, dpitch, dyaw, gripper]'
+  xyz:
+  - 0
+  - 3
+  rpy:
+  - 3
+  - 6
+  gripper: 6
+  doc_xyz_limit_m: 0.02
+  doc_rpy_limit_rad: 0.06667
+  fraction_within_doc_xyz: 1.0
+  fraction_within_doc_rpy: 1.0
+  q01:
+  - -0.02
+  - -0.02
+  - -0.02
+  - -0.0263
+  - -0.0667
+  - -0.0385
+  - 0.0
+  q99:
+  - 0.02
+  - 0.02
+  - 0.02
+  - 0.0318
+  - 0.0667
+  - 0.0366
+  - 1.0
+  gripper_values:
+    '0.0': 36254
+    '1.0': 61685
+  gripper_coding: 1=open,0=close (absolute)
+  p_next_closed_given_action_1: 0.086
+  p_next_closed_given_action_0: 0.86
+action_frame_vs_state_frame:
+  translation:
+    P_action_to_state:
+    - - 0
+      - 1
+      - 0
+    - - 1
+      - 0
+      - 0
+    - - 0
+      - 0
+      - -1
+    gain: 0.608
+    singular_values:
+    - 0.626
+    - 0.616
+    - 0.583
+    r2_lag0: 0.951
+  rotation:
+    P_action_to_state:
+    - - 1
+      - 0
+      - 0
+    - - 0
+      - 1
+      - 0
+    - - 0
+      - 0
+      - -1
+    gain: 0.603
+    singular_values:
+    - 0.612
+    - 0.603
+    - 0.595
+    r2: 0.925
+  reading: 'Δstate ≈ gain · P · action with P a signed permutation: the actions are
+    commands in a rotated teleop frame and the real controller realised only `gain`
+    of each command per 5 Hz step. For the bed: apply P (and the rotation P to rotation
+    vectors) to express real actions in the state/base frame; the gain is the real
+    controller''s tracking, not part of the convention.'
+bed_alignment:
+  note: 'chosen by measurement in oxe_replay.py (state mode): rotation about z by
+    k·90° and a z offset so the lowest real pose sits 0.10 m above the bed floor;
+    filled in below'
+  chosen:
+    rotation_about_z_deg: 90.0
+    z_offset_m: 0.2836
+    mean_L_transl_m: 0.0081
+    mean_L_rot_deg: 0.46
+sample_count: 97939

@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dataset as ds  # noqa: E402
+import resources  # noqa: E402
 
 REQUIRED_SUCCESS = {"v1": 1.0, "v2": 0.95, "v2b": 0.95}
 
@@ -60,6 +61,7 @@ def main() -> int:
         "recipes": {k: {kk: vv for kk, vv in v.items()} for k, v in recipes.items()},
         "cpu_bench": json.loads(bench.read_text()) if bench.exists() else None,
         "wall_s": round(time.perf_counter() - t0, 1),
+        "resources": resources.snapshot(),
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
     (out / "dataset_acceptance.json").write_text(json.dumps(acceptance, indent=2) + "\n")

@@ -8,6 +8,32 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-04 — UR5e VLA sim bed: Phase 3 verified (Open X-Embodiment UR5 replay)
+
+### Added
+
+- `sim/vla-bed/oxe/` — `fetch.py` (meta + the 4.6 MB state/action table of
+  `lerobot/berkeley_autolab_ur5`, no videos; five seeded replay episodes),
+  `map.py` (every mapping field verified from the data and written to
+  `configs/oxe_ur5_map.yaml`), `geom.py`; `oxe_replay.py` (state and action
+  replay through the bed's own controller, alignment search, side-by-side
+  PNGs); `p3_gate.py`; `resources.py` (peak RSS / threads in every evidence
+  file); `tests/unit/test_vla_bed_oxe.py`.
+
+### Measured
+
+- The dataset's **quaternion is xyzw**, the **gripper action 1 means open**, and
+  the **action frame is not the state frame**: Δstate ≈ 0.61 · P · action with
+  P swapping x and y and flipping z (R² 0.95, zero lag); a two-step model gives
+  0.43 / 0.19 (first-order controller lag). 9.5 % of commands sit at the ±2 cm limit.
+- Aligned at 90° about z with a 0.284 m lift, the sim UR5e tracks all five real
+  pose trajectories to 0.7–1.2 cm mean and ≤ 0.4 cm final error with zero
+  safety rejections (**G3 PASS**). Open-loop integration of the real commands
+  drifts 2–9 cm (2.5–5× less than at unit gain): the teleop loop was closed by
+  a human, as SimplerEnv's controller identification also implies.
+- Gate thresholds were revised after this measurement and the reasons are in
+  `p3_gate.py` and SDD §6.3. Replay: 486 s wall, 0.60 GB peak RSS.
+
 ## 2026-09-03 — UR5e VLA sim bed: Phase 2 verified (datasets, validator, CPU bench)
 
 ### Added

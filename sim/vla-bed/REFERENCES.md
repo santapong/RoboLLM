@@ -252,3 +252,29 @@ upstream key. License and attribution obligations are in
   note          = {Counter-evidence: random Gaussian or uniform noise gave no gain on quadruped and F1Tenth navigation; adversarial disturbance did}
 }
 ```
+
+## Real-to-sim replay (read 4 Sep 2026, SDD §6.3)
+
+```bibtex
+@misc{li2024simpler,
+  title         = {Evaluating Real-World Robot Manipulation Policies in Simulation},
+  author        = {Xuanlin Li and Kyle Hsu and Jiayuan Gu and Karl Pertsch and Oier Mees and Homer Rich Walke and Chuyuan Fu and Ishikaa Lunawat and Isabel Sieh and Sean Kirmani and Sergey Levine and Jiajun Wu and Chelsea Finn and Hao Su and Quan Vuong and Ted Xiao},
+  year          = {2024},
+  eprint        = {2405.05941},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2405.05941},
+  note          = {SIMPLER. Used for: the open-loop replay control check (eqs. 3-4; the bed reports the full geodesic angle, twice eq. 4), controller system identification before replay, MMRV / Pearson real-to-sim metrics}
+}
+
+@misc{kim2024openvla,
+  title         = {OpenVLA: An Open-Source Vision-Language-Action Model},
+  author        = {Moo Jin Kim and Karl Pertsch and Siddharth Karamcheti and Ted Xiao and Ashwin Balakrishna and Suraj Nair and Rafael Rafailov and Ethan Foster and Grace Lam and Pannag Sanketi and Quan Vuong and Thomas Kollar and Benjamin Burchfiel and Russ Tedrake and Dorsa Sadigh and Sergey Levine and Percy Liang and Chelsea Finn},
+  year          = {2024},
+  eprint        = {2406.09246},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.RO},
+  url           = {https://arxiv.org/abs/2406.09246},
+  note          = {Used for: per-dataset 1st-99th quantile action normalisation, single-arm EE-control filter, Berkeley Autolab UR5 at 1.2 percent of the OXE mixture (App. A)}
+}
+```

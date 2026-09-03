@@ -24,6 +24,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import resources  # noqa: E402
 from env import INSTRUCTION  # noqa: E402
 
 DEFAULT_CHECKPOINT = "lerobot/smolvla_base"
@@ -133,6 +134,7 @@ def main() -> int:
         "implied_control_hz": {str(n): round(n / med, 3) for n in (1, 10, 50)},
         "bed_control_hz": 20,
         "lockstep_note": "In the bed the simulator only advances on request, so this latency slows wall-clock, never the policy's view (SDD §0).",
+        "resources": resources.snapshot(),
         "measured_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
     (out / "cpu_bench.json").write_text(json.dumps(result, indent=2) + "\n")

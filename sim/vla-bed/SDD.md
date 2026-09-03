@@ -3,7 +3,7 @@
 > **RoboLLM field guide** · Build → Observe → Measure → Learn<br>
 > [Home](../../README.md) · [Bed README](README.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md) · [Style guide](../../docs/STYLE_GUIDE.md)
 
-**Status: Planned; Phases 0–2 Verified** (P0–P1 on both machines, P2 on the workstation), 3 Sep 2026 (evidence in `results/p0/`, `results/p1/`, `results/p2/`). This document is normative. It defines the simulation
+**Status: Planned; Phases 0–3 Verified** (P0–P1 on both machines, P2–P3 on the workstation), 3–4 Sep 2026 (evidence in `results/p0/` … `results/p3/`); P2b LIBERO calibration running. This document is normative. It defines the simulation
 bed, where each process runs, what every interface carries, what evidence
 closes each phase, and what the bed structurally cannot show. It is written
 **before** any of it exists, so that a disappointing measurement is reportable
@@ -34,7 +34,7 @@ and the action space.
 | **Progress score** | 1 on success; 0.5 if the EE ever came within 2× the success threshold (6 cm); else 0. Partial credit as in ZETA (2609.02546), rule R8 of §14. |
 | **Spec family** | One safety clause with a threshold and a severity anchor K. S1–S5 reject before execution; S6–S7 measure after. SafeVLA-Bench pattern (2606.00773), rule R7. |
 | **Clean label / executed action** | `action` is the clean expert action that is recorded; `action.executed` is what was applied — noisy for the noisy expert. DART (1703.09327) and Zhang et al. (2507.09061), rule R4. |
-| Status words | **Planned / Code-ready / Bench-gated / Verified** exactly as defined in [`../../docs/STYLE_GUIDE.md`](../../docs/STYLE_GUIDE.md). Phases 0–1 are Verified on both machines and Phase 2 on the workstation (3 Sep 2026); everything after them is Planned. |
+| Status words | **Planned / Code-ready / Bench-gated / Verified** exactly as defined in [`../../docs/STYLE_GUIDE.md`](../../docs/STYLE_GUIDE.md). Phases 0–1 are Verified on both machines and Phases 2–3 on the workstation (3–4 Sep 2026); everything after them is Planned. |
 
 ## 1. Questions this bed answers
 
@@ -49,7 +49,7 @@ and the action space.
 
 | Route | Physics | Embodiment | Viewer | Server host | Status | Why it is here |
 |---|---|---|---|---|---|---|
-| **M** | MuJoCo 3.10.0 | Menagerie `universal_robots_ur5e` + `robotiq_2f85` | mjviser (browser) | Pi | **Phases 0–2 Verified** (3 Sep 2026); P3–P5 Planned | Native `aarch64` wheels run on the Pi at 26.9× real time (measured 3 Sep 2026); pure-Python viewer; same engine as B1 |
+| **M** | MuJoCo 3.10.0 | Menagerie `universal_robots_ur5e` + `robotiq_2f85` | mjviser (browser) | Pi | **Phases 0–3 Verified** (3–4 Sep 2026); P4–P5 Planned | Native `aarch64` wheels run on the Pi at 26.9× real time (measured 3 Sep 2026); pure-Python viewer; same engine as B1 |
 | **O** | OmniSim v8.1.x (Newton on Warp, CPU) | OmniSim UR5e PROTO | OmniSim `--stream=w3d` (browser) | Workstation only | **Planned, optional** | Vendor asked for feedback; a second simulator is a real cross-bed measurement |
 
 ### 2.1 Evaluated and rejected (kept so nobody re-evaluates them)
@@ -123,6 +123,9 @@ non-default `host=` is itself a Phase 0 check.
 | Same, workstation | 35,518 steps/s = 71× real time; render 102 fps; cold start 0.58 s | measured, i3-9100 + UHD 630 EGL, 3 Sep 2026, `results/p0/santapong/bench.json` |
 | Viewer from the workstation | scene at 1.00× real time, 60 fps in the browser, ~2.8 MB page, WebGL on the workstation's Intel GPU | measured, 3 Sep 2026, `results/p0/santapong-dev/viewer-from-workstation.jpg` |
 | P1 gate wall time (200 rendered episodes + 100 label-check episodes) | workstation **254 s**; Pi **536 s** under `nice -n 10` | measured, 3 Sep 2026, `results/p1/<host>/summary.json` |
+| RAM, SmolVLA inference process (LIBERO calibration, CPU) | **3.09 GB resident, 3.74 GB peak**, 8.4 GB virtual, 20 threads, ≈ 2 cores busy | measured from `/proc` on the workstation, 3 Sep 2026 23:41 |
+| RAM, OXE replay (MuJoCo + mink + PIL) | **0.60 GB peak**, 69 s CPU for 486 s wall, 15 threads | measured, `results/p3/santapong/summary.json` |
+| Downloads on the workstation | `smolvla_base` 865 MB · `smolvla_libero` 865 MB · SmolVLM2-500M-Video-Instruct 1.9 GB · OXE UR5 table 4.6 MB (no videos) | `~/.cache/huggingface`, 3 Sep 2026 |
 | Recording throughput (render + IK + AV1 encode) | ≈ 1.2 s per episode; v2 train 400 episodes in 468 s; 47 MB per 500-episode recipe on disk | measured, workstation, 3 Sep 2026, manifests under `datasets/vla-bed/` |
 | SmolVLA-base CPU inference, workstation | **36.0 s median per 50-action chunk** (p95 50.9 s, min 29.4 s), 4 torch threads, three 512×512 camera slots, 10 flow-matching steps, 6-dim SO-100 state; implied refresh 0.03 Hz (n_action_steps 1), 0.28 Hz (10), 1.4 Hz (50) against the bed's 20 Hz | measured, i3-9100, 3 Sep 2026, `results/p2/santapong/cpu_bench.json`; lockstep makes this a wall-clock cost only. A one-camera fine-tune should cost roughly a third of the vision tokens (estimate, not measured) |
 
@@ -150,7 +153,7 @@ role in that case, and Q-A is answered "no" with the failing line quoted.
 | Viewer | `sim/vla-bed/viewer.py` | **Verified** (Pi → workstation browser, 3 Sep 2026) | mjviser |
 | Sim server | `sim/vla-bed/sim_server.py` | Planned | pyzmq |
 | Policy runner + evaluator | `sim/vla-bed/policy_runner.py`, `evaluate.py` (reuses `examples/mujoco/evaluate_reaching.py` suite logic) | Planned | LeRobot, ZeroMQ |
-| OXE replayer | `sim/vla-bed/oxe_replay.py`, `configs/oxe_ur5_map.yaml` | Planned | `lerobot/berkeley_autolab_ur5`, mink |
+| OXE replayer | `sim/vla-bed/oxe/fetch.py` (meta + 4.6 MB parquet, seeded episode pick), `oxe/map.py` (data-verified map → `configs/oxe_ur5_map.yaml`), `oxe/geom.py`, `oxe_replay.py` (state + action modes, alignment search, side-by-side PNGs), `p3_gate.py` | **Verified** (workstation, 4 Sep 2026) | `lerobot/berkeley_autolab_ur5` @ `c4e26a6`, mink |
 | GPU gate | `sim/vla-bed/GPU-GATE.md`, `configs/training/vla_bed_smolvla.json`, `sim/vla-bed/gpu/preflight.py`. B1's `train.py` is config-driven and reusable; its `preflight.py` pins B1's repo id, manifest and instruction (`scripts/learning/b1/gpu/preflight.py:21-52`) and is not | Planned | pattern of `examples/mujoco/B1-GPU-GATE.md` |
 | Phase 0 gate | `sim/vla-bed/p0_gate.py` → `results/p0/<host>/{frame.png,bench.json}` | **Verified** | scene, PIL |
 | Route O world + controller | `sim/vla-bed/route_o/` | Planned, optional | OmniSim unmodified |
@@ -205,21 +208,51 @@ metrics (`stats.py`). A rejected action is a fault of the expert in recording
 (the episode is discarded) and a policy fault in evaluation (counted, the arm
 holds).
 
-### 6.3 OXE alignment (`lerobot/berkeley_autolab_ur5`)
+### 6.3 OXE alignment (`lerobot/berkeley_autolab_ur5`) — verified 4 Sep 2026
 
-| | Real dataset (TFDS card, LeRobot v3.0 conversion) | This bed |
+Every row below was read from the data (`oxe/map.py --verify`, 97,939 frames,
+revision `c4e26a6`), not from documentation alone. The machine-readable form is
+[`configs/oxe_ur5_map.yaml`](configs/oxe_ur5_map.yaml).
+
+| | Real dataset (measured) | This bed |
 |---|---|---|
-| Rate | 5 fps | 20 Hz; a real action of Δ maps to four steps of Δ/4 |
-| Action | `[Δx, Δy, Δz, Δroll, Δpitch, Δyaw, gripper]`, base frame, Δxyz ∈ ±0.02 m, Δrpy ∈ ±1/15 rad, gripper ∈ {−1, 0, +1} | same order and frame; same gripper coding |
-| State | `[x, y, z, qx, qy, qz, qw, gripper_is_closed]` per the TFDS card; the LeRobot copy names them `motor_0…7` | EE pose + gripper are the first eight of ours; quaternion order is **confirmed at Phase 3** from the data, not assumed |
-| Cameras | three at 480×640 | one at 224×224; replay uses state only |
+| Rate | 5 fps | 20 Hz: one real action = four bed steps of Δ/4 |
+| State | `[x, y, z, qx, qy, qz, qw, gripper_is_closed]` = `robot_state[6:14]` (Octo's transform); base frame; **quaternion xyzw** (under that reading the tool axis points down, mean (0.009, 0.002, −0.98)); x ∈ [0.20, 0.66], y ∈ [−0.28, 0.39], z ∈ [−0.21, 0.21] m | EE pose 7 (wxyz) + gripper + joints |
+| Action | `[Δx, Δy, Δz, Δroll, Δpitch, Δyaw, gripper]`; 100 % within the documented ±0.02 m / ±1/15 rad; 9.5 % of translation components sit at the limit; gripper **absolute, 1 = open** (P(next closed \| 1) = 0.09, \| 0) = 0.86) | Δ of the commanded pose, base frame; gripper −1 open / +1 close |
+| **Action frame ≠ state frame** | Δstate ≈ **gain · P · action** with P = [[0,1,0],[1,0,0],[0,0,−1]] (x↔y swapped, z flipped; a proper rotation) and gain ≈ **0.61** (singular values 0.626 / 0.616 / 0.583), R² 0.951 at zero lag; the same P fits the rotation deltas (gain 0.60). A two-step model Δs_t ≈ 0.43·P·a_t + 0.19·P·a_(t−1) raises R² to 0.963: the real controller realised ~43 % of a command in-step and ~19 % in the next | the bed's actions are realised ≈ exactly (commanded-pose integrator), so real actions enter the bed through P; the gain is the real controller's lag, not part of the convention |
+| Bed alignment | rotation about z by **90°** and a z lift of **0.284 m** (lowest real pose 0.10 m above the floor), chosen by the lowest state-replay loss among k·90° (the other three put 2,044 steps outside the workspace box) | — |
 
-OXE's base-frame convention is exactly the frame stored here, so replay and
-co-training need no action transform; the gripper-frame variant is one
-training-time transform applied to both datasets.
+**Replay evidence** (`results/p3/santapong/`, five episodes, two modes):
 
-Phase 3 commits `configs/oxe_ur5_map.yaml` with the verified index and
-quaternion mapping. Until then the mapping is a hypothesis.
+| Episode | Task | Frames | State replay L_transl mean / final (cm) | L_rot (°) | Action replay, measured gain: mean / final (cm) | Action replay, unit gain: mean (cm) |
+|---|---|---|---|---|---|---|
+| 95 | take the tiger out of the red bowl and | 104 | 0.81 / 0.07 | 0.36 | 2.3 / 3.0 | 30.9 |
+| 819 | take the tiger out of the red bowl and | 97 | 0.72 / 0.04 | 0.41 | 3.4 / 7.9 | 8.4 |
+| 243 | sweep the green cloth to the left side | 79 | 1.15 / 0.06 | 0.48 | 9.3 / 8.2 | 33.1 |
+| 138 | pick up the blue cup and put it into t | 123 | 0.68 / 0.37 | 0.38 | 2.2 / 3.8 | 12.8 |
+| 828 | put the ranch bottle into the pot | 113 | 0.69 / 0.03 | 0.68 | 6.4 / 11.3 | 23.0 |
+
+Reading: **state replay** tracks every episode to a mean of 0.7–1.2 cm and a
+final error ≤ 0.4 cm with no safety rejections; the mean is the bed's own
+servo lag at the real arm's speed (up to 2 cm per 0.2 s), not a mismatch.
+**Action replay** with the measured gain stays inside the workspace and beats
+unit-gain integration by 2.5–5× on every episode, which confirms P and the gain,
+but drifts 2–9 cm over 80–120 steps: the real teleoperation loop was closed by a
+human, so open-loop integration of the commands cannot reproduce the path — the
+same reason SimplerEnv (2405.05941 §IV-A) had to identify the controller before
+replaying. Rotation error is reported as the full geodesic angle; SimplerEnv's
+eq. 4 as written equals half of it.
+
+**Consequence for P4 co-training.** The bed's labels are near-exactly realised
+commanded deltas; the real labels are commands realised at ≈ 0.61 with a
+one-step lag. Co-training therefore offers two action sources for the real data,
+both as config options: `command` (P · action, the dataset's own labels) and
+`achieved` (Δstate, the motion that actually happened). The SDD does not choose
+between them; P4 measures.
+
+Gate G3 thresholds were revised after this first measurement and the revision is
+recorded in `p3_gate.py`: state mean ≤ 1.5 cm, final ≤ 0.5 cm, rotation ≤ 5°;
+action mean ≤ 10 cm, inside the workspace, and ≥ 2× better than unit gain.
 
 ### 6.4 ZeroMQ lockstep contract
 
@@ -328,7 +361,7 @@ Every phase names its machine. A phase without a number is not done.
 | **P1** | Port the task: red target, oracle and noisy expert through mink in EE space, safety wrapper, limits tuned | **G1 — Verified 3 Sep 2026.** 20 cells × 5 seeds = 100 evaluation episodes per expert, identical results on both machines. Oracle **(SR 100, Safety 100, SBU 0, VSI 0)**, Wilson 95 % ≥ 0.963, mean 25.3 frames [23.6, 27.2]; noisy σ = 0.5× limit **(100, 100, 0, 0)**, 29.7 frames [27.5, 32.0], 0 clean-label faults, length ratio 1.17. `results/p1/santapong/` (workstation, 254 s) and `results/p1/santapong-dev/` (Pi, 536 s). 26 unit tests green | 1 session (used) | — |
 | **P2** | Record v1 (40/10), v2 (400/100, σ = 0.5×) and v2b (400/100, σ = 0.25×) with one clean episode in five; `--validate` re-checks every clean label and executed action against S1–S4; SmolVLA-base CPU seconds-per-chunk | **G2 — Verified 3 Sep 2026** (workstation, `results/p2/santapong/dataset_acceptance.json`). v1 1,261 frames; **v2 11,506 + 2,917 frames**, mean 28.8 / 29.2 frames (max 61), chunk padding 27.0 % @20 / 44.4 % @50; **v2b 10,735 + 2,721 frames**, mean 26.8 / 27.2 (max 55), padding 28.3 % / 47.1 %. Every split 100 % success, **0 clean-label faults, 0 executed-action faults**, all 29,140 video frames decode. Noisy episodes are only 1.09× longer than clean ones at σ = 0.5× and equal at 0.25×; mean distance-to-target over recorded frames 0.151 m (clean) vs 0.137 m (noisy). Recording ≈ 1.2 s per episode incl. AV1 encoding (v2 train 468 s). CPU bench: 36.0 s per chunk (§4) | 1–2 sessions (used ½) | — |
 | **P2b** | LIBERO-Spatial calibration of the evaluation plumbing: `lerobot/smolvla_libero` (Apache-2.0) in `.venv-libero`, CPU, `n_action_steps` = 10, against the paper's Spatial 90 % at 10 trials per task (2506.01844, Table 2; its protocol refreshes every step on GPU). Runbook `libero_calibration.md` | Within the paper's Wilson band (≈ [82.6, 94.5] at n = 100), or the deviation explained; per-rollout wall time recorded from a one-episode probe first | overnight CPU; 5 episodes per task if a rollout exceeds 10 min | Report the shortfall; the bed's own P5 numbers stand on their own protocol |
-| **P3** | OXE replay: 3–5 episodes of `lerobot/berkeley_autolab_ur5` loaded by episode index, EE deltas integrated, mink IK on the sim UR5e, side-by-side video | Max EE tracking error per episode reported; `configs/oxe_ur5_map.yaml` committed with the verified mapping | 1 session | P4 does not depend on it |
+| **P3** | OXE replay: five episodes of `lerobot/berkeley_autolab_ur5` (2 tiger, 1 cloth, 1 cup, 1 bottle), map verified from the data, state and action modes, alignment search, side-by-side PNGs | **G3 — Verified 4 Sep 2026** (workstation, `results/p3/santapong/`). Map verified (xyzw quaternion, gripper 1 = open, action frame = P · state frame with gain 0.61, R² 0.95). Alignment 90° about z + 0.284 m lift. State replay mean 0.7–1.2 cm, final ≤ 0.4 cm, rotation ≤ 0.7°, zero rejections; action replay (measured gain) 2.2–9.3 cm mean, 2.5–5× better than unit gain, zero rejections. 486 s wall, 0.60 GB peak RSS. Five PNGs. `configs/oxe_ur5_map.yaml` committed with the chosen alignment | 1 session (used) | — |
 | **P4** | `GPU-GATE.md` priced go/no-go; `smoke_train.sh` first; 20 k-step fine-tune on v2. Training-time variants (config flags, one run each only if budget allows): chunk-wise deltas (R1), gripper-frame deltas (R3), `n_action_steps ≤ chunk_size/2` (R1); optional co-training with OXE-UR5 at mixing ratios {natural, 0.1, 0.3} with a `sim:` / `real:` prefix in the task string as the domain tag (R9) | Checkpoint, training curve, cost line; **checkpoint not published** until the weights-license item in §12 closes | user's go, est. $8–16 | — |
 | **P5** | `sim_server.py` on the Pi; policy on the workstation; frozen suite (the P1 schedule, seeds shared by every policy); cross-embodiment check against the B1 DIY-arm checkpoint; **blank-image probe** (success must collapse, else the policy runs on state alone, R6) and a **state-free** variant (R3) | Quadruple (SR, Safety, SBU, VSI) with Wilson CIs, progress score, per-family breakdown; report under `sim/vla-bed/results/` in the §9 schema | 1 session | — |
 | **O0–O2** (optional) | OmniSim unmodified on the workstation: headless camera gate, UR5e world, same schema; issues A–E filed; ARM64 fix offered upstream | G0-style frame test; step cost from OmniSim's `/capabilities` | ≤ 2 sessions total | Drop Route O; issues are still filed |
@@ -427,8 +460,10 @@ full table with copyright lines is [`NOTICES.md`](NOTICES.md); the BibTeX is
   `<include>`s the upstream files from a git-ignored checkout, so nothing is
   redistributed. If vendoring ever becomes necessary, the model's own `LICENSE`
   is copied beside it, following `examples/talos_mirror/ros2_ws/src/VENDORED.md`.
-- **`lerobot/berkeley_autolab_ur5`** is CC-BY-4.0. Replay videos and any
-  checkpoint co-trained on it are derivatives and carry the attribution.
+- **`lerobot/berkeley_autolab_ur5`** (revision `c4e26a6`, table only, 4.6 MB;
+  no videos downloaded) is CC-BY-4.0. The P3 side-by-side PNGs plot its
+  end-effector paths and are derivatives; they carry the attribution in
+  `NOTICES.md`. Any checkpoint co-trained on it is a derivative too.
 - **SmolVLA weights** (`lerobot/smolvla_base`, revision `c83c3163`, downloaded
   3 Sep 2026 for the CPU measurement) carry **no license tag** on the model
   card, while the base VLM (SmolVLM2-500M) and the LeRobot code are Apache-2.0.

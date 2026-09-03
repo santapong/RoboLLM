@@ -1,0 +1,571 @@
+{
+  "schema": "robollm.vla-bed.oxe-replay.v1",
+  "phase": "P3",
+  "host": "santapong",
+  "repo_id": "lerobot/berkeley_autolab_ur5",
+  "revision": "c4e26a697fc4c04776b0558f83e563d14be0109f",
+  "z_offset_m": 0.2836,
+  "floor_clearance_m": 0.1,
+  "substeps": 4,
+  "map_gain": {
+    "translation": 0.608,
+    "rotation": 0.603
+  },
+  "alignment_search": {
+    "0": {
+      "mean_L_transl_m": 0.2077,
+      "mean_L_rot_deg": 18.33,
+      "steps_outside_box": 2044,
+      "rejections": 2044,
+      "per_episode": [
+        {
+          "episode_index": 95,
+          "L_transl_m": 0.1657,
+          "L_rot_rad": 0.1875,
+          "L_rot_deg": 10.74,
+          "max_transl_m": 0.3185,
+          "final_transl_m": 0.0494,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 412,
+          "steps_total": 412,
+          "rejections": {
+            "S4_workspace": 412
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 819,
+          "L_transl_m": 0.161,
+          "L_rot_rad": 0.2753,
+          "L_rot_deg": 15.77,
+          "max_transl_m": 0.2484,
+          "final_transl_m": 0.0983,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 384,
+          "steps_total": 384,
+          "rejections": {
+            "S4_workspace": 384
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 243,
+          "L_transl_m": 0.2464,
+          "L_rot_rad": 0.3214,
+          "L_rot_deg": 18.41,
+          "max_transl_m": 0.3569,
+          "final_transl_m": 0.1538,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 312,
+          "steps_total": 312,
+          "rejections": {
+            "S4_workspace": 312
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 138,
+          "L_transl_m": 0.1957,
+          "L_rot_rad": 0.4539,
+          "L_rot_deg": 26.01,
+          "max_transl_m": 0.2763,
+          "final_transl_m": 0.2702,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 488,
+          "steps_total": 488,
+          "rejections": {
+            "S4_workspace": 488
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 828,
+          "L_transl_m": 0.2695,
+          "L_rot_rad": 0.3615,
+          "L_rot_deg": 20.71,
+          "max_transl_m": 0.3891,
+          "final_transl_m": 0.2268,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 448,
+          "steps_total": 448,
+          "rejections": {
+            "S4_workspace": 448
+          },
+          "safe": false
+        }
+      ]
+    },
+    "90": {
+      "mean_L_transl_m": 0.0081,
+      "mean_L_rot_deg": 0.46,
+      "steps_outside_box": 0,
+      "rejections": 0,
+      "per_episode": [
+        {
+          "episode_index": 95,
+          "L_transl_m": 0.0081,
+          "L_rot_rad": 0.0063,
+          "L_rot_deg": 0.36,
+          "max_transl_m": 0.0162,
+          "final_transl_m": 0.0007,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 0,
+          "steps_total": 412,
+          "rejections": {},
+          "safe": false
+        },
+        {
+          "episode_index": 819,
+          "L_transl_m": 0.0072,
+          "L_rot_rad": 0.0071,
+          "L_rot_deg": 0.41,
+          "max_transl_m": 0.0154,
+          "final_transl_m": 0.0004,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 0,
+          "steps_total": 384,
+          "rejections": {},
+          "safe": false
+        },
+        {
+          "episode_index": 243,
+          "L_transl_m": 0.0115,
+          "L_rot_rad": 0.0084,
+          "L_rot_deg": 0.48,
+          "max_transl_m": 0.0154,
+          "final_transl_m": 0.0006,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 0,
+          "steps_total": 312,
+          "rejections": {},
+          "safe": true
+        },
+        {
+          "episode_index": 138,
+          "L_transl_m": 0.0068,
+          "L_rot_rad": 0.0066,
+          "L_rot_deg": 0.38,
+          "max_transl_m": 0.0151,
+          "final_transl_m": 0.0037,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 0,
+          "steps_total": 488,
+          "rejections": {},
+          "safe": false
+        },
+        {
+          "episode_index": 828,
+          "L_transl_m": 0.0069,
+          "L_rot_rad": 0.0119,
+          "L_rot_deg": 0.68,
+          "max_transl_m": 0.016,
+          "final_transl_m": 0.0003,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 0,
+          "steps_total": 448,
+          "rejections": {},
+          "safe": false
+        }
+      ]
+    },
+    "180": {
+      "mean_L_transl_m": 0.2077,
+      "mean_L_rot_deg": 18.34,
+      "steps_outside_box": 2044,
+      "rejections": 2044,
+      "per_episode": [
+        {
+          "episode_index": 95,
+          "L_transl_m": 0.1657,
+          "L_rot_rad": 0.1876,
+          "L_rot_deg": 10.75,
+          "max_transl_m": 0.3185,
+          "final_transl_m": 0.0494,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 412,
+          "steps_total": 412,
+          "rejections": {
+            "S4_workspace": 412
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 819,
+          "L_transl_m": 0.1611,
+          "L_rot_rad": 0.2754,
+          "L_rot_deg": 15.78,
+          "max_transl_m": 0.2484,
+          "final_transl_m": 0.0983,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 384,
+          "steps_total": 384,
+          "rejections": {
+            "S4_workspace": 384
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 243,
+          "L_transl_m": 0.2464,
+          "L_rot_rad": 0.3214,
+          "L_rot_deg": 18.42,
+          "max_transl_m": 0.3569,
+          "final_transl_m": 0.1539,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 312,
+          "steps_total": 312,
+          "rejections": {
+            "S4_workspace": 312
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 138,
+          "L_transl_m": 0.1957,
+          "L_rot_rad": 0.454,
+          "L_rot_deg": 26.01,
+          "max_transl_m": 0.2763,
+          "final_transl_m": 0.2702,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 488,
+          "steps_total": 488,
+          "rejections": {
+            "S4_workspace": 488
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 828,
+          "L_transl_m": 0.2695,
+          "L_rot_rad": 0.3616,
+          "L_rot_deg": 20.72,
+          "max_transl_m": 0.3891,
+          "final_transl_m": 0.2268,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 448,
+          "steps_total": 448,
+          "rejections": {
+            "S4_workspace": 448
+          },
+          "safe": false
+        }
+      ]
+    },
+    "270": {
+      "mean_L_transl_m": 0.2077,
+      "mean_L_rot_deg": 18.34,
+      "steps_outside_box": 2044,
+      "rejections": 2044,
+      "per_episode": [
+        {
+          "episode_index": 95,
+          "L_transl_m": 0.1657,
+          "L_rot_rad": 0.1876,
+          "L_rot_deg": 10.75,
+          "max_transl_m": 0.3185,
+          "final_transl_m": 0.0494,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 412,
+          "steps_total": 412,
+          "rejections": {
+            "S4_workspace": 412
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 819,
+          "L_transl_m": 0.1611,
+          "L_rot_rad": 0.2754,
+          "L_rot_deg": 15.78,
+          "max_transl_m": 0.2484,
+          "final_transl_m": 0.0983,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 384,
+          "steps_total": 384,
+          "rejections": {
+            "S4_workspace": 384
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 243,
+          "L_transl_m": 0.2464,
+          "L_rot_rad": 0.3214,
+          "L_rot_deg": 18.42,
+          "max_transl_m": 0.3569,
+          "final_transl_m": 0.1539,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 312,
+          "steps_total": 312,
+          "rejections": {
+            "S4_workspace": 312
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 138,
+          "L_transl_m": 0.1957,
+          "L_rot_rad": 0.454,
+          "L_rot_deg": 26.01,
+          "max_transl_m": 0.2763,
+          "final_transl_m": 0.2702,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 488,
+          "steps_total": 488,
+          "rejections": {
+            "S4_workspace": 488
+          },
+          "safe": false
+        },
+        {
+          "episode_index": 828,
+          "L_transl_m": 0.2695,
+          "L_rot_rad": 0.3616,
+          "L_rot_deg": 20.72,
+          "max_transl_m": 0.3891,
+          "final_transl_m": 0.2268,
+          "teleport_residual_m": 0.0,
+          "steps_outside_box": 448,
+          "steps_total": 448,
+          "rejections": {
+            "S4_workspace": 448
+          },
+          "safe": false
+        }
+      ]
+    }
+  },
+  "episodes": [
+    {
+      "episode_index": 95,
+      "task": "take the tiger out of the red bowl and put it in the grey bowl",
+      "frames": 104,
+      "state_mode": {
+        "L_transl_m": 0.0081,
+        "L_rot_rad": 0.0063,
+        "L_rot_deg": 0.36,
+        "max_transl_m": 0.0162,
+        "final_transl_m": 0.0007,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 412,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_measured_gain": {
+        "L_transl_m": 0.0232,
+        "L_rot_rad": 0.0235,
+        "L_rot_deg": 1.35,
+        "max_transl_m": 0.0422,
+        "final_transl_m": 0.0297,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 412,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_unit_gain": {
+        "L_transl_m": 0.3088,
+        "L_rot_rad": 0.2201,
+        "L_rot_deg": 12.61,
+        "max_transl_m": 0.5314,
+        "final_transl_m": 0.51,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 314,
+        "steps_total": 412,
+        "rejections": {
+          "S4_workspace": 311
+        },
+        "safe": false
+      },
+      "png": "episode_0095_3.png"
+    },
+    {
+      "episode_index": 819,
+      "task": "take the tiger out of the red bowl and put it in the grey bowl",
+      "frames": 97,
+      "state_mode": {
+        "L_transl_m": 0.0072,
+        "L_rot_rad": 0.0071,
+        "L_rot_deg": 0.41,
+        "max_transl_m": 0.0154,
+        "final_transl_m": 0.0004,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 384,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_measured_gain": {
+        "L_transl_m": 0.0336,
+        "L_rot_rad": 0.0385,
+        "L_rot_deg": 2.2,
+        "max_transl_m": 0.0793,
+        "final_transl_m": 0.0793,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 384,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_unit_gain": {
+        "L_transl_m": 0.0841,
+        "L_rot_rad": 0.1512,
+        "L_rot_deg": 8.66,
+        "max_transl_m": 0.1282,
+        "final_transl_m": 0.1282,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 384,
+        "rejections": {},
+        "safe": false
+      },
+      "png": "episode_0819_3.png"
+    },
+    {
+      "episode_index": 243,
+      "task": "sweep the green cloth to the left side of the table",
+      "frames": 79,
+      "state_mode": {
+        "L_transl_m": 0.0115,
+        "L_rot_rad": 0.0084,
+        "L_rot_deg": 0.48,
+        "max_transl_m": 0.0154,
+        "final_transl_m": 0.0006,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 312,
+        "rejections": {},
+        "safe": true
+      },
+      "action_mode_measured_gain": {
+        "L_transl_m": 0.0932,
+        "L_rot_rad": 0.062,
+        "L_rot_deg": 3.55,
+        "max_transl_m": 0.1238,
+        "final_transl_m": 0.0818,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 312,
+        "rejections": {},
+        "safe": true
+      },
+      "action_mode_unit_gain": {
+        "L_transl_m": 0.3305,
+        "L_rot_rad": 0.1614,
+        "L_rot_deg": 9.25,
+        "max_transl_m": 0.5952,
+        "final_transl_m": 0.5315,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 229,
+        "steps_total": 312,
+        "rejections": {
+          "S4_workspace": 225
+        },
+        "safe": false
+      },
+      "png": "episode_0243_0.png"
+    },
+    {
+      "episode_index": 138,
+      "task": "pick up the blue cup and put it into the brown cup. ",
+      "frames": 123,
+      "state_mode": {
+        "L_transl_m": 0.0068,
+        "L_rot_rad": 0.0066,
+        "L_rot_deg": 0.38,
+        "max_transl_m": 0.0151,
+        "final_transl_m": 0.0037,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 488,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_measured_gain": {
+        "L_transl_m": 0.022,
+        "L_rot_rad": 0.0488,
+        "L_rot_deg": 2.79,
+        "max_transl_m": 0.0406,
+        "final_transl_m": 0.0377,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 488,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_unit_gain": {
+        "L_transl_m": 0.1285,
+        "L_rot_rad": 0.2605,
+        "L_rot_deg": 14.92,
+        "max_transl_m": 0.219,
+        "final_transl_m": 0.2127,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 488,
+        "rejections": {},
+        "safe": false
+      },
+      "png": "episode_0138_2.png"
+    },
+    {
+      "episode_index": 828,
+      "task": "put the ranch bottle into the pot",
+      "frames": 113,
+      "state_mode": {
+        "L_transl_m": 0.0069,
+        "L_rot_rad": 0.0119,
+        "L_rot_deg": 0.68,
+        "max_transl_m": 0.016,
+        "final_transl_m": 0.0003,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 448,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_measured_gain": {
+        "L_transl_m": 0.0637,
+        "L_rot_rad": 0.0838,
+        "L_rot_deg": 4.8,
+        "max_transl_m": 0.1259,
+        "final_transl_m": 0.1127,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 0,
+        "steps_total": 448,
+        "rejections": {},
+        "safe": false
+      },
+      "action_mode_unit_gain": {
+        "L_transl_m": 0.2299,
+        "L_rot_rad": 0.2436,
+        "L_rot_deg": 13.96,
+        "max_transl_m": 0.4358,
+        "final_transl_m": 0.4357,
+        "teleport_residual_m": 0.0,
+        "steps_outside_box": 347,
+        "steps_total": 448,
+        "rejections": {
+          "S4_workspace": 344
+        },
+        "safe": false
+      },
+      "png": "episode_0828_1.png"
+    }
+  ],
+  "alignment_chosen": {
+    "rotation_about_z_deg": 90.0,
+    "z_offset_m": 0.2836,
+    "mean_L_transl_m": 0.0081,
+    "mean_L_rot_deg": 0.46
+  },
+  "wall_s": 485.5,
+  "resources": {
+    "peak_rss_mb": 596.8,
+    "cpu_user_s": 68.8,
+    "cpu_system_s": 3.1,
+    "threads": 15,
+    "cpus_online": 4,
+    "wall_clock": "2026-09-04T00:01:26+0700"
+  }
+}
