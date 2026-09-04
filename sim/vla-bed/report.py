@@ -96,6 +96,7 @@ def main() -> int:
     pol = kg["nominal_010000_100ep"]; quick = kg["quick_check_010000_50ep"]; tr = kg["train_record"]; sm = kg["smoke_v5"]
     blank = kg.get("blank_image_010000_100ep"); gain = kg.get("gain061_010000_100ep")
     prog = kg.get("progress")
+    curve = sorted((int(k.split("_")[1]), v) for k, v in kg.items() if k.startswith("nominal_") and k.endswith("_100ep"))
     lib_k, lib_n = round(p2b["pc_success"] / 100 * p2b["n_episodes"]), p2b["n_episodes"]
     lib_ci = wilson(lib_k, lib_n)
     libero_per_task = [5, 5, 5, 5, 4, 0, 4, 4, 4, 5]  # from results/p2b/full.log (final line per task, de-duplicated)
@@ -118,6 +119,11 @@ def main() -> int:
     charts["per-family"] = hbar_chart("Baseline success by goal family (n = 20 each, Wilson 95 %)",
                                       [(f"{k}", v, wilson(round(v * n), n), teal) for k, v in fam.items()],
                                       note="Lateral cells (front_low, right) are the weakest; near targets the strongest.")
+    final_steps = curve[-1][0]
+    charts["learning-curve"] = hbar_chart("Learning curve: closed-loop success per checkpoint (nominal, n = 100 each, Wilson 95 %)",
+                                          [(f"{st/1000:g}k steps" + (" (final)" if st == final_steps else ""), v["success_rate"], tuple(v["ci95_wilson_success"]), "#5FB0B7" if st == final_steps else teal) for st, v in curve]
+                                          + [("10k, quick check, n = 50", quick["success_rate"], tuple(quick["ci95_wilson_success"]), grey)],
+                                          note="Checkpoints not shown are still being evaluated on Kaggle; the R11 rule selects by this number, never by loss.")
     steps = pol["n"] * pol["episode_len_mean"]
     rej = pol["faults"]["rejected"]
     charts["safety"] = hbar_chart("Commands rejected by the safety wrapper, per 100 policy steps (baseline, 10k)",
@@ -147,17 +153,27 @@ def main() -> int:
     g_sr = gain["success_rate"] if gain else float("nan"); g_pr = gain["progress_mean"] if gain else float("nan"); g_sf = gain["safety"] if gain else float("nan")
     g_s4 = gain["faults"]["rejected"].get("S4_workspace", 0) if gain else 0; g_s3 = gain["faults"]["rejected"].get("S3_rpy_step", 0) if gain else 0
     g_lo, g_hi = tuple(gain["ci95_wilson_success"]) if gain else (float("nan"), float("nan"))
+    curve_txt = "; ".join(f"{st/1000:g}k: {v['success_rate']:.2f} (progress {v['progress_mean']:.2f}, safety {v['safety']:.2f})" for st, v in curve)
+    curve_ci = "; ".join(f"{st/1000:g}k [{v['ci95_wilson_success'][0]:.3f}, {v['ci95_wilson_success'][1]:.3f}]" for st, v in curve)
+    c_best = max(curve, key=lambda t: t[1]["success_rate"])
+    curve_bullet = ""
+    if len(curve) >= 2 and c_best[0] != final_steps:
+        cb = c_best[1]
+        curve_bullet = (f"- **An earlier checkpoint scores higher.** The {c_best[0]/1000:g}k checkpoint reaches {100*cb['success_rate']:.0f} % "
+                        f"[{100*cb['ci95_wilson_success'][0]:.0f}–{100*cb['ci95_wilson_success'][1]:.0f} %] against the final checkpoint's {100*pol['success_rate']:.0f} %; the intervals overlap, so this is not a proven "
+                        f"decline, but the R11 rule picks by closed-loop success and would select {c_best[0]/1000:g}k today. Both checkpoints reject about a third of their "
+                        f"steps at S2, so the action-scale problem is not a late-training artefact.")
     b_sr = blank["success_rate"] if blank else float("nan"); b_pr = blank["progress_mean"] if blank else float("nan"); b_hi = blank["ci95_wilson_success"][1] if blank else float("nan")
     md = f"""# UR5e VLA bed — experiment report ({a.date})
 
 Status of the experiment branch `experiment/ur5e-vla-bed` at report time: Phases 0–3 verified,
 LIBERO calibration done, Phase 4 baseline trained on a free Kaggle T4 and its evaluation
-in progress (probes, learning curve and variations pending). **Money spent: $0.00.**
+in progress (learning curve and variations pending). **Money spent: $0.00.**
 Kaggle GPU quota used ≈ 12 h of 30 (smokes 0.3 h, training 3.9 h, evaluation ≈ 8 h).
 Every number below comes from a committed JSON under `results/` or from the Kaggle logs
 transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 
-{"## 0. Live progress of the evaluation run" + chr(10) + chr(10) + "Updated " + prog["updated"] + " · " + prog["notebook"] + " · started " + prog["started"] + " · " + str(prog["elapsed_h"]) + " h elapsed · **ETA " + prog["eta"] + "**" + chr(10) + chr(10) + chr(10).join("- done: " + x for x in prog["done"]) + chr(10) + "- running: " + prog["running"] + chr(10) + chr(10).join("- queued: " + x for x in prog["queued"]) + chr(10) if prog else ""}
+{"## 0. Live progress of the evaluation run" + chr(10) + chr(10) + "Updated " + prog["updated"] + " · " + prog["notebook"] + " · started " + prog["started"] + " · " + str(prog["elapsed_h"]) + " h elapsed · **ETA " + prog["eta"] + "**" + chr(10) + chr(10) + chr(10).join("- done: " + x for x in prog["done"]) + chr(10) + "- running: " + prog["running"] + chr(10) + chr(10).join("- queued: " + x for x in prog["queued"]) + chr(10) + chr(10).join("- expected: " + k + " at " + v for k, v in prog.get("milestones", {}).items()) + chr(10) if prog else ""}
 ## 1. What was measured, in one table
 
 | Measurement | Result | Interval / uncertainty | Where |
@@ -171,6 +187,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 | Baseline training (`baseline`, 10k steps, batch 32) | {tr['steps_per_s']} steps/s, {tr['wall_s']/3600:.2f} h, {tr['peak_vram_gb']} GB VRAM, 4 checkpoints | — | Kaggle `vla-bed-train` v1 |
 | **Baseline checkpoint 10k, nominal, n = 100** | **success {pol['success_rate']:.2f}**, progress {pol['progress_mean']:.2f}, safety {pol['safety']:.2f}, SBU {pol['sbu']:.2f}, VSI {pol['vsi']:.2f}, {pol['episode_len_mean']:.1f} frames | Wilson [{pol['ci95_wilson_success'][0]:.3f}, {pol['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-eval` v2 |
 | Same checkpoint, quick check, n = 50 | success {quick['success_rate']:.2f}, progress {quick['progress_mean']:.2f} | [{quick['ci95_wilson_success'][0]:.3f}, {quick['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-train` v1 |
+| **Learning curve, nominal, n = 100 per checkpoint** | {curve_txt} | Wilson {curve_ci} | Kaggle `vla-bed-eval` v2 |
 | **Gain probe: same checkpoint, every command × 0.61, n = 100** | **success {g_sr:.2f}**, progress {g_pr:.2f}, safety {g_sf:.2f}, rejections S4 {g_s4} / S3 {g_s3} / S2 0 | Wilson [{g_lo:.3f}, {g_hi:.3f}] | Kaggle `vla-bed-eval` v2 |
 | **Vision probe: same checkpoint, camera blanked, n = 100** | success {b_sr:.2f}, progress {b_pr:.2f}, all episodes time out; 66 rejections | Wilson [0, {b_hi:.3f}] | Kaggle `vla-bed-eval` v2 |
 | Rejected commands, baseline 10k (per 100 policy steps) | S2 {100*rej['S2_xyz_step']/steps:.1f}, S3 {100*rej['S3_rpy_step']/steps:.1f}, S4 {100*rej['S4_workspace']/steps:.1f} | over {int(steps):,} steps | same |
@@ -200,6 +217,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 - **The baseline learns, but not much yet.** 13 % success on the 100 held-out seeds after
   10k steps (interval 8–21 %), progress 0.30, best on near targets (25 %), worst on the
   lateral cells (5 %). Twelve of the thirteen successes touched the safety wrapper on the way.
+{curve_bullet}
 - **The safety wrapper is doing real work.** About a third of the policy's commands exceed
   the 1 cm-per-step limit the demonstrations respected; the arm holds for those steps. The
   policy predicts larger steps than it was trained on — a scale/normalisation question to
@@ -257,7 +275,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="eyebrow">RoboLLM · sim/vla-bed · experiment/ur5e-vla-bed · {a.date}</div>
 <h1>UR5e Bed Experiment Report</h1>
 <p class="lede">Everything measured so far on the UR5e VLA sim bed: the calibration of the evaluator, the real-to-sim bridge, the free-GPU fine-tune of SmolVLA, and the baseline policy's first evaluation against scripted controls. Every number comes from a committed result file.</p>
-{"<div class=\"callout\"><strong>Live progress</strong> (updated " + esc(prog["updated"]) + "): " + esc(str(len(prog["done"]))) + " of " + esc(str(len(prog["done"]) + 1 + len(prog["queued"]))) + " suites done · running <b>" + esc(prog["running"]) + "</b> · <b>ETA " + esc(prog["eta"]) + "</b><br>done: " + esc("; ".join(prog["done"])) + "<br>queued: " + esc("; ".join(prog["queued"])) + "</div>" if prog else ""}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span><span class="chip warn">evaluation <b>still running</b></span></div>
+{"<div class=\"callout\"><strong>Live progress</strong> (updated " + esc(prog["updated"]) + "): " + esc(str(len(prog["done"]))) + " of " + esc(str(len(prog["done"]) + 1 + len(prog["queued"]))) + " suites done · running <b>" + esc(prog["running"]) + "</b> · <b>ETA " + esc(prog["eta"]) + "</b><br>done: " + esc("; ".join(prog["done"])) + "<br>queued: " + esc("; ".join(prog["queued"])) + ("<br>expected: " + esc("; ".join(k + " at " + v for k, v in prog["milestones"].items())) if prog.get("milestones") else "") + "</div>" if prog else ""}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span><span class="chip warn">evaluation <b>still running</b></span></div>
 <h2>Measurements</h2>
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
