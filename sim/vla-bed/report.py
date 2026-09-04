@@ -99,6 +99,7 @@ def main() -> int:
     oracle = load(R / "p5" / "santapong" / "oracle" / "nominal.json")["oracle"]
     hold = load(R / "p5" / "santapong" / "hold" / "nominal.json")["hold"]
     kg = load(R / "p5" / "kaggle" / "eval-v2-partial.json")
+    pr = load(R / "p5" / "kaggle" / "probes-v2-partial.json") if (R / "p5" / "kaggle" / "probes-v2-partial.json").exists() else None
     # imported Kaggle result files (schema v2 rows, paired comparisons, magnitude probes) — empty until gpu/kaggle_import.sh has run
     compares = sorted(R.glob("p5/*/*/*/compare_*.json"))
     magnitudes = sorted(R.glob("p5/*/*/*/magnitude.json"))
@@ -206,6 +207,32 @@ def main() -> int:
                       f"A policy trained on one camera pose learned the picture, not the geometry — the diversity rule (R10) applies before any more demonstrations are recorded.")
     sel_row = (f"| **Checkpoint selection (R11: by closed-loop success)** | selected **{int(sel['selected'])/1000:g}k** at {sel['success_rate']:.2f}; checkpoints inside the best interval: {', '.join(f'{int(x)/1000:g}k' for x in sel['within_ci'])} | — | Kaggle `vla-bed-eval` v2 |" + chr(10)) if sel else ""
     b_sr = blank["success_rate"] if blank else float("nan"); b_pr = blank["progress_mean"] if blank else float("nan"); b_hi = blank["ci95_wilson_success"][1] if blank else float("nan")
+    probes_md, probes_html = "", ""
+    if pr:
+        lines = ["## 3a. Session A — probes on the existing checkpoints (Kaggle, transcribed)", "",
+                 f"Suites now take {min(pr['profile']['suite_100ep_minutes']):.0f}–{max(pr['profile']['suite_100ep_minutes']):.0f} min per 100 episodes (was {pr['profile']['previous_suite_minutes']}): the camera is rendered only when the policy is queried and two workers share the seeds.", "",
+                 "| Magnitude probe (open loop, 500 training frames) | pred / label L∞ | labels on the cap | predicted over the cap | given label on cap | direction cosine |", "|---|---|---|---|---|---|"]
+        for st, m in pr["magnitude_probe"].items():
+            lines.append(f"| {int(st)/1000:g}k | {m['ratio_pred_over_label_xyz_linf']} | {100*m['label_at_cap_fraction']:.0f} % | {100*m['pred_over_cap_fraction']:.0f} % | {100*m['pred_over_cap_given_label_at_cap']:.0f} % | {m['direction_cosine_xyz_mean']} |")
+        lines += ["", "| Closed-loop suite (7.5k unless stated) | success | Wilson 95 % | safety | rejected steps | cmd L∞ mean | progress |", "|---|---|---|---|---|---|---|"]
+        for su in pr["suites"]:
+            what = su["variation"] + (" + clip" if su["post"] == "clip" else "") + (f" + ensemble/{su.get('replan_every')}" if su["post"] == "ensemble" else "") + (f" + gain {su['gain']}" if su["gain"] != 1.0 else "") + (f" + VLM {su['vlm_dtype']}" if su.get("vlm_dtype") else "") + ("" if su["label"].endswith("007500") else f" ({int(su['label'].split('/')[-1])/1000:g}k)")
+            ci = su["ci95_wilson_success"]
+            lines.append(f"| {what}, n = {su['n']} | **{su['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {su['safety']:.2f} | {100*su['rejected_fraction_mean']:.0f} % | {su['cmd_xyz_linf_mean']:.4f} | {su['progress_mean']:.2f} |")
+        lines += ["", "| Paired on the same 100 seeds | A → B | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
+        for c in pr["paired"]:
+            lines.append(f"| {c['a']} vs {c['b']} | {c['success_a']:.2f} → {c['success_b']:.2f} | {c['diff']:+.2f} [{c['diff_ci95'][0]:+.2f}, {c['diff_ci95'][1]:+.2f}] | {c['discordant'][0]} vs {c['discordant'][1]} | {c['mcnemar_p']:.3g} | {c['verdict']} |")
+        lines += ["", "- **" + pr["reading"] + "**", ""]
+        probes_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith(("Magnitude probe", "Closed-loop suite", "Paired on")) else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+            elif line == "" and rows_html and not rows_html.endswith("</td></tr>" * 0 + "<tr><td colspan=\"7\"></td></tr>"):
+                rows_html += "<tr><td colspan=\"7\"></td></tr>"
+        probes_html = "<h2>Session A: probes on the existing checkpoints</h2><p>" + esc(lines[2]) + "</p><div class=\"tablewrap\"><table>" + rows_html + "</table></div><div class=\"callout\">" + bold(esc("**" + pr["reading"] + "**")) + "</div>"
     imported_md, imported_html = "", ""
     if magnitudes or compares or v2rows:
         lines = ["## 3b. Imported Kaggle probe results (session A, per-episode files)", ""]
@@ -313,7 +340,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{imported_md}## 4. Pending when this report was written
+{probes_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -359,7 +386,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """

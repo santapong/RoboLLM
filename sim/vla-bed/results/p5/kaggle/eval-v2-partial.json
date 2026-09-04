@@ -87,8 +87,8 @@
     "peak_rss_mb": 4599.9
   },
   "pending": [
-    "download vla-bed-baseline-eval.zip from the Kaggle Output tab and run sim/vla-bed/gpu/kaggle_import.sh <zip> 4118f3f718d5cac2b40a64372acafcb994105f0b55d7e6efbe3d1fe8645e9737 (replaces these transcribed numbers with the packed JSONs)",
-    "lighting and target_relocation variations on the 10k checkpoint (cut by the 7.5 h budget; next Kaggle session, after the evaluator speed-ups)"
+    "download vla-bed-baseline-eval.zip (sha256 4118f3f7…8645e9737) and vla-bed-baseline-probes.zip (sha256 ff3e1a2e…aa84955b) from the Kaggle Output tabs and run sim/vla-bed/gpu/kaggle_import.sh on each (replaces these transcribed numbers with the packed per-episode JSONs)",
+    "session B: train baseline on recipe v3 (headroom 0.7 + camera jitter) and evaluate it on the same frozen suite, paired against baseline-v2"
   ],
   "blank_image_010000_100ep": {
     "n": 100,

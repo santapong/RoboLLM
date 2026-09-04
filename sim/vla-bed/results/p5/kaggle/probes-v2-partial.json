@@ -1,0 +1,327 @@
+{
+  "schema": "robollm.vla-bed.kaggle-probes-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/probe version 2 (session A of the 4 Sep 2026 plan), log transcribed 5 Sep 2026 00:45 ICT; commit 187206e; GPU T4 x2, WORKERS 2; packed JSONs in vla-bed-baseline-probes.zip (sha256 ff3e1a2e8a6a38898c460c76af452b9256628ad9593782b57108b841aa84955b) not yet imported",
+  "wall_s": 4839.6,
+  "profile": {
+    "oracle_20ep_s_per_frame": 0.403,
+    "smolvla_policy_call_s": 0.42,
+    "suite_100ep_minutes": [
+      8.2,
+      7.8,
+      8.0,
+      8.2,
+      15.1,
+      8.5,
+      8.5
+    ],
+    "previous_suite_minutes": 65
+  },
+  "magnitude_probe": {
+    "007500": {
+      "rows": 4296,
+      "ratio_pred_over_label_xyz_linf": 0.9795,
+      "bias_per_axis_m": [
+        4.7e-05,
+        8.3e-05,
+        8.7e-05
+      ],
+      "spread_per_axis_m": [
+        0.003099,
+        0.00413,
+        0.004007
+      ],
+      "label_at_cap_fraction": 0.7868,
+      "pred_over_cap_fraction": 0.3433,
+      "pred_over_cap_given_label_at_cap": 0.4305,
+      "pred_over_cap_given_label_below_cap": 0.0218,
+      "direction_cosine_xyz_mean": 0.7468,
+      "rpy_pred_over_cap_fraction": 0.0128
+    },
+    "010000": {
+      "rows": 4296,
+      "ratio_pred_over_label_xyz_linf": 0.9833,
+      "bias_per_axis_m": [
+        -4e-06,
+        -1.2e-05,
+        -3e-06
+      ],
+      "spread_per_axis_m": [
+        0.00306,
+        0.004102,
+        0.00398
+      ],
+      "label_at_cap_fraction": 0.7868,
+      "pred_over_cap_fraction": 0.3119,
+      "pred_over_cap_given_label_at_cap": 0.3911,
+      "pred_over_cap_given_label_below_cap": 0.0197,
+      "direction_cosine_xyz_mean": 0.7523,
+      "rpy_pred_over_cap_fraction": 0.0135
+    }
+  },
+  "suites": [
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "post": "none",
+      "gain": 1.0,
+      "n": 100,
+      "success_rate": 0.24,
+      "ci95_wilson_success": [
+        0.1669132550788802,
+        0.33232336428099796
+      ],
+      "safety": 0.0,
+      "progress_mean": 0.4,
+      "episode_len_mean": 88.92,
+      "rejected_fraction_mean": 0.4242,
+      "cmd_xyz_linf_mean": 0.008419,
+      "cmd_xyz_over_cap_fraction_mean": 0.3678,
+      "minutes": 8.2
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "post": "clip",
+      "gain": 1.0,
+      "n": 100,
+      "success_rate": 0.19,
+      "ci95_wilson_success": [
+        0.12514751467908536,
+        0.27778845455769235
+      ],
+      "safety": 0.53,
+      "progress_mean": 0.375,
+      "episode_len_mean": 87.52,
+      "rejected_fraction_mean": 0.1351,
+      "cmd_xyz_linf_mean": 0.0073166,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 7.8
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "post": "clip",
+      "gain": 1.0,
+      "n": 100,
+      "success_rate": 0.17,
+      "ci95_wilson_success": [
+        0.10893566075403192,
+        0.2554800484335057
+      ],
+      "safety": 0.52,
+      "progress_mean": 0.355,
+      "episode_len_mean": 89.12,
+      "rejected_fraction_mean": 0.1313,
+      "cmd_xyz_linf_mean": 0.0072566,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.0
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "post": "none",
+      "gain": 0.61,
+      "n": 100,
+      "success_rate": 0.17,
+      "ci95_wilson_success": [
+        0.10893566075403192,
+        0.2554800484335057
+      ],
+      "safety": 0.86,
+      "progress_mean": 0.39,
+      "episode_len_mean": 89.66,
+      "rejected_fraction_mean": 0.0239,
+      "cmd_xyz_linf_mean": 0.0045249,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.2
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "post": "ensemble",
+      "replan_every": 5,
+      "gain": 1.0,
+      "n": 100,
+      "success_rate": 0.18,
+      "ci95_wilson_success": [
+        0.11700225458662546,
+        0.2666735846255322
+      ],
+      "safety": 0.02,
+      "progress_mean": 0.345,
+      "episode_len_mean": 88.99,
+      "rejected_fraction_mean": 0.3153,
+      "cmd_xyz_linf_mean": 0.0073984,
+      "cmd_xyz_over_cap_fraction_mean": 0.2759,
+      "minutes": 15.1
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "lighting",
+      "post": "none",
+      "gain": 1.0,
+      "n": 100,
+      "success_rate": 0.11,
+      "ci95_wilson_success": [
+        0.06254196329419368,
+        0.18631296574562342
+      ],
+      "safety": 0.0,
+      "progress_mean": 0.31,
+      "episode_len_mean": 94.38,
+      "rejected_fraction_mean": 0.3637,
+      "cmd_xyz_linf_mean": 0.0080168,
+      "cmd_xyz_over_cap_fraction_mean": 0.2919,
+      "minutes": 8.5
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "target_relocation",
+      "post": "none",
+      "gain": 1.0,
+      "n": 100,
+      "success_rate": 0.07,
+      "ci95_wilson_success": [
+        0.0343192608798127,
+        0.13749514806152413
+      ],
+      "safety": 0.0,
+      "progress_mean": 0.26,
+      "episode_len_mean": 95.65,
+      "rejected_fraction_mean": 0.3674,
+      "cmd_xyz_linf_mean": 0.0081768,
+      "cmd_xyz_over_cap_fraction_mean": 0.3161,
+      "minutes": 8.5
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "post": "none",
+      "gain": 1.0,
+      "vlm_dtype": "float16",
+      "n": 20,
+      "success_rate": 0.05,
+      "ci95_wilson_success": [
+        0.008881448702335523,
+        0.23613119546428119
+      ],
+      "safety": 0.0,
+      "progress_mean": 0.25,
+      "episode_len_mean": 96.65,
+      "rejected_fraction_mean": 0.3663,
+      "cmd_xyz_linf_mean": 0.0080675,
+      "cmd_xyz_over_cap_fraction_mean": 0.3137,
+      "minutes": 2.1
+    }
+  ],
+  "paired": [
+    {
+      "a": "007500 nominal",
+      "b": "007500 clip",
+      "success_a": 0.24,
+      "success_b": 0.19,
+      "diff": -0.05,
+      "diff_ci95": [
+        -0.16,
+        0.05
+      ],
+      "discordant": [
+        12,
+        17
+      ],
+      "mcnemar_p": 0.458,
+      "verdict": "not separable at n = 100"
+    },
+    {
+      "a": "007500 nominal",
+      "b": "007500 gain 0.61",
+      "success_a": 0.24,
+      "success_b": 0.17,
+      "diff": -0.07,
+      "diff_ci95": [
+        -0.16,
+        0.02
+      ],
+      "discordant": [
+        8,
+        15
+      ],
+      "mcnemar_p": 0.21,
+      "verdict": "not separable at n = 100"
+    },
+    {
+      "a": "007500 nominal",
+      "b": "007500 ensemble replan 5",
+      "success_a": 0.24,
+      "success_b": 0.18,
+      "diff": -0.06,
+      "diff_ci95": [
+        -0.15,
+        0.03
+      ],
+      "discordant": [
+        8,
+        14
+      ],
+      "mcnemar_p": 0.286,
+      "verdict": "not separable at n = 100"
+    },
+    {
+      "a": "007500 nominal",
+      "b": "007500 lighting",
+      "success_a": 0.24,
+      "success_b": 0.11,
+      "diff": -0.13,
+      "diff_ci95": [
+        -0.22,
+        -0.04
+      ],
+      "discordant": [
+        6,
+        19
+      ],
+      "mcnemar_p": 0.0146,
+      "verdict": "A better"
+    },
+    {
+      "a": "007500 nominal",
+      "b": "007500 target_relocation",
+      "success_a": 0.24,
+      "success_b": 0.07,
+      "diff": -0.17,
+      "diff_ci95": [
+        -0.26,
+        -0.08
+      ],
+      "discordant": [
+        4,
+        21
+      ],
+      "mcnemar_p": 0.000911,
+      "verdict": "A better"
+    },
+    {
+      "a": "007500 clip",
+      "b": "010000 clip",
+      "success_a": 0.19,
+      "success_b": 0.17,
+      "diff": -0.02,
+      "diff_ci95": [
+        -0.08,
+        0.04
+      ],
+      "discordant": [
+        4,
+        6
+      ],
+      "mcnemar_p": 0.754,
+      "verdict": "not separable at n = 100"
+    }
+  ],
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-probes.zip",
+    "sha256": "ff3e1a2e8a6a38898c460c76af452b9256628ad9593782b57108b841aa84955b",
+    "imported": false
+  },
+  "reading": "No magnitude bias (ratio 0.98); the cap explains the rejections but not the failures: clipping (0.19), gain 0.61 (0.17) and the linear temporal ensemble (0.18) are all inside the noise of the 7.5k nominal suite (0.24), paired McNemar p 0.21-0.46. lighting (0.11, p 0.015) and target_relocation (0.07, p 0.0009) are significantly worse than nominal. The v3 data fix (headroom + viewpoint jitter) is the next lever; inference-side tricks are not."
+}
