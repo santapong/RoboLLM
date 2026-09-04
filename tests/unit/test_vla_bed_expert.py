@@ -75,3 +75,24 @@ def test_make_expert_rejects_bad_inputs(controller):
         expert.make_expert("dagger", controller.home_rot)
     with pytest.raises(ValueError):
         expert.make_expert("noisy", controller.home_rot, -1.0)
+
+
+def test_headroom_caps_the_clean_label_below_the_limits(controller):
+    spec = families.episode_specs(1, 5, "train")[0]
+    ee = np.array([-0.134, 0.492, 0.332])
+    target = np.asarray(spec.target)
+    capped = expert.make_expert("oracle", controller.home_rot, headroom=0.7)
+    full = expert.make_expert("oracle", controller.home_rot)
+    oc, of = capped.act(ee, controller.home_rot, target), full.act(ee, controller.home_rot, target)
+    assert np.max(np.abs(of.clean[:3])) == pytest.approx(expert.XYZ_STEP_LIMIT_M, abs=1e-7)  # v2: label on the cap
+    assert np.max(np.abs(oc.clean[:3])) <= 0.7 * expert.XYZ_STEP_LIMIT_M + 1e-7  # v3: 30 % headroom
+    assert np.all(np.abs(oc.clean[3:6]) <= 0.7 * expert.RPY_STEP_LIMIT_RAD + 1e-7)
+    noisy = expert.make_expert("noisy", controller.home_rot, 0.5, headroom=0.7)
+    noisy.reset(spec)
+    n = noisy.act(ee, controller.home_rot, target)
+    assert np.allclose(n.clean, oc.clean)  # label capped
+    assert np.all(np.abs(n.executed[:3]) <= expert.XYZ_STEP_LIMIT_M + 1e-7)  # executed noise clipped at the full limit
+    with pytest.raises(ValueError):
+        expert.make_expert("oracle", controller.home_rot, headroom=0.0)
+    with pytest.raises(ValueError):
+        expert.make_expert("oracle", controller.home_rot, headroom=1.5)

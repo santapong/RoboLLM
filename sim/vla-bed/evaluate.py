@@ -94,10 +94,10 @@ def parse_shard(text: str | None) -> tuple[int, int] | None:
 class OraclePolicy:
     name = "oracle"
 
-    def __init__(self, env) -> None:
+    def __init__(self, env, headroom: float = 1.0) -> None:
         from expert import make_expert
 
-        self.expert = make_expert("oracle", env.controller.home_rot)
+        self.expert = make_expert("oracle", env.controller.home_rot, headroom=headroom)
 
     def reset(self, spec) -> None:
         self.expert.reset(spec)
@@ -167,7 +167,7 @@ class SmolVLAPolicy:
 
 def make_policy(name: str, env, args) -> object:
     if name == "oracle":
-        return OraclePolicy(env)
+        return OraclePolicy(env, getattr(args, "oracle_headroom", 1.0))
     if name == "hold":
         return HoldPolicy()
     if name == "smolvla":
@@ -373,7 +373,7 @@ def evaluate(args) -> dict:
         "embodiment": "ur5e+2f85",
         "schedule": {"manifest": str(Path(args.manifest).relative_to(ROOT)) if str(args.manifest).startswith(str(ROOT)) else str(args.manifest), "recipe": manifest["recipe"], "split": "evaluation", "base_seed": manifest["splits"]["evaluation"]["base_seed"], "episodes": len(specs), "cells": manifest["cells"], "variation": args.variation, "fps": FPS, "max_frames": MAX_FRAMES, "shard": args.shard},
         "limits": {"xyz_step_m": XYZ_STEP_LIMIT_M, "rpy_step_rad": RPY_STEP_LIMIT_RAD},
-        "policy": {"name": args.policy, "label": label, "checkpoint": str(args.checkpoint) if args.checkpoint else None, "representation": args.representation, "n_action_steps": args.n_action_steps if args.policy == "smolvla" else 1, "gain": args.gain, "blank_image": bool(args.blank_image), "sampling_seed": args.sampling_seed, "post": args.post, "replan_every": args.replan_every if args.post == "ensemble" else None, "ensemble_horizon": args.ensemble_horizon if args.post == "ensemble" else None, "vlm_dtype": args.vlm_dtype},
+        "policy": {"name": args.policy, "label": label, "checkpoint": str(args.checkpoint) if args.checkpoint else None, "representation": args.representation, "n_action_steps": args.n_action_steps if args.policy == "smolvla" else 1, "gain": args.gain, "blank_image": bool(args.blank_image), "sampling_seed": args.sampling_seed, "oracle_headroom": args.oracle_headroom if args.policy == "oracle" else None, "post": args.post, "replan_every": args.replan_every if args.post == "ensemble" else None, "ensemble_horizon": args.ensemble_horizon if args.post == "ensemble" else None, "vlm_dtype": args.vlm_dtype},
         label: aggregate(rows),
         "episodes": {label: rows},
         "wall_s": round(wall, 1),
@@ -437,6 +437,7 @@ def main() -> int:
     parser.add_argument("--replan-every", type=int, default=None, help="ensemble: re-query the policy every k steps (default n_action_steps)")
     parser.add_argument("--ensemble-horizon", type=int, default=None, help="ensemble: use only the first H rows of each chunk (default n_action_steps)")
     parser.add_argument("--vlm-dtype", default=None, choices=("float32", "float16", "bfloat16"), help="cast the frozen VLM at eval (train/eval dtype consistency probe)")
+    parser.add_argument("--oracle-headroom", type=float, default=1.0, help="oracle policy: cap the expert at this fraction of the S2/S3 limits (recipe v3 = 0.7)")
     parser.add_argument("--device", default=None)
     parser.add_argument("--sampling-seed", type=int, default=0, help="seed for the policy's flow-matching noise (added to the episode seed); -1 = unseeded")
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
@@ -466,6 +467,8 @@ def main() -> int:
         args.n_action_steps = args.n_action_steps or config["n_action_steps"]
     args.representation = args.representation or "identity"
     args.n_action_steps = args.n_action_steps or DEFAULT_N_ACTION_STEPS
+    if args.policy == "oracle" and args.oracle_headroom != 1.0 and not args.label:
+        args.label = f"oracle_h{args.oracle_headroom:g}"
     if args.sampling_seed is not None and args.sampling_seed < 0:
         args.sampling_seed = None
     summary = evaluate(args)

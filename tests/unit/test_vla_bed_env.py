@@ -75,3 +75,40 @@ def test_oracle_succeeds_on_three_cells_under_every_variation(env, variation):
 def test_unknown_variation_rejected(env):
     with pytest.raises(ValueError):
         env.reset(families.episode_specs(1, 1, "train")[0], "occlusion")
+
+
+def test_camera_azimuth_keeps_distance_and_aims_at_the_lookat(env):
+    import mujoco
+
+    spec = families.episode_specs(1, 10_000, "evaluation")[0]
+    env.reset(spec)
+    pos0, quat0 = env.model.cam_pos[env.cam_id].copy(), env.model.cam_quat[env.cam_id].copy()
+    env.reset(spec, camera_azimuth_deg=20.0)
+    pos = env.model.cam_pos[env.cam_id].copy()
+    assert not np.allclose(pos, pos0)
+    assert np.isclose(np.linalg.norm(pos - env.cam_lookat), np.linalg.norm(pos0 - env.cam_lookat))
+    assert np.isclose(pos[2], pos0[2])  # elevation kept
+    mat = np.zeros(9)
+    mujoco.mju_quat2Mat(mat, env.model.cam_quat[env.cam_id])
+    forward = -mat.reshape(3, 3)[:, 2]  # MuJoCo cameras look down their -z axis
+    aim = env.cam_lookat - pos
+    assert np.isclose(np.dot(forward, aim) / np.linalg.norm(aim), 1.0, atol=1e-6)
+    env.reset(spec)
+    assert np.allclose(env.model.cam_pos[env.cam_id], pos0) and np.allclose(env.model.cam_quat[env.cam_id], quat0)
+
+
+def test_oracle_with_headroom_succeeds_under_camera_azimuth(env):
+    from expert import make_expert
+
+    spec = families.episode_specs(1, 10_000, "evaluation")[0]
+    expert = make_expert("oracle", env.controller.home_rot, headroom=0.7)
+    env.reset(spec, camera_azimuth_deg=-15.0)
+    expert.reset(spec)
+    success = False
+    for _ in range(100):
+        pos, rot = env.commanded_ee
+        result = env.step(expert.act(pos, rot, env.target).executed)
+        if result.success:
+            success = True
+            break
+    assert success and env.safety.safe

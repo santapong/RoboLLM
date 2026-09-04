@@ -132,3 +132,21 @@ def test_recipes_and_padding():
     assert ds.RECIPES["v2b"].sigma(7) == 0.25
     assert ds.chunk_padding_percent([20, 20], 20) == 0.0
     assert ds.chunk_padding_percent([10], 20) == 50.0
+
+
+def test_v3_recipe_headroom_and_camera_jitter(tmp_path):
+    FakeLeRobotDataset.instances.clear()
+    result = ds.record_split("v3", "train", output_root=tmp_path, episodes=3, dataset_class=FakeLeRobotDataset)
+    manifest = json.loads(Path(result["manifest"]).read_text())
+    assert manifest["headroom"] == 0.7 and manifest["camera_jitter_deg"] == 20.0
+    rows = manifest["splits"]["train"]["episodes"]
+    az = [r["camera_azimuth_deg"] for r in rows]
+    assert all(-20.0 <= a <= 20.0 for a in az) and len(set(az)) == 3
+    assert az == [round(ds.camera_azimuth(ds.RECIPES["v3"], type("S", (), {"seed": r["seed"]})(), "train"), 4) for r in rows]
+    assert ds.camera_azimuth(ds.RECIPES["v3"], type("S", (), {"seed": 1})(), "evaluation") == 0.0
+    frames = FakeLeRobotDataset.instances[f"local/robollm-vla-bed-v3-train"].frames
+    labels = np.stack([f["action"] for f in frames])
+    executed = np.stack([f["action.executed"] for f in frames])
+    assert np.max(np.abs(labels[:, :3])) <= 0.7 * 0.010 + 1e-6
+    assert np.max(np.abs(executed[:, :3])) <= 0.010 + 1e-6
+    assert result["success_rate"] == 1.0

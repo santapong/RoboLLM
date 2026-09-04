@@ -87,6 +87,8 @@ class BedEnv:
         self.camera = build_scene.CAMERA_NAME
         self.cam_id = self.model.camera(self.camera).id
         self._cam_pos0 = self.model.cam_pos[self.cam_id].copy()
+        self._cam_quat0 = self.model.cam_quat[self.cam_id].copy()
+        self.cam_lookat = np.asarray(build_scene.CAMERA_LOOKAT, dtype=float).copy()
         self._light_diffuse0 = self.model.light_diffuse.copy()
         self.controller = MinkController(self.model)
         self.wrapper = SafetyWrapper()
@@ -152,16 +154,36 @@ class BedEnv:
             "observation.camera_lag_ms": np.zeros(1, dtype=np.float32),
         }
 
+    def set_camera_azimuth(self, azimuth_deg: float) -> None:
+        """Rotate the fixed camera about the world z axis through the scene's look-at point (distance and
+        elevation kept) and re-aim it at that point; 0 restores the nominal pose. Recording-time
+        viewpoint diversity (recipe v3, ±20°, Cai et al. 2603.26757); the frozen suite stays at 0."""
+        if abs(float(azimuth_deg)) < 1e-12:
+            self.model.cam_pos[self.cam_id] = self._cam_pos0
+            self.model.cam_quat[self.cam_id] = self._cam_quat0
+            return
+        a = np.deg2rad(float(azimuth_deg))
+        c, s = np.cos(a), np.sin(a)
+        rz = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
+        pos = self.cam_lookat + rz @ (self._cam_pos0 - self.cam_lookat)
+        xy = build_scene._lookat_xyaxes(pos, self.cam_lookat)
+        x, y = xy[:3], xy[3:]
+        z = np.cross(x, y)
+        quat = np.zeros(4)
+        mujoco.mju_mat2Quat(quat, np.stack([x, y, z], axis=1).reshape(-1))
+        self.model.cam_pos[self.cam_id] = pos
+        self.model.cam_quat[self.cam_id] = quat
+
     # ----- episode control -----
-    def reset(self, spec: EpisodeSpec, variation: str = "nominal") -> dict[str, np.ndarray]:
+    def reset(self, spec: EpisodeSpec, variation: str = "nominal", camera_azimuth_deg: float = 0.0) -> dict[str, np.ndarray]:
         if variation not in VARIATIONS:
             raise ValueError(f"unknown variation {variation!r}; choose from {VARIATIONS}")
         self.spec = spec
         mujoco.mj_resetData(self.model, self.data)
-        self.model.cam_pos[self.cam_id] = self._cam_pos0
+        self.set_camera_azimuth(camera_azimuth_deg)
         self.model.light_diffuse[:] = self._light_diffuse0
         if variation == "camera_shift":
-            self.model.cam_pos[self.cam_id] = self._cam_pos0 + np.array([0.15, 0.10, 0.0])
+            self.model.cam_pos[self.cam_id] = self.model.cam_pos[self.cam_id] + np.array([0.15, 0.10, 0.0])
         elif variation == "lighting":
             self.model.light_diffuse[:] = self._light_diffuse0 * 0.45
         target = relocated_target(spec) if variation == "target_relocation" else np.asarray(spec.target)

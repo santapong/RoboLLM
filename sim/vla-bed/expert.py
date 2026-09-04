@@ -5,6 +5,11 @@ targets for the UR5e through mink differential IK. `OracleExpert` moves the EE
 straight toward the target while holding the home (tool-down) orientation.
 `NoisyExpert` follows DART / Zhang et al.: it *executes* a noisy action but
 *labels* the frame with the clean expert action (both are returned).
+
+`headroom` < 1 caps the clean label below the safety limits (recipe v3: 0.7 ×), so a
+policy's regression spread around the label stays inside S2/S3 instead of being
+rejected one-sidedly — the v2 labels sat exactly on the cap (audit, 4 Sep 2026).
+The executed (noisy) action is still clipped at the full limits.
 """
 
 from __future__ import annotations
@@ -113,8 +118,13 @@ class ExpertOutput:
 class OracleExpert:
     name = "oracle"
 
-    def __init__(self, home_rot: np.ndarray):
+    def __init__(self, home_rot: np.ndarray, headroom: float = 1.0):
+        if not 0.0 < headroom <= 1.0:
+            raise ValueError("headroom must be in (0, 1]")
         self.home_rot = home_rot
+        self.headroom = float(headroom)
+        self.cap = STEP_LIMITS.copy()
+        self.cap[:6] *= self.headroom
 
     def reset(self, spec) -> None:  # noqa: ARG002 — interface parity with NoisyExpert
         return None
@@ -123,7 +133,7 @@ class OracleExpert:
         action = np.zeros(ACTION_DIM)
         action[:3] = target - ee_pos
         action[3:6] = _rotvec_between(ee_rot, self.home_rot)
-        return clip_action(action).astype(np.float32)
+        return np.clip(action, -self.cap, self.cap).astype(np.float32)
 
     def act(self, ee_pos, ee_rot, target) -> ExpertOutput:
         clean = self.clean_action(ee_pos, ee_rot, target)
@@ -135,8 +145,8 @@ class NoisyExpert(OracleExpert):
 
     name = "noisy"
 
-    def __init__(self, home_rot: np.ndarray, noise_fraction: float = DEFAULT_NOISE_FRACTION):
-        super().__init__(home_rot)
+    def __init__(self, home_rot: np.ndarray, noise_fraction: float = DEFAULT_NOISE_FRACTION, headroom: float = 1.0):
+        super().__init__(home_rot, headroom)
         if noise_fraction < 0:
             raise ValueError("noise_fraction must be non-negative")
         self.noise_fraction = float(noise_fraction)
@@ -157,9 +167,9 @@ class NoisyExpert(OracleExpert):
 EXPERTS = {"oracle": OracleExpert, "noisy": NoisyExpert}
 
 
-def make_expert(name: str, home_rot: np.ndarray, noise_fraction: float = DEFAULT_NOISE_FRACTION):
+def make_expert(name: str, home_rot: np.ndarray, noise_fraction: float = DEFAULT_NOISE_FRACTION, headroom: float = 1.0):
     if name == "oracle":
-        return OracleExpert(home_rot)
+        return OracleExpert(home_rot, headroom)
     if name == "noisy":
-        return NoisyExpert(home_rot, noise_fraction)
+        return NoisyExpert(home_rot, noise_fraction, headroom)
     raise ValueError(f"unknown expert {name!r}; choose from {sorted(EXPERTS)}")

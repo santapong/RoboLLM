@@ -1,7 +1,11 @@
 """LeRobot v3 recording, validation and summary for the bed (SDD §6.1, §7.2, §8/P2).
 
 Recipes (SDD §7): v1 oracle 40/10 (reproduction anchor); v2 noisy σ = 0.5 × limit
-400/100 with one clean episode in five; v2b the same at σ = 0.25 ×. Every frame
+400/100 with one clean episode in five; v2b the same at σ = 0.25 ×; v3 = v2 with the
+expert capped at 0.7 × the safety limits (headroom: the v2 labels sat exactly on the S2
+cap, audit 4 Sep 2026) and a per-episode camera azimuth jitter of ±20° on the train
+split (Cai et al. 2603.26757; the evaluation split — the frozen suite — stays at the
+nominal camera). Every frame
 stores the clean expert label as ``action`` and the applied action as
 ``action.executed`` (DART / Zhang et al.), plus the episode's σ.
 
@@ -61,6 +65,8 @@ class Recipe:
     evaluation: int
     base_seed: int
     clean_every: int | None  # every k-th episode is recorded clean (σ = 0)
+    headroom: float = 1.0  # clean-label cap as a fraction of the safety limits (S2/S3)
+    camera_jitter_deg: float = 0.0  # train-split camera azimuth ~ U(−j, +j) about the look-at point, seeded per episode
 
     def episodes(self, split: str) -> int:
         return self.train if split == "train" else self.evaluation
@@ -77,7 +83,17 @@ RECIPES: dict[str, Recipe] = {
     "v1": Recipe("v1", "oracle", 0.0, 40, 10, 10_000, None),
     "v2": Recipe("v2", "noisy", 0.5, 400, 100, 10_000, 5),
     "v2b": Recipe("v2b", "noisy", 0.25, 400, 100, 10_000, 5),
+    "v3": Recipe("v3", "noisy", 0.5, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0),
 }
+CAMERA_JITTER_SEED_OFFSET = 777_777
+
+
+def camera_azimuth(recipe: Recipe, spec, split: str) -> float:
+    """Per-episode camera azimuth for recording: 0 unless the recipe jitters the train split."""
+    if split != "train" or recipe.camera_jitter_deg <= 0:
+        return 0.0
+    rng = np.random.default_rng(int(spec.seed) + CAMERA_JITTER_SEED_OFFSET)
+    return float(rng.uniform(-recipe.camera_jitter_deg, recipe.camera_jitter_deg))
 
 
 class RecordingFault(RuntimeError):
@@ -126,6 +142,8 @@ def _read_manifest(path: Path, recipe: Recipe) -> dict:
         "expert": recipe.expert,
         "noise_fraction": recipe.noise_fraction,
         "clean_every": recipe.clean_every,
+        "headroom": recipe.headroom,
+        "camera_jitter_deg": recipe.camera_jitter_deg,
         "instruction": INSTRUCTION,
         "fps": FPS,
         "max_frames_per_episode": MAX_FRAMES,
@@ -188,8 +206,9 @@ def record_split(
             sigma = recipe.sigma(index)
             expert = experts.get(sigma)
             if expert is None:
-                expert = experts[sigma] = make_expert(recipe.expert, env.controller.home_rot, sigma)
-            observation = env.reset(spec)
+                expert = experts[sigma] = make_expert(recipe.expert, env.controller.home_rot, sigma, recipe.headroom)
+            azimuth = camera_azimuth(recipe, spec, split)
+            observation = env.reset(spec, camera_azimuth_deg=azimuth)
             expert.reset(spec)
             succeeded = False
             recorded = 0
@@ -228,6 +247,7 @@ def record_split(
                     "final_error_m": round(env.error_m, 5),
                     "noise_sigma": sigma,
                     "safe": env.safety.safe,
+                    "camera_azimuth_deg": round(azimuth, 4),
                 }
             )
     except Exception:
@@ -247,6 +267,8 @@ def record_split(
         "expert": recipe.expert,
         "noise_fraction": recipe.noise_fraction,
         "clean_every": recipe.clean_every,
+        "headroom": recipe.headroom,
+        "camera_jitter_deg": recipe.camera_jitter_deg if split == "train" else 0.0,
         "episode_count": count,
         "frame_count": sum(r["frame_count"] for r in rows),
         "success_count": successes,
