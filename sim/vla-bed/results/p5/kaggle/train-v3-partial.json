@@ -1,0 +1,50 @@
+{
+  "schema": "robollm.vla-bed.kaggle-train-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/train033260eb32 version 2 (session B of the 4 Sep 2026 plan), log transcribed 5 Sep 2026 04:50 ICT; recipe v3 (headroom 0.7, camera jitter +-20 deg on train), commit b90c6bf; GPU T4 x2",
+  "recipe": "v3",
+  "run": "baseline",
+  "train_record": {
+    "status": "completed",
+    "steps_done": 10000,
+    "batch_size": 32,
+    "vlm_dtype": "float16",
+    "steps_per_s": 0.8422,
+    "wall_s": 11909.1,
+    "gpu": "Tesla T4",
+    "peak_vram_gb": 4.87,
+    "checkpoints": [
+      "002500",
+      "005000",
+      "007500",
+      "010000"
+    ]
+  },
+  "quick_check_010000_50ep": {
+    "policy": "baseline/last",
+    "variation": "nominal",
+    "n": 50,
+    "success_rate": 0.14,
+    "safety": 0.68,
+    "progress_mean": 0.31,
+    "episode_len_mean": 89.8,
+    "rejected_fraction_mean": 0.059,
+    "cmd_xyz_linf_mean": 0.0058318,
+    "cmd_xyz_over_cap_fraction_mean": 0.0,
+    "faults": {
+      "rejected": {
+        "S4_workspace": 294
+      },
+      "measured": {}
+    },
+    "wall_s": 380.6,
+    "note": "single worker, 50 episodes: 7.6 s per episode with render-on-demand (was ~66 s)"
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-output-v3.zip",
+    "size_mb": 3521,
+    "sha256": "1d74c6af271a8847682c8566521ba21334465cf704775a8d0c6fea388bd1269f",
+    "imported": false
+  },
+  "session_wall_s": 13014.0,
+  "reading": "Headroom did what it was designed to do: 0 % of commanded steps exceed the S2 cap (v2: 37 %) and only 5.9 % of steps are rejected, all S4 workspace exits (v2: 42 %). Success on the 50-episode quick check is 0.14, i.e. no visible gain over v2's final checkpoint (0.13 at n = 100); the 100-episode paired evaluation of all four checkpoints (session C) decides."
+}
