@@ -170,7 +170,7 @@ def main() -> int:
         curve_bullet = (f"- **An earlier checkpoint scores higher.** The {c_best[0]/1000:g}k checkpoint reaches {100*cb['success_rate']:.0f} % "
                         f"[{100*cb['ci95_wilson_success'][0]:.0f}–{100*cb['ci95_wilson_success'][1]:.0f} %] against the final checkpoint's {100*pol['success_rate']:.0f} %; the intervals overlap, so this is not a proven "
                         f"decline, but the R11 rule picks by closed-loop success and would select {c_best[0]/1000:g}k today. Both checkpoints reject about a third of their "
-                        f"steps at S2, so the action-scale problem is not a late-training artefact.")
+                        f"steps at S2, so the cap problem is not a late-training artefact.")
     if prog and prog.get("finished"):
         prog_md = ("## 0. Evaluation run: finished" + chr(10) + chr(10) + prog["notebook"] + " finished at " + prog["finished"] + " after " + str(prog["elapsed_h"]) + " h · "
                    + str(len(prog["done"])) + " suites ran; cut by the 7.5 h budget: " + ", ".join(prog["queued"]) + chr(10) + chr(10)
@@ -257,13 +257,14 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 {curve_bullet}
 - **The safety wrapper is doing real work.** About a third of the policy's commands exceed
   the 1 cm-per-step limit the demonstrations respected; the arm holds for those steps. The
-  policy predicts larger steps than it was trained on — a scale/normalisation question to
-  check before the next run (the labels' std is 0.007 m; the model's outputs are unclipped).
+  training labels sit exactly on that limit (84 % of label steps saturate at 0.010 m per axis,
+  audit of 4 Sep 2026), so a regressor's symmetric spread is rejected one-sidedly; the next
+  dataset (v3) records with headroom below the limits.
 - **The two probes explain the number.** Blank the camera and success falls to 0 of 100 (the policy
   uses vision, R6). Execute every command at 61 % of what the policy asks — the real UR5's measured
   realisation — and success doubles to 28 % with 86 % safe episodes and no per-step rejections: the
-  policy's steps are about 1.6× its training labels, the wrapper's holds were the bottleneck, and
-  the controller-amplification effect of R11 is visible. Fixing the action scale is the next change.
+  wrapper's holds were the bottleneck (labels on the cap, so any spread crosses it), and the
+  controller-amplification effect of R11 is visible. Headroom in the data is the next change.
 {cam_bullet}
 - **Repeated suites of one checkpoint differ.** 26 % on a 50-episode check versus 13 % on the
   100-episode suite: SmolVLA samples its action chunk from noise, so a suite is a sample of

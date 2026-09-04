@@ -1,11 +1,11 @@
 {
-  "schema": "robollm.vla-bed.phase-summary.v1",
+  "schema": "robollm.vla-bed.phase-summary.v2",
   "phase": "P4-pre",
   "route": "M",
   "host": {
     "hostname": "santapong",
     "machine": "x86_64",
-    "python": "3.13.14",
+    "python": "3.13.15",
     "MUJOCO_GL": "egl"
   },
   "task": "touch the red target",
@@ -19,7 +19,8 @@
     "cells": 20,
     "variation": "nominal",
     "fps": 20,
-    "max_frames": 100
+    "max_frames": 100,
+    "shard": null
   },
   "limits": {
     "xyz_step_m": 0.01,
@@ -32,7 +33,12 @@
     "representation": "identity",
     "n_action_steps": 1,
     "gain": 1.0,
-    "blank_image": false
+    "blank_image": false,
+    "sampling_seed": 0,
+    "post": "none",
+    "replan_every": null,
+    "ensemble_horizon": null,
+    "vlm_dtype": null
   },
   "oracle": {
     "n": 100,
@@ -59,8 +65,18 @@
       27.570249999999998
     ],
     "chunks_mean": 25.8,
-    "latency_s_mean": 0.000283,
+    "latency_s_mean": 0.00023999999999999998,
     "final_error_m_mean": 0.0095342,
+    "rejected_fraction_mean": 0.0,
+    "rejected_steps_total": 0,
+    "frames_total": 2580,
+    "cmd_xyz_linf_mean": 0.007752800000000001,
+    "cmd_xyz_linf_max": 0.01,
+    "cmd_xyz_over_cap_fraction_mean": 0.0,
+    "cmd_rpy_linf_mean": 0.0027571,
+    "cmd_rpy_over_cap_fraction_mean": 0.0,
+    "exec_xyz_linf_mean": 0.007752800000000001,
+    "ensemble_members_mean": null,
     "per_family_success": {
       "front_high": 1.0,
       "front_low": 1.0,
@@ -97,7 +113,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00635,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0027,
+        "cmd_rpy_linf_max": 0.04049,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00635
       },
       {
         "seed": 1000010001,
@@ -114,7 +139,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00779,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00277,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00779
       },
       {
         "seed": 1000010002,
@@ -131,7 +165,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0001,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00735,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00131,
+        "cmd_rpy_linf_max": 0.02213,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00735
       },
       {
         "seed": 1000010003,
@@ -148,7 +191,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00811,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00293,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00811
       },
       {
         "seed": 1000010004,
@@ -165,7 +217,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00819,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00284,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00819
       },
       {
         "seed": 1000010005,
@@ -182,7 +243,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0005,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00807,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00122,
+        "cmd_rpy_linf_max": 0.0313,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00807
       },
       {
         "seed": 1000010006,
@@ -199,7 +269,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0004,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00834,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0034,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00834
       },
       {
         "seed": 1000010007,
@@ -216,7 +295,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0075,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0035,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0075
       },
       {
         "seed": 1000010008,
@@ -233,7 +321,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00812,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00217,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00812
       },
       {
         "seed": 1000010009,
@@ -250,7 +347,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00765,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0039,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00765
       },
       {
         "seed": 1000010010,
@@ -267,7 +373,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0008,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00824,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00224,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00824
       },
       {
         "seed": 1000010011,
@@ -284,7 +399,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0067,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00423,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0067
       },
       {
         "seed": 1000010012,
@@ -301,7 +425,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0004,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0084,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00396,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0084
       },
       {
         "seed": 1000010013,
@@ -318,7 +451,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0007,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00888,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00089,
+        "cmd_rpy_linf_max": 0.03974,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00888
       },
       {
         "seed": 1000010014,
@@ -335,7 +477,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00855,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00145,
+        "cmd_rpy_linf_max": 0.04725,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00855
       },
       {
         "seed": 1000010015,
@@ -352,7 +503,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00895,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00127,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00895
       },
       {
         "seed": 1000010016,
@@ -369,7 +529,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0005
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00776,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00186,
+        "cmd_rpy_linf_max": 0.04595,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00776
       },
       {
         "seed": 1000010017,
@@ -386,7 +555,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00798,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00106,
+        "cmd_rpy_linf_max": 0.02815,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00798
       },
       {
         "seed": 1000010018,
@@ -403,7 +581,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00732,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00221,
+        "cmd_rpy_linf_max": 0.04395,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00732
       },
       {
         "seed": 1000010019,
@@ -420,7 +607,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0011
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00758,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00331,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00758
       },
       {
         "seed": 1000010020,
@@ -437,7 +633,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0074,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00514,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0074
       },
       {
         "seed": 1000010021,
@@ -454,7 +659,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00706,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00316,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00706
       },
       {
         "seed": 1000010022,
@@ -471,7 +685,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0001,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00585,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00821,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00585
       },
       {
         "seed": 1000010023,
@@ -488,7 +711,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0074,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00284,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0074
       },
       {
         "seed": 1000010024,
@@ -505,7 +737,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00728,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00524,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00728
       },
       {
         "seed": 1000010025,
@@ -522,7 +763,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0004,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00846,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00263,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00846
       },
       {
         "seed": 1000010026,
@@ -539,7 +789,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00773,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00557,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00773
       },
       {
         "seed": 1000010027,
@@ -556,7 +815,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00817,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00304,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00817
       },
       {
         "seed": 1000010028,
@@ -573,7 +841,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0028
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00784,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00138,
+        "cmd_rpy_linf_max": 0.03433,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00784
       },
       {
         "seed": 1000010029,
@@ -590,7 +867,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00716,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00626,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00716
       },
       {
         "seed": 1000010030,
@@ -607,7 +893,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00772,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00247,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00772
       },
       {
         "seed": 1000010031,
@@ -624,7 +919,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00694,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00222,
+        "cmd_rpy_linf_max": 0.03759,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00694
       },
       {
         "seed": 1000010032,
@@ -641,7 +945,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0009
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00867,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00063,
+        "cmd_rpy_linf_max": 0.02295,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00867
       },
       {
         "seed": 1000010033,
@@ -658,7 +971,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00877,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00163,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00877
       },
       {
         "seed": 1000010034,
@@ -675,7 +997,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00847,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00306,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00847
       },
       {
         "seed": 1000010035,
@@ -692,7 +1023,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00884,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00058,
+        "cmd_rpy_linf_max": 0.02708,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00884
       },
       {
         "seed": 1000010036,
@@ -709,7 +1049,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00788,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00122,
+        "cmd_rpy_linf_max": 0.02875,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00788
       },
       {
         "seed": 1000010037,
@@ -726,7 +1075,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0005,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00809,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00428,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00809
       },
       {
         "seed": 1000010038,
@@ -743,7 +1101,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0072,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00213,
+        "cmd_rpy_linf_max": 0.03803,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0072
       },
       {
         "seed": 1000010039,
@@ -760,7 +1127,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00716,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00247,
+        "cmd_rpy_linf_max": 0.0467,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00716
       },
       {
         "seed": 1000010040,
@@ -777,7 +1153,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0006
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00534,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00948,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00534
       },
       {
         "seed": 1000010041,
@@ -794,7 +1179,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0008
+        "latency_s_mean": 0.0001,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00757,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00333,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00757
       },
       {
         "seed": 1000010042,
@@ -811,7 +1205,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00647,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00165,
+        "cmd_rpy_linf_max": 0.02935,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00647
       },
       {
         "seed": 1000010043,
@@ -828,7 +1231,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0006
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00711,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00279,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00711
       },
       {
         "seed": 1000010044,
@@ -845,7 +1257,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0011
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00763,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00205,
+        "cmd_rpy_linf_max": 0.04489,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00763
       },
       {
         "seed": 1000010045,
@@ -862,7 +1283,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00819,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00153,
+        "cmd_rpy_linf_max": 0.04563,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00819
       },
       {
         "seed": 1000010046,
@@ -879,7 +1309,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00812,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00157,
+        "cmd_rpy_linf_max": 0.04212,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00812
       },
       {
         "seed": 1000010047,
@@ -896,7 +1335,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00819,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00066,
+        "cmd_rpy_linf_max": 0.0169,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00819
       },
       {
         "seed": 1000010048,
@@ -913,7 +1361,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0001,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00783,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00151,
+        "cmd_rpy_linf_max": 0.03911,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00783
       },
       {
         "seed": 1000010049,
@@ -930,7 +1387,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00754,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00334,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00754
       },
       {
         "seed": 1000010050,
@@ -947,7 +1413,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00805,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0028,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00805
       },
       {
         "seed": 1000010051,
@@ -964,7 +1439,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00736,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.004,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00736
       },
       {
         "seed": 1000010052,
@@ -981,7 +1465,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00816,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00101,
+        "cmd_rpy_linf_max": 0.02977,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00816
       },
       {
         "seed": 1000010053,
@@ -998,7 +1491,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0001,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00863,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0023,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00863
       },
       {
         "seed": 1000010054,
@@ -1015,7 +1517,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00869,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00233,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00869
       },
       {
         "seed": 1000010055,
@@ -1032,7 +1543,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00887,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00183,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00887
       },
       {
         "seed": 1000010056,
@@ -1049,7 +1569,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00808,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00253,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00808
       },
       {
         "seed": 1000010057,
@@ -1066,7 +1595,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0004,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00769,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00322,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00769
       },
       {
         "seed": 1000010058,
@@ -1083,7 +1621,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00718,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00085,
+        "cmd_rpy_linf_max": 0.01422,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00718
       },
       {
         "seed": 1000010059,
@@ -1100,7 +1647,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00822,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00196,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00822
       },
       {
         "seed": 1000010060,
@@ -1117,7 +1673,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00618,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00222,
+        "cmd_rpy_linf_max": 0.02658,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00618
       },
       {
         "seed": 1000010061,
@@ -1134,7 +1699,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00788,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00354,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00788
       },
       {
         "seed": 1000010062,
@@ -1151,7 +1725,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00673,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00482,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00673
       },
       {
         "seed": 1000010063,
@@ -1168,7 +1751,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00642,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00394,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00642
       },
       {
         "seed": 1000010064,
@@ -1185,7 +1777,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00781,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00181,
+        "cmd_rpy_linf_max": 0.04508,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00781
       },
       {
         "seed": 1000010065,
@@ -1202,7 +1803,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00826,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00152,
+        "cmd_rpy_linf_max": 0.04669,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00826
       },
       {
         "seed": 1000010066,
@@ -1219,7 +1829,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00792,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00089,
+        "cmd_rpy_linf_max": 0.02118,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00792
       },
       {
         "seed": 1000010067,
@@ -1236,7 +1855,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00796,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00216,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00796
       },
       {
         "seed": 1000010068,
@@ -1253,7 +1881,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00784,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00546,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00784
       },
       {
         "seed": 1000010069,
@@ -1270,7 +1907,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00732,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00459,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00732
       },
       {
         "seed": 1000010070,
@@ -1287,7 +1933,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00804,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00191,
+        "cmd_rpy_linf_max": 0.04757,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00804
       },
       {
         "seed": 1000010071,
@@ -1304,7 +1959,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00664,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00624,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00664
       },
       {
         "seed": 1000010072,
@@ -1321,7 +1985,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00843,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00161,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00843
       },
       {
         "seed": 1000010073,
@@ -1338,7 +2011,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00883,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00161,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00883
       },
       {
         "seed": 1000010074,
@@ -1355,7 +2037,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00853,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00312,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00853
       },
       {
         "seed": 1000010075,
@@ -1372,7 +2063,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00888,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00151,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00888
       },
       {
         "seed": 1000010076,
@@ -1389,7 +2089,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0008
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00788,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00279,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00788
       },
       {
         "seed": 1000010077,
@@ -1406,7 +2115,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00792,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00238,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00792
       },
       {
         "seed": 1000010078,
@@ -1423,7 +2141,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0004,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00636,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00436,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00636
       },
       {
         "seed": 1000010079,
@@ -1440,7 +2167,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00795,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00252,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00795
       },
       {
         "seed": 1000010080,
@@ -1457,7 +2193,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00683,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00532,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00683
       },
       {
         "seed": 1000010081,
@@ -1474,7 +2219,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00821,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00311,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00821
       },
       {
         "seed": 1000010082,
@@ -1491,7 +2245,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00607,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00362,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00607
       },
       {
         "seed": 1000010083,
@@ -1508,7 +2271,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00828,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00186,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00828
       },
       {
         "seed": 1000010084,
@@ -1525,7 +2297,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0004
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00806,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00214,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00806
       },
       {
         "seed": 1000010085,
@@ -1542,7 +2323,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00795,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.0024,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00795
       },
       {
         "seed": 1000010086,
@@ -1559,7 +2349,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00695,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00202,
+        "cmd_rpy_linf_max": 0.0404,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00695
       },
       {
         "seed": 1000010087,
@@ -1576,7 +2375,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.0084,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00138,
+        "cmd_rpy_linf_max": 0.04103,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.0084
       },
       {
         "seed": 1000010088,
@@ -1593,7 +2401,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00779,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00234,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00779
       },
       {
         "seed": 1000010089,
@@ -1610,7 +2427,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0003
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00738,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00408,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00738
       },
       {
         "seed": 1000010090,
@@ -1627,7 +2453,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00752,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00167,
+        "cmd_rpy_linf_max": 0.03499,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00752
       },
       {
         "seed": 1000010091,
@@ -1644,7 +2479,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.001
+        "latency_s_mean": 0.0003,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00717,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00392,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00717
       },
       {
         "seed": 1000010092,
@@ -1661,7 +2505,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0017
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00826,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00263,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00826
       },
       {
         "seed": 1000010093,
@@ -1678,7 +2531,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00874,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00058,
+        "cmd_rpy_linf_max": 0.02529,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00874
       },
       {
         "seed": 1000010094,
@@ -1695,7 +2557,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00843,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00172,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00843
       },
       {
         "seed": 1000010095,
@@ -1712,7 +2583,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00878,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00146,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00878
       },
       {
         "seed": 1000010096,
@@ -1729,7 +2609,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00761,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00369,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00761
       },
       {
         "seed": 1000010097,
@@ -1746,7 +2635,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0001
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00788,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00207,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00788
       },
       {
         "seed": 1000010098,
@@ -1763,7 +2661,16 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0005
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00732,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00421,
+        "cmd_rpy_linf_max": 0.05,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00732
       },
       {
         "seed": 1000010099,
@@ -1780,18 +2687,27 @@
         "rejections": {},
         "measured": {},
         "worst_depth": 0.0,
-        "latency_s_mean": 0.0002
+        "latency_s_mean": 0.0002,
+        "rejected_steps": 0,
+        "rejected_fraction": 0.0,
+        "cmd_xyz_linf_mean": 0.00703,
+        "cmd_xyz_linf_max": 0.01,
+        "cmd_xyz_over_cap_fraction": 0.0,
+        "cmd_rpy_linf_mean": 0.00237,
+        "cmd_rpy_linf_max": 0.0424,
+        "cmd_rpy_over_cap_fraction": 0.0,
+        "exec_xyz_linf_mean": 0.00703
       }
     ]
   },
-  "wall_s": 113.2,
+  "wall_s": 70.5,
   "resources": {
-    "peak_rss_mb": 409.9,
-    "cpu_user_s": 13.2,
+    "peak_rss_mb": 410.0,
+    "cpu_user_s": 20.8,
     "cpu_system_s": 0.8,
     "threads": 9,
     "cpus_online": 4,
-    "wall_clock": "2026-09-04T00:56:06+0700"
+    "wall_clock": "2026-09-04T23:01:20+0700"
   },
-  "measured_at": "2026-09-04T00:56:06+0700"
+  "measured_at": "2026-09-04T23:01:20+0700"
 }

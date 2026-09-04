@@ -136,8 +136,12 @@ class BedEnv:
         mujoco.mju_mat2Quat(quat, self.ee_rot.reshape(-1))
         return np.concatenate([self.end_effector, quat, [self._gripper_opening()], self.data.qpos[self.arm_qpos]]).astype(np.float32)
 
-    def observation(self) -> dict[str, np.ndarray]:
-        if self.renderer is not None:
+    def observation(self, render: bool = True) -> dict[str, np.ndarray]:
+        """B1's observation dict. `render=False` skips the camera (image None) — the evaluator asks for a
+        frame only when the policy is about to be queried; success and error are state-based."""
+        if not render:
+            image = None
+        elif self.renderer is not None:
             self.renderer.update_scene(self.data, camera=self.camera)
             image = self.renderer.render().copy()
         else:
@@ -187,7 +191,7 @@ class BedEnv:
             self.data.qfrc_applied[self.arm_dof] = self.data.qfrc_bias[self.arm_dof]
             mujoco.mj_step(self.model, self.data)
 
-    def step(self, action: np.ndarray) -> StepResult:
+    def step(self, action: np.ndarray, render: bool = True) -> StepResult:
         if self.spec is None:
             raise RuntimeError("call reset() first")
         ee_before = self.end_effector
@@ -218,7 +222,7 @@ class BedEnv:
         self.min_error_m = min(self.min_error_m, error)
         success = self.detector.update(error)
         progress = 1.0 if success else (0.5 if self.min_error_m <= PROGRESS_HALF_DISTANCE_M else 0.0)
-        return StepResult(self.observation(), error, success, progress, decision, executed)
+        return StepResult(self.observation(render), error, success, progress, decision, executed)
 
     def close(self) -> None:
         if self.renderer is not None:

@@ -43,3 +43,17 @@ Runs, in order of value: `baseline` → `gripper` → `chunkwise` → `plastic`.
   float16 cast of the frozen VLM (`--vlm-dtype float16`).
 - 20 GB output: the pack step keeps only the selected checkpoint.
 - Nothing needs your Kaggle API token; uploads and downloads happen in the browser.
+
+## Probe session on existing checkpoints — `probe.ipynb` (no training)
+
+Same inputs as `eval.ipynb` (dataset `vla-bed-v2` + the train notebook's output), GPU T4 x2,
+Internet on, **Save & Run All**. It runs the open-loop magnitude probe
+(`gpu/magnitude_probe.py`: predicted vs label step magnitudes on 500 training frames) for the
+selected and the final checkpoint, then closed-loop probes on the selected checkpoint with the
+schema-v2 evaluator (commanded magnitudes and rejected fraction per episode): nominal, clip to
+the S2/S3 limits (`--post clip`), gain 0.61, linear temporal ensemble (`--post ensemble
+--replan-every 5`), `lighting`, `target_relocation`, and a 20-episode float16-VLM consistency
+check; `compare.py` pairs every probe with the nominal suite on the same seeds. Every suite runs
+as `WORKERS` shards (`evaluate.py --shard i/n`, merged with `--merge`), and checkpoints are
+unpacked under `/tmp`, so the Output tab holds only `vla-bed-<run>-probes.zip` (results JSONs,
+< 1 MB) → `gpu/kaggle_import.sh <zip> <sha256>` on the workstation.
