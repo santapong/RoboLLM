@@ -18,11 +18,16 @@
     "v2b_clean_labels_pass": true,
     "v2b_train_success_ge_0.95": true,
     "v2b_evaluation_success_ge_0.95": true,
+    "v3_present": true,
+    "v3_valid": true,
+    "v3_clean_labels_pass": true,
+    "v3_train_success_ge_0.95": true,
+    "v3_evaluation_success_ge_0.95": true,
     "cpu_bench_present": true
   },
   "host": "santapong",
   "dependencies": {
-    "python": "3.13.14",
+    "python": "3.13.15",
     "numpy": "2.2.6",
     "mujoco": "3.10.0",
     "mink": "1.3.0",
@@ -38,7 +43,7 @@
         "valid": true,
         "errors": [],
         "frames_checked": 1261,
-        "decoded_video_frames": 1261,
+        "decoded_video_frames": 0,
         "clean_label_faults": 0,
         "executed_action_faults": 0,
         "splits": {
@@ -144,7 +149,7 @@
         "valid": true,
         "errors": [],
         "frames_checked": 14423,
-        "decoded_video_frames": 14423,
+        "decoded_video_frames": 0,
         "clean_label_faults": 0,
         "executed_action_faults": 0,
         "splits": {
@@ -302,7 +307,7 @@
         "valid": true,
         "errors": [],
         "frames_checked": 13456,
-        "decoded_video_frames": 13456,
+        "decoded_video_frames": 0,
         "clean_label_faults": 0,
         "executed_action_faults": 0,
         "splits": {
@@ -453,6 +458,164 @@
           }
         }
       }
+    },
+    "v3": {
+      "present": true,
+      "validation": {
+        "valid": true,
+        "errors": [],
+        "frames_checked": 17785,
+        "decoded_video_frames": 0,
+        "clean_label_faults": 0,
+        "executed_action_faults": 0,
+        "splits": {
+          "train": {
+            "frames_checked": 14197,
+            "episodes": 400
+          },
+          "evaluation": {
+            "frames_checked": 3588,
+            "episodes": 100
+          }
+        }
+      },
+      "summary": {
+        "recipe": "v3",
+        "splits": {
+          "train": {
+            "episodes": 400,
+            "frames": 14197,
+            "success_rate": 1.0,
+            "episode_len_mean": 35.4925,
+            "episode_len_max": 79,
+            "chunk_padding_percent": {
+              "20": 19.5,
+              "50": 38.8
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 80,
+                "frames": 2786,
+                "success_rate": 1.0,
+                "episode_len_mean": 34.825,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    321,
+                    335,
+                    414,
+                    795,
+                    895,
+                    26
+                  ]
+                },
+                "distance_to_target_mean_m": 0.1549457071257433
+              },
+              "0.5": {
+                "episodes": 320,
+                "frames": 11411,
+                "success_rate": 1.0,
+                "episode_len_mean": 35.659375,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    1280,
+                    1481,
+                    1909,
+                    3959,
+                    2663,
+                    119
+                  ]
+                },
+                "distance_to_target_mean_m": 0.13870999735585648
+              }
+            },
+            "wall_s": 558.3
+          },
+          "evaluation": {
+            "episodes": 100,
+            "frames": 3588,
+            "success_rate": 1.0,
+            "episode_len_mean": 35.88,
+            "episode_len_max": 76,
+            "chunk_padding_percent": {
+              "20": 20.3,
+              "50": 38.1
+            },
+            "by_sigma": {
+              "0.0": {
+                "episodes": 20,
+                "frames": 741,
+                "success_rate": 1.0,
+                "episode_len_mean": 37.05,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    80,
+                    83,
+                    106,
+                    205,
+                    241,
+                    26
+                  ]
+                },
+                "distance_to_target_mean_m": 0.16616178115892857
+              },
+              "0.5": {
+                "episodes": 80,
+                "frames": 2847,
+                "success_rate": 1.0,
+                "episode_len_mean": 35.5875,
+                "distance_to_target_hist": {
+                  "bins_m": [
+                    0.0,
+                    0.03,
+                    0.06,
+                    0.1,
+                    0.2,
+                    0.4,
+                    1.0
+                  ],
+                  "counts": [
+                    320,
+                    356,
+                    457,
+                    1028,
+                    663,
+                    23
+                  ]
+                },
+                "distance_to_target_mean_m": 0.1383715643248062
+              }
+            },
+            "wall_s": 135.7
+          }
+        }
+      }
     }
   },
   "cpu_bench": {
@@ -530,24 +693,40 @@
       6
     ],
     "timing_s": {
-      "load": 15.58,
+      "load": 18.29,
       "runs": 10,
-      "preprocess_median": 0.0006,
-      "predict_median": 35.9514,
+      "preprocess_median": 0.0005,
+      "predict_median": 19.46,
       "postprocess_median": 0.0,
-      "total_median": 35.9519,
-      "total_p95": 50.8718,
-      "total_min": 29.3964
+      "total_median": 19.4605,
+      "total_p95": 29.3049,
+      "total_min": 18.6857
     },
     "implied_control_hz": {
-      "1": 0.028,
-      "10": 0.278,
-      "50": 1.391
+      "1": 0.051,
+      "10": 0.514,
+      "50": 2.569
     },
     "bed_control_hz": 20,
     "lockstep_note": "In the bed the simulator only advances on request, so this latency slows wall-clock, never the policy's view (SDD \u00a70).",
-    "measured_at": "2026-09-03T22:58:25+0700"
+    "resources": {
+      "peak_rss_mb": 3478.5,
+      "cpu_user_s": 876.9,
+      "cpu_system_s": 3.2,
+      "threads": 19,
+      "cpus_online": 4,
+      "wall_clock": "2026-09-04T06:47:55+0700"
+    },
+    "measured_at": "2026-09-04T06:47:55+0700"
   },
-  "wall_s": 137.2,
-  "measured_at": "2026-09-03T23:26:54+0700"
+  "wall_s": 1096.4,
+  "resources": {
+    "peak_rss_mb": 636.6,
+    "cpu_user_s": 1825.5,
+    "cpu_system_s": 14.5,
+    "threads": 16,
+    "cpus_online": 4,
+    "wall_clock": "2026-09-04T23:59:59+0700"
+  },
+  "measured_at": "2026-09-04T23:59:59+0700"
 }
