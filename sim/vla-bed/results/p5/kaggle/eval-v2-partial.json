@@ -87,9 +87,8 @@
     "peak_rss_mb": 4599.9
   },
   "pending": [
-    "gain 0.61 probe (010000)",
     "nominal 007500 / 005000 / 002500",
-    "variations camera_shift / lighting / target_relocation (likely cut by the 7.5 h budget)"
+    "variations camera_shift (likely) / lighting / target_relocation (likely cut by the 7.5 h budget)"
   ],
   "blank_image_010000_100ep": {
     "n": 100,
@@ -120,5 +119,34 @@
     "wall_s": 4221.9,
     "peak_rss_mb": 4459.1,
     "reading": "success collapses without the camera \u2192 the policy uses vision (R6); blind it also stops emitting the large commands the wrapper rejects"
+  },
+  "gain061_010000_100ep": {
+    "n": 100,
+    "success_rate": 0.28,
+    "ci95_wilson_success": [
+      0.2014,
+      0.3749
+    ],
+    "safety": 0.86,
+    "sbu": 0.0,
+    "vsi": 0.0154,
+    "progress_mean": 0.425,
+    "episode_len_mean": 83.7,
+    "per_family_success": {
+      "front_high": 0.25,
+      "front_low": 0.2,
+      "left": 0.5,
+      "near": 0.25,
+      "right": 0.2
+    },
+    "faults": {
+      "rejected": {
+        "S4_workspace": 135,
+        "S3_rpy_step": 3
+      }
+    },
+    "wall_s": 3496.9,
+    "peak_rss_mb": 4462.0,
+    "reading": "executing 0.61 x the commanded delta (the real UR5's measured realisation) doubles success (0.13 -> 0.28) and removes the S2 rejections: the policy's steps are ~1.6x larger than its training labels; R11 amplification effect observed"
   }
 }
