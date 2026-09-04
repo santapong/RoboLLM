@@ -94,6 +94,7 @@ def main() -> int:
     hold = load(R / "p5" / "santapong" / "hold" / "nominal.json")["hold"]
     kg = load(R / "p5" / "kaggle" / "eval-v2-partial.json")
     pol = kg["nominal_010000_100ep"]; quick = kg["quick_check_010000_50ep"]; tr = kg["train_record"]; sm = kg["smoke_v5"]
+    blank = kg.get("blank_image_010000_100ep"); gain = kg.get("gain061_010000_100ep")
     lib_k, lib_n = round(p2b["pc_success"] / 100 * p2b["n_episodes"]), p2b["n_episodes"]
     lib_ci = wilson(lib_k, lib_n)
     libero_per_task = [5, 5, 5, 5, 4, 0, 4, 4, 4, 5]  # from results/p2b/full.log (final line per task, de-duplicated)
@@ -107,8 +108,10 @@ def main() -> int:
         [("Scripted oracle (control)", oracle["success_rate"], tuple(oracle["ci95_wilson_success"]), grey),
          ("Do-nothing hold (control)", hold["success_rate"], tuple(hold["ci95_wilson_success"]), grey),
          ("SmolVLA baseline, 10k steps, n = 100", pol["success_rate"], tuple(pol["ci95_wilson_success"]), teal),
-         ("same checkpoint, quick check, n = 50", quick["success_rate"], tuple(quick["ci95_wilson_success"]), "#5FB0B7"),
-         ("LIBERO-Spatial calibration, n = 50", lib_k / lib_n, lib_ci, amber)],
+         ("same checkpoint, quick check, n = 50", quick["success_rate"], tuple(quick["ci95_wilson_success"]), "#5FB0B7")]
+        + ([("same checkpoint, commands × 0.61 (gain probe)", gain["success_rate"], tuple(gain["ci95_wilson_success"]), "#9A6A12")] if gain else [])
+        + ([("same checkpoint, camera blanked (vision probe)", blank["success_rate"], tuple(blank["ci95_wilson_success"]), red)] if blank else [])
+        + [("LIBERO-Spatial calibration, n = 50", lib_k / lib_n, lib_ci, amber)],
         note="LIBERO row: lerobot/smolvla_libero evaluated on this CPU; dashed line = the published SmolVLA-0.45B score.", marker=(0.90, "published 0.90"))
     fam = pol["per_family_success"]; n = pol["per_family_n"]
     charts["per-family"] = hbar_chart("Baseline success by goal family (n = 20 each, Wilson 95 %)",
@@ -140,6 +143,10 @@ def main() -> int:
     for name, svg in charts.items():
         (OUT / f"{name}.svg").write_text(svg + "\n")
 
+    g_sr = gain["success_rate"] if gain else float("nan"); g_pr = gain["progress_mean"] if gain else float("nan"); g_sf = gain["safety"] if gain else float("nan")
+    g_s4 = gain["faults"]["rejected"].get("S4_workspace", 0) if gain else 0; g_s3 = gain["faults"]["rejected"].get("S3_rpy_step", 0) if gain else 0
+    g_lo, g_hi = tuple(gain["ci95_wilson_success"]) if gain else (float("nan"), float("nan"))
+    b_sr = blank["success_rate"] if blank else float("nan"); b_pr = blank["progress_mean"] if blank else float("nan"); b_hi = blank["ci95_wilson_success"][1] if blank else float("nan")
     md = f"""# UR5e VLA bed — experiment report ({a.date})
 
 Status of the experiment branch `experiment/ur5e-vla-bed` at report time: Phases 0–3 verified,
@@ -162,6 +169,8 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 | Baseline training (`baseline`, 10k steps, batch 32) | {tr['steps_per_s']} steps/s, {tr['wall_s']/3600:.2f} h, {tr['peak_vram_gb']} GB VRAM, 4 checkpoints | — | Kaggle `vla-bed-train` v1 |
 | **Baseline checkpoint 10k, nominal, n = 100** | **success {pol['success_rate']:.2f}**, progress {pol['progress_mean']:.2f}, safety {pol['safety']:.2f}, SBU {pol['sbu']:.2f}, VSI {pol['vsi']:.2f}, {pol['episode_len_mean']:.1f} frames | Wilson [{pol['ci95_wilson_success'][0]:.3f}, {pol['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-eval` v2 |
 | Same checkpoint, quick check, n = 50 | success {quick['success_rate']:.2f}, progress {quick['progress_mean']:.2f} | [{quick['ci95_wilson_success'][0]:.3f}, {quick['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-train` v1 |
+| **Gain probe: same checkpoint, every command × 0.61, n = 100** | **success {g_sr:.2f}**, progress {g_pr:.2f}, safety {g_sf:.2f}, rejections S4 {g_s4} / S3 {g_s3} / S2 0 | Wilson [{g_lo:.3f}, {g_hi:.3f}] | Kaggle `vla-bed-eval` v2 |
+| **Vision probe: same checkpoint, camera blanked, n = 100** | success {b_sr:.2f}, progress {b_pr:.2f}, all episodes time out; 66 rejections | Wilson [0, {b_hi:.3f}] | Kaggle `vla-bed-eval` v2 |
 | Rejected commands, baseline 10k (per 100 policy steps) | S2 {100*rej['S2_xyz_step']/steps:.1f}, S3 {100*rej['S3_rpy_step']/steps:.1f}, S4 {100*rej['S4_workspace']/steps:.1f} | over {int(steps):,} steps | same |
 | Real UR5 replay on the sim UR5e (5 OXE episodes) | state tracking 0.7–1.2 cm mean, ≤ 0.4 cm final; command replay 2.2–9.3 cm with the measured 0.61 gain | alignment Rz 90° + 0.284 m | `results/p3/santapong/summary.json` |
 | Datasets recorded | v2: {v2['train']['episodes']} train / {v2['evaluation']['episodes']} held-out episodes, {v2['train']['frames']:,} + {v2['evaluation']['frames']:,} frames, 100 % expert success | — | `results/p2/santapong/` |
@@ -193,6 +202,11 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   the 1 cm-per-step limit the demonstrations respected; the arm holds for those steps. The
   policy predicts larger steps than it was trained on — a scale/normalisation question to
   check before the next run (the labels' std is 0.007 m; the model's outputs are unclipped).
+- **The two probes explain the number.** Blank the camera and success falls to 0 of 100 (the policy
+  uses vision, R6). Execute every command at 61 % of what the policy asks — the real UR5's measured
+  realisation — and success doubles to 28 % with 86 % safe episodes and no per-step rejections: the
+  policy's steps are about 1.6× its training labels, the wrapper's holds were the bottleneck, and
+  the controller-amplification effect of R11 is visible. Fixing the action scale is the next change.
 - **Repeated suites of one checkpoint differ.** 26 % on a 50-episode check versus 13 % on the
   100-episode suite: SmolVLA samples its action chunk from noise, so a suite is a sample of
   the policy, not a deterministic property. The evaluator now seeds that noise per episode.
