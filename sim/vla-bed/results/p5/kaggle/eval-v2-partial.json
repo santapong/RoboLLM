@@ -87,8 +87,7 @@
     "peak_rss_mb": 4599.9
   },
   "pending": [
-    "nominal 002500 (last learning-curve point)",
-    "variation camera_shift on 010000 (expected to fit the 7.5 h budget)",
+    "variation camera_shift on 010000 (running; fits the 7.5 h budget)",
     "lighting and target_relocation (cut by the 7.5 h budget; next Kaggle session)"
   ],
   "blank_image_010000_100ep": {
@@ -151,20 +150,20 @@
     "reading": "executing 0.61 x the commanded delta (the real UR5's measured realisation) doubles success (0.13 -> 0.28) and removes the S2 rejections: the policy's steps are ~1.6x larger than its training labels; R11 amplification effect observed"
   },
   "progress": {
-    "updated": "2026-09-04 14:07 ICT",
+    "updated": "2026-09-04 15:10 ICT",
     "notebook": "santapongsondhi/vla-bed-eval v2",
     "started": "≈ 08:25 ICT (container clock; submitted 07:47 ICT)",
-    "elapsed_h": 5.73,
+    "elapsed_h": 6.77,
     "done": [
       "010000 nominal (13 %)",
       "010000 blank-image probe (0 %)",
       "010000 gain-0.61 probe (28 %)",
       "007500 nominal (20 %)",
-      "005000 nominal (13 %)"
+      "005000 nominal (13 %)",
+      "002500 nominal (9 %)"
     ],
-    "running": "002500 nominal",
+    "running": "010000 camera_shift",
     "queued": [
-      "010000 camera_shift",
       "010000 lighting (will be cut by the 7.5 h budget)",
       "010000 target_relocation (will be cut by the 7.5 h budget)"
     ],
@@ -173,14 +172,14 @@
       4222,
       3497,
       3829,
-      4013
+      4013,
+      4069
     ],
     "milestones": {
-      "002500 nominal": "≈ 15:00 ICT",
-      "010000 camera_shift": "≈ 16:07 ICT",
-      "finish + pack": "≈ 16:10 ICT"
+      "010000 camera_shift": "≈ 16:08 ICT",
+      "finish + pack": "≈ 16:12 ICT"
     },
-    "eta": "≈ 16:10 ICT (± 20 min)"
+    "eta": "≈ 16:12 ICT (± 15 min)"
   },
   "nominal_007500_100ep": {
     "policy": "baseline/007500",
@@ -251,5 +250,40 @@
     "peak_rss_mb": 4460.8,
     "log_time_s": 19738.3,
     "transcribed_from": "Kaggle vla-bed-eval v2 log, 4 Sep 2026 14:09 ICT"
+  },
+  "nominal_002500_100ep": {
+    "policy": "baseline/002500",
+    "variation": "nominal",
+    "n": 100,
+    "success_rate": 0.09,
+    "ci95_wilson_success": [
+      0.04807253976868698,
+      0.16226212922188998
+    ],
+    "safety": 0.0,
+    "sbu": 0.09,
+    "vsi": 0.1086,
+    "progress_mean": 0.23,
+    "episode_len_mean": 95.2,
+    "per_family_success": {
+      "front_high": 0.05,
+      "front_low": 0.0,
+      "left": 0.2,
+      "near": 0.2,
+      "right": 0.0
+    },
+    "per_family_n": 20,
+    "faults": {
+      "rejected": {
+        "S2_xyz_step": 4238,
+        "S3_rpy_step": 125,
+        "S4_workspace": 146
+      },
+      "measured": {}
+    },
+    "wall_s": 4069.2,
+    "peak_rss_mb": 4458.9,
+    "log_time_s": 23832.9,
+    "transcribed_from": "Kaggle vla-bed-eval v2 log, 4 Sep 2026 15:12 ICT"
   }
 }
