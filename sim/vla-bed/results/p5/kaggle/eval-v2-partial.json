@@ -87,8 +87,8 @@
     "peak_rss_mb": 4599.9
   },
   "pending": [
-    "download vla-bed-baseline-eval.zip (sha256 4118f3f7…8645e9737) and vla-bed-baseline-probes.zip (sha256 ff3e1a2e…aa84955b) from the Kaggle Output tabs and run sim/vla-bed/gpu/kaggle_import.sh on each (replaces these transcribed numbers with the packed per-episode JSONs)",
-    "session B: train baseline on recipe v3 (headroom 0.7 + camera jitter) and evaluate it on the same frozen suite, paired against baseline-v2"
+    "download the three result zips from the Kaggle Output tabs and run sim/vla-bed/gpu/kaggle_import.sh on each: vla-bed-eval v2 (sha256 4118f3f7…8645e9737), probe v2 (ff3e1a2e…aa84955b), eval0f826de634 v2 (c6b359a8…16442170); then compare.py pairs baseline-v3 against baseline-v2 on identical seeds",
+    "decide the next lever after the v3 negative result (precision, not the cap): more diverse data (cells/families), or the SDD action-representation variants on v3"
   ],
   "blank_image_010000_100ep": {
     "n": 100,

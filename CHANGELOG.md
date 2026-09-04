@@ -8,6 +8,23 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-05 — UR5e VLA sim bed: probe session, v3 retrain, both for $0 on Kaggle
+
+### Results
+
+- **Session A** (probes on the v2 checkpoints): the open-loop magnitude probe measured no
+  trainer bias (predicted / label L∞ ratio 0.98); clip-to-limit 0.19, gain 0.61 → 0.17 and a
+  linear temporal ensemble 0.18 are all inside the noise of the 7.5k nominal suite 0.24 (paired
+  McNemar p 0.21–0.46); lighting 0.11 and target_relocation 0.07 are significantly worse.
+  Suites now take 8 min per 100 episodes (was 65).
+- **Sessions B + C** (baseline retrained on recipe v3, evaluated on the identical frozen
+  suite): steps over the cap 0 %, rejected steps 4–6 % (workspace exits only), safety
+  0.46–0.72 (v2: 0.00) — and success unchanged: 0.12 / 0.20 / 0.16 / 0.10 over the four
+  checkpoints, selected 5k at 0.20; camera_shift 0.05 (v2 0.04). The safety cap bounded
+  safety, not success; the policy's ceiling with 400 demonstrations is precision.
+- The Kaggle dataset `vla-bed-v3` was created from split 9 MB parts; the notebooks join and
+  checksum them (`kaggle/*.ipynb`, `RECIPE = "auto"`).
+
 ## 2026-09-04 (evening) — UR5e VLA sim bed: evaluator v2, paired comparisons, probes, recipe v3
 
 ### Added

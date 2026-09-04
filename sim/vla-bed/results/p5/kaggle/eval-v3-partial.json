@@ -1,0 +1,188 @@
+{
+  "schema": "robollm.vla-bed.kaggle-eval-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/eval0f826de634 version 2 (session C of the 4 Sep 2026 plan): baseline trained on recipe v3 (headroom 0.7, camera azimuth jitter +-20 deg on train), evaluated on the frozen v2/v3 suite (identical 100 seeds); log transcribed 5 Sep 2026 06:35 ICT; commit b90c6bf; GPU T4 x2, WORKERS 2; 'Successfully ran in 5058.3s'",
+  "recipe": "v3",
+  "run": "baseline",
+  "train_record": {
+    "steps_done": 10000,
+    "steps_per_s": 0.8422,
+    "wall_s": 11909.1,
+    "gpu": "Tesla T4",
+    "peak_vram_gb": 4.87
+  },
+  "suites": [
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.1,
+      "ci95_wilson_success": [
+        0.055,
+        0.174
+      ],
+      "safety": 0.7,
+      "progress_mean": 0.28,
+      "episode_len_mean": 92.52,
+      "rejected_fraction_mean": 0.057,
+      "cmd_xyz_linf_mean": 0.00583,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.6
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.0,
+      "ci95_wilson_success": [
+        0.0,
+        0.037
+      ],
+      "safety": 0.0,
+      "progress_mean": 0.01,
+      "episode_len_mean": 100.0,
+      "rejected_fraction_mean": 0.346,
+      "cmd_xyz_linf_mean": 0.00589,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 9.3,
+      "blank_image": true
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.22,
+      "ci95_wilson_success": [
+        0.15,
+        0.311
+      ],
+      "safety": 1.0,
+      "progress_mean": 0.355,
+      "episode_len_mean": 87.37,
+      "rejected_fraction_mean": 0.0,
+      "cmd_xyz_linf_mean": 0.00367,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.3,
+      "gain": 0.61
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.16,
+      "ci95_wilson_success": [
+        0.101,
+        0.244
+      ],
+      "safety": 0.63,
+      "progress_mean": 0.315,
+      "episode_len_mean": 89.32,
+      "rejected_fraction_mean": 0.052,
+      "cmd_xyz_linf_mean": 0.00584,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.3
+    },
+    {
+      "label": "baseline/005000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.2,
+      "ci95_wilson_success": [
+        0.133,
+        0.289
+      ],
+      "safety": 0.72,
+      "progress_mean": 0.33,
+      "episode_len_mean": 86.86,
+      "rejected_fraction_mean": 0.041,
+      "cmd_xyz_linf_mean": 0.00591,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.1
+    },
+    {
+      "label": "baseline/002500",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.12,
+      "ci95_wilson_success": [
+        0.07,
+        0.198
+      ],
+      "safety": 0.46,
+      "progress_mean": 0.27,
+      "episode_len_mean": 92.36,
+      "rejected_fraction_mean": 0.121,
+      "cmd_xyz_linf_mean": 0.006,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.3
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "camera_shift",
+      "n": 100,
+      "success_rate": 0.05,
+      "ci95_wilson_success": [
+        0.022,
+        0.112
+      ],
+      "safety": 0.64,
+      "progress_mean": 0.13,
+      "episode_len_mean": 96.04,
+      "rejected_fraction_mean": 0.098,
+      "cmd_xyz_linf_mean": 0.00596,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.9
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "lighting",
+      "n": 100,
+      "success_rate": 0.1,
+      "ci95_wilson_success": [
+        0.055,
+        0.174
+      ],
+      "safety": 0.8,
+      "progress_mean": 0.245,
+      "episode_len_mean": 92.89,
+      "rejected_fraction_mean": 0.026,
+      "cmd_xyz_linf_mean": 0.00577,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.6
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "target_relocation",
+      "n": 100,
+      "success_rate": 0.14,
+      "ci95_wilson_success": [
+        0.085,
+        0.221
+      ],
+      "safety": 0.73,
+      "progress_mean": 0.275,
+      "episode_len_mean": 90.97,
+      "rejected_fraction_mean": 0.054,
+      "cmd_xyz_linf_mean": 0.00577,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "minutes": 8.4
+    }
+  ],
+  "selection": {
+    "run": "baseline",
+    "selected": "005000",
+    "success_rate": 0.2,
+    "within_ci": [
+      "005000",
+      "007500"
+    ],
+    "rule": "R11"
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-eval-v3.zip",
+    "size_mb": 0.06,
+    "sha256": "c6b359a88a4fb42b20294ac7dcd090cea13558f530a4032e4fb2138516442170",
+    "imported": false
+  },
+  "session_wall_s": 5058.3,
+  "reading": "Headroom removed the wrapper's interventions (over-cap steps 0 %, rejected steps 4-6 % instead of 32-45 %, safety 0.46-0.72 instead of 0.00) but did not move closed-loop success: the v3 learning curve 0.12 / 0.20 / 0.16 / 0.10 sits in the same band as v2's 0.09 / 0.13 / 0.20 / 0.13, and the selected checkpoint (5k) scores 0.20, exactly v2's best. The camera azimuth jitter did not help the camera_shift variation (0.05 vs 0.04): that variation translates the camera without re-aiming it, a perturbation the jitter never showed. lighting 0.10 and target_relocation 0.14 are within noise of nominal. The policy's ceiling with 400 demonstrations is precision, not the safety cap; the paired comparison on identical seeds (after the zips are imported) is the formal statement."
+}

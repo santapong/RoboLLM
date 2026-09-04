@@ -100,6 +100,7 @@ def main() -> int:
     hold = load(R / "p5" / "santapong" / "hold" / "nominal.json")["hold"]
     kg = load(R / "p5" / "kaggle" / "eval-v2-partial.json")
     pr = load(R / "p5" / "kaggle" / "probes-v2-partial.json") if (R / "p5" / "kaggle" / "probes-v2-partial.json").exists() else None
+    e3 = load(R / "p5" / "kaggle" / "eval-v3-partial.json") if (R / "p5" / "kaggle" / "eval-v3-partial.json").exists() else None
     # imported Kaggle result files (schema v2 rows, paired comparisons, magnitude probes) — empty until gpu/kaggle_import.sh has run
     compares = sorted(R.glob("p5/*/*/*/compare_*.json"))
     magnitudes = sorted(R.glob("p5/*/*/*/magnitude.json"))
@@ -137,6 +138,15 @@ def main() -> int:
                                           [(f"{st/1000:g}k steps" + (" (final)" if st == final_steps else ""), v["success_rate"], tuple(v["ci95_wilson_success"]), "#5FB0B7" if st == final_steps else teal) for st, v in curve]
                                           + [("10k, quick check, n = 50", quick["success_rate"], tuple(quick["ci95_wilson_success"]), grey)],
                                           note="Checkpoints not shown are still being evaluated on Kaggle; the R11 rule selects by this number, never by loss.")
+    if e3:
+        v3curve = {int(su["label"].split("/")[-1]): su for su in e3["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0}
+        rows_lc = []
+        for st, v in curve:
+            rows_lc.append((f"v2 · {st/1000:g}k", v["success_rate"], tuple(v["ci95_wilson_success"]), teal))
+            if st in v3curve:
+                rows_lc.append((f"v3 · {st/1000:g}k (headroom + jitter)", v3curve[st]["success_rate"], tuple(v3curve[st]["ci95_wilson_success"]), "#7A5C99"))
+        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3 data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
+                                                       note="v3 caps the expert at 0.7 × the limits and jitters the camera ±20° on the train split; every v3 checkpoint has 0 % over-cap steps.")
     steps = pol["n"] * pol["episode_len_mean"]
     rej = pol["faults"]["rejected"]
     charts["safety"] = hbar_chart("Commands rejected by the safety wrapper, per 100 policy steps (baseline, 10k)",
@@ -233,6 +243,31 @@ def main() -> int:
             elif line == "" and rows_html and not rows_html.endswith("</td></tr>" * 0 + "<tr><td colspan=\"7\"></td></tr>"):
                 rows_html += "<tr><td colspan=\"7\"></td></tr>"
         probes_html = "<h2>Session A: probes on the existing checkpoints</h2><p>" + esc(lines[2]) + "</p><div class=\"tablewrap\"><table>" + rows_html + "</table></div><div class=\"callout\">" + bold(esc("**" + pr["reading"] + "**")) + "</div>"
+    v3_md, v3_html = "", ""
+    if e3:
+        lines = ["## 3c. Session C — baseline trained on v3 (headroom 0.7 + camera jitter), frozen suite (transcribed)", "",
+                 "| Suite (v3 checkpoint) | success | Wilson 95 % | safety | progress | rejected steps | cmd L∞ mean | v2 same suite |", "|---|---|---|---|---|---|---|---|"]
+        v2ref = {("010000", "nominal", False, 1.0): kg["nominal_010000_100ep"]["success_rate"], ("007500", "nominal", False, 1.0): kg["nominal_007500_100ep"]["success_rate"], ("005000", "nominal", False, 1.0): kg["nominal_005000_100ep"]["success_rate"], ("002500", "nominal", False, 1.0): kg["nominal_002500_100ep"]["success_rate"], ("010000", "nominal", True, 1.0): kg["blank_image_010000_100ep"]["success_rate"], ("010000", "nominal", False, 0.61): kg["gain061_010000_100ep"]["success_rate"], ("010000", "camera_shift", False, 1.0): kg["camera_shift_010000_100ep"]["success_rate"]}
+        if pr:
+            for su in pr["suites"]:
+                if su["variation"] in ("lighting", "target_relocation") and su["post"] == "none":
+                    v2ref[("010000", su["variation"], False, 1.0)] = f"{su['success_rate']:.2f} (7.5k)"
+        for su in e3["suites"]:
+            st = su["label"].split("/")[-1]; ci = su["ci95_wilson_success"]
+            what = f"{int(st)/1000:g}k " + su["variation"] + (" + camera blanked" if su.get("blank_image") else "") + (f" + gain {su['gain']}" if su.get("gain", 1.0) != 1.0 else "")
+            ref = v2ref.get((st, su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0)), "")
+            ref = f"{ref:.2f}" if isinstance(ref, float) else ref
+            lines.append(f"| {what} | **{su['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {su['safety']:.2f} | {su['progress_mean']:.2f} | {100*su['rejected_fraction_mean']:.0f} % | {su['cmd_xyz_linf_mean']:.4f} | {ref} |")
+        sel = e3["selection"]
+        lines += ["", f"Selected checkpoint (R11): **{int(sel['selected'])/1000:g}k** at {sel['success_rate']:.2f}; inside the best interval: {', '.join(f'{int(x)/1000:g}k' for x in sel['within_ci'])}. Training: {e3['train_record']['steps_per_s']} steps/s, {e3['train_record']['wall_s']/3600:.2f} h.", "", "- **" + e3["reading"] + "**", ""]
+        v3_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith("Suite") else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+        v3_html = "<h2>Session C: baseline trained on v3, same frozen suite</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><p>" + bold(esc(lines[-4])) + "</p><div class=\"callout\">" + bold(esc("**" + e3["reading"] + "**")) + "</div>"
     imported_md, imported_html = "", ""
     if magnitudes or compares or v2rows:
         lines = ["## 3b. Imported Kaggle probe results (session A, per-episode files)", ""]
@@ -340,7 +375,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{probes_md}{imported_md}## 4. Pending when this report was written
+{probes_md}{v3_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -386,7 +421,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{probes_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{v3_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """
