@@ -95,7 +95,7 @@ class SmolVLAPolicy:
 
     name = "smolvla"
 
-    def __init__(self, checkpoint: str, representation: str = "identity", instruction: str = "touch the red target", blank_image: bool = False, device: str | None = None) -> None:
+    def __init__(self, checkpoint: str, representation: str = "identity", instruction: str = "touch the red target", blank_image: bool = False, device: str | None = None, seed: int | None = 0) -> None:
         import torch
         from lerobot.policies.factory import make_pre_post_processors
         from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy as _Policy
@@ -110,9 +110,12 @@ class SmolVLAPolicy:
         self.instruction = instruction
         self.blank_image = blank_image
         self.chunk_size = int(self.policy.config.chunk_size)
+        self.seed = seed
 
-    def reset(self, spec) -> None:  # noqa: ARG002
+    def reset(self, spec) -> None:
         self.policy.reset()
+        if self.seed is not None:  # flow-matching sampling is stochastic: seed per episode so repeated suites are comparable (SDD §13)
+            self.torch.manual_seed(int(self.seed) + int(spec.seed))
 
     def act(self, env, observation) -> np.ndarray:  # noqa: ARG002
         torch = self.torch
@@ -140,7 +143,7 @@ def make_policy(name: str, env, args) -> object:
     if name == "smolvla":
         if not args.checkpoint:
             raise SystemExit("--checkpoint is required for smolvla")
-        return SmolVLAPolicy(str(args.checkpoint), args.representation, blank_image=args.blank_image, device=args.device)
+        return SmolVLAPolicy(str(args.checkpoint), args.representation, blank_image=args.blank_image, device=args.device, seed=args.sampling_seed)
     raise SystemExit(f"unknown policy {name!r}")
 
 
@@ -248,7 +251,7 @@ def evaluate(args) -> dict:
         "embodiment": "ur5e+2f85",
         "schedule": {"manifest": str(Path(args.manifest).relative_to(ROOT)) if str(args.manifest).startswith(str(ROOT)) else str(args.manifest), "recipe": manifest["recipe"], "split": "evaluation", "base_seed": manifest["splits"]["evaluation"]["base_seed"], "episodes": len(specs), "cells": manifest["cells"], "variation": args.variation, "fps": FPS, "max_frames": MAX_FRAMES},
         "limits": {"xyz_step_m": 0.01, "rpy_step_rad": 0.05},
-        "policy": {"name": args.policy, "label": label, "checkpoint": str(args.checkpoint) if args.checkpoint else None, "representation": args.representation, "n_action_steps": args.n_action_steps if args.policy == "smolvla" else 1, "gain": args.gain, "blank_image": bool(args.blank_image)},
+        "policy": {"name": args.policy, "label": label, "checkpoint": str(args.checkpoint) if args.checkpoint else None, "representation": args.representation, "n_action_steps": args.n_action_steps if args.policy == "smolvla" else 1, "gain": args.gain, "blank_image": bool(args.blank_image), "sampling_seed": args.sampling_seed},
         label: aggregate(rows),
         "episodes": {label: rows},
         "wall_s": round(wall, 1),
@@ -275,6 +278,7 @@ def main() -> int:
     parser.add_argument("--gain", type=float, default=1.0)
     parser.add_argument("--blank-image", action="store_true")
     parser.add_argument("--device", default=None)
+    parser.add_argument("--sampling-seed", type=int, default=0, help="seed for the policy's flow-matching noise (added to the episode seed); -1 = unseeded")
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--label", default=None)
     parser.add_argument("--out", type=Path, default=None)
@@ -288,6 +292,8 @@ def main() -> int:
         args.n_action_steps = args.n_action_steps or config["n_action_steps"]
     args.representation = args.representation or "identity"
     args.n_action_steps = args.n_action_steps or DEFAULT_N_ACTION_STEPS
+    if args.sampling_seed is not None and args.sampling_seed < 0:
+        args.sampling_seed = None
     summary = evaluate(args)
     out = args.out or default_out(args)
     out.parent.mkdir(parents=True, exist_ok=True)
