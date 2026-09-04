@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Zip one dataset recipe (train + evaluation, no leftover images/) for a one-time upload
+# Zip one dataset recipe (train + evaluation, no leftover images/) for a one-time upload; a browser upload capped at 10 MB per file can use `split -b 9M -d -a 2 <zip> <dir>/<name>.zip.part` + `sha256sum > SHA256SUMS` (the notebooks re-join the parts)
 # as a private Kaggle dataset named vla-bed-<recipe>. Prints size and sha256.
 #   sim/vla-bed/kaggle/make_bundle.sh [v2|v3]
 set -euo pipefail
