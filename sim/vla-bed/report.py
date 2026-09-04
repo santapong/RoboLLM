@@ -102,6 +102,7 @@ def main() -> int:
     pol = kg["nominal_010000_100ep"]; quick = kg["quick_check_010000_50ep"]; tr = kg["train_record"]; sm = kg["smoke_v5"]
     blank = kg.get("blank_image_010000_100ep"); gain = kg.get("gain061_010000_100ep")
     prog = kg.get("progress")
+    cam = kg.get("camera_shift_010000_100ep"); sel = kg.get("selection")
     curve = sorted((int(k.split("_")[1]), v) for k, v in kg.items() if k.startswith("nominal_") and k.endswith("_100ep"))
     lib_k, lib_n = round(p2b["pc_success"] / 100 * p2b["n_episodes"]), p2b["n_episodes"]
     lib_ci = wilson(lib_k, lib_n)
@@ -119,6 +120,7 @@ def main() -> int:
          ("same checkpoint, quick check, n = 50", quick["success_rate"], tuple(quick["ci95_wilson_success"]), "#5FB0B7")]
         + ([("same checkpoint, commands × 0.61 (gain probe)", gain["success_rate"], tuple(gain["ci95_wilson_success"]), "#9A6A12")] if gain else [])
         + ([("same checkpoint, camera blanked (vision probe)", blank["success_rate"], tuple(blank["ci95_wilson_success"]), red)] if blank else [])
+        + ([("same checkpoint, camera shifted (variation)", cam["success_rate"], tuple(cam["ci95_wilson_success"]), "#7A5C99")] if cam else [])
         + [("LIBERO-Spatial calibration, n = 50", lib_k / lib_n, lib_ci, amber)],
         note="LIBERO row: lerobot/smolvla_libero evaluated on this CPU; dashed line = the published SmolVLA-0.45B score.", marker=(0.90, "published 0.90"))
     fam = pol["per_family_success"]; n = pol["per_family_n"]
@@ -169,17 +171,46 @@ def main() -> int:
                         f"[{100*cb['ci95_wilson_success'][0]:.0f}–{100*cb['ci95_wilson_success'][1]:.0f} %] against the final checkpoint's {100*pol['success_rate']:.0f} %; the intervals overlap, so this is not a proven "
                         f"decline, but the R11 rule picks by closed-loop success and would select {c_best[0]/1000:g}k today. Both checkpoints reject about a third of their "
                         f"steps at S2, so the action-scale problem is not a late-training artefact.")
+    if prog and prog.get("finished"):
+        prog_md = ("## 0. Evaluation run: finished" + chr(10) + chr(10) + prog["notebook"] + " finished at " + prog["finished"] + " after " + str(prog["elapsed_h"]) + " h · "
+                   + str(len(prog["done"])) + " suites ran; cut by the 7.5 h budget: " + ", ".join(prog["queued"]) + chr(10) + chr(10)
+                   + chr(10).join("- done: " + x for x in prog["done"]) + chr(10) + "- output: " + prog["output"] + chr(10))
+        prog_html = ("<div class=\"callout\"><strong>Evaluation finished</strong> " + esc(prog["finished"]) + " after " + esc(str(prog["elapsed_h"])) + " h · " + esc(str(len(prog["done"])))
+                     + " suites ran · cut by the budget: " + esc("; ".join(prog["queued"])) + "<br>done: " + esc("; ".join(prog["done"])) + "<br>output: " + esc(prog["output"]) + "</div>")
+        status_txt = ("Phase 4 baseline trained on a free Kaggle T4 and evaluated closed-loop: " + str(len(prog["done"])) + " of " + str(len(prog["done"]) + len(prog["queued"]))
+                      + " suites ran inside the 7.5 h budget (" + " and ".join(q.split(" ", 1)[1] for q in prog["queued"]) + " deferred to the next session); packed JSONs not yet imported.")
+        chips_extra = ("<span class=\"chip\">evaluation <b>complete · " + esc(str(len(prog["done"]))) + " of " + esc(str(len(prog["done"]) + len(prog["queued"]))) + " suites</b></span>"
+                       + ("<span class=\"chip\">selected checkpoint <b>" + esc(f"{int(sel['selected'])/1000:g}k · {sel['success_rate']:.2f}") + "</b></span>" if sel else ""))
+    elif prog:
+        prog_md = ("## 0. Live progress of the evaluation run" + chr(10) + chr(10) + "Updated " + prog["updated"] + " · " + prog["notebook"] + " · started " + prog["started"] + " · " + str(prog["elapsed_h"])
+                   + " h elapsed · **ETA " + prog["eta"] + "**" + chr(10) + chr(10) + chr(10).join("- done: " + x for x in prog["done"]) + chr(10) + "- running: " + prog["running"] + chr(10)
+                   + chr(10).join("- queued: " + x for x in prog["queued"]) + chr(10) + chr(10).join("- expected: " + k + " at " + v for k, v in prog.get("milestones", {}).items()) + chr(10))
+        prog_html = ("<div class=\"callout\"><strong>Live progress</strong> (updated " + esc(prog["updated"]) + "): " + esc(str(len(prog["done"]))) + " of " + esc(str(len(prog["done"]) + 1 + len(prog["queued"])))
+                     + " suites done · running <b>" + esc(prog["running"]) + "</b> · <b>ETA " + esc(prog["eta"]) + "</b><br>done: " + esc("; ".join(prog["done"])) + "<br>queued: " + esc("; ".join(prog["queued"]))
+                     + ("<br>expected: " + esc("; ".join(k + " at " + v for k, v in prog["milestones"].items())) if prog.get("milestones") else "") + "</div>")
+        status_txt = "Phase 4 baseline trained on a free Kaggle T4 and its evaluation in progress (learning curve and variations pending)."
+        chips_extra = "<span class=\"chip warn\">evaluation <b>still running</b></span>"
+    else:
+        prog_md = prog_html = chips_extra = ""; status_txt = "Phase 4 baseline trained on a free Kaggle T4."
+    cam_row = ""; cam_bullet = ""
+    if cam:
+        cr = cam["faults"]["rejected"]; cm = cam["faults"]["measured"].get("S6_self_collision", 0)
+        cam_row = (f"| **Variation camera_shift, 10k checkpoint, n = 100** | **success {cam['success_rate']:.2f}**, progress {cam['progress_mean']:.2f}, VSI {cam['vsi']:.2f}, {cm} self-collision steps measured, rejections S2 {cr.get('S2_xyz_step', 0)} / S3 {cr.get('S3_rpy_step', 0)} / S4 {cr.get('S4_workspace', 0)} "
+                   f"| Wilson [{cam['ci95_wilson_success'][0]:.3f}, {cam['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-eval` v2 |" + chr(10))
+        cam_bullet = (f"- **A shifted camera breaks it.** With the camera moved, success falls from {100*pol['success_rate']:.0f} % to {100*cam['success_rate']:.0f} % [{100*cam['ci95_wilson_success'][0]:.0f}–{100*cam['ci95_wilson_success'][1]:.0f} %], progress from {pol['progress_mean']:.2f} to {cam['progress_mean']:.2f}, "
+                      f"and the arm self-collides in {cm} steps where the nominal suite had none; the wrapper rejects far more workspace exits (S4 {cr.get('S4_workspace', 0)} vs {rej['S4_workspace']}). "
+                      f"A policy trained on one camera pose learned the picture, not the geometry — the diversity rule (R10) applies before any more demonstrations are recorded.")
+    sel_row = (f"| **Checkpoint selection (R11: by closed-loop success)** | selected **{int(sel['selected'])/1000:g}k** at {sel['success_rate']:.2f}; checkpoints inside the best interval: {', '.join(f'{int(x)/1000:g}k' for x in sel['within_ci'])} | — | Kaggle `vla-bed-eval` v2 |" + chr(10)) if sel else ""
     b_sr = blank["success_rate"] if blank else float("nan"); b_pr = blank["progress_mean"] if blank else float("nan"); b_hi = blank["ci95_wilson_success"][1] if blank else float("nan")
     md = f"""# UR5e VLA bed — experiment report ({a.date})
 
 Status of the experiment branch `experiment/ur5e-vla-bed` at report time: Phases 0–3 verified,
-LIBERO calibration done, Phase 4 baseline trained on a free Kaggle T4 and its evaluation
-in progress (learning curve and variations pending). **Money spent: $0.00.**
+LIBERO calibration done, {status_txt} **Money spent: $0.00.**
 Kaggle GPU quota used ≈ 12 h of 30 (smokes 0.3 h, training 3.9 h, evaluation ≈ 8 h).
 Every number below comes from a committed JSON under `results/` or from the Kaggle logs
 transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 
-{"## 0. Live progress of the evaluation run" + chr(10) + chr(10) + "Updated " + prog["updated"] + " · " + prog["notebook"] + " · started " + prog["started"] + " · " + str(prog["elapsed_h"]) + " h elapsed · **ETA " + prog["eta"] + "**" + chr(10) + chr(10) + chr(10).join("- done: " + x for x in prog["done"]) + chr(10) + "- running: " + prog["running"] + chr(10) + chr(10).join("- queued: " + x for x in prog["queued"]) + chr(10) + chr(10).join("- expected: " + k + " at " + v for k, v in prog.get("milestones", {}).items()) + chr(10) if prog else ""}
+{prog_md}
 ## 1. What was measured, in one table
 
 | Measurement | Result | Interval / uncertainty | Where |
@@ -196,7 +227,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 | **Learning curve, nominal, n = 100 per checkpoint** | {curve_txt} | Wilson {curve_ci} | Kaggle `vla-bed-eval` v2 |
 | **Gain probe: same checkpoint, every command × 0.61, n = 100** | **success {g_sr:.2f}**, progress {g_pr:.2f}, safety {g_sf:.2f}, rejections S4 {g_s4} / S3 {g_s3} / S2 0 | Wilson [{g_lo:.3f}, {g_hi:.3f}] | Kaggle `vla-bed-eval` v2 |
 | **Vision probe: same checkpoint, camera blanked, n = 100** | success {b_sr:.2f}, progress {b_pr:.2f}, all episodes time out; 66 rejections | Wilson [0, {b_hi:.3f}] | Kaggle `vla-bed-eval` v2 |
-| Rejected commands, baseline 10k (per 100 policy steps) | S2 {100*rej['S2_xyz_step']/steps:.1f}, S3 {100*rej['S3_rpy_step']/steps:.1f}, S4 {100*rej['S4_workspace']/steps:.1f} | over {int(steps):,} steps | same |
+{cam_row}{sel_row}| Rejected commands, baseline 10k (per 100 policy steps) | S2 {100*rej['S2_xyz_step']/steps:.1f}, S3 {100*rej['S3_rpy_step']/steps:.1f}, S4 {100*rej['S4_workspace']/steps:.1f} | over {int(steps):,} steps | same |
 | Real UR5 replay on the sim UR5e (5 OXE episodes) | state tracking 0.7–1.2 cm mean, ≤ 0.4 cm final; command replay 2.2–9.3 cm with the measured 0.61 gain | alignment Rz 90° + 0.284 m | `results/p3/santapong/summary.json` |
 | Datasets recorded | v2: {v2['train']['episodes']} train / {v2['evaluation']['episodes']} held-out episodes, {v2['train']['frames']:,} + {v2['evaluation']['frames']:,} frames, 100 % expert success | — | `results/p2/santapong/` |
 
@@ -233,6 +264,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   realisation — and success doubles to 28 % with 86 % safe episodes and no per-step rejections: the
   policy's steps are about 1.6× its training labels, the wrapper's holds were the bottleneck, and
   the controller-amplification effect of R11 is visible. Fixing the action scale is the next change.
+{cam_bullet}
 - **Repeated suites of one checkpoint differ.** 26 % on a 50-episode check versus 13 % on the
   100-episode suite: SmolVLA samples its action chunk from noise, so a suite is a sample of
   the policy, not a deterministic property. The evaluator now seeds that noise per episode.
@@ -244,8 +276,8 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
-Each pending suite is 100 episodes ≈ 1.1 h on Kaggle's CPU; the run is bounded at 7.5 h and
-drops the tail. The next report regenerates from the packed JSONs once they are imported
+Each suite is 100 episodes ≈ 1.1 h on Kaggle's CPU; the run was bounded at 7.5 h and
+dropped the tail. The next report regenerates from the packed JSONs once they are imported
 (`gpu/kaggle_import.sh`).
 
 Generated by `sim/vla-bed/report.py` from the committed results.
@@ -281,7 +313,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="eyebrow">RoboLLM · sim/vla-bed · experiment/ur5e-vla-bed · {a.date}</div>
 <h1>UR5e Bed Experiment Report</h1>
 <p class="lede">Everything measured so far on the UR5e VLA sim bed: the calibration of the evaluator, the real-to-sim bridge, the free-GPU fine-tune of SmolVLA, and the baseline policy's first evaluation against scripted controls. Every number comes from a committed result file.</p>
-{"<div class=\"callout\"><strong>Live progress</strong> (updated " + esc(prog["updated"]) + "): " + esc(str(len(prog["done"]))) + " of " + esc(str(len(prog["done"]) + 1 + len(prog["queued"]))) + " suites done · running <b>" + esc(prog["running"]) + "</b> · <b>ETA " + esc(prog["eta"]) + "</b><br>done: " + esc("; ".join(prog["done"])) + "<br>queued: " + esc("; ".join(prog["queued"])) + ("<br>expected: " + esc("; ".join(k + " at " + v for k, v in prog["milestones"].items())) if prog.get("milestones") else "") + "</div>" if prog else ""}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span><span class="chip warn">evaluation <b>still running</b></span></div>
+{prog_html}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span>{chips_extra}</div>
 <h2>Measurements</h2>
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}

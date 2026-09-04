@@ -4,7 +4,7 @@
 > [Home](../../README.md) · [Specification](SDD.md) · [References](REFERENCES.md) · [Notices](NOTICES.md) · [B1 runbook](../../examples/mujoco/B1.md) · [Documentation](../../docs/README.md)
 
 **Status: Phases 0–3 Verified** (P0–P1 on the Pi and the workstation, P2–P3 on the
-workstation, 3–4 Sep 2026); Phase 4's baseline is training free on Kaggle; the P2b LIBERO calibration is done. The [specification](SDD.md) was written first, on
+workstation, 3–4 Sep 2026); Phase 4's baseline was trained and evaluated free on Kaggle (selected checkpoint 7.5k, 0.20 [0.133, 0.289] closed-loop success; charts in [`results/REPORT-2026-09-04.md`](results/REPORT-2026-09-04.md)); the P2b LIBERO calibration is done. The [specification](SDD.md) was written first, on
 purpose, so every number below had a gate it was measured against.
 
 ## What it is
@@ -159,7 +159,7 @@ produces identical episodes.
 | P1 | **Verified** — oracle and noisy expert both (SR 100, Safety 100, SBU 0, VSI 0) over 100 episodes on 20 IK-verified cells, identical on both machines; `results/p1/` |
 | P2 | **Verified** — v1, v2 (σ 0.5×) and v2b (σ 0.25×) valid, 100 % success, 0 clean-label faults over 29,140 frames; SmolVLA-base 36.0 s per chunk on this CPU; `results/p2/` |
 | P3 | **Verified** — five real UR5 episodes replayed on the sim UR5e: state tracking ≤ 1.2 cm mean / ≤ 0.4 cm final; the action frame turned out to be a rotated teleop frame with a 0.61 controller gain, measured from the data; `configs/oxe_ur5_map.yaml`, `results/p3/` |
-| P4 | **Prepared, awaiting the owner's go** — free pre-checks passed on both machines (see below); the rented session is scripted in `GPU-GATE.md` |
+| P4 | **Baseline ran on Kaggle for $0 (4 Sep 2026)** — 10k steps, 4 checkpoints, 7 evaluation suites in 7.8 h; selected 7.5k at 0.20 [0.133, 0.289]; camera_shift 0.04; packed JSONs not yet imported (`gpu/kaggle_import.sh`); variants gripper / chunkwise / plastic wait for quota and the action-scale fix |
 | P5 | closed-loop success rate with confidence intervals; cross-embodiment row against B1 |
 
 Full table, limits, interfaces and the honesty rules: [`SDD.md`](SDD.md).

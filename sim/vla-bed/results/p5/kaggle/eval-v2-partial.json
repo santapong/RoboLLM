@@ -87,8 +87,8 @@
     "peak_rss_mb": 4599.9
   },
   "pending": [
-    "variation camera_shift on 010000 (running; fits the 7.5 h budget)",
-    "lighting and target_relocation (cut by the 7.5 h budget; next Kaggle session)"
+    "download vla-bed-baseline-eval.zip from the Kaggle Output tab and run sim/vla-bed/gpu/kaggle_import.sh <zip> 4118f3f718d5cac2b40a64372acafcb994105f0b55d7e6efbe3d1fe8645e9737 (replaces these transcribed numbers with the packed JSONs)",
+    "lighting and target_relocation variations on the 10k checkpoint (cut by the 7.5 h budget; next Kaggle session, after the evaluator speed-ups)"
   ],
   "blank_image_010000_100ep": {
     "n": 100,
@@ -150,22 +150,23 @@
     "reading": "executing 0.61 x the commanded delta (the real UR5's measured realisation) doubles success (0.13 -> 0.28) and removes the S2 rejections: the policy's steps are ~1.6x larger than its training labels; R11 amplification effect observed"
   },
   "progress": {
-    "updated": "2026-09-04 15:10 ICT",
+    "updated": "2026-09-04 16:21 ICT",
     "notebook": "santapongsondhi/vla-bed-eval v2",
     "started": "≈ 08:25 ICT (container clock; submitted 07:47 ICT)",
-    "elapsed_h": 6.77,
+    "elapsed_h": 7.81,
     "done": [
       "010000 nominal (13 %)",
       "010000 blank-image probe (0 %)",
       "010000 gain-0.61 probe (28 %)",
       "007500 nominal (20 %)",
       "005000 nominal (13 %)",
-      "002500 nominal (9 %)"
+      "002500 nominal (9 %)",
+      "010000 camera_shift (4 %)"
     ],
-    "running": "010000 camera_shift",
+    "running": null,
     "queued": [
-      "010000 lighting (will be cut by the 7.5 h budget)",
-      "010000 target_relocation (will be cut by the 7.5 h budget)"
+      "010000 lighting",
+      "010000 target_relocation"
     ],
     "suite_wall_s": [
       3918,
@@ -173,13 +174,14 @@
       3497,
       3829,
       4013,
-      4069
+      4069,
+      4262
     ],
-    "milestones": {
-      "010000 camera_shift": "≈ 16:08 ICT",
-      "finish + pack": "≈ 16:12 ICT"
-    },
-    "eta": "≈ 16:12 ICT (± 15 min)"
+    "milestones": {},
+    "eta": "finished",
+    "finished": "2026-09-04 16:14 ICT",
+    "status": "Successfully ran in 28127.5s",
+    "output": "vla-bed-baseline-eval.zip (JSON results only) in the notebook's Output tab; sha256 4118f3f7…8645e9737; import with gpu/kaggle_import.sh"
   },
   "nominal_007500_100ep": {
     "policy": "baseline/007500",
@@ -285,5 +287,58 @@
     "peak_rss_mb": 4458.9,
     "log_time_s": 23832.9,
     "transcribed_from": "Kaggle vla-bed-eval v2 log, 4 Sep 2026 15:12 ICT"
+  },
+  "camera_shift_010000_100ep": {
+    "policy": "baseline/010000",
+    "variation": "camera_shift",
+    "n": 100,
+    "success_rate": 0.04,
+    "ci95_wilson_success": [
+      0.01566330388275538,
+      0.09837071498472119
+    ],
+    "safety": 0.0,
+    "sbu": 0.04,
+    "vsi": 0.2331,
+    "progress_mean": 0.12,
+    "episode_len_mean": 98.4,
+    "per_family_success": {
+      "front_high": 0.0,
+      "front_low": 0.0,
+      "left": 0.1,
+      "near": 0.05,
+      "right": 0.05
+    },
+    "per_family_n": 20,
+    "faults": {
+      "rejected": {
+        "S3_rpy_step": 574,
+        "S2_xyz_step": 1556,
+        "S4_workspace": 742
+      },
+      "measured": {
+        "S6_self_collision": 268
+      }
+    },
+    "wall_s": 4261.9,
+    "peak_rss_mb": 4463.1,
+    "log_time_s": 28119.9,
+    "transcribed_from": "Kaggle vla-bed-eval v2 log, 4 Sep 2026 16:25 ICT"
+  },
+  "selection": {
+    "run": "baseline",
+    "selected": "007500",
+    "success_rate": 0.2,
+    "within_ci": [
+      "007500"
+    ],
+    "rule": "R11: by closed-loop success on the nominal suite, ties by progress then final error"
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-eval.zip",
+    "sha256": "4118f3f718d5cac2b40a64372acafcb994105f0b55d7e6efbe3d1fe8645e9737",
+    "kaggle_output_total": "8.24 GB (the unpacked training checkpoints; only the eval zip is needed)",
+    "import": "sim/vla-bed/gpu/kaggle_import.sh <zip> <sha256>",
+    "imported": false
   }
 }

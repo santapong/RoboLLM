@@ -1,6 +1,6 @@
 # GPU gate — Phase 4 fine-tune of SmolVLA on the UR5e bed
 
-**Status: Route K — baseline TRAINED on Kaggle** (`santapongsondhi/vla-bed-train` v1: float16 VLM, batch 32, 10k steps, checkpoints at 2.5k/5k/7.5k/10k, 3 h 56 min wall, output `vla-bed-baseline-output.zip` 3.52 GB) **and the full-suite EVALUATION is running** (`santapongsondhi/vla-bed-eval` v1, started 4 Sep 2026 ≈ 07:40 ICT, inputs: dataset + the training notebook's output). Nothing billed; Kaggle quota used ≈ 4.3 h of 30. This is the priced
+**Status: Route K — baseline TRAINED and EVALUATED on Kaggle, $0** (`santapongsondhi/vla-bed-train` v1: float16 VLM, batch 32, 10k steps, checkpoints at 2.5k/5k/7.5k/10k, 3 h 56 min wall, output `vla-bed-baseline-output.zip` 3.52 GB; `santapongsondhi/vla-bed-eval` v2: 7 of 9 suites in 7.81 h — lighting and target_relocation cut by the 7.5 h budget — selected checkpoint 7.5k at 0.20 [0.133, 0.289], output `vla-bed-baseline-eval.zip` sha256 4118f3f7…8645e9737, **import pending** via `gpu/kaggle_import.sh`; numbers transcribed in `results/p5/kaggle/eval-v2-partial.json`, charts in `results/REPORT-2026-09-04.md`). Nothing billed; Kaggle quota used ≈ 12 h of 30 this week. This is the priced
 go/no-go for the first spend of the bed. Everything free has been run; the
 rented session is a script; the smoke step measures the real cost before the
 priced command starts. Nothing below is executed without `--execute`.

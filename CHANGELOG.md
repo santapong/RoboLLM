@@ -8,6 +8,37 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-04 — UR5e VLA sim bed: Phase 4 baseline trained and evaluated on Kaggle ($0)
+
+### Added
+
+- `sim/vla-bed/kaggle/eval.ipynb` — full frozen-suite evaluation of a training run's
+  checkpoints as its own Kaggle session (value-ordered: final checkpoint, its blank-image
+  and gain-0.61 probes, the earlier checkpoints, then the variations; `MAX_HOURS` guard;
+  `gpu/select_checkpoint.py`; packs `vla-bed-<run>-eval.zip`).
+- `sim/vla-bed/report.py` — regenerates `results/REPORT-<date>.md` and seven hand-drawn
+  SVG charts (success rates with Wilson whiskers, learning curve, per-family, safety
+  rejections, Kaggle timings, OXE replay tracking, LIBERO per task) from the committed
+  JSONs; `--html` writes the single-page report. Kaggle numbers transcribed from the logs
+  live in `results/p5/kaggle/eval-v2-partial.json` until the packed zip is imported.
+- `sim/vla-bed/evaluate.py` seeds the policy's action sampling per episode
+  (`--sampling-seed`); two suites of one checkpoint had differed by 13 points.
+
+### Results (Kaggle T4, free, 4 Sep 2026)
+
+- Baseline `baseline` run: 10k steps at batch 32 with the frozen VLM cast to float16,
+  0.8745 steps/s, 3.19 h, 4.87 GB VRAM, checkpoints at 2.5k/5k/7.5k/10k.
+- Closed-loop success on the 100 held-out seeds: 2.5k 0.09, 5k 0.13, 7.5k **0.20
+  [0.133, 0.289]**, 10k 0.13 [0.078, 0.210]; selected checkpoint 7.5k (by success, R11).
+- Probes on the 10k checkpoint: camera blanked 0.00 (the policy uses vision); commands
+  scaled by the measured 0.61 gain 0.28 [0.201, 0.375] with safety 0.86 and no per-step
+  rejections (the policy's steps are about 1.6× its labels; the wrapper's holds were the
+  bottleneck); camera_shift 0.04 [0.016, 0.098] with 268 self-collision steps.
+- Controls: scripted oracle 1.00, do-nothing 0.00; LIBERO-Spatial calibration 0.82 with the
+  published 0.90 inside the interval. Money spent: $0; Kaggle quota ≈ 12 h of 30.
+- Evaluation is CPU-bound on Kaggle (≈ 1.1 h per 100 episodes); lighting and
+  target_relocation were cut by the 7.5 h budget. Packed JSONs not yet imported.
+
 ## 2026-09-04 — UR5e VLA sim bed: Phase 4 prepared (priced GPU gate, zero spend so far)
 
 ### Added
