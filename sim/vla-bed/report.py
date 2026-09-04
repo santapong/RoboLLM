@@ -95,6 +95,7 @@ def main() -> int:
     kg = load(R / "p5" / "kaggle" / "eval-v2-partial.json")
     pol = kg["nominal_010000_100ep"]; quick = kg["quick_check_010000_50ep"]; tr = kg["train_record"]; sm = kg["smoke_v5"]
     blank = kg.get("blank_image_010000_100ep"); gain = kg.get("gain061_010000_100ep")
+    prog = kg.get("progress")
     lib_k, lib_n = round(p2b["pc_success"] / 100 * p2b["n_episodes"]), p2b["n_episodes"]
     lib_ci = wilson(lib_k, lib_n)
     libero_per_task = [5, 5, 5, 5, 4, 0, 4, 4, 4, 5]  # from results/p2b/full.log (final line per task, de-duplicated)
@@ -156,6 +157,7 @@ Kaggle GPU quota used ≈ 12 h of 30 (smokes 0.3 h, training 3.9 h, evaluation �
 Every number below comes from a committed JSON under `results/` or from the Kaggle logs
 transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 
+{"## 0. Live progress of the evaluation run" + chr(10) + chr(10) + "Updated " + prog["updated"] + " · " + prog["notebook"] + " · started " + prog["started"] + " · " + str(prog["elapsed_h"]) + " h elapsed · **ETA " + prog["eta"] + "**" + chr(10) + chr(10) + chr(10).join("- done: " + x for x in prog["done"]) + chr(10) + "- running: " + prog["running"] + chr(10) + chr(10).join("- queued: " + x for x in prog["queued"]) + chr(10) if prog else ""}
 ## 1. What was measured, in one table
 
 | Measurement | Result | Interval / uncertainty | Where |
@@ -255,7 +257,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="eyebrow">RoboLLM · sim/vla-bed · experiment/ur5e-vla-bed · {a.date}</div>
 <h1>UR5e Bed Experiment Report</h1>
 <p class="lede">Everything measured so far on the UR5e VLA sim bed: the calibration of the evaluator, the real-to-sim bridge, the free-GPU fine-tune of SmolVLA, and the baseline policy's first evaluation against scripted controls. Every number comes from a committed result file.</p>
-<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span><span class="chip warn">evaluation <b>still running</b></span></div>
+{"<div class=\"callout\"><strong>Live progress</strong> (updated " + esc(prog["updated"]) + "): " + esc(str(len(prog["done"]))) + " of " + esc(str(len(prog["done"]) + 1 + len(prog["queued"]))) + " suites done · running <b>" + esc(prog["running"]) + "</b> · <b>ETA " + esc(prog["eta"]) + "</b><br>done: " + esc("; ".join(prog["done"])) + "<br>queued: " + esc("; ".join(prog["queued"])) + "</div>" if prog else ""}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span><span class="chip warn">evaluation <b>still running</b></span></div>
 <h2>Measurements</h2>
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}

@@ -148,5 +148,30 @@
     "wall_s": 3496.9,
     "peak_rss_mb": 4462.0,
     "reading": "executing 0.61 x the commanded delta (the real UR5's measured realisation) doubles success (0.13 -> 0.28) and removes the S2 rejections: the policy's steps are ~1.6x larger than its training labels; R11 amplification effect observed"
+  },
+  "progress": {
+    "updated": "2026-09-04 13:33 ICT",
+    "notebook": "santapongsondhi/vla-bed-eval v2",
+    "started": "2026-09-04 07:47 ICT",
+    "elapsed_h": 3.64,
+    "done": [
+      "010000 nominal (13 %)",
+      "010000 blank-image probe (0 %)",
+      "010000 gain-0.61 probe (28 %)"
+    ],
+    "running": "007500 nominal",
+    "queued": [
+      "005000 nominal",
+      "002500 nominal",
+      "010000 camera_shift",
+      "010000 lighting",
+      "010000 target_relocation (will be cut by the 7.5 h budget)"
+    ],
+    "suite_wall_s": [
+      3918,
+      4222,
+      3497
+    ],
+    "eta": "\u2248 16:00 ICT (\u00b1 30 min)"
   }
 }
