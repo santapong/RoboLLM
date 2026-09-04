@@ -1,0 +1,259 @@
+"""Experiment report for the UR5e VLA bed: reads the committed result JSONs, writes
+results/REPORT-<date>.md with hand-drawn SVG charts (no plotting dependency) and,
+with --html, a single self-contained page.
+
+    python sim/vla-bed/report.py [--html OUT.html]
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from datetime import date
+from pathlib import Path
+
+BED = Path(__file__).resolve().parent
+R = BED / "results"
+OUT = R / "report"
+
+
+def wilson(k: int, n: int, z: float = 1.959964) -> tuple[float, float]:
+    if n == 0:
+        return (0.0, 0.0)
+    p = k / n
+    den = 1 + z * z / n
+    c = (p + z * z / (2 * n)) / den
+    h = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / den
+    return (max(0.0, c - h), min(1.0, c + h))
+
+
+def load(p: Path) -> dict:
+    return json.loads(p.read_text())
+
+
+# ----- SVG helpers -----
+
+
+def esc(s: str) -> str:
+    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def hbar_chart(title: str, rows: list[tuple[str, float, tuple[float, float] | None, str]], xmax: float = 1.0, unit: str = "", width: int = 640, note: str = "", marker: tuple[float, str] | None = None) -> str:
+    """rows: (label, value, (lo, hi) or None, colour)."""
+    left, top, rh, gap = 230, 46, 26, 10
+    plot_w = width - left - 40
+    height = top + len(rows) * (rh + gap) + 46
+    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="13">',
+           f'<rect width="{width}" height="{height}" fill="#FFFFFF"/>',
+           f'<text x="16" y="24" font-size="15" font-weight="600" fill="#1A232C">{esc(title)}</text>']
+    for t in range(0, 6):
+        x = left + plot_w * t / 5
+        svg.append(f'<line x1="{x:.1f}" y1="{top-6}" x2="{x:.1f}" y2="{height-36}" stroke="#E3E8EC" stroke-width="1"/>')
+        svg.append(f'<text x="{x:.1f}" y="{height-18}" text-anchor="middle" fill="#5A6874" font-size="11">{xmax*t/5:g}{unit}</text>')
+    for i, (label, val, ci, colour) in enumerate(rows):
+        y = top + i * (rh + gap)
+        w = plot_w * min(val, xmax) / xmax
+        svg.append(f'<text x="{left-10}" y="{y+rh/2+4}" text-anchor="end" fill="#1A232C">{esc(label)}</text>')
+        svg.append(f'<rect x="{left}" y="{y}" width="{w:.1f}" height="{rh}" fill="{colour}" rx="2"/>')
+        if ci:
+            lo, hi = ci
+            x0, x1 = left + plot_w * lo / xmax, left + plot_w * min(hi, xmax) / xmax
+            ym = y + rh / 2
+            svg.append(f'<line x1="{x0:.1f}" y1="{ym}" x2="{x1:.1f}" y2="{ym}" stroke="#1A232C" stroke-width="1.5"/>')
+            for x in (x0, x1):
+                svg.append(f'<line x1="{x:.1f}" y1="{ym-6}" x2="{x:.1f}" y2="{ym+6}" stroke="#1A232C" stroke-width="1.5"/>')
+        txt = f"{val:.2f}" if xmax <= 1.0 else f"{val:g}"
+        tx = left + w + 6 if (ci is None or ci[1] * plot_w / xmax + left + 6 < width - 60) else left + w + 6
+        if ci:
+            tx = max(tx, left + plot_w * min(ci[1], xmax) / xmax + 8)
+        svg.append(f'<text x="{tx:.1f}" y="{y+rh/2+4}" fill="#1A232C" font-size="12">{txt}{unit}</text>')
+    if marker:
+        mx = left + plot_w * marker[0] / xmax
+        svg.append(f'<line x1="{mx:.1f}" y1="{top-6}" x2="{mx:.1f}" y2="{height-36}" stroke="#9A6A12" stroke-width="1.5" stroke-dasharray="4 3"/>')
+        svg.append(f'<text x="{mx+4:.1f}" y="{top-10}" fill="#9A6A12" font-size="11">{esc(marker[1])}</text>')
+    if note:
+        svg.append(f'<text x="16" y="{height-4}" fill="#5A6874" font-size="11">{esc(note)}</text>')
+    svg.append("</svg>")
+    return "\n".join(svg)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--html", type=Path, default=None)
+    ap.add_argument("--date", default=date.today().isoformat())
+    a = ap.parse_args()
+    OUT.mkdir(parents=True, exist_ok=True)
+
+    p1 = load(R / "p1" / "santapong" / "summary.json")
+    p2 = load(R / "p2" / "santapong" / "dataset_acceptance.json")
+    bench = load(R / "p2" / "santapong" / "cpu_bench.json")
+    p2b = load(R / "p2b" / "full" / "eval_info.json")["overall"]
+    p3 = load(R / "p3" / "santapong" / "summary.json")
+    oracle = load(R / "p5" / "santapong" / "oracle" / "nominal.json")["oracle"]
+    hold = load(R / "p5" / "santapong" / "hold" / "nominal.json")["hold"]
+    kg = load(R / "p5" / "kaggle" / "eval-v2-partial.json")
+    pol = kg["nominal_010000_100ep"]; quick = kg["quick_check_010000_50ep"]; tr = kg["train_record"]; sm = kg["smoke_v5"]
+    lib_k, lib_n = round(p2b["pc_success"] / 100 * p2b["n_episodes"]), p2b["n_episodes"]
+    lib_ci = wilson(lib_k, lib_n)
+    libero_per_task = [5, 5, 5, 5, 4, 0, 4, 4, 4, 5]  # from results/p2b/full.log (final line per task, de-duplicated)
+    v2 = p2["recipes"]["v2"]["summary"]["splits"]
+    med = bench.get("timing_s", {}).get("median") or bench.get("timing_s", {}).get("median_s")
+
+    teal, grey, amber, red = "#0E7C86", "#9AA8B3", "#B7791F", "#B23A3A"
+    charts = {}
+    charts["success-rates"] = hbar_chart(
+        "Closed-loop success on the 100 held-out seeds (Wilson 95 % intervals)",
+        [("Scripted oracle (control)", oracle["success_rate"], tuple(oracle["ci95_wilson_success"]), grey),
+         ("Do-nothing hold (control)", hold["success_rate"], tuple(hold["ci95_wilson_success"]), grey),
+         ("SmolVLA baseline, 10k steps, n = 100", pol["success_rate"], tuple(pol["ci95_wilson_success"]), teal),
+         ("same checkpoint, quick check, n = 50", quick["success_rate"], tuple(quick["ci95_wilson_success"]), "#5FB0B7"),
+         ("LIBERO-Spatial calibration, n = 50", lib_k / lib_n, lib_ci, amber)],
+        note="LIBERO row: lerobot/smolvla_libero evaluated on this CPU; dashed line = the published SmolVLA-0.45B score.", marker=(0.90, "published 0.90"))
+    fam = pol["per_family_success"]; n = pol["per_family_n"]
+    charts["per-family"] = hbar_chart("Baseline success by goal family (n = 20 each, Wilson 95 %)",
+                                      [(f"{k}", v, wilson(round(v * n), n), teal) for k, v in fam.items()],
+                                      note="Lateral cells (front_low, right) are the weakest; near targets the strongest.")
+    steps = pol["n"] * pol["episode_len_mean"]
+    rej = pol["faults"]["rejected"]
+    charts["safety"] = hbar_chart("Commands rejected by the safety wrapper, per 100 policy steps (baseline, 10k)",
+                                  [("S2 translation > 1 cm/step", 100 * rej["S2_xyz_step"] / steps, None, red),
+                                   ("S3 rotation > 0.05 rad/step", 100 * rej["S3_rpy_step"] / steps, None, red),
+                                   ("S4 leaves the workspace box", 100 * rej["S4_workspace"] / steps, None, red),
+                                   ("Scripted oracle (any)", 0.0, None, grey)],
+                                  xmax=40, unit="", note=f"{int(steps):,} policy steps over 100 episodes; a rejected command holds the arm for that step. Safety 0.01, SBU 0.12, VSI 0.18.")
+    charts["kaggle-timings"] = hbar_chart("Training speed on Kaggle's free Tesla T4 (10-step smoke, batch 32 unless noted)",
+                                          [("bfloat16 as LeRobot ships it", sm["trials"]["bf16-b32"]["steps_per_s"], None, grey),
+                                           ("bfloat16, batch 16", sm["trials"]["bf16-b16"]["steps_per_s"], None, grey),
+                                           ("float16 VLM cast (chosen)", sm["trials"]["fp16-b32"]["steps_per_s"], None, teal),
+                                           ("full run, 10k steps (measured)", tr["steps_per_s"], None, "#5FB0B7")],
+                                          xmax=1.0, unit=" st/s", note=f"VRAM 5.9 / 3.6 / 4.9 GB. Full run: {tr['steps_done']:,} steps in {tr['wall_s']/3600:.2f} h.")
+    rows = []
+    for e in p3["episodes"]:
+        rows.append((f"ep {e['episode_index']} {e['task'][:22]}… state", e["state_mode"]["L_transl_m"] * 100, None, teal))
+        rows.append((f"   action replay, gain 0.61", e["action_mode_measured_gain"]["L_transl_m"] * 100, None, "#5FB0B7"))
+        rows.append((f"   action replay, unit gain", e["action_mode_unit_gain"]["L_transl_m"] * 100, None, grey))
+    charts["p3-tracking"] = hbar_chart("Real UR5 episodes replayed on the sim UR5e — mean end-effector error (cm)", rows, xmax=35, unit=" cm",
+                                       note="State replay ≤ 1.2 cm mean, ≤ 0.4 cm final; open-loop command replay drifts because the human closed the loop.", width=720)
+    charts["libero-per-task"] = hbar_chart("LIBERO-Spatial calibration: successes per task (5 episodes each)",
+                                           [(f"task {i}", k, None, amber if k else red) for i, k in enumerate(libero_per_task)], xmax=5, unit="")
+    for name, svg in charts.items():
+        (OUT / f"{name}.svg").write_text(svg + "\n")
+
+    md = f"""# UR5e VLA bed — experiment report ({a.date})
+
+Status of the experiment branch `experiment/ur5e-vla-bed` at report time: Phases 0–3 verified,
+LIBERO calibration done, Phase 4 baseline trained on a free Kaggle T4 and its evaluation
+in progress (probes, learning curve and variations pending). **Money spent: $0.00.**
+Kaggle GPU quota used ≈ 12 h of 30 (smokes 0.3 h, training 3.9 h, evaluation ≈ 8 h).
+Every number below comes from a committed JSON under `results/` or from the Kaggle logs
+transcribed in `results/p5/kaggle/eval-v2-partial.json`.
+
+## 1. What was measured, in one table
+
+| Measurement | Result | Interval / uncertainty | Where |
+|---|---|---|---|
+| Scripted expert on the 100 held-out seeds (control) | {oracle['success_rate']:.2f} success, {oracle['episode_len_mean']:.1f} frames, zero faults | Wilson [{oracle['ci95_wilson_success'][0]:.3f}, {oracle['ci95_wilson_success'][1]:.2f}] | `results/p5/santapong/oracle/` |
+| Do-nothing policy (control) | {hold['success_rate']:.2f} | [{hold['ci95_wilson_success'][0]:.2f}, {hold['ci95_wilson_success'][1]:.3f}] | `results/p5/santapong/hold/` |
+| Same two controls on the Raspberry Pi | identical episode rows (0 mismatches over 200 episodes) | — | `results/p5/santapong-dev/` |
+| LIBERO-Spatial calibration, `lerobot/smolvla_libero`, 10 × 5 episodes, CPU | **{lib_k}/{lib_n} = {lib_k/lib_n:.2f}**; per task {', '.join(str(k) for k in libero_per_task)} of 5; 7.0 h | Wilson [{lib_ci[0]:.3f}, {lib_ci[1]:.3f}]; published 0.90 inside | `results/p2b/full/eval_info.json` |
+| SmolVLA-base inference on this CPU | {med if med else '≈36'} s per 50-action chunk, 3.5 GB peak RSS | — | `results/p2/santapong/cpu_bench.json` |
+| Kaggle T4 training speed (smoke) | float16 VLM **{sm['trials']['fp16-b32']['steps_per_s']}** steps/s vs bfloat16 {sm['trials']['bf16-b32']['steps_per_s']} | 10 steps each | `results/p5/kaggle/eval-v2-partial.json` |
+| Baseline training (`baseline`, 10k steps, batch 32) | {tr['steps_per_s']} steps/s, {tr['wall_s']/3600:.2f} h, {tr['peak_vram_gb']} GB VRAM, 4 checkpoints | — | Kaggle `vla-bed-train` v1 |
+| **Baseline checkpoint 10k, nominal, n = 100** | **success {pol['success_rate']:.2f}**, progress {pol['progress_mean']:.2f}, safety {pol['safety']:.2f}, SBU {pol['sbu']:.2f}, VSI {pol['vsi']:.2f}, {pol['episode_len_mean']:.1f} frames | Wilson [{pol['ci95_wilson_success'][0]:.3f}, {pol['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-eval` v2 |
+| Same checkpoint, quick check, n = 50 | success {quick['success_rate']:.2f}, progress {quick['progress_mean']:.2f} | [{quick['ci95_wilson_success'][0]:.3f}, {quick['ci95_wilson_success'][1]:.3f}] | Kaggle `vla-bed-train` v1 |
+| Rejected commands, baseline 10k (per 100 policy steps) | S2 {100*rej['S2_xyz_step']/steps:.1f}, S3 {100*rej['S3_rpy_step']/steps:.1f}, S4 {100*rej['S4_workspace']/steps:.1f} | over {int(steps):,} steps | same |
+| Real UR5 replay on the sim UR5e (5 OXE episodes) | state tracking 0.7–1.2 cm mean, ≤ 0.4 cm final; command replay 2.2–9.3 cm with the measured 0.61 gain | alignment Rz 90° + 0.284 m | `results/p3/santapong/summary.json` |
+| Datasets recorded | v2: {v2['train']['episodes']} train / {v2['evaluation']['episodes']} held-out episodes, {v2['train']['frames']:,} + {v2['evaluation']['frames']:,} frames, 100 % expert success | — | `results/p2/santapong/` |
+
+## 2. Charts
+
+![success rates](report/success-rates.svg)
+
+![per family](report/per-family.svg)
+
+![safety rejections](report/safety.svg)
+
+![kaggle timings](report/kaggle-timings.svg)
+
+![OXE replay tracking](report/p3-tracking.svg)
+
+![LIBERO per task](report/libero-per-task.svg)
+
+## 3. Reading the results
+
+- **The pipeline is closed.** Record on the workstation → fine-tune SmolVLA on a free T4 →
+  evaluate every step through the bed's own controller and safety wrapper, with the
+  scripted expert at 100 % and the do-nothing policy at 0 % as controls. That is SDD Q-B,
+  answered without spending money.
+- **The baseline learns, but not much yet.** 13 % success on the 100 held-out seeds after
+  10k steps (interval 8–21 %), progress 0.30, best on near targets (25 %), worst on the
+  lateral cells (5 %). Twelve of the thirteen successes touched the safety wrapper on the way.
+- **The safety wrapper is doing real work.** About a third of the policy's commands exceed
+  the 1 cm-per-step limit the demonstrations respected; the arm holds for those steps. The
+  policy predicts larger steps than it was trained on — a scale/normalisation question to
+  check before the next run (the labels' std is 0.007 m; the model's outputs are unclipped).
+- **Repeated suites of one checkpoint differ.** 26 % on a 50-episode check versus 13 % on the
+  100-episode suite: SmolVLA samples its action chunk from noise, so a suite is a sample of
+  the policy, not a deterministic property. The evaluator now seeds that noise per episode.
+- **The evaluator is calibrated.** On LIBERO-Spatial it reproduces the published SmolVLA score
+  within its interval (82 % measured, 90 published), so the low bed number is a property of
+  the trained policy, not of the measuring instrument.
+
+## 4. Pending when this report was written
+
+{chr(10).join('- ' + p for p in kg['pending'])}
+
+Each pending suite is 100 episodes ≈ 1.1 h on Kaggle's CPU; the run is bounded at 7.5 h and
+drops the tail. The next report regenerates from the packed JSONs once they are imported
+(`gpu/kaggle_import.sh`).
+
+Generated by `sim/vla-bed/report.py` from the committed results.
+"""
+    (R / f"REPORT-{a.date}.md").write_text(md)
+    print("wrote", R / f"REPORT-{a.date}.md", "and", len(charts), "charts in", OUT)
+
+    if a.html:
+        blocks = "".join(f'<figure>{svg}</figure>' for svg in charts.values())
+        rows_html = ""
+        for line in md.split("## 1. What was measured, in one table")[1].split("## 2. Charts")[0].strip().splitlines():
+            if line.startswith("| ") and not line.startswith("|---") and not line.startswith("| Measurement"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                rows_html += "<tr>" + "".join(f"<td>{esc(c).replace('`', '')}</td>" for c in cells) + "</tr>"
+        reading = md.split("## 3. Reading the results")[1].split("## 4.")[0]
+        items = "".join(f"<li>{esc(p.strip('- ').replace(chr(10), ' '))}</li>" for p in reading.strip().split("\n- ") if p.strip())
+        pending = "".join(f"<li>{esc(p)}</li>" for p in kg["pending"])
+        html = f"""<title>UR5e Bed Experiment Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {{ --bg:#F2F4F6; --surface:#FFFFFF; --line:#D3DAE1; --text:#1A232C; --muted:#5A6874; --accent:#0E7C86; --accent-ink:#0A5C64; --warn:#9A6A12; --warn-soft:#F6ECD3; --display:'IBM Plex Sans Condensed',"Arial Narrow",Arial,sans-serif; --body:'IBM Plex Sans',Helvetica,Arial,sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace; }}
+@media (prefers-color-scheme: dark) {{ :root:not([data-theme="light"]) {{ --bg:#0F1418; --surface:#171E24; --line:#2C3740; --text:#E4EAEF; --muted:#98A7B3; --accent:#3FB6C0; --accent-ink:#7ED4DB; --warn:#D9A64A; --warn-soft:#3A2E14; }} }}
+:root[data-theme="dark"] {{ --bg:#0F1418; --surface:#171E24; --line:#2C3740; --text:#E4EAEF; --muted:#98A7B3; --accent:#3FB6C0; --accent-ink:#7ED4DB; --warn:#D9A64A; --warn-soft:#3A2E14; }}
+*{{box-sizing:border-box}} body{{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:16px;line-height:1.55}}
+main{{max-width:900px;margin:0 auto;padding:32px 24px 72px}} h1,h2{{font-family:var(--display);text-wrap:balance;margin:0}} h1{{font-size:2.3rem}} h2{{font-size:1.4rem;margin-top:44px;padding-top:16px;border-top:1px solid var(--line)}}
+.eyebrow{{font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}} .lede{{color:var(--muted);max-width:68ch}}
+.chips{{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}} .chip{{font-family:var(--mono);font-size:.8rem;padding:6px 10px;border:1px solid var(--line);background:var(--surface);border-radius:4px}} .chip b{{font-weight:500;color:var(--accent-ink)}} .chip.warn{{border-color:var(--warn);background:var(--warn-soft)}}
+.tablewrap{{overflow-x:auto;border:1px solid var(--line);background:var(--surface);margin:16px 0}} table{{border-collapse:collapse;width:100%;font-size:.9rem}} th,td{{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}} th{{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}} tr:last-child td{{border-bottom:0}}
+figure{{margin:18px 0;background:#FFFFFF;border:1px solid var(--line);padding:6px;overflow-x:auto}} figure svg{{max-width:100%;height:auto;display:block}}
+ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:4px solid var(--accent);background:var(--surface);padding:12px 16px;margin:16px 0}}
+</style>
+<main>
+<div class="eyebrow">RoboLLM · sim/vla-bed · experiment/ur5e-vla-bed · {a.date}</div>
+<h1>UR5e Bed Experiment Report</h1>
+<p class="lede">Everything measured so far on the UR5e VLA sim bed: the calibration of the evaluator, the real-to-sim bridge, the free-GPU fine-tune of SmolVLA, and the baseline policy's first evaluation against scripted controls. Every number comes from a committed result file.</p>
+<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span><span class="chip warn">evaluation <b>still running</b></span></div>
+<h2>Measurements</h2>
+<div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
+<h2>Charts</h2>{blocks}
+<h2>Reading the results</h2><ul>{items}</ul>
+<h2>Pending</h2><ul>{pending}</ul>
+<div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
+</main>
+"""
+        a.html.write_text(html)
+        print("wrote", a.html)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,9 @@
+{
+  "schema": "robollm.vla-bed.kaggle-eval-transcript.v1",
+  "source": "Kaggle notebooks santapongsondhi/vla-bed-train v1 and santapongsondhi/vla-bed-eval v2 logs, transcribed 4 Sep 2026 10:30 ICT (the packed JSONs land in results/p5/<kaggle-host>/ after download)",
+  "smoke_v5": {"gpu": "Tesla T4 15.6 GB", "trials": {"bf16-b32": {"steps_per_s": 0.214, "vram_gb": 5.86}, "fp16-b32": {"steps_per_s": 0.763, "vram_gb": 4.87}, "bf16-b16": {"steps_per_s": 0.393, "vram_gb": 3.62}}, "eval_latency_s_per_chunk": 0.536, "env_step_s_kaggle": 0.66, "oracle_5_episodes": 1.0},
+  "train_record": {"run": "baseline", "steps_done": 10000, "steps_per_s": 0.8745, "wall_s": 11471.5, "batch_size": 32, "vlm_dtype": "float16", "peak_vram_gb": 4.87, "checkpoints": ["002500", "005000", "007500", "010000"], "notebook_wall_s": 14152.1, "output_zip_gb": 3.52},
+  "quick_check_010000_50ep": {"n": 50, "success_rate": 0.26, "ci95_wilson_success": [0.1587, 0.3955], "safety": 0.0, "progress_mean": 0.43, "episode_len_mean": 87.12, "faults": {"rejected": {"S2_xyz_step": 1391, "S3_rpy_step": 161, "S4_workspace": 91}}},
+  "nominal_010000_100ep": {"n": 100, "success_rate": 0.13, "ci95_wilson_success": [0.0776, 0.2098], "safety": 0.01, "sbu": 0.12, "vsi": 0.1833, "progress_mean": 0.295, "episode_len_mean": 93.3, "per_family_success": {"front_high": 0.15, "front_low": 0.05, "left": 0.15, "near": 0.25, "right": 0.05}, "per_family_n": 20, "faults": {"rejected": {"S2_xyz_step": 2964, "S3_rpy_step": 334, "S4_workspace": 321}}, "wall_s": 3917.8, "peak_rss_mb": 4599.9},
+  "pending": ["blank-image probe (010000)", "gain 0.61 probe (010000)", "nominal 007500 / 005000 / 002500", "variations camera_shift / lighting / target_relocation"]
+}
