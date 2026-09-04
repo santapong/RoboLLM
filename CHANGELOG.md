@@ -8,6 +8,33 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-04 (evening) — UR5e VLA sim bed: evaluator v2, paired comparisons, probes, recipe v3
+
+### Added
+
+- `sim/vla-bed/evaluate.py` schema v2: every episode row records the rejected-step fraction and
+  the commanded / executed per-step magnitudes; policy-side post-processors `--post clip` and
+  `--post ensemble` (linear temporal ensemble, Lazzati et al. 2608.02547; `--replan-every`,
+  `--ensemble-horizon`), `--vlm-dtype`, `--oracle-headroom`, `--shard i/n` + `--merge`.
+- `sim/vla-bed/compare.py` — paired comparison of two suites on the same seeds (discordant
+  pairs, exact McNemar, paired bootstrap of the difference).
+- `sim/vla-bed/gpu/magnitude_probe.py` — a checkpoint's predicted step magnitudes against the
+  training labels (bias vs spread) on N training frames.
+- Recipe **v3** (`dataset.py`): expert label capped at 0.7 × the S2/S3 limits (headroom) and a
+  seeded per-episode camera azimuth jitter of ±20° on the train split
+  (`BedEnv.set_camera_azimuth`); the evaluation split keeps v2's seeds, targets and camera.
+- `kaggle/probe.ipynb` — the probe session on existing checkpoints; `eval.ipynb` and
+  `train.ipynb` take a `RECIPE`; `make_bundle.sh <recipe>`.
+
+### Changed
+
+- `BedEnv.step(render=False)` / `observation(render)`: the evaluator renders only when the
+  policy is queried (rows unchanged; oracle suite 113 s → 70 s on the workstation, a 100-episode
+  SmolVLA suite 65 min → 8 min on Kaggle with two sharded workers).
+- The report's and SDD's "policy steps ≈ 1.6× the labels" line replaced by the audited
+  statement: the v2 labels sit exactly on the S2 cap (84 % saturate), so regression spread is
+  rejected one-sidedly; the magnitude probe measured no bias (ratio 0.98).
+
 ## 2026-09-04 — UR5e VLA sim bed: Phase 4 baseline trained and evaluated on Kaggle ($0)
 
 ### Added

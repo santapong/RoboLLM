@@ -77,7 +77,7 @@ in the specification's §14.
 
 ```bash
 uv pip install --python .venv-lerobot/bin/python -r sim/vla-bed/requirements-record.txt
-MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --split train   # and evaluation; v1, v2b likewise
+MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --split train   # and evaluation; v1, v2b, v3 likewise
 .venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --validate
 .venv-lerobot/bin/python sim/vla-bed/cpu_bench.py
 .venv-lerobot/bin/python sim/vla-bed/p2_gate.py
@@ -88,6 +88,7 @@ MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --split
 | v1 | oracle | 40 / 10 | 1,023 / 238 | 100 % | 25.6 / 23.8 | 29.9 % / 48.9 % |
 | v2 | noisy, 0.5× limit (20 % clean) | 400 / 100 | 11,506 / 2,917 | 100 % | 28.8 / 29.2 | 27.0 % / 44.4 % |
 | v2b | noisy, 0.25× limit (20 % clean) | 400 / 100 | 10,735 / 2,721 | 100 % | 26.8 / 27.2 | 28.3 % / 47.1 % |
+| v3 | noisy, 0.5× limit (20 % clean), **label cap 0.7 × limits, camera azimuth ±20° on train** | 400 / 100 | 14,197 / 3,588 | 100 % | 35.5 / 35.9 | 19.5 % / 38.8 % |
 
 Every clean label and every executed action passes S1–S4 offline (0 faults); all
 video frames decode. Each frame stores the clean label as `action` and the applied

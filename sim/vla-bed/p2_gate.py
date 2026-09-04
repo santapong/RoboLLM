@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dataset as ds  # noqa: E402
 import resources  # noqa: E402
 
-REQUIRED_SUCCESS = {"v1": 1.0, "v2": 0.95, "v2b": 0.95}
+REQUIRED_SUCCESS = {"v1": 1.0, "v2": 0.95, "v2b": 0.95, "v3": 0.95}
 
 
 def main() -> int:
