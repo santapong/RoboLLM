@@ -1,0 +1,2094 @@
+{
+  "schema": "robollm.vla-bed.phase-summary.v1",
+  "phase": "P5",
+  "route": "M",
+  "host": {
+    "hostname": "8ac6124fd05b",
+    "machine": "x86_64",
+    "python": "3.12.13",
+    "MUJOCO_GL": "egl"
+  },
+  "task": "touch the red target",
+  "embodiment": "ur5e+2f85",
+  "schedule": {
+    "manifest": "datasets/vla-bed/v2/manifest.json",
+    "recipe": "v2",
+    "split": "evaluation",
+    "base_seed": 10000,
+    "episodes": 100,
+    "cells": 20,
+    "variation": "nominal",
+    "fps": 20,
+    "max_frames": 100
+  },
+  "limits": {
+    "xyz_step_m": 0.01,
+    "rpy_step_rad": 0.05
+  },
+  "policy": {
+    "name": "smolvla",
+    "label": "baseline/007500",
+    "checkpoint": "artifacts/vla-bed/baseline/full/checkpoints/007500/pretrained_model",
+    "representation": "identity",
+    "n_action_steps": 10,
+    "gain": 1.0,
+    "blank_image": false
+  },
+  "baseline/007500": {
+    "n": 100,
+    "success_rate": 0.2,
+    "safety": 0.0,
+    "sbu": 0.2,
+    "vsi": 0.16427500000000003,
+    "ci95_wilson_success": [
+      0.13336693289714838,
+      0.2888291663642495
+    ],
+    "ci95_wilson_safety": [
+      0.0,
+      0.03699349876899627
+    ],
+    "progress_mean": 0.32,
+    "progress_ci95_bootstrap": [
+      0.245,
+      0.4
+    ],
+    "episode_len_mean": 90.44,
+    "episode_len_ci95_bootstrap": [
+      85.83975000000001,
+      94.56
+    ],
+    "chunks_mean": 9.14,
+    "latency_s_mean": 0.4809650000000001,
+    "final_error_m_mean": 0.14451959999999997,
+    "per_family_success": {
+      "front_high": 0.2,
+      "front_low": 0.15,
+      "left": 0.35,
+      "near": 0.3,
+      "right": 0.0
+    },
+    "per_family_n": {
+      "front_high": 20,
+      "front_low": 20,
+      "left": 20,
+      "near": 20,
+      "right": 20
+    },
+    "faults": {
+      "rejected": {
+        "S3_rpy_step": 272,
+        "S2_xyz_step": 3496,
+        "S4_workspace": 211
+      },
+      "measured": {}
+    }
+  },
+  "episodes": {
+    "baseline/007500": [
+      {
+        "seed": 1000010000,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.28429,
+        "min_error_m": 0.11752,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.2745,
+        "latency_s_mean": 0.5108
+      },
+      {
+        "seed": 1000010001,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.2208,
+        "min_error_m": 0.06097,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 28,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0961,
+        "latency_s_mean": 0.4757
+      },
+      {
+        "seed": 1000010002,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 33,
+        "chunks": 4,
+        "final_error_m": 0.02008,
+        "min_error_m": 0.01953,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 8
+        },
+        "measured": {},
+        "worst_depth": 0.0535,
+        "latency_s_mean": 0.4932
+      },
+      {
+        "seed": 1000010003,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.05107,
+        "min_error_m": 0.05107,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 75
+        },
+        "measured": {},
+        "worst_depth": 0.0369,
+        "latency_s_mean": 0.4676
+      },
+      {
+        "seed": 1000010004,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.22087,
+        "min_error_m": 0.15755,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 7,
+          "S2_xyz_step": 11,
+          "S4_workspace": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1366,
+        "latency_s_mean": 0.4832
+      },
+      {
+        "seed": 1000010005,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.23113,
+        "min_error_m": 0.09925,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 46,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1227,
+        "latency_s_mean": 0.48
+      },
+      {
+        "seed": 1000010006,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.278,
+        "min_error_m": 0.20347,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 63
+        },
+        "measured": {},
+        "worst_depth": 0.0339,
+        "latency_s_mean": 0.4813
+      },
+      {
+        "seed": 1000010007,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 58,
+        "chunks": 6,
+        "final_error_m": 0.02719,
+        "min_error_m": 0.02508,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 36
+        },
+        "measured": {},
+        "worst_depth": 0.0505,
+        "latency_s_mean": 0.4855
+      },
+      {
+        "seed": 1000010008,
+        "family": "left",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16087,
+        "min_error_m": 0.06649,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 14,
+          "S3_rpy_step": 11,
+          "S4_workspace": 17
+        },
+        "measured": {},
+        "worst_depth": 0.3323,
+        "latency_s_mean": 0.4882
+      },
+      {
+        "seed": 1000010009,
+        "family": "left",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.07141,
+        "min_error_m": 0.05152,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 30,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.1365,
+        "latency_s_mean": 0.4847
+      },
+      {
+        "seed": 1000010010,
+        "family": "left",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13024,
+        "min_error_m": 0.07327,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 20,
+          "S3_rpy_step": 10
+        },
+        "measured": {},
+        "worst_depth": 0.3301,
+        "latency_s_mean": 0.4796
+      },
+      {
+        "seed": 1000010011,
+        "family": "left",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20087,
+        "min_error_m": 0.06636,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 6,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2524,
+        "latency_s_mean": 0.4818
+      },
+      {
+        "seed": 1000010012,
+        "family": "right",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.23368,
+        "min_error_m": 0.15219,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 19
+        },
+        "measured": {},
+        "worst_depth": 0.0395,
+        "latency_s_mean": 0.4759
+      },
+      {
+        "seed": 1000010013,
+        "family": "right",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14971,
+        "min_error_m": 0.04305,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 13,
+          "S3_rpy_step": 2,
+          "S4_workspace": 13
+        },
+        "measured": {},
+        "worst_depth": 0.3075,
+        "latency_s_mean": 0.4876
+      },
+      {
+        "seed": 1000010014,
+        "family": "right",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.07943,
+        "min_error_m": 0.07304,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 64
+        },
+        "measured": {},
+        "worst_depth": 0.0461,
+        "latency_s_mean": 0.4814
+      },
+      {
+        "seed": 1000010015,
+        "family": "right",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.06006,
+        "min_error_m": 0.04861,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 34,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0769,
+        "latency_s_mean": 0.4775
+      },
+      {
+        "seed": 1000010016,
+        "family": "near",
+        "cell": 0,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 36,
+        "chunks": 4,
+        "final_error_m": 0.00737,
+        "min_error_m": 0.00737,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 10,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.1665,
+        "latency_s_mean": 0.4769
+      },
+      {
+        "seed": 1000010017,
+        "family": "near",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.07481,
+        "min_error_m": 0.07158,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 35,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0394,
+        "latency_s_mean": 0.48
+      },
+      {
+        "seed": 1000010018,
+        "family": "near",
+        "cell": 2,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 29,
+        "chunks": 3,
+        "final_error_m": 0.02841,
+        "min_error_m": 0.0206,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 10
+        },
+        "measured": {},
+        "worst_depth": 0.0486,
+        "latency_s_mean": 0.4769
+      },
+      {
+        "seed": 1000010019,
+        "family": "near",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13793,
+        "min_error_m": 0.13793,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 92,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0482,
+        "latency_s_mean": 0.4844
+      },
+      {
+        "seed": 1000010020,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 54,
+        "chunks": 6,
+        "final_error_m": 0.01125,
+        "min_error_m": 0.01125,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 8,
+          "S3_rpy_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1044,
+        "latency_s_mean": 0.4841
+      },
+      {
+        "seed": 1000010021,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09443,
+        "min_error_m": 0.07627,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 20,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.148,
+        "latency_s_mean": 0.4814
+      },
+      {
+        "seed": 1000010022,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 21,
+        "chunks": 3,
+        "final_error_m": 0.01669,
+        "min_error_m": 0.01669,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.2154,
+        "latency_s_mean": 0.4824
+      },
+      {
+        "seed": 1000010023,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.0549,
+        "min_error_m": 0.0549,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 83
+        },
+        "measured": {},
+        "worst_depth": 0.097,
+        "latency_s_mean": 0.4764
+      },
+      {
+        "seed": 1000010024,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.28416,
+        "min_error_m": 0.11995,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 1,
+          "S2_xyz_step": 69
+        },
+        "measured": {},
+        "worst_depth": 0.0771,
+        "latency_s_mean": 0.4825
+      },
+      {
+        "seed": 1000010025,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.06032,
+        "min_error_m": 0.06005,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 1,
+          "S2_xyz_step": 68
+        },
+        "measured": {},
+        "worst_depth": 0.1231,
+        "latency_s_mean": 0.4772
+      },
+      {
+        "seed": 1000010026,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.2818,
+        "min_error_m": 0.10935,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 2,
+          "S2_xyz_step": 11,
+          "S4_workspace": 7
+        },
+        "measured": {},
+        "worst_depth": 0.1196,
+        "latency_s_mean": 0.4845
+      },
+      {
+        "seed": 1000010027,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17485,
+        "min_error_m": 0.0439,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 43,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.1648,
+        "latency_s_mean": 0.4738
+      },
+      {
+        "seed": 1000010028,
+        "family": "left",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10386,
+        "min_error_m": 0.06513,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 7,
+          "S3_rpy_step": 11
+        },
+        "measured": {},
+        "worst_depth": 0.2329,
+        "latency_s_mean": 0.4778
+      },
+      {
+        "seed": 1000010029,
+        "family": "left",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 73,
+        "chunks": 8,
+        "final_error_m": 0.02679,
+        "min_error_m": 0.02679,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 11,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.166,
+        "latency_s_mean": 0.4755
+      },
+      {
+        "seed": 1000010030,
+        "family": "left",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16563,
+        "min_error_m": 0.06093,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 14,
+          "S3_rpy_step": 8,
+          "S4_workspace": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1605,
+        "latency_s_mean": 0.4782
+      },
+      {
+        "seed": 1000010031,
+        "family": "left",
+        "cell": 3,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 96,
+        "chunks": 10,
+        "final_error_m": 0.02203,
+        "min_error_m": 0.02203,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 73
+        },
+        "measured": {},
+        "worst_depth": 0.0966,
+        "latency_s_mean": 0.479
+      },
+      {
+        "seed": 1000010032,
+        "family": "right",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.12439,
+        "min_error_m": 0.12439,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 77,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0972,
+        "latency_s_mean": 0.4676
+      },
+      {
+        "seed": 1000010033,
+        "family": "right",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.11228,
+        "min_error_m": 0.03721,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 41,
+          "S3_rpy_step": 1,
+          "S4_workspace": 8
+        },
+        "measured": {},
+        "worst_depth": 0.2227,
+        "latency_s_mean": 0.4778
+      },
+      {
+        "seed": 1000010034,
+        "family": "right",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21171,
+        "min_error_m": 0.05818,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 1,
+          "S2_xyz_step": 33,
+          "S4_workspace": 7
+        },
+        "measured": {},
+        "worst_depth": 0.1631,
+        "latency_s_mean": 0.4821
+      },
+      {
+        "seed": 1000010035,
+        "family": "right",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16895,
+        "min_error_m": 0.16895,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 26,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0434,
+        "latency_s_mean": 0.4951
+      },
+      {
+        "seed": 1000010036,
+        "family": "near",
+        "cell": 0,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 46,
+        "chunks": 5,
+        "final_error_m": 0.01184,
+        "min_error_m": 0.01184,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 19,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2811,
+        "latency_s_mean": 0.4864
+      },
+      {
+        "seed": 1000010037,
+        "family": "near",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16669,
+        "min_error_m": 0.04084,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 43,
+          "S3_rpy_step": 1,
+          "S4_workspace": 12
+        },
+        "measured": {},
+        "worst_depth": 0.1637,
+        "latency_s_mean": 0.4828
+      },
+      {
+        "seed": 1000010038,
+        "family": "near",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20452,
+        "min_error_m": 0.03413,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 5,
+          "S3_rpy_step": 4,
+          "S4_workspace": 47
+        },
+        "measured": {},
+        "worst_depth": 0.3396,
+        "latency_s_mean": 0.4834
+      },
+      {
+        "seed": 1000010039,
+        "family": "near",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.11661,
+        "min_error_m": 0.02802,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 41,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2875,
+        "latency_s_mean": 0.4771
+      },
+      {
+        "seed": 1000010040,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 10,
+        "chunks": 1,
+        "final_error_m": 0.01305,
+        "min_error_m": 0.01305,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 1,
+          "S2_xyz_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1424,
+        "latency_s_mean": 0.4643
+      },
+      {
+        "seed": 1000010041,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.04182,
+        "min_error_m": 0.04182,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 82
+        },
+        "measured": {},
+        "worst_depth": 0.1343,
+        "latency_s_mean": 0.4818
+      },
+      {
+        "seed": 1000010042,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10222,
+        "min_error_m": 0.10222,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 93
+        },
+        "measured": {},
+        "worst_depth": 0.222,
+        "latency_s_mean": 0.4744
+      },
+      {
+        "seed": 1000010043,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.29797,
+        "min_error_m": 0.10697,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 49,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1435,
+        "latency_s_mean": 0.4892
+      },
+      {
+        "seed": 1000010044,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.29246,
+        "min_error_m": 0.09452,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 31,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.2025,
+        "latency_s_mean": 0.4798
+      },
+      {
+        "seed": 1000010045,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 88,
+        "chunks": 9,
+        "final_error_m": 0.01654,
+        "min_error_m": 0.01654,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 56,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0704,
+        "latency_s_mean": 0.4839
+      },
+      {
+        "seed": 1000010046,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.44834,
+        "min_error_m": 0.20329,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 34
+        },
+        "measured": {},
+        "worst_depth": 0.0216,
+        "latency_s_mean": 0.4795
+      },
+      {
+        "seed": 1000010047,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20588,
+        "min_error_m": 0.03597,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 9,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2494,
+        "latency_s_mean": 0.4796
+      },
+      {
+        "seed": 1000010048,
+        "family": "left",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13352,
+        "min_error_m": 0.03035,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 8,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.3439,
+        "latency_s_mean": 0.4855
+      },
+      {
+        "seed": 1000010049,
+        "family": "left",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 90,
+        "chunks": 9,
+        "final_error_m": 0.02897,
+        "min_error_m": 0.02644,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 13,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2157,
+        "latency_s_mean": 0.4683
+      },
+      {
+        "seed": 1000010050,
+        "family": "left",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.2843,
+        "min_error_m": 0.20732,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 3,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.3099,
+        "latency_s_mean": 0.4784
+      },
+      {
+        "seed": 1000010051,
+        "family": "left",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.1536,
+        "min_error_m": 0.04854,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 22,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.3222,
+        "latency_s_mean": 0.482
+      },
+      {
+        "seed": 1000010052,
+        "family": "right",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10663,
+        "min_error_m": 0.09143,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 22,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.2413,
+        "latency_s_mean": 0.4827
+      },
+      {
+        "seed": 1000010053,
+        "family": "right",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.08936,
+        "min_error_m": 0.08864,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 57,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1629,
+        "latency_s_mean": 0.479
+      },
+      {
+        "seed": 1000010054,
+        "family": "right",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.1324,
+        "min_error_m": 0.1324,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 72,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.1451,
+        "latency_s_mean": 0.4792
+      },
+      {
+        "seed": 1000010055,
+        "family": "right",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.11748,
+        "min_error_m": 0.07363,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 3,
+          "S2_xyz_step": 20
+        },
+        "measured": {},
+        "worst_depth": 0.2296,
+        "latency_s_mean": 0.4789
+      },
+      {
+        "seed": 1000010056,
+        "family": "near",
+        "cell": 0,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 36,
+        "chunks": 4,
+        "final_error_m": 0.0137,
+        "min_error_m": 0.01147,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 6,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.2151,
+        "latency_s_mean": 0.485
+      },
+      {
+        "seed": 1000010057,
+        "family": "near",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.05305,
+        "min_error_m": 0.05305,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 78,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0462,
+        "latency_s_mean": 0.4827
+      },
+      {
+        "seed": 1000010058,
+        "family": "near",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17075,
+        "min_error_m": 0.04961,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 5,
+          "S3_rpy_step": 7,
+          "S4_workspace": 7
+        },
+        "measured": {},
+        "worst_depth": 0.3073,
+        "latency_s_mean": 0.478
+      },
+      {
+        "seed": 1000010059,
+        "family": "near",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09445,
+        "min_error_m": 0.07303,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 45
+        },
+        "measured": {},
+        "worst_depth": 0.0566,
+        "latency_s_mean": 0.4768
+      },
+      {
+        "seed": 1000010060,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.28861,
+        "min_error_m": 0.03215,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 14,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.0544,
+        "latency_s_mean": 0.4854
+      },
+      {
+        "seed": 1000010061,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17165,
+        "min_error_m": 0.06979,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.1544,
+        "latency_s_mean": 0.4845
+      },
+      {
+        "seed": 1000010062,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.28978,
+        "min_error_m": 0.11583,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 23
+        },
+        "measured": {},
+        "worst_depth": 0.2627,
+        "latency_s_mean": 0.48
+      },
+      {
+        "seed": 1000010063,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09344,
+        "min_error_m": 0.07129,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 73,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2532,
+        "latency_s_mean": 0.4833
+      },
+      {
+        "seed": 1000010064,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.23728,
+        "min_error_m": 0.16851,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 78
+        },
+        "measured": {},
+        "worst_depth": 0.0537,
+        "latency_s_mean": 0.4868
+      },
+      {
+        "seed": 1000010065,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.219,
+        "min_error_m": 0.17434,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 37,
+          "S4_workspace": 28
+        },
+        "measured": {},
+        "worst_depth": 0.297,
+        "latency_s_mean": 0.4789
+      },
+      {
+        "seed": 1000010066,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.02843,
+        "min_error_m": 0.02843,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 67,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.3379,
+        "latency_s_mean": 0.4835
+      },
+      {
+        "seed": 1000010067,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25374,
+        "min_error_m": 0.18919,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 61
+        },
+        "measured": {},
+        "worst_depth": 0.0573,
+        "latency_s_mean": 0.4848
+      },
+      {
+        "seed": 1000010068,
+        "family": "left",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.06086,
+        "min_error_m": 0.06086,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 14,
+          "S2_xyz_step": 17
+        },
+        "measured": {},
+        "worst_depth": 0.3915,
+        "latency_s_mean": 0.4835
+      },
+      {
+        "seed": 1000010069,
+        "family": "left",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 45,
+        "chunks": 5,
+        "final_error_m": 0.02646,
+        "min_error_m": 0.02585,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 2,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2305,
+        "latency_s_mean": 0.4755
+      },
+      {
+        "seed": 1000010070,
+        "family": "left",
+        "cell": 2,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 91,
+        "chunks": 10,
+        "final_error_m": 0.02805,
+        "min_error_m": 0.02805,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 3,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.1465,
+        "latency_s_mean": 0.484
+      },
+      {
+        "seed": 1000010071,
+        "family": "left",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.2114,
+        "min_error_m": 0.1409,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 9
+        },
+        "measured": {},
+        "worst_depth": 0.2871,
+        "latency_s_mean": 0.4756
+      },
+      {
+        "seed": 1000010072,
+        "family": "right",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21773,
+        "min_error_m": 0.21773,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 86,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.2343,
+        "latency_s_mean": 0.4829
+      },
+      {
+        "seed": 1000010073,
+        "family": "right",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.18767,
+        "min_error_m": 0.18767,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 73
+        },
+        "measured": {},
+        "worst_depth": 0.0316,
+        "latency_s_mean": 0.4765
+      },
+      {
+        "seed": 1000010074,
+        "family": "right",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.30328,
+        "min_error_m": 0.30328,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 98
+        },
+        "measured": {},
+        "worst_depth": 0.0968,
+        "latency_s_mean": 0.4754
+      },
+      {
+        "seed": 1000010075,
+        "family": "right",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17966,
+        "min_error_m": 0.17914,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 3,
+          "S2_xyz_step": 44
+        },
+        "measured": {},
+        "worst_depth": 0.0356,
+        "latency_s_mean": 0.4831
+      },
+      {
+        "seed": 1000010076,
+        "family": "near",
+        "cell": 0,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 52,
+        "chunks": 6,
+        "final_error_m": 0.02263,
+        "min_error_m": 0.02263,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 11,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.1816,
+        "latency_s_mean": 0.4852
+      },
+      {
+        "seed": 1000010077,
+        "family": "near",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 87,
+        "chunks": 9,
+        "final_error_m": 0.02576,
+        "min_error_m": 0.02576,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 52,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0557,
+        "latency_s_mean": 0.4736
+      },
+      {
+        "seed": 1000010078,
+        "family": "near",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.23392,
+        "min_error_m": 0.05365,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 31,
+          "S3_rpy_step": 5,
+          "S4_workspace": 14
+        },
+        "measured": {},
+        "worst_depth": 0.2264,
+        "latency_s_mean": 0.4755
+      },
+      {
+        "seed": 1000010079,
+        "family": "near",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21098,
+        "min_error_m": 0.06417,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 35,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2253,
+        "latency_s_mean": 0.4801
+      },
+      {
+        "seed": 1000010080,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.15249,
+        "min_error_m": 0.08417,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.2348,
+        "latency_s_mean": 0.4901
+      },
+      {
+        "seed": 1000010081,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.24001,
+        "min_error_m": 0.03366,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 11,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.154,
+        "latency_s_mean": 0.4763
+      },
+      {
+        "seed": 1000010082,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17951,
+        "min_error_m": 0.06985,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 45
+        },
+        "measured": {},
+        "worst_depth": 0.0778,
+        "latency_s_mean": 0.4757
+      },
+      {
+        "seed": 1000010083,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21592,
+        "min_error_m": 0.21592,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 91,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0783,
+        "latency_s_mean": 0.4853
+      },
+      {
+        "seed": 1000010084,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.36616,
+        "min_error_m": 0.15664,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 3,
+          "S2_xyz_step": 17
+        },
+        "measured": {},
+        "worst_depth": 0.3224,
+        "latency_s_mean": 0.4796
+      },
+      {
+        "seed": 1000010085,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 41,
+        "chunks": 5,
+        "final_error_m": 0.02444,
+        "min_error_m": 0.02305,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0606,
+        "latency_s_mean": 0.4923
+      },
+      {
+        "seed": 1000010086,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.31453,
+        "min_error_m": 0.12165,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 42,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0975,
+        "latency_s_mean": 0.4665
+      },
+      {
+        "seed": 1000010087,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20859,
+        "min_error_m": 0.12645,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 36,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2274,
+        "latency_s_mean": 0.4819
+      },
+      {
+        "seed": 1000010088,
+        "family": "left",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.15797,
+        "min_error_m": 0.06874,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 40,
+          "S3_rpy_step": 6,
+          "S4_workspace": 17
+        },
+        "measured": {},
+        "worst_depth": 0.3403,
+        "latency_s_mean": 0.4816
+      },
+      {
+        "seed": 1000010089,
+        "family": "left",
+        "cell": 1,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 24,
+        "chunks": 3,
+        "final_error_m": 0.02876,
+        "min_error_m": 0.0245,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0142,
+        "latency_s_mean": 0.4829
+      },
+      {
+        "seed": 1000010090,
+        "family": "left",
+        "cell": 2,
+        "variation": "nominal",
+        "success": true,
+        "progress": 1.0,
+        "frames": 34,
+        "chunks": 4,
+        "final_error_m": 0.02075,
+        "min_error_m": 0.02075,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 10,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0653,
+        "latency_s_mean": 0.4773
+      },
+      {
+        "seed": 1000010091,
+        "family": "left",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25837,
+        "min_error_m": 0.07614,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 9,
+          "S2_xyz_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.289,
+        "latency_s_mean": 0.4796
+      },
+      {
+        "seed": 1000010092,
+        "family": "right",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09972,
+        "min_error_m": 0.09972,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 80,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0738,
+        "latency_s_mean": 0.4865
+      },
+      {
+        "seed": 1000010093,
+        "family": "right",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.08334,
+        "min_error_m": 0.08334,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 50,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.0497,
+        "latency_s_mean": 0.478
+      },
+      {
+        "seed": 1000010094,
+        "family": "right",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17712,
+        "min_error_m": 0.04086,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 42,
+          "S3_rpy_step": 1,
+          "S4_workspace": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1115,
+        "latency_s_mean": 0.4847
+      },
+      {
+        "seed": 1000010095,
+        "family": "right",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14845,
+        "min_error_m": 0.06103,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 31,
+          "S4_workspace": 15
+        },
+        "measured": {},
+        "worst_depth": 0.324,
+        "latency_s_mean": 0.4915
+      },
+      {
+        "seed": 1000010096,
+        "family": "near",
+        "cell": 0,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16382,
+        "min_error_m": 0.06938,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 6,
+          "S2_xyz_step": 13,
+          "S4_workspace": 6
+        },
+        "measured": {},
+        "worst_depth": 0.296,
+        "latency_s_mean": 0.4838
+      },
+      {
+        "seed": 1000010097,
+        "family": "near",
+        "cell": 1,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20066,
+        "min_error_m": 0.06243,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 44
+        },
+        "measured": {},
+        "worst_depth": 0.0533,
+        "latency_s_mean": 0.4802
+      },
+      {
+        "seed": 1000010098,
+        "family": "near",
+        "cell": 2,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14607,
+        "min_error_m": 0.05836,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 6,
+          "S4_workspace": 1
+        },
+        "measured": {},
+        "worst_depth": 0.1754,
+        "latency_s_mean": 0.4822
+      },
+      {
+        "seed": 1000010099,
+        "family": "near",
+        "cell": 3,
+        "variation": "nominal",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09654,
+        "min_error_m": 0.03434,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 74
+        },
+        "measured": {},
+        "worst_depth": 0.0544,
+        "latency_s_mean": 0.4761
+      }
+    ]
+  },
+  "wall_s": 3829.2,
+  "resources": {
+    "peak_rss_mb": 4459.2,
+    "cpu_user_s": 9086.4,
+    "cpu_system_s": 19.8,
+    "threads": 33,
+    "cpus_online": 4,
+    "wall_clock": "2026-09-04T05:49:33+0000"
+  },
+  "measured_at": "2026-09-04T05:49:33+0000"
+}

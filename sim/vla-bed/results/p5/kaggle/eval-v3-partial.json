@@ -181,7 +181,8 @@
     "file": "/kaggle/working/vla-bed-baseline-eval-v3.zip",
     "size_mb": 0.06,
     "sha256": "c6b359a88a4fb42b20294ac7dcd090cea13558f530a4032e4fb2138516442170",
-    "imported": false
+    "imported": true,
+    "imported_at": "2026-09-05 18:20 ICT"
   },
   "session_wall_s": 5058.3,
   "reading": "Headroom removed the wrapper's interventions (over-cap steps 0 %, rejected steps 4-6 % instead of 32-45 %, safety 0.46-0.72 instead of 0.00) but did not move closed-loop success: the v3 learning curve 0.12 / 0.20 / 0.16 / 0.10 sits in the same band as v2's 0.09 / 0.13 / 0.20 / 0.13, and the selected checkpoint (5k) scores 0.20, exactly v2's best. The camera azimuth jitter did not help the camera_shift variation (0.05 vs 0.04): that variation translates the camera without re-aiming it, a perturbation the jitter never showed. lighting 0.10 and target_relocation 0.14 are within noise of nominal. The policy's ceiling with 400 demonstrations is precision, not the safety cap; the paired comparison on identical seeds (after the zips are imported) is the formal statement."

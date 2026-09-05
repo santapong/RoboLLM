@@ -43,7 +43,8 @@
     "file": "/kaggle/working/vla-bed-baseline-output-v3.zip",
     "size_mb": 3521,
     "sha256": "1d74c6af271a8847682c8566521ba21334465cf704775a8d0c6fea388bd1269f",
-    "imported": false
+    "imported": true,
+    "imported_at": "2026-09-05 18:20 ICT"
   },
   "session_wall_s": 13014.0,
   "reading": "Headroom did what it was designed to do: 0 % of commanded steps exceed the S2 cap (v2: 37 %) and only 5.9 % of steps are rejected, all S4 workspace exits (v2: 42 %). Success on the 50-episode quick check is 0.14, i.e. no visible gain over v2's final checkpoint (0.13 at n = 100); the 100-episode paired evaluation of all four checkpoints (session C) decides."

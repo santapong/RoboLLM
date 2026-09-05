@@ -1,0 +1,2137 @@
+{
+  "schema": "robollm.vla-bed.phase-summary.v1",
+  "phase": "P5",
+  "route": "M",
+  "host": {
+    "hostname": "8ac6124fd05b",
+    "machine": "x86_64",
+    "python": "3.12.13",
+    "MUJOCO_GL": "egl"
+  },
+  "task": "touch the red target",
+  "embodiment": "ur5e+2f85",
+  "schedule": {
+    "manifest": "datasets/vla-bed/v2/manifest.json",
+    "recipe": "v2",
+    "split": "evaluation",
+    "base_seed": 10000,
+    "episodes": 100,
+    "cells": 20,
+    "variation": "camera_shift",
+    "fps": 20,
+    "max_frames": 100
+  },
+  "limits": {
+    "xyz_step_m": 0.01,
+    "rpy_step_rad": 0.05
+  },
+  "policy": {
+    "name": "smolvla",
+    "label": "baseline/010000",
+    "checkpoint": "artifacts/vla-bed/baseline/full/checkpoints/010000/pretrained_model",
+    "representation": "identity",
+    "n_action_steps": 10,
+    "gain": 1.0,
+    "blank_image": false
+  },
+  "baseline/010000": {
+    "n": 100,
+    "success_rate": 0.04,
+    "safety": 0.0,
+    "sbu": 0.04,
+    "vsi": 0.233059,
+    "ci95_wilson_success": [
+      0.01566330388275538,
+      0.09837071498472119
+    ],
+    "ci95_wilson_safety": [
+      0.0,
+      0.03699349876899627
+    ],
+    "progress_mean": 0.12,
+    "progress_ci95_bootstrap": [
+      0.075,
+      0.17
+    ],
+    "episode_len_mean": 98.37,
+    "episode_len_ci95_bootstrap": [
+      96.1895,
+      99.99
+    ],
+    "chunks_mean": 9.86,
+    "latency_s_mean": 0.4834030000000001,
+    "final_error_m_mean": 0.19474629999999998,
+    "per_family_success": {
+      "front_high": 0.0,
+      "front_low": 0.0,
+      "left": 0.1,
+      "near": 0.05,
+      "right": 0.05
+    },
+    "per_family_n": {
+      "front_high": 20,
+      "front_low": 20,
+      "left": 20,
+      "near": 20,
+      "right": 20
+    },
+    "faults": {
+      "rejected": {
+        "S3_rpy_step": 574,
+        "S2_xyz_step": 1556,
+        "S4_workspace": 742
+      },
+      "measured": {
+        "S6_self_collision": 268
+      }
+    }
+  },
+  "episodes": {
+    "baseline/010000": [
+      {
+        "seed": 1000010000,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.04679,
+        "min_error_m": 0.04679,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.2768,
+        "latency_s_mean": 0.5219
+      },
+      {
+        "seed": 1000010001,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25238,
+        "min_error_m": 0.12883,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 3,
+          "S2_xyz_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.1116,
+        "latency_s_mean": 0.4819
+      },
+      {
+        "seed": 1000010002,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.19191,
+        "min_error_m": 0.10054,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 8,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.28,
+        "latency_s_mean": 0.4886
+      },
+      {
+        "seed": 1000010003,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.19681,
+        "min_error_m": 0.10288,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 3,
+          "S2_xyz_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.1405,
+        "latency_s_mean": 0.4784
+      },
+      {
+        "seed": 1000010004,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.30136,
+        "min_error_m": 0.19178,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 32,
+          "S3_rpy_step": 1,
+          "S4_workspace": 38
+        },
+        "measured": {
+          "S6_self_collision": 268
+        },
+        "worst_depth": 1.0,
+        "latency_s_mean": 0.4908
+      },
+      {
+        "seed": 1000010005,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.27315,
+        "min_error_m": 0.13163,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 10,
+          "S3_rpy_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.3096,
+        "latency_s_mean": 0.4822
+      },
+      {
+        "seed": 1000010006,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.23273,
+        "min_error_m": 0.19492,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.1763,
+        "latency_s_mean": 0.4781
+      },
+      {
+        "seed": 1000010007,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20794,
+        "min_error_m": 0.12817,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 25,
+          "S3_rpy_step": 3,
+          "S4_workspace": 17
+        },
+        "measured": {},
+        "worst_depth": 0.2632,
+        "latency_s_mean": 0.4774
+      },
+      {
+        "seed": 1000010008,
+        "family": "left",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14292,
+        "min_error_m": 0.07133,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 4,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.3136,
+        "latency_s_mean": 0.4818
+      },
+      {
+        "seed": 1000010009,
+        "family": "left",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09727,
+        "min_error_m": 0.04226,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.2901,
+        "latency_s_mean": 0.4841
+      },
+      {
+        "seed": 1000010010,
+        "family": "left",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.27066,
+        "min_error_m": 0.17524,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 18
+        },
+        "measured": {},
+        "worst_depth": 0.2244,
+        "latency_s_mean": 0.4874
+      },
+      {
+        "seed": 1000010011,
+        "family": "left",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21682,
+        "min_error_m": 0.05547,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 5,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2107,
+        "latency_s_mean": 0.4794
+      },
+      {
+        "seed": 1000010012,
+        "family": "right",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.1464,
+        "min_error_m": 0.11162,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 5,
+          "S3_rpy_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1278,
+        "latency_s_mean": 0.482
+      },
+      {
+        "seed": 1000010013,
+        "family": "right",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.29,
+        "min_error_m": 0.25006,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 28,
+          "S4_workspace": 35
+        },
+        "measured": {},
+        "worst_depth": 0.2903,
+        "latency_s_mean": 0.4951
+      },
+      {
+        "seed": 1000010014,
+        "family": "right",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.29161,
+        "min_error_m": 0.19805,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 54,
+          "S3_rpy_step": 1,
+          "S4_workspace": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0659,
+        "latency_s_mean": 0.4881
+      },
+      {
+        "seed": 1000010015,
+        "family": "right",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10242,
+        "min_error_m": 0.08826,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 33,
+          "S4_workspace": 12
+        },
+        "measured": {},
+        "worst_depth": 0.2392,
+        "latency_s_mean": 0.4847
+      },
+      {
+        "seed": 1000010016,
+        "family": "near",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14528,
+        "min_error_m": 0.07066,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 13,
+          "S3_rpy_step": 7,
+          "S4_workspace": 33
+        },
+        "measured": {},
+        "worst_depth": 0.2896,
+        "latency_s_mean": 0.484
+      },
+      {
+        "seed": 1000010017,
+        "family": "near",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.12821,
+        "min_error_m": 0.09599,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 4,
+          "S3_rpy_step": 7,
+          "S4_workspace": 3
+        },
+        "measured": {},
+        "worst_depth": 0.1087,
+        "latency_s_mean": 0.4773
+      },
+      {
+        "seed": 1000010018,
+        "family": "near",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.22318,
+        "min_error_m": 0.12438,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 12,
+          "S3_rpy_step": 5,
+          "S4_workspace": 8
+        },
+        "measured": {},
+        "worst_depth": 0.1437,
+        "latency_s_mean": 0.4791
+      },
+      {
+        "seed": 1000010019,
+        "family": "near",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.24154,
+        "min_error_m": 0.15316,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2443,
+        "latency_s_mean": 0.4872
+      },
+      {
+        "seed": 1000010020,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25944,
+        "min_error_m": 0.14044,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1451,
+        "latency_s_mean": 0.4833
+      },
+      {
+        "seed": 1000010021,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.0691,
+        "min_error_m": 0.06107,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 6,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.2477,
+        "latency_s_mean": 0.4836
+      },
+      {
+        "seed": 1000010022,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21587,
+        "min_error_m": 0.06168,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 13,
+          "S2_xyz_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.3254,
+        "latency_s_mean": 0.4892
+      },
+      {
+        "seed": 1000010023,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.08447,
+        "min_error_m": 0.0461,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 9,
+          "S2_xyz_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.3422,
+        "latency_s_mean": 0.4812
+      },
+      {
+        "seed": 1000010024,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25846,
+        "min_error_m": 0.11045,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 9,
+          "S2_xyz_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.2083,
+        "latency_s_mean": 0.4804
+      },
+      {
+        "seed": 1000010025,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21185,
+        "min_error_m": 0.15227,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 28,
+          "S4_workspace": 12
+        },
+        "measured": {},
+        "worst_depth": 0.4489,
+        "latency_s_mean": 0.4831
+      },
+      {
+        "seed": 1000010026,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.29105,
+        "min_error_m": 0.1881,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 5,
+          "S2_xyz_step": 14
+        },
+        "measured": {},
+        "worst_depth": 0.095,
+        "latency_s_mean": 0.48
+      },
+      {
+        "seed": 1000010027,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.35075,
+        "min_error_m": 0.19125,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 10,
+          "S3_rpy_step": 5,
+          "S4_workspace": 27
+        },
+        "measured": {},
+        "worst_depth": 0.2586,
+        "latency_s_mean": 0.4769
+      },
+      {
+        "seed": 1000010028,
+        "family": "left",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21461,
+        "min_error_m": 0.04222,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 12,
+          "S3_rpy_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.2275,
+        "latency_s_mean": 0.4872
+      },
+      {
+        "seed": 1000010029,
+        "family": "left",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.28122,
+        "min_error_m": 0.06642,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 5,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.3235,
+        "latency_s_mean": 0.4804
+      },
+      {
+        "seed": 1000010030,
+        "family": "left",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13867,
+        "min_error_m": 0.04607,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 13
+        },
+        "measured": {},
+        "worst_depth": 0.3018,
+        "latency_s_mean": 0.4862
+      },
+      {
+        "seed": 1000010031,
+        "family": "left",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17885,
+        "min_error_m": 0.05061,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 37,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2041,
+        "latency_s_mean": 0.4877
+      },
+      {
+        "seed": 1000010032,
+        "family": "right",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.15774,
+        "min_error_m": 0.15508,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 24,
+          "S4_workspace": 20
+        },
+        "measured": {},
+        "worst_depth": 0.1585,
+        "latency_s_mean": 0.4812
+      },
+      {
+        "seed": 1000010033,
+        "family": "right",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.04068,
+        "min_error_m": 0.03469,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 21,
+          "S3_rpy_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1391,
+        "latency_s_mean": 0.4861
+      },
+      {
+        "seed": 1000010034,
+        "family": "right",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.1446,
+        "min_error_m": 0.14357,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 5,
+          "S2_xyz_step": 30
+        },
+        "measured": {},
+        "worst_depth": 0.2654,
+        "latency_s_mean": 0.4806
+      },
+      {
+        "seed": 1000010035,
+        "family": "right",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.08521,
+        "min_error_m": 0.07637,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 25,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.171,
+        "latency_s_mean": 0.4767
+      },
+      {
+        "seed": 1000010036,
+        "family": "near",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.24446,
+        "min_error_m": 0.12618,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 8,
+          "S2_xyz_step": 12,
+          "S4_workspace": 22
+        },
+        "measured": {},
+        "worst_depth": 0.3576,
+        "latency_s_mean": 0.4874
+      },
+      {
+        "seed": 1000010037,
+        "family": "near",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14538,
+        "min_error_m": 0.1128,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 7,
+          "S2_xyz_step": 5,
+          "S4_workspace": 48
+        },
+        "measured": {},
+        "worst_depth": 0.2893,
+        "latency_s_mean": 0.4819
+      },
+      {
+        "seed": 1000010038,
+        "family": "near",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13913,
+        "min_error_m": 0.04485,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 2,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2308,
+        "latency_s_mean": 0.4796
+      },
+      {
+        "seed": 1000010039,
+        "family": "near",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20956,
+        "min_error_m": 0.15299,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 4,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2153,
+        "latency_s_mean": 0.4864
+      },
+      {
+        "seed": 1000010040,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10424,
+        "min_error_m": 0.03879,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 12,
+          "S2_xyz_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.3164,
+        "latency_s_mean": 0.4822
+      },
+      {
+        "seed": 1000010041,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09527,
+        "min_error_m": 0.04501,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 6,
+          "S2_xyz_step": 11
+        },
+        "measured": {},
+        "worst_depth": 0.1929,
+        "latency_s_mean": 0.4876
+      },
+      {
+        "seed": 1000010042,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13685,
+        "min_error_m": 0.07081,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 9,
+          "S3_rpy_step": 8
+        },
+        "measured": {},
+        "worst_depth": 0.2343,
+        "latency_s_mean": 0.4812
+      },
+      {
+        "seed": 1000010043,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.31843,
+        "min_error_m": 0.20321,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 3,
+          "S3_rpy_step": 8
+        },
+        "measured": {},
+        "worst_depth": 0.2009,
+        "latency_s_mean": 0.4816
+      },
+      {
+        "seed": 1000010044,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17302,
+        "min_error_m": 0.12368,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 20,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2464,
+        "latency_s_mean": 0.4915
+      },
+      {
+        "seed": 1000010045,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10965,
+        "min_error_m": 0.09682,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 30,
+          "S4_workspace": 30,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.306,
+        "latency_s_mean": 0.4816
+      },
+      {
+        "seed": 1000010046,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.39828,
+        "min_error_m": 0.22905,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 33,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.1768,
+        "latency_s_mean": 0.4825
+      },
+      {
+        "seed": 1000010047,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.40626,
+        "min_error_m": 0.1743,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 30,
+          "S3_rpy_step": 1,
+          "S4_workspace": 5
+        },
+        "measured": {},
+        "worst_depth": 0.0903,
+        "latency_s_mean": 0.4846
+      },
+      {
+        "seed": 1000010048,
+        "family": "left",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": true,
+        "progress": 1.0,
+        "frames": 73,
+        "chunks": 8,
+        "final_error_m": 0.02733,
+        "min_error_m": 0.02733,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 7,
+          "S3_rpy_step": 14
+        },
+        "measured": {},
+        "worst_depth": 0.2523,
+        "latency_s_mean": 0.4798
+      },
+      {
+        "seed": 1000010049,
+        "family": "left",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16074,
+        "min_error_m": 0.08217,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 8,
+          "S2_xyz_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.1412,
+        "latency_s_mean": 0.4724
+      },
+      {
+        "seed": 1000010050,
+        "family": "left",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25831,
+        "min_error_m": 0.11992,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 5,
+          "S3_rpy_step": 10
+        },
+        "measured": {},
+        "worst_depth": 0.384,
+        "latency_s_mean": 0.4809
+      },
+      {
+        "seed": 1000010051,
+        "family": "left",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25967,
+        "min_error_m": 0.04148,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 8,
+          "S2_xyz_step": 9,
+          "S4_workspace": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2598,
+        "latency_s_mean": 0.4833
+      },
+      {
+        "seed": 1000010052,
+        "family": "right",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.18514,
+        "min_error_m": 0.14751,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 8,
+          "S3_rpy_step": 10,
+          "S4_workspace": 25
+        },
+        "measured": {},
+        "worst_depth": 0.2829,
+        "latency_s_mean": 0.4804
+      },
+      {
+        "seed": 1000010053,
+        "family": "right",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.21889,
+        "min_error_m": 0.2088,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 22,
+          "S3_rpy_step": 1,
+          "S4_workspace": 36
+        },
+        "measured": {},
+        "worst_depth": 0.2557,
+        "latency_s_mean": 0.489
+      },
+      {
+        "seed": 1000010054,
+        "family": "right",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.26807,
+        "min_error_m": 0.19843,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 18,
+          "S3_rpy_step": 3,
+          "S4_workspace": 35
+        },
+        "measured": {},
+        "worst_depth": 0.2929,
+        "latency_s_mean": 0.4776
+      },
+      {
+        "seed": 1000010055,
+        "family": "right",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.09597,
+        "min_error_m": 0.09049,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 45
+        },
+        "measured": {},
+        "worst_depth": 0.035,
+        "latency_s_mean": 0.4812
+      },
+      {
+        "seed": 1000010056,
+        "family": "near",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20248,
+        "min_error_m": 0.14631,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 6,
+          "S2_xyz_step": 8,
+          "S4_workspace": 4
+        },
+        "measured": {},
+        "worst_depth": 0.3043,
+        "latency_s_mean": 0.4757
+      },
+      {
+        "seed": 1000010057,
+        "family": "near",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.19254,
+        "min_error_m": 0.13466,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 5,
+          "S4_workspace": 27
+        },
+        "measured": {},
+        "worst_depth": 0.2449,
+        "latency_s_mean": 0.4817
+      },
+      {
+        "seed": 1000010058,
+        "family": "near",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.26342,
+        "min_error_m": 0.07967,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 9,
+          "S3_rpy_step": 5,
+          "S4_workspace": 18
+        },
+        "measured": {},
+        "worst_depth": 0.1852,
+        "latency_s_mean": 0.4815
+      },
+      {
+        "seed": 1000010059,
+        "family": "near",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14213,
+        "min_error_m": 0.12072,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 20,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2847,
+        "latency_s_mean": 0.4822
+      },
+      {
+        "seed": 1000010060,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.17505,
+        "min_error_m": 0.06848,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 8,
+          "S2_xyz_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.2889,
+        "latency_s_mean": 0.4845
+      },
+      {
+        "seed": 1000010061,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.20712,
+        "min_error_m": 0.07167,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 6,
+          "S2_xyz_step": 8,
+          "S4_workspace": 8
+        },
+        "measured": {},
+        "worst_depth": 0.2379,
+        "latency_s_mean": 0.4864
+      },
+      {
+        "seed": 1000010062,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.35308,
+        "min_error_m": 0.12494,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 9,
+          "S2_xyz_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.2652,
+        "latency_s_mean": 0.4814
+      },
+      {
+        "seed": 1000010063,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.18959,
+        "min_error_m": 0.07651,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 8,
+          "S4_workspace": 30
+        },
+        "measured": {},
+        "worst_depth": 0.2699,
+        "latency_s_mean": 0.4826
+      },
+      {
+        "seed": 1000010064,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.33093,
+        "min_error_m": 0.1156,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 5,
+          "S2_xyz_step": 38,
+          "S4_workspace": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1884,
+        "latency_s_mean": 0.484
+      },
+      {
+        "seed": 1000010065,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.1963,
+        "min_error_m": 0.1724,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 8,
+          "S3_rpy_step": 2,
+          "S4_workspace": 56
+        },
+        "measured": {},
+        "worst_depth": 0.2496,
+        "latency_s_mean": 0.4842
+      },
+      {
+        "seed": 1000010066,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.24273,
+        "min_error_m": 0.12174,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 34,
+          "S3_rpy_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.2775,
+        "latency_s_mean": 0.4907
+      },
+      {
+        "seed": 1000010067,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.30537,
+        "min_error_m": 0.24532,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 3,
+          "S2_xyz_step": 9
+        },
+        "measured": {},
+        "worst_depth": 0.1233,
+        "latency_s_mean": 0.4815
+      },
+      {
+        "seed": 1000010068,
+        "family": "left",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.13008,
+        "min_error_m": 0.05835,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 11,
+          "S3_rpy_step": 5,
+          "S4_workspace": 4
+        },
+        "measured": {},
+        "worst_depth": 0.2802,
+        "latency_s_mean": 0.4862
+      },
+      {
+        "seed": 1000010069,
+        "family": "left",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14747,
+        "min_error_m": 0.03428,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 10,
+          "S3_rpy_step": 8
+        },
+        "measured": {},
+        "worst_depth": 0.197,
+        "latency_s_mean": 0.4872
+      },
+      {
+        "seed": 1000010070,
+        "family": "left",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14579,
+        "min_error_m": 0.09696,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 5,
+          "S2_xyz_step": 1
+        },
+        "measured": {},
+        "worst_depth": 0.2446,
+        "latency_s_mean": 0.4807
+      },
+      {
+        "seed": 1000010071,
+        "family": "left",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.28591,
+        "min_error_m": 0.11495,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 14,
+          "S2_xyz_step": 1,
+          "S4_workspace": 10
+        },
+        "measured": {},
+        "worst_depth": 0.1748,
+        "latency_s_mean": 0.4748
+      },
+      {
+        "seed": 1000010072,
+        "family": "right",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16016,
+        "min_error_m": 0.13163,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 21,
+          "S3_rpy_step": 7,
+          "S4_workspace": 23
+        },
+        "measured": {},
+        "worst_depth": 0.257,
+        "latency_s_mean": 0.4845
+      },
+      {
+        "seed": 1000010073,
+        "family": "right",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.2079,
+        "min_error_m": 0.18301,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 32,
+          "S3_rpy_step": 3,
+          "S4_workspace": 2
+        },
+        "measured": {},
+        "worst_depth": 0.186,
+        "latency_s_mean": 0.48
+      },
+      {
+        "seed": 1000010074,
+        "family": "right",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.19144,
+        "min_error_m": 0.18697,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 67,
+          "S3_rpy_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.1252,
+        "latency_s_mean": 0.4792
+      },
+      {
+        "seed": 1000010075,
+        "family": "right",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.05417,
+        "min_error_m": 0.05417,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 32,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.1092,
+        "latency_s_mean": 0.49
+      },
+      {
+        "seed": 1000010076,
+        "family": "near",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.11453,
+        "min_error_m": 0.07252,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 6,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.1486,
+        "latency_s_mean": 0.4865
+      },
+      {
+        "seed": 1000010077,
+        "family": "near",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16355,
+        "min_error_m": 0.08671,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 12,
+          "S3_rpy_step": 5,
+          "S4_workspace": 11
+        },
+        "measured": {},
+        "worst_depth": 0.2995,
+        "latency_s_mean": 0.4751
+      },
+      {
+        "seed": 1000010078,
+        "family": "near",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.12936,
+        "min_error_m": 0.07959,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 37,
+          "S3_rpy_step": 9
+        },
+        "measured": {},
+        "worst_depth": 0.3665,
+        "latency_s_mean": 0.4743
+      },
+      {
+        "seed": 1000010079,
+        "family": "near",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.08277,
+        "min_error_m": 0.08277,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 24,
+          "S3_rpy_step": 5
+        },
+        "measured": {},
+        "worst_depth": 0.1058,
+        "latency_s_mean": 0.484
+      },
+      {
+        "seed": 1000010080,
+        "family": "front_high",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.25172,
+        "min_error_m": 0.08969,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2511,
+        "latency_s_mean": 0.4872
+      },
+      {
+        "seed": 1000010081,
+        "family": "front_high",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.24023,
+        "min_error_m": 0.1965,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 4
+        },
+        "measured": {},
+        "worst_depth": 0.321,
+        "latency_s_mean": 0.4802
+      },
+      {
+        "seed": 1000010082,
+        "family": "front_high",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.2375,
+        "min_error_m": 0.09231,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 5,
+          "S2_xyz_step": 3
+        },
+        "measured": {},
+        "worst_depth": 0.2267,
+        "latency_s_mean": 0.4837
+      },
+      {
+        "seed": 1000010083,
+        "family": "front_high",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.5,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.12191,
+        "min_error_m": 0.04472,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 17,
+          "S3_rpy_step": 8
+        },
+        "measured": {},
+        "worst_depth": 0.2753,
+        "latency_s_mean": 0.4821
+      },
+      {
+        "seed": 1000010084,
+        "family": "front_low",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.31153,
+        "min_error_m": 0.17065,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 11,
+          "S3_rpy_step": 2,
+          "S4_workspace": 7
+        },
+        "measured": {},
+        "worst_depth": 0.0307,
+        "latency_s_mean": 0.4842
+      },
+      {
+        "seed": 1000010085,
+        "family": "front_low",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.32824,
+        "min_error_m": 0.1566,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 15,
+          "S3_rpy_step": 2,
+          "S4_workspace": 14
+        },
+        "measured": {},
+        "worst_depth": 0.136,
+        "latency_s_mean": 0.4762
+      },
+      {
+        "seed": 1000010086,
+        "family": "front_low",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.53181,
+        "min_error_m": 0.18277,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 22,
+          "S3_rpy_step": 3,
+          "S4_workspace": 15
+        },
+        "measured": {},
+        "worst_depth": 0.3143,
+        "latency_s_mean": 0.4836
+      },
+      {
+        "seed": 1000010087,
+        "family": "front_low",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.34625,
+        "min_error_m": 0.24571,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 26,
+          "S4_workspace": 42
+        },
+        "measured": {},
+        "worst_depth": 0.1955,
+        "latency_s_mean": 0.4776
+      },
+      {
+        "seed": 1000010088,
+        "family": "left",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.10797,
+        "min_error_m": 0.07544,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 26
+        },
+        "measured": {},
+        "worst_depth": 0.0912,
+        "latency_s_mean": 0.4797
+      },
+      {
+        "seed": 1000010089,
+        "family": "left",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": true,
+        "progress": 1.0,
+        "frames": 32,
+        "chunks": 4,
+        "final_error_m": 0.01254,
+        "min_error_m": 0.01254,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 10
+        },
+        "measured": {},
+        "worst_depth": 0.2205,
+        "latency_s_mean": 0.4837
+      },
+      {
+        "seed": 1000010090,
+        "family": "left",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.15192,
+        "min_error_m": 0.08151,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 11,
+          "S2_xyz_step": 10
+        },
+        "measured": {},
+        "worst_depth": 0.2392,
+        "latency_s_mean": 0.4811
+      },
+      {
+        "seed": 1000010091,
+        "family": "left",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.14392,
+        "min_error_m": 0.07133,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 4,
+          "S3_rpy_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2488,
+        "latency_s_mean": 0.4936
+      },
+      {
+        "seed": 1000010092,
+        "family": "right",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.16324,
+        "min_error_m": 0.11939,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 5,
+          "S2_xyz_step": 20,
+          "S4_workspace": 10
+        },
+        "measured": {},
+        "worst_depth": 0.2153,
+        "latency_s_mean": 0.4836
+      },
+      {
+        "seed": 1000010093,
+        "family": "right",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.19377,
+        "min_error_m": 0.19248,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 62,
+          "S3_rpy_step": 2,
+          "S4_workspace": 7
+        },
+        "measured": {},
+        "worst_depth": 0.2345,
+        "latency_s_mean": 0.4871
+      },
+      {
+        "seed": 1000010094,
+        "family": "right",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": true,
+        "progress": 1.0,
+        "frames": 99,
+        "chunks": 10,
+        "final_error_m": 0.02476,
+        "min_error_m": 0.02476,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 7,
+          "S2_xyz_step": 17
+        },
+        "measured": {},
+        "worst_depth": 0.1889,
+        "latency_s_mean": 0.4912
+      },
+      {
+        "seed": 1000010095,
+        "family": "right",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.1559,
+        "min_error_m": 0.14311,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 24,
+          "S4_workspace": 1,
+          "S3_rpy_step": 2
+        },
+        "measured": {},
+        "worst_depth": 0.0775,
+        "latency_s_mean": 0.4889
+      },
+      {
+        "seed": 1000010096,
+        "family": "near",
+        "cell": 0,
+        "variation": "camera_shift",
+        "success": true,
+        "progress": 1.0,
+        "frames": 33,
+        "chunks": 4,
+        "final_error_m": 0.02297,
+        "min_error_m": 0.01762,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 4,
+          "S2_xyz_step": 6
+        },
+        "measured": {},
+        "worst_depth": 0.2457,
+        "latency_s_mean": 0.4792
+      },
+      {
+        "seed": 1000010097,
+        "family": "near",
+        "cell": 1,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.15498,
+        "min_error_m": 0.11873,
+        "safe": false,
+        "rejections": {
+          "S2_xyz_step": 6,
+          "S3_rpy_step": 7
+        },
+        "measured": {},
+        "worst_depth": 0.3232,
+        "latency_s_mean": 0.4751
+      },
+      {
+        "seed": 1000010098,
+        "family": "near",
+        "cell": 2,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.22947,
+        "min_error_m": 0.08335,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 6,
+          "S2_xyz_step": 15
+        },
+        "measured": {},
+        "worst_depth": 0.1008,
+        "latency_s_mean": 0.4923
+      },
+      {
+        "seed": 1000010099,
+        "family": "near",
+        "cell": 3,
+        "variation": "camera_shift",
+        "success": false,
+        "progress": 0.0,
+        "frames": 100,
+        "chunks": 10,
+        "final_error_m": 0.19353,
+        "min_error_m": 0.1252,
+        "safe": false,
+        "rejections": {
+          "S3_rpy_step": 10,
+          "S2_xyz_step": 20,
+          "S4_workspace": 34
+        },
+        "measured": {},
+        "worst_depth": 0.2263,
+        "latency_s_mean": 0.4851
+      }
+    ]
+  },
+  "wall_s": 4261.9,
+  "resources": {
+    "peak_rss_mb": 4463.1,
+    "cpu_user_s": 9942.7,
+    "cpu_system_s": 19.9,
+    "threads": 33,
+    "cpus_online": 4,
+    "wall_clock": "2026-09-04T09:16:33+0000"
+  },
+  "measured_at": "2026-09-04T09:16:33+0000"
+}

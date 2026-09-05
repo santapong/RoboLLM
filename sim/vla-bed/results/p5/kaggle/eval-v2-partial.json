@@ -339,6 +339,7 @@
     "sha256": "4118f3f718d5cac2b40a64372acafcb994105f0b55d7e6efbe3d1fe8645e9737",
     "kaggle_output_total": "8.24 GB (the unpacked training checkpoints; only the eval zip is needed)",
     "import": "sim/vla-bed/gpu/kaggle_import.sh <zip> <sha256>",
-    "imported": false
+    "imported": true,
+    "imported_at": "2026-09-05 18:20 ICT"
   }
 }

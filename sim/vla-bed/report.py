@@ -285,14 +285,15 @@ def main() -> int:
         if magnitudes:
             lines += ["| Magnitude probe (open loop, training frames) | rows | pred / label L∞ | labels on the cap | predicted over the cap | given label on cap | direction cosine |", "|---|---|---|---|---|---|---|"]
             for f in magnitudes:
-                d = load(f); sm = d["summary"]; x = sm["xyz_linf"]
-                lines.append(f"| {f.parent.parent.name}/{f.parent.name} | {sm['rows']} | {x['ratio_pred_over_label']} | {100*x['label_at_cap_fraction']:.0f} % | {100*x['pred_over_cap_fraction']:.0f} % | {100*(x['pred_over_cap_fraction_given_label_at_cap'] or 0):.0f} % | {sm['direction_cosine_xyz_mean']} |")
+                d = load(f); msum = d["summary"]; x = msum["xyz_linf"]
+                lines.append(f"| {f.parent.parent.name}/{f.parent.name} | {msum['rows']} | {x['ratio_pred_over_label']} | {100*x['label_at_cap_fraction']:.0f} % | {100*x['pred_over_cap_fraction']:.0f} % | {100*(x['pred_over_cap_fraction_given_label_at_cap'] or 0):.0f} % | {msum['direction_cosine_xyz_mean']} |")
             lines.append("")
         if compares:
-            lines += ["| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
+            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `9f5dbf4dd492` the v3 baseline; names starting with `v2 … vs v3 …` pair the two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
             for f in compares:
                 d = load(f); dd = d["discordant"]; ci = d["success_diff_ci95_paired_bootstrap"]
-                lines.append(f"| {d['a']['label']} {d['a']['variation']}/{d['a']['post']}/g{d['a']['gain']} vs {d['b']['label']} {d['b']['variation']}/{d['b']['post']}/g{d['b']['gain']} | {d['success_a']:.2f} → {d['success_b']:.2f} | {d['success_diff_b_minus_a']:+.2f} [{ci[0]:+.2f}, {ci[1]:+.2f}] | {dd['a_fail_b_success']} vs {dd['a_success_b_fail']} | {d['mcnemar_exact_p']:.3g} | {d['verdict']} |")
+                name = f.stem.replace("compare_", "").replace("_", " ")
+                lines.append(f"| {name} ({d['a']['label']} {d['a']['variation']} g{d['a']['gain']} → {d['b']['label']} {d['b']['variation']} g{d['b']['gain']}) | {d['success_a']:.2f} → {d['success_b']:.2f} | {d['success_diff_b_minus_a']:+.2f} [{ci[0]:+.2f}, {ci[1]:+.2f}] | {dd['a_fail_b_success']} vs {dd['a_success_b_fail']} | {d['mcnemar_exact_p']:.3g} | {d['verdict']} |")
             lines.append("")
         imported_md = chr(10).join(lines) + chr(10)
         rows_html = ""

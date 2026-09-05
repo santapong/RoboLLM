@@ -321,7 +321,8 @@
   "output": {
     "file": "/kaggle/working/vla-bed-baseline-probes.zip",
     "sha256": "ff3e1a2e8a6a38898c460c76af452b9256628ad9593782b57108b841aa84955b",
-    "imported": false
+    "imported": true,
+    "imported_at": "2026-09-05 18:20 ICT"
   },
   "reading": "No magnitude bias (ratio 0.98); the cap explains the rejections but not the failures: clipping (0.19), gain 0.61 (0.17) and the linear temporal ensemble (0.18) are all inside the noise of the 7.5k nominal suite (0.24), paired McNemar p 0.21-0.46. lighting (0.11, p 0.015) and target_relocation (0.07, p 0.0009) are significantly worse than nominal. The v3 data fix (headroom + viewpoint jitter) is the next lever; inference-side tricks are not."
 }

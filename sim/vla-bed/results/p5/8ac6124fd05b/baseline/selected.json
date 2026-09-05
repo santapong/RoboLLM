@@ -1,0 +1,74 @@
+{
+  "schema": "robollm.vla-bed.checkpoint-selection.v1",
+  "run": "baseline",
+  "selected": {
+    "step": "007500",
+    "success_rate": 0.2,
+    "ci95_wilson_success": [
+      0.13336693289714838,
+      0.2888291663642495
+    ],
+    "progress_mean": 0.32,
+    "final_error_m_mean": 0.14451959999999997,
+    "safety": 0.0,
+    "n": 100,
+    "file": "results/p5/8ac6124fd05b/baseline/007500/nominal.json"
+  },
+  "steps_within_selected_ci": [
+    "007500"
+  ],
+  "candidates": [
+    {
+      "step": "002500",
+      "success_rate": 0.09,
+      "ci95_wilson_success": [
+        0.04807253976868698,
+        0.16226212922188998
+      ],
+      "progress_mean": 0.23,
+      "final_error_m_mean": 0.1706138,
+      "safety": 0.0,
+      "n": 100,
+      "file": "results/p5/8ac6124fd05b/baseline/002500/nominal.json"
+    },
+    {
+      "step": "005000",
+      "success_rate": 0.13,
+      "ci95_wilson_success": [
+        0.07757167395660301,
+        0.20980351513245427
+      ],
+      "progress_mean": 0.32,
+      "final_error_m_mean": 0.13994600000000001,
+      "safety": 0.0,
+      "n": 100,
+      "file": "results/p5/8ac6124fd05b/baseline/005000/nominal.json"
+    },
+    {
+      "step": "007500",
+      "success_rate": 0.2,
+      "ci95_wilson_success": [
+        0.13336693289714838,
+        0.2888291663642495
+      ],
+      "progress_mean": 0.32,
+      "final_error_m_mean": 0.14451959999999997,
+      "safety": 0.0,
+      "n": 100,
+      "file": "results/p5/8ac6124fd05b/baseline/007500/nominal.json"
+    },
+    {
+      "step": "010000",
+      "success_rate": 0.13,
+      "ci95_wilson_success": [
+        0.07757167395660301,
+        0.20980351513245427
+      ],
+      "progress_mean": 0.295,
+      "final_error_m_mean": 0.16756890000000002,
+      "safety": 0.01,
+      "n": 100,
+      "file": "results/p5/8ac6124fd05b/baseline/010000/nominal.json"
+    }
+  ]
+}

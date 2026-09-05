@@ -24,6 +24,10 @@ after the touched demos verifiably run).
   safety, not success; the policy's ceiling with 400 demonstrations is precision.
 - The Kaggle dataset `vla-bed-v3` was created from split 9 MB parts; the notebooks join and
   checksum them (`kaggle/*.ipynb`, `RECIPE = "auto"`).
+- All three Kaggle result zips imported (checksums verified) and paired on identical seeds:
+  v2-best (7.5k) vs v3-best (5k) 0.20 → 0.20, 15 vs 15 discordant, McNemar p = 1; no v2-vs-v3
+  pair separable at n = 100; within v3, gain 0.61 beats nominal on the 10k checkpoint
+  (+0.12 [+0.04, +0.20], p = 0.0075). P4 row in the SDD reads Verified.
 
 ## 2026-09-04 (evening) — UR5e VLA sim bed: evaluator v2, paired comparisons, probes, recipe v3
 
