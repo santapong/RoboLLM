@@ -1,0 +1,215 @@
+{
+  "schema": "robollm.vla-bed.kaggle-eval-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/eval613b2f3479 version 2 (session E of the 5 Sep 2026 plan): baseline trained on recipe v4 (headroom 0.7, camera translation jitter +-0.20 m x/y, +-0.05 m z on train, orientation kept), evaluated on the frozen v2/v3/v4 suite (identical 100 seeds); log transcribed 6 Sep 2026 00:45 ICT; eval.ipynb @ bf6c807, train notebook trainb70132a39a; GPU T4 x2, 2 sharded workers per suite",
+  "recipe": "v4",
+  "run": "baseline",
+  "train_record": {
+    "status": "completed",
+    "steps_done": 10000,
+    "steps_per_s": 0.9348,
+    "wall_s": 10737.2,
+    "gpu": "Tesla T4",
+    "peak_vram_gb": 4.88
+  },
+  "profile": {
+    "oracle_20ep_wall_s": 213,
+    "env_s_per_frame": 0.399,
+    "smolvla_3ep_wall_s": 84,
+    "policy_call_s": 0.41
+  },
+  "suites": [
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.09,
+      "ci95_wilson_success": [
+        0.048,
+        0.162
+      ],
+      "safety": 0.73,
+      "progress_mean": 0.275,
+      "episode_len_mean": 94.75,
+      "rejected_fraction_mean": 0.049,
+      "cmd_xyz_linf_mean": 0.00581,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.0,
+      "ci95_wilson_success": [
+        0.0,
+        0.037
+      ],
+      "safety": 0.01,
+      "progress_mean": 0.015,
+      "episode_len_mean": 100.0,
+      "rejected_fraction_mean": 0.254,
+      "cmd_xyz_linf_mean": 0.00537,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "blank_image": true
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.2,
+      "ci95_wilson_success": [
+        0.133,
+        0.289
+      ],
+      "safety": 0.99,
+      "progress_mean": 0.34,
+      "episode_len_mean": 90.7,
+      "rejected_fraction_mean": 0.001,
+      "cmd_xyz_linf_mean": 0.00364,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "gain": 0.61
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.09,
+      "ci95_wilson_success": [
+        0.048,
+        0.162
+      ],
+      "safety": 0.65,
+      "progress_mean": 0.245,
+      "episode_len_mean": 93.64,
+      "rejected_fraction_mean": 0.058,
+      "cmd_xyz_linf_mean": 0.00587,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/005000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.13,
+      "ci95_wilson_success": [
+        0.078,
+        0.21
+      ],
+      "safety": 0.56,
+      "progress_mean": 0.295,
+      "episode_len_mean": 91.3,
+      "rejected_fraction_mean": 0.076,
+      "cmd_xyz_linf_mean": 0.0061,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/002500",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.07,
+      "ci95_wilson_success": [
+        0.034,
+        0.137
+      ],
+      "safety": 0.74,
+      "progress_mean": 0.25,
+      "episode_len_mean": 95.91,
+      "rejected_fraction_mean": 0.038,
+      "cmd_xyz_linf_mean": 0.00612,
+      "cmd_xyz_over_cap_fraction_mean": 0.0001
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "camera_shift",
+      "n": 100,
+      "success_rate": 0.13,
+      "ci95_wilson_success": [
+        0.077,
+        0.209
+      ],
+      "safety": 0.73,
+      "progress_mean": 0.27,
+      "episode_len_mean": 92.7,
+      "rejected_fraction_mean": 0.053,
+      "cmd_xyz_linf_mean": 0.00593,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "camera_shift_far",
+      "n": 100,
+      "success_rate": 0.06,
+      "ci95_wilson_success": [
+        0.027,
+        0.124
+      ],
+      "safety": 0.62,
+      "progress_mean": 0.115,
+      "episode_len_mean": 95.62,
+      "rejected_fraction_mean": 0.083,
+      "cmd_xyz_linf_mean": 0.00583,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "lighting",
+      "n": 100,
+      "success_rate": 0.07,
+      "ci95_wilson_success": [
+        0.034,
+        0.137
+      ],
+      "safety": 0.45,
+      "progress_mean": 0.17,
+      "episode_len_mean": 95.12,
+      "rejected_fraction_mean": 0.092,
+      "cmd_xyz_linf_mean": 0.00592,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "target_relocation",
+      "n": 100,
+      "success_rate": 0.09,
+      "ci95_wilson_success": [
+        0.048,
+        0.162
+      ],
+      "safety": 0.64,
+      "progress_mean": 0.24,
+      "episode_len_mean": 94.05,
+      "rejected_fraction_mean": 0.045,
+      "cmd_xyz_linf_mean": 0.00587,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    }
+  ],
+  "selection": {
+    "run": "baseline",
+    "selected": "005000",
+    "success_rate": 0.13,
+    "within_ci": [
+      "005000",
+      "007500",
+      "010000"
+    ],
+    "rule": "R11"
+  },
+  "comparison_points_v3_same_suites": {
+    "nominal_010000": 0.1,
+    "nominal_007500": 0.16,
+    "nominal_005000": 0.2,
+    "nominal_002500": 0.12,
+    "blank": 0.0,
+    "gain_0.61": 0.22,
+    "camera_shift": 0.05,
+    "lighting": 0.1,
+    "target_relocation": 0.14,
+    "camera_shift_far": null
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-eval-v4.zip",
+    "size_mb": 0.06,
+    "sha256": "766925edc98addda665600ac263914b6373a46548516ad447af6859e166cd0df",
+    "imported": false
+  },
+  "session_wall_s": 5690.0,
+  "reading": "The camera-translation jitter did what it was designed for: the same 10k policy scores 0.13 [0.08, 0.21] under camera_shift (+0.15, +0.10 m), against 0.05 for v3 and 0.04 for v2, and its camera_shift score now equals its nominal score (0.09), i.e. the policy is viewpoint-invariant inside the jitter range. Outside that range (camera_shift_far, +0.30/+0.20 m) it drops to 0.06 with progress 0.12: the invariance does not extrapolate, matching Cai et al. 2603.26757. Nominal success did not improve (5k 0.13 vs v3 5k 0.20, inside the +-8-point noise of n = 100); lighting 0.07 and target_relocation 0.09 are likewise within noise of nominal. Safety unchanged (0 % over the cap, 4-9 % S4 rejections). The paired comparison on identical seeds (after the zip is imported) is the formal statement for camera_shift."
+}
