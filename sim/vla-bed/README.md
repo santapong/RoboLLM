@@ -89,7 +89,7 @@ MUJOCO_GL=egl .venv-lerobot/bin/python sim/vla-bed/record.py --recipe v2 --split
 | v2 | noisy, 0.5× limit (20 % clean) | 400 / 100 | 11,506 / 2,917 | 100 % | 28.8 / 29.2 | 27.0 % / 44.4 % |
 | v2b | noisy, 0.25× limit (20 % clean) | 400 / 100 | 10,735 / 2,721 | 100 % | 26.8 / 27.2 | 28.3 % / 47.1 % |
 | v3 | noisy, 0.5× limit (20 % clean), **label cap 0.7 × limits, camera azimuth ±20° on train** | 400 / 100 | 14,197 / 3,588 | 100 % | 35.5 / 35.9 | 19.5 % / 38.8 % |
-| v4 | v3 + **camera translation ±0.20 m (x, y), ±0.05 m (z) on train, orientation kept** | 400 / 100 | recording 5 Sep 2026 | | | |
+| v4 | v3 + **camera translation ±0.20 m (x, y), ±0.05 m (z) on train, orientation kept** | 400 / 100 | 14,197 / 3,588 | 100 % | 35.5 / 35.9 | 19.5 % / 38.8 % |
 
 Every clean label and every executed action passes S1–S4 offline (0 faults); all
 video frames decode. Each frame stores the clean label as `action` and the applied
