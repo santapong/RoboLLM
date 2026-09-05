@@ -8,6 +8,28 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-06 — UR5e VLA sim bed: v4 (camera-translation jitter) trained and evaluated for $0
+
+### Results
+
+- **Sessions D + E** (baseline retrained on recipe v4 = v3 + per-episode camera translation
+  ±0.20 m x/y, ±0.05 m z with the orientation kept; 10k steps at 0.935 steps/s, 2.98 h; evaluated
+  on the identical frozen suite in 1.58 h): under `camera_shift` the 10k policy scores **0.13**
+  [0.077, 0.209] against 0.05 (v3) and 0.04 (v2) on the same seeds — paired v3 → v4 +0.08
+  [+0.01, +0.15] (11 vs 3 discordant, McNemar p = 0.057), v2 → v4 +0.09 [+0.02, +0.16]
+  (p = 0.022), progress +0.14 [+0.08, +0.21] — and that score is not separable from its own
+  nominal 0.09 (p = 0.34): the policy is viewpoint-invariant inside the jittered range.
+- It does not extrapolate: the new `camera_shift_far` variation (0.30, 0.20, 0) m gives 0.06
+  [0.027, 0.124] with progress 0.12, as Cai et al. 2603.26757 predicted for views outside the
+  training range.
+- Nominal success did not improve: 2.5k 0.07 / 5k 0.13 / 7.5k 0.09 / 10k 0.09 (selected 5k,
+  R11); every v3-vs-v4 nominal pair, lighting (0.07) and target_relocation (0.09) are inside the
+  noise of n = 100; over-cap steps 0 %, rejected 4–9 % (workspace exits only). The gain-0.61
+  probe again beats nominal on 10k (+0.11 [+0.04, +0.18], p = 0.0074).
+- Transcripts `results/p5/kaggle/{train-v4,eval-v4}-partial.json`; per-episode files and the
+  paired comparisons under `results/p5/145880075d6f` (zip sha256 766925ed…, checksum verified).
+  Kaggle dataset `vla-bed-v4` created from split parts; quota used this week ≈ 4.6 h of 30.
+
 ## 2026-09-05 — UR5e VLA sim bed: probe session, v3 retrain, both for $0 on Kaggle
 
 ### Results

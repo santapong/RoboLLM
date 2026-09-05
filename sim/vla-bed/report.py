@@ -101,6 +101,7 @@ def main() -> int:
     kg = load(R / "p5" / "kaggle" / "eval-v2-partial.json")
     pr = load(R / "p5" / "kaggle" / "probes-v2-partial.json") if (R / "p5" / "kaggle" / "probes-v2-partial.json").exists() else None
     e3 = load(R / "p5" / "kaggle" / "eval-v3-partial.json") if (R / "p5" / "kaggle" / "eval-v3-partial.json").exists() else None
+    e4 = load(R / "p5" / "kaggle" / "eval-v4-partial.json") if (R / "p5" / "kaggle" / "eval-v4-partial.json").exists() else None
     # imported Kaggle result files (schema v2 rows, paired comparisons, magnitude probes) — empty until gpu/kaggle_import.sh has run
     compares = sorted(R.glob("p5/*/*/*/compare_*.json"))
     magnitudes = sorted(R.glob("p5/*/*/*/magnitude.json"))
@@ -145,8 +146,33 @@ def main() -> int:
             rows_lc.append((f"v2 · {st/1000:g}k", v["success_rate"], tuple(v["ci95_wilson_success"]), teal))
             if st in v3curve:
                 rows_lc.append((f"v3 · {st/1000:g}k (headroom + jitter)", v3curve[st]["success_rate"], tuple(v3curve[st]["ci95_wilson_success"]), "#7A5C99"))
-        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3 data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
-                                                       note="v3 caps the expert at 0.7 × the limits and jitters the camera ±20° on the train split; every v3 checkpoint has 0 % over-cap steps.")
+        v4curve = {int(su["label"].split("/")[-1]): su for su in e4["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e4 else {}
+        if v4curve:
+            rows_lc = []
+            for st, v in curve:
+                rows_lc.append((f"v2 · {st/1000:g}k", v["success_rate"], tuple(v["ci95_wilson_success"]), teal))
+                if st in v3curve:
+                    rows_lc.append((f"v3 · {st/1000:g}k (headroom + azimuth jitter)", v3curve[st]["success_rate"], tuple(v3curve[st]["ci95_wilson_success"]), "#7A5C99"))
+                if st in v4curve:
+                    rows_lc.append((f"v4 · {st/1000:g}k (+ camera translation jitter)", v4curve[st]["success_rate"], tuple(v4curve[st]["ci95_wilson_success"]), "#2E7D4F"))
+        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3" + (" vs v4" if v4curve else "") + " data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
+                                                       note="v3 caps the expert at 0.7 × the limits and jitters the camera azimuth ±20° on the train split; v4 adds a camera translation ±0.20 m (x, y), ±0.05 m (z); every v3/v4 checkpoint has 0 % over-cap steps.")
+        if e4:
+            def _suite(e, var, **kw):
+                for su in e["suites"]:
+                    if su["variation"] == var and su["label"].endswith("010000") and not su.get("blank_image") and su.get("gain", 1.0) == 1.0:
+                        return su
+                return None
+            rows_vp = [("v2 · nominal", pol["success_rate"], tuple(pol["ci95_wilson_success"]), teal)]
+            if cam:
+                rows_vp.append(("v2 · camera_shift (+0.15, +0.10 m)", cam["success_rate"], tuple(cam["ci95_wilson_success"]), "#5FB0B7"))
+            for rec, e, col, col2 in (("v3", e3, "#7A5C99", "#A98BC4"), ("v4", e4, "#2E7D4F", "#6FB08A")):
+                nom, cs, far = _suite(e, "nominal"), _suite(e, "camera_shift"), _suite(e, "camera_shift_far")
+                if nom: rows_vp.append((f"{rec} · nominal", nom["success_rate"], tuple(nom["ci95_wilson_success"]), col))
+                if cs: rows_vp.append((f"{rec} · camera_shift (+0.15, +0.10 m)", cs["success_rate"], tuple(cs["ci95_wilson_success"]), col2))
+                if far: rows_vp.append((f"{rec} · camera_shift_far (+0.30, +0.20 m)", far["success_rate"], tuple(far["ci95_wilson_success"]), amber))
+            charts["viewpoint"] = hbar_chart("Viewpoint robustness: the 10k checkpoint of each recipe at the nominal and the shifted camera (same 100 seeds, Wilson 95 %)", rows_vp,
+                                             note="Only v4 (train split recorded with a per-episode camera translation) keeps its nominal score under camera_shift; outside the jittered range (camera_shift_far) it falls back.")
     steps = pol["n"] * pol["episode_len_mean"]
     rej = pol["faults"]["rejected"]
     charts["safety"] = hbar_chart("Commands rejected by the safety wrapper, per 100 policy steps (baseline, 10k)",
@@ -268,6 +294,30 @@ def main() -> int:
                 tag = "th" if cells[0].startswith("Suite") else "td"
                 rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
         v3_html = "<h2>Session C: baseline trained on v3, same frozen suite</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><p>" + bold(esc(lines[-4])) + "</p><div class=\"callout\">" + bold(esc("**" + e3["reading"] + "**")) + "</div>"
+    v4_md, v4_html = "", ""
+    if e4:
+        lines = ["## 3d. Session E — baseline trained on v4 (v3 + camera translation jitter), frozen suite (transcribed)", "",
+                 "| Suite (v4 checkpoint) | success | Wilson 95 % | safety | progress | rejected steps | cmd L∞ mean | v3 same suite |", "|---|---|---|---|---|---|---|---|"]
+        v3ref = {}
+        if e3:
+            for su in e3["suites"]:
+                v3ref[(su["label"].split("/")[-1], su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0))] = su["success_rate"]
+        for su in e4["suites"]:
+            st = su["label"].split("/")[-1]; ci = su["ci95_wilson_success"]
+            what = f"{int(st)/1000:g}k " + su["variation"] + (" + camera blanked" if su.get("blank_image") else "") + (f" + gain {su['gain']}" if su.get("gain", 1.0) != 1.0 else "")
+            ref = v3ref.get((st, su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0)))
+            ref = f"{ref:.2f}" if isinstance(ref, float) else "not run"
+            lines.append(f"| {what} | **{su['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {su['safety']:.2f} | {su['progress_mean']:.2f} | {100*su['rejected_fraction_mean']:.0f} % | {su['cmd_xyz_linf_mean']:.4f} | {ref} |")
+        sel4 = e4["selection"]
+        lines += ["", f"Selected checkpoint (R11): **{int(sel4['selected'])/1000:g}k** at {sel4['success_rate']:.2f}; inside the best interval: {', '.join(f'{int(x)/1000:g}k' for x in sel4['within_ci'])}. Training: {e4['train_record']['steps_per_s']} steps/s, {e4['train_record']['wall_s']/3600:.2f} h; evaluation {e4['session_wall_s']/3600:.2f} h.", "", "- **" + e4["reading"] + "**", ""]
+        v4_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith("Suite") else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+        v4_html = "<h2>Session E: baseline trained on v4, same frozen suite</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><p>" + bold(esc(lines[-4])) + "</p><div class=\"callout\">" + bold(esc("**" + e4["reading"] + "**")) + "</div>"
     imported_md, imported_html = "", ""
     if magnitudes or compares or v2rows:
         lines = ["## 3b. Imported Kaggle probe results (session A, per-episode files)", ""]
@@ -289,7 +339,7 @@ def main() -> int:
                 lines.append(f"| {f.parent.parent.name}/{f.parent.name} | {msum['rows']} | {x['ratio_pred_over_label']} | {100*x['label_at_cap_fraction']:.0f} % | {100*x['pred_over_cap_fraction']:.0f} % | {100*(x['pred_over_cap_fraction_given_label_at_cap'] or 0):.0f} % | {msum['direction_cosine_xyz_mean']} |")
             lines.append("")
         if compares:
-            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `9f5dbf4dd492` the v3 baseline; names starting with `v2 … vs v3 …` pair the two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
+            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `9f5dbf4dd492` the v3 baseline, `145880075d6f` the v4 baseline; names of the form `vX … vs vY …` pair two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
             for f in compares:
                 d = load(f); dd = d["discordant"]; ci = d["success_diff_ci95_paired_bootstrap"]
                 name = f.stem.replace("compare_", "").replace("_", " ")
@@ -309,7 +359,7 @@ def main() -> int:
 
 Status of the experiment branch `experiment/ur5e-vla-bed` at report time: Phases 0–3 verified,
 LIBERO calibration done, {status_txt} **Money spent: $0.00.**
-Kaggle GPU quota used ≈ 12 h of 30 (smokes 0.3 h, training 3.9 h, evaluation ≈ 8 h).
+Kaggle GPU quota used ≈ 19 h in the week of 29 Aug (smokes, v2 training, three evaluation/probe sessions, v3 training) and ≈ 4.6 h in the week of 5 Sep (v4 training 3.0 h, evaluation 1.6 h); weekly cap 30 h.
 Every number below comes from a committed JSON under `results/` or from the Kaggle logs
 transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 
@@ -347,6 +397,9 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 ![OXE replay tracking](report/p3-tracking.svg)
 
 ![LIBERO per task](report/libero-per-task.svg)
+![Learning curve, v2 baseline](report/learning-curve.svg)
+![Learning curve: v2 vs v3 vs v4 on the same seeds](report/learning-curve-v2-vs-v3.svg)
+![Viewpoint robustness: nominal vs shifted camera per recipe](report/viewpoint.svg)
 
 ## 3. Reading the results
 
@@ -376,7 +429,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{probes_md}{v3_md}{imported_md}## 4. Pending when this report was written
+{probes_md}{v3_md}{v4_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -417,12 +470,12 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="eyebrow">RoboLLM · sim/vla-bed · experiment/ur5e-vla-bed · {a.date}</div>
 <h1>UR5e Bed Experiment Report</h1>
 <p class="lede">Everything measured so far on the UR5e VLA sim bed: the calibration of the evaluator, the real-to-sim bridge, the free-GPU fine-tune of SmolVLA, and the baseline policy's first evaluation against scripted controls. Every number comes from a committed result file.</p>
-{prog_html}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 12 of 30 h</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span>{chips_extra}</div>
+{prog_html}<div class="chips"><span class="chip">money spent <b>$0.00</b></span><span class="chip">Kaggle quota <b>≈ 19 h + 4.6 h (two weeks of 30)</b></span><span class="chip">baseline success <b>{pol['success_rate']:.2f} [{pol['ci95_wilson_success'][0]:.2f}, {pol['ci95_wilson_success'][1]:.2f}]</b></span><span class="chip">controls <b>oracle 1.00 · hold 0.00</b></span>{chips_extra}</div>
 <h2>Measurements</h2>
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{probes_html}{v3_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{v3_html}{v4_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """

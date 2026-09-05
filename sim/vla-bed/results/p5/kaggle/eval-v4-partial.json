@@ -208,8 +208,67 @@
     "file": "/kaggle/working/vla-bed-baseline-eval-v4.zip",
     "size_mb": 0.06,
     "sha256": "766925edc98addda665600ac263914b6373a46548516ad447af6859e166cd0df",
-    "imported": false
+    "imported": true,
+    "imported_at": "2026-09-06 00:45 ICT",
+    "imported_to": "results/p5/145880075d6f"
   },
   "session_wall_s": 5690.0,
-  "reading": "The camera-translation jitter did what it was designed for: the same 10k policy scores 0.13 [0.08, 0.21] under camera_shift (+0.15, +0.10 m), against 0.05 for v3 and 0.04 for v2, and its camera_shift score now equals its nominal score (0.09), i.e. the policy is viewpoint-invariant inside the jitter range. Outside that range (camera_shift_far, +0.30/+0.20 m) it drops to 0.06 with progress 0.12: the invariance does not extrapolate, matching Cai et al. 2603.26757. Nominal success did not improve (5k 0.13 vs v3 5k 0.20, inside the +-8-point noise of n = 100); lighting 0.07 and target_relocation 0.09 are likewise within noise of nominal. Safety unchanged (0 % over the cap, 4-9 % S4 rejections). The paired comparison on identical seeds (after the zip is imported) is the formal statement for camera_shift."
+  "reading": "The camera-translation jitter did what it was designed for: the same 10k policy scores 0.13 [0.08, 0.21] under camera_shift (+0.15, +0.10 m) against 0.05 for v3 and 0.04 for v2 on the identical seeds \u2014 paired v3 \u2192 v4 +0.08 [+0.01, +0.15] (11 vs 3 discordant, McNemar p = 0.057), v2 \u2192 v4 +0.09 [+0.02, +0.16] (p = 0.022), progress +0.14 [+0.08, +0.21] \u2014 and its camera_shift score is not separable from its own nominal 0.09 (p = 0.34): inside the jittered range the policy is viewpoint-invariant. Outside that range (camera_shift_far, +0.30/+0.20 m) it drops to 0.06 with progress 0.12: the invariance does not extrapolate, matching Cai et al. 2603.26757. Nominal success did not improve (5k 0.13 vs v3 5k 0.20, paired \u22120.07 [\u22120.17, +0.03], p = 0.23; every v3-vs-v4 nominal pair inside the noise of n = 100); lighting 0.07 and target_relocation 0.09 are likewise within noise. Safety unchanged (0 % over the cap, 4\u20139 % S4 rejections); gain 0.61 again beats nominal on 10k (+0.11 [+0.04, +0.18], p = 0.0074).",
+  "paired_comparisons": {
+    "files": "results/p5/145880075d6f/baseline/*/compare_*.json",
+    "headline": {
+      "v3_to_v4_camera_shift": {
+        "diff": 0.08,
+        "ci95": [
+          0.01,
+          0.15
+        ],
+        "discordant": [
+          11,
+          3
+        ],
+        "mcnemar_p": 0.0574
+      },
+      "v2_to_v4_camera_shift": {
+        "diff": 0.09,
+        "ci95": [
+          0.02,
+          0.16
+        ],
+        "mcnemar_p": 0.0225
+      },
+      "v4_nominal_to_camera_shift": {
+        "diff": 0.04,
+        "ci95": [
+          -0.02,
+          0.1
+        ],
+        "mcnemar_p": 0.344
+      },
+      "v4_camera_shift_to_far": {
+        "diff": -0.07,
+        "ci95": [
+          -0.14,
+          0.0
+        ],
+        "mcnemar_p": 0.0923
+      },
+      "v3_to_v4_nominal_5000": {
+        "diff": -0.07,
+        "ci95": [
+          -0.17,
+          0.03
+        ],
+        "mcnemar_p": 0.2295
+      },
+      "v4_nominal_to_gain0.61": {
+        "diff": 0.11,
+        "ci95": [
+          0.04,
+          0.18
+        ],
+        "mcnemar_p": 0.0074
+      }
+    }
+  }
 }
