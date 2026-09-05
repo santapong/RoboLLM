@@ -358,6 +358,17 @@ and elevation (`BedEnv.set_camera_azimuth`, seeded from the episode seed), the
 range Cai et al. 2603.26757 found most useful; the evaluation split — the frozen
 suite, identical seeds and targets to v2 — keeps the nominal camera.
 
+**Camera translation (recipe v4, 5 Sep 2026).** v3's azimuth jitter did not help the
+`camera_shift` variation (0.05 vs 0.04), and the two perturbations differ in kind: the
+variation *translates* the camera by (0.15, 0.10, 0) m without re-aiming it, while the
+jitter rotates it about the look-at point. v4 = v3 plus a per-episode camera translation
+drawn from U(−0.20, 0.20) m on x and y and U(−0.05, 0.05) m on z with the orientation
+kept (`BedEnv.set_camera_pose`, seeded from the episode seed), so the train split now
+contains the variation's perturbation family; the evaluation split is unchanged. A new
+variation `camera_shift_far` = (0.30, 0.20, 0) m, outside the jittered range, separates
+"learned the geometry" from "memorised the trained range". The v3 → v4 difference is
+the translation jitter alone, so the paired comparison attributes any change to it.
+
 ### 7.3 Controller
 
 Deltas integrate on the controller's **commanded** EE pose (the teleoperation

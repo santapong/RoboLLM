@@ -150,3 +150,16 @@ def test_v3_recipe_headroom_and_camera_jitter(tmp_path):
     assert np.max(np.abs(labels[:, :3])) <= 0.7 * 0.010 + 1e-6
     assert np.max(np.abs(executed[:, :3])) <= 0.010 + 1e-6
     assert result["success_rate"] == 1.0
+
+
+def test_v4_recipe_adds_camera_translation_on_train_only(tmp_path):
+    FakeLeRobotDataset.instances.clear()
+    result = ds.record_split("v4", "train", output_root=tmp_path, episodes=3, dataset_class=FakeLeRobotDataset)
+    manifest = json.loads(Path(result["manifest"]).read_text())
+    assert manifest["camera_translate_m"] == 0.2 and manifest["camera_jitter_deg"] == 20.0 and manifest["headroom"] == 0.7
+    rows = manifest["splits"]["train"]["episodes"]
+    tr = [r["camera_translation_m"] for r in rows]
+    assert all(len(t) == 3 and abs(t[0]) <= 0.2 and abs(t[1]) <= 0.2 and abs(t[2]) <= 0.05 for t in tr) and len({tuple(t) for t in tr}) == 3
+    assert ds.camera_translation(ds.RECIPES["v4"], type("S", (), {"seed": 1})(), "evaluation") == (0.0, 0.0, 0.0)
+    assert ds.camera_translation(ds.RECIPES["v3"], type("S", (), {"seed": 1})(), "train") == (0.0, 0.0, 0.0)
+    assert result["success_rate"] == 1.0

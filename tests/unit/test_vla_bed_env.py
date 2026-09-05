@@ -112,3 +112,16 @@ def test_oracle_with_headroom_succeeds_under_camera_azimuth(env):
             success = True
             break
     assert success and env.safety.safe
+
+
+def test_camera_translation_keeps_orientation_and_far_shift_variation(env):
+    spec = families.episode_specs(1, 10_000, "evaluation")[0]
+    env.reset(spec)
+    pos0, quat0 = env.model.cam_pos[env.cam_id].copy(), env.model.cam_quat[env.cam_id].copy()
+    env.reset(spec, camera_translation_m=(0.1, -0.05, 0.02))
+    assert np.allclose(env.model.cam_pos[env.cam_id], pos0 + np.array([0.1, -0.05, 0.02]))
+    assert np.allclose(env.model.cam_quat[env.cam_id], quat0)  # translation only: no re-aim
+    env.reset(spec, variation="camera_shift_far")
+    assert np.allclose(env.model.cam_pos[env.cam_id], pos0 + bed_env.CAMERA_SHIFT_FAR_M)
+    env.reset(spec)
+    assert np.allclose(env.model.cam_pos[env.cam_id], pos0)

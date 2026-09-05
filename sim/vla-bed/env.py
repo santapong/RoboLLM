@@ -35,7 +35,9 @@ SUCCESS_DISTANCE_M = 0.03
 SUCCESS_FRAMES = 5
 PROGRESS_HALF_DISTANCE_M = 2 * SUCCESS_DISTANCE_M
 INSTRUCTION = "touch the red target"
-VARIATIONS = ("nominal", "camera_shift", "lighting", "target_relocation")
+VARIATIONS = ("nominal", "camera_shift", "camera_shift_far", "lighting", "target_relocation")
+CAMERA_SHIFT_M = np.array([0.15, 0.10, 0.0])  # the camera_shift variation: translate, do not re-aim
+CAMERA_SHIFT_FAR_M = np.array([0.30, 0.20, 0.0])  # twice as far: outside any ±0.2 m training jitter
 STATE_NAMES = ["ee_x", "ee_y", "ee_z", "ee_qw", "ee_qx", "ee_qy", "ee_qz", "gripper", "q1", "q2", "q3", "q4", "q5", "q6"]
 ACTION_NAMES = ["dx", "dy", "dz", "droll", "dpitch", "dyaw", "gripper"]
 GRIPPER_CTRL_MAX = 255.0
@@ -174,16 +176,26 @@ class BedEnv:
         self.model.cam_pos[self.cam_id] = pos
         self.model.cam_quat[self.cam_id] = quat
 
+    def set_camera_pose(self, azimuth_deg: float = 0.0, translation_m=(0.0, 0.0, 0.0)) -> None:
+        """Azimuth about the look-at point (re-aimed), then a plain translation of the camera position with the
+        orientation kept — the perturbation family of the camera_shift variation. Recipe v4 jitters both."""
+        self.set_camera_azimuth(azimuth_deg)
+        t = np.asarray(translation_m, dtype=float).reshape(3)
+        if np.any(np.abs(t) > 1e-12):
+            self.model.cam_pos[self.cam_id] = self.model.cam_pos[self.cam_id] + t
+
     # ----- episode control -----
-    def reset(self, spec: EpisodeSpec, variation: str = "nominal", camera_azimuth_deg: float = 0.0) -> dict[str, np.ndarray]:
+    def reset(self, spec: EpisodeSpec, variation: str = "nominal", camera_azimuth_deg: float = 0.0, camera_translation_m=(0.0, 0.0, 0.0)) -> dict[str, np.ndarray]:
         if variation not in VARIATIONS:
             raise ValueError(f"unknown variation {variation!r}; choose from {VARIATIONS}")
         self.spec = spec
         mujoco.mj_resetData(self.model, self.data)
-        self.set_camera_azimuth(camera_azimuth_deg)
+        self.set_camera_pose(camera_azimuth_deg, camera_translation_m)
         self.model.light_diffuse[:] = self._light_diffuse0
         if variation == "camera_shift":
-            self.model.cam_pos[self.cam_id] = self.model.cam_pos[self.cam_id] + np.array([0.15, 0.10, 0.0])
+            self.model.cam_pos[self.cam_id] = self.model.cam_pos[self.cam_id] + CAMERA_SHIFT_M
+        elif variation == "camera_shift_far":
+            self.model.cam_pos[self.cam_id] = self.model.cam_pos[self.cam_id] + CAMERA_SHIFT_FAR_M
         elif variation == "lighting":
             self.model.light_diffuse[:] = self._light_diffuse0 * 0.45
         target = relocated_target(spec) if variation == "target_relocation" else np.asarray(spec.target)
