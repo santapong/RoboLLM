@@ -1,0 +1,59 @@
+{
+  "schema": "robollm.vla-bed.kaggle-train-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/traina1ee2b18e6 version 2 (session H #2 of the 6 Sep 2026 plan, step 2): run plastic (VLM + vision encoder unfrozen, lr 2.5e-5) on recipe v5a at batch 8 with the VLM cast to float16; the first attempt traine87adacd02 at batch 32 hit CUDA OOM at step 1. Log transcribed 6 Sep 2026 18:30 ICT; train.ipynb @ bddce56; GPU T4 x2",
+  "recipe": "v5a",
+  "run": "plastic",
+  "train_record": {
+    "status": "completed",
+    "steps_done": 10000,
+    "batch_size": 8,
+    "vlm_dtype": "float16",
+    "policy_overrides": {
+      "train_expert_only": false,
+      "freeze_vision_encoder": false,
+      "optimizer_lr": 2.5e-05
+    },
+    "steps_per_s": 1.7282,
+    "wall_s": 5820.6,
+    "gpu": "Tesla T4",
+    "peak_vram_gb": 6.16,
+    "peak_rss_mb": 4702.7,
+    "samples_seen": 80000,
+    "samples_seen_baseline_10k_batch32": 320000,
+    "checkpoints": [
+      "002500",
+      "005000",
+      "007500",
+      "010000"
+    ]
+  },
+  "quick_check_010000_50ep": {
+    "policy": "plastic/last",
+    "variation": "nominal",
+    "n": 50,
+    "success_rate": 0.0,
+    "safety": 0.0,
+    "progress_mean": 0.01,
+    "episode_len_mean": 100.0,
+    "rejected_fraction_mean": 1.0,
+    "cmd_xyz_linf_mean": null,
+    "cmd_xyz_over_cap_fraction_mean": 0.0,
+    "per_family_success": {
+      "front_high": 0.0,
+      "front_low": 0.0,
+      "left": 0.0,
+      "near": 0.0,
+      "right": 0.0
+    },
+    "note": "cmd_xyz_linf_mean is NaN in the log: the policy emits NaN actions, every step is rejected by S1 \u2014 the weights diverged"
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-plastic-output-v5a.zip",
+    "size_mb": 439,
+    "sha256": "2e0e9d1b3eaaf99cb6caae91cf4b53c4a95c2d4f207eca426311495974e83e17",
+    "imported": false,
+    "note": "not evaluated: a diverged checkpoint scores 0 by construction"
+  },
+  "session_wall_s": 7200.0,
+  "reading": "Unfreezing the float16-cast VLM and vision encoder on a T4 diverged: the 10k checkpoint outputs NaN actions (quick check 0/50, every step rejected). Training AdamW through float16 parameters is the likely cause (the baseline keeps the VLM frozen, so its float16 cast is inference-only). The batch-32 attempt did not fit 15 GB; batch 8 trained at 1.73 steps/s with 6.16 GB peak VRAM, so a float32 VLM at batch 8 is the next attempt; the sample count (80k vs 320k for the baseline) is a confound to state with any result."
+}
