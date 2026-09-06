@@ -48,6 +48,25 @@ after the touched demos verifiably run).
 - Transcripts `results/p5/kaggle/{train-v4,eval-v4}-partial.json`; per-episode files and the
   paired comparisons under `results/p5/145880075d6f` (zip sha256 766925ed…, checksum verified).
   Kaggle dataset `vla-bed-v4` created from split parts; quota used this week ≈ 4.6 h of 30.
+- **Sessions F + G** (baseline retrained on recipe v5a = v4 with the expert noise halved to 0.25× the
+  limits; 10k steps at 0.917 steps/s, 3.04 h; evaluated on the identical frozen suite in 1.72 h): nominal
+  2.5k 0.11 / 5k 0.09 / 7.5k **0.16** [0.10, 0.24] / 10k 0.10 (selected 7.5k, R11); every v4 → v5a
+  checkpoint pair inside the noise (+0.04, −0.04, +0.07, +0.01; McNemar p 0.19–1), best-vs-best v3 5k →
+  v5a 7.5k −0.04 (p = 0.54) — the Geometric-Entropy prediction (less injected diversity → higher success
+  on a fine-tuned VLA) is not confirmed at n = 100, so v5b (clean labels) is not recorded.
+- v5a is the best recipe under the shifted camera: `camera_shift` **0.21** [0.14, 0.30] on 10k, above its
+  own nominal (+0.11 [+0.02, +0.20], p = 0.035), above v3 (+0.16 [+0.08, +0.24], 18 vs 2 discordant,
+  p = 0.0004) and v4 (+0.08 [0.00, +0.16], p = 0.077); `camera_shift_far` 0.05, lighting 0.09,
+  target_relocation 0.11, gain 0.61 → 0.15, blank 0.00. v5a becomes the base recipe for the plastic,
+  wrist-camera (v6) and DAgger (v7) runs.
+- Transcripts `results/p5/kaggle/{train-v5a,eval-v5a}-partial.json`; per-episode files and 16 paired
+  comparisons under `results/p5/8af08da6f6a2` (zip sha256 9e1a4261…, checksum verified); Kaggle dataset
+  `vla-bed-v5a`.
+- **Plastic variant on v5a** (VLM + vision encoder unfrozen, lr 2.5e-5): batch 32 OOMs on the 15 GB T4;
+  batch 8 with the float16-cast VLM trains at 1.73 steps/s (6.2 GB) but diverges to NaN actions by 10k
+  (`train-plastic-v5a-partial.json`; AdamW through float16 parameters), so `gpu/train.py --vlm-dtype
+  float32` was added and the run relaunched (session H #4). Recipe **v6** (v5a + wrist camera; 13,217 /
+  3,359 frames, 100 % success) recorded, uploaded as `vla-bed-v6`, training at 1.94 s/step (session I).
 
 ## 2026-09-05 — UR5e VLA sim bed: probe session, v3 retrain, both for $0 on Kaggle
 
