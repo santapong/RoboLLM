@@ -22,8 +22,9 @@ after the touched demos verifiably run).
   recipes so an unrecorded optional recipe does not fail it.
 - **P5 ZeroMQ split verified**: `sim_server.py` (REQ/REP, msgpack) on the Pi + `remote_env.RemoteEnv` +
   `evaluate.py --env zmq://host:5555`; oracle/hold suites over the wire reproduce the in-process rows with
-  0 mismatches; the v3 5k checkpoint on the workstation CPU drove the Pi for 20 episodes (0.15, same 3 seeds
-  as in-process; the wire cost 0.9 % of 94 min). SDD §6.4 carries the as-built contract, §8 P5 reads Verified.
+  0 mismatches; the v3 5k checkpoint on the workstation CPU drove the Pi for 20 episodes (0.15, 3/20 — the same rate as in-process on
+  these seeds but on different episodes, 14/20 outcome agreement: a stochastic policy on CPU vs GPU is not expected to
+  match per episode; the parity evidence is the oracle/hold diff; the wire cost 0.9 % of 94 min). SDD §6.4 carries the as-built contract, §8 P5 reads Verified.
 - Wrist camera plumbing (flag-gated, recipe v6 pending): flange camera in the scene, second image stream in
   env / dataset / evaluator / server / probe; the trainer renames only the cameras a dataset has.
 - `dagger.py` (one DAgger round: the policy drives fresh seeds, the capped oracle labels; LeRobot

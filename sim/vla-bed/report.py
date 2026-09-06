@@ -194,8 +194,22 @@ def main() -> int:
                 fields = ("success", "progress", "frames", "final_error_m", "min_error_m", "safe", "rejections", "measured", "worst_depth")
                 mism = sum(1 for r in d["episodes"][lab] if r["seed"] in lrows for k in fields if r.get(k) != lrows[r["seed"]].get(k))
                 same = f"{mism} field mismatches"
+            elif d["policy"]["name"] == "smolvla":
+                # Policy suites have no in-process twin on the workstation; compare with the Kaggle rows on the same seeds.
+                import re
+                import precision as pz
+                m = re.match(r"baseline-(v\w+)/(\d+)$", lab)
+                for host, rec in (pz.HOST_RECIPE.items() if m else ()):
+                    kf = R / "p5" / host / "baseline" / m.group(2) / "nominal.json"
+                    if rec == m.group(1) and kf.exists():
+                        kd = load(kf); krows = {r["seed"]: r for r in kd["episodes"][kd["policy"]["label"]]}
+                        wire = [r for r in d["episodes"][lab] if r["seed"] in krows]
+                        agree = sum(1 for r in wire if bool(r["success"]) == bool(krows[r["seed"]]["success"]))
+                        ks = sum(1 for r in wire if krows[r["seed"]]["success"])
+                        same = f"Kaggle in-process on the same {len(wire)} seeds: {ks}/{len(wire)} success, per-episode agreement {agree}/{len(wire)} (stochastic policy, CPU vs GPU: no parity expected)"
+                        break
             lines.append(f"| {lab} ({d['policy']['name']}) | {b['n']} | **{b['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {b['safety']:.2f} | {b['progress_mean']:.2f} | {b.get('latency_s_mean', 0):.1f} s | {e.get('requests', '')} | {e.get('wire_s_total', 0):.0f} s | {d['wall_s']/60:.0f} min | {same} |")
-        lines += ["", "- **The split works: the oracle and hold suites reproduce the in-process rows field for field, a request round trip (Pi physics or render + transfer) costs ≈ 25 ms without rendering and ≈ 46 ms with, and in the policy suite that round trip is 0.9 % of the wall time — the ≈ 32 s CPU policy call is the whole budget. SDD question Q-A is answered.**", ""]
+        lines += ["", "- **The split works: the oracle and hold suites reproduce the in-process rows field for field (the policy suite matches the Kaggle rate on the same 20 seeds, 3/20, but on different episodes — a flow-matching policy sampled on a CPU is not expected to reproduce GPU episodes, so parity is claimed for the deterministic suites only), a request round trip (Pi physics or render + transfer) costs ≈ 25 ms without rendering and ≈ 46 ms with, and in the policy suite that round trip is 0.9 % of the wall time — the ≈ 32 s CPU policy call is the whole budget. SDD question Q-A is answered.**", ""]
         p5_md = chr(10).join(lines) + chr(10)
         rows_html = ""
         for line in lines:
