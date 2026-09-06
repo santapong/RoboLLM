@@ -1,0 +1,226 @@
+{
+  "schema": "robollm.vla-bed.kaggle-eval-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/eval90a85c2188 version 2 (session G of the 6 Sep 2026 plan, step 1; the first attempt eval3f9cdb909e was cancelled after its second T4 failed every shard): baseline trained on recipe v5a (v4 with expert noise 0.25 x), evaluated on the frozen suite (identical 100 seeds); log transcribed 6 Sep 2026 15:55 ICT; eval.ipynb @ 7e1884b (per-shard GPU-0 retry), train notebook train6f33ce1832; GPU T4 x2, 2 sharded workers",
+  "recipe": "v5a",
+  "run": "baseline",
+  "train_record": {
+    "status": "completed",
+    "steps_done": 10000,
+    "steps_per_s": 0.917,
+    "wall_s": 10941.1,
+    "gpu": "Tesla T4",
+    "peak_vram_gb": 4.87
+  },
+  "profile": {
+    "oracle_20ep_wall_s": 216,
+    "env_s_per_frame": 0.404,
+    "smolvla_3ep_wall_s": 73,
+    "policy_call_s": 0.43
+  },
+  "suites": [
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.1,
+      "ci95_wilson_success": [
+        0.055,
+        0.174
+      ],
+      "safety": 0.66,
+      "progress_mean": 0.26,
+      "episode_len_mean": 92.57,
+      "rejected_fraction_mean": 0.051,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.0,
+      "ci95_wilson_success": [
+        0.0,
+        0.036
+      ],
+      "safety": 0.05,
+      "progress_mean": 0.015,
+      "episode_len_mean": 100.0,
+      "rejected_fraction_mean": 0.255,
+      "cmd_xyz_linf_mean": 0.004,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "blank_image": true
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.15,
+      "ci95_wilson_success": [
+        0.093,
+        0.232
+      ],
+      "safety": 1.0,
+      "progress_mean": 0.28,
+      "episode_len_mean": 91.56,
+      "rejected_fraction_mean": 0.0,
+      "cmd_xyz_linf_mean": 0.003,
+      "cmd_xyz_over_cap_fraction_mean": 0.0,
+      "gain": 0.61
+    },
+    {
+      "label": "baseline/007500",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.16,
+      "ci95_wilson_success": [
+        0.1,
+        0.244
+      ],
+      "safety": 0.62,
+      "progress_mean": 0.27,
+      "episode_len_mean": 90.23,
+      "rejected_fraction_mean": 0.05,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/005000",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.09,
+      "ci95_wilson_success": [
+        0.048,
+        0.162
+      ],
+      "safety": 0.64,
+      "progress_mean": 0.255,
+      "episode_len_mean": 93.92,
+      "rejected_fraction_mean": 0.028,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/002500",
+      "variation": "nominal",
+      "n": 100,
+      "success_rate": 0.11,
+      "ci95_wilson_success": [
+        0.062,
+        0.186
+      ],
+      "safety": 0.51,
+      "progress_mean": 0.235,
+      "episode_len_mean": 92.8,
+      "rejected_fraction_mean": 0.062,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "camera_shift",
+      "n": 100,
+      "success_rate": 0.21,
+      "ci95_wilson_success": [
+        0.141,
+        0.299
+      ],
+      "safety": 0.68,
+      "progress_mean": 0.31,
+      "episode_len_mean": 87.04,
+      "rejected_fraction_mean": 0.033,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "camera_shift_far",
+      "n": 100,
+      "success_rate": 0.05,
+      "ci95_wilson_success": [
+        0.021,
+        0.111
+      ],
+      "safety": 0.66,
+      "progress_mean": 0.115,
+      "episode_len_mean": 96.23,
+      "rejected_fraction_mean": 0.058,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "lighting",
+      "n": 100,
+      "success_rate": 0.09,
+      "ci95_wilson_success": [
+        0.048,
+        0.162
+      ],
+      "safety": 0.63,
+      "progress_mean": 0.225,
+      "episode_len_mean": 93.62,
+      "rejected_fraction_mean": 0.042,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    },
+    {
+      "label": "baseline/010000",
+      "variation": "target_relocation",
+      "n": 100,
+      "success_rate": 0.11,
+      "ci95_wilson_success": [
+        0.062,
+        0.186
+      ],
+      "safety": 0.57,
+      "progress_mean": 0.265,
+      "episode_len_mean": 93.37,
+      "rejected_fraction_mean": 0.047,
+      "cmd_xyz_linf_mean": 0.005,
+      "cmd_xyz_over_cap_fraction_mean": 0.0
+    }
+  ],
+  "selection": {
+    "run": "baseline",
+    "selected": "007500",
+    "success_rate": 0.16,
+    "within_ci": [
+      "002500",
+      "007500"
+    ],
+    "rule": "R11"
+  },
+  "comparison_points_same_suites": {
+    "v4": {
+      "nominal_010000": 0.09,
+      "nominal_007500": 0.09,
+      "nominal_005000": 0.13,
+      "nominal_002500": 0.07,
+      "gain_0.61": 0.2,
+      "camera_shift": 0.13,
+      "camera_shift_far": 0.06,
+      "lighting": 0.07,
+      "target_relocation": 0.09
+    },
+    "v3": {
+      "nominal_010000": 0.1,
+      "nominal_007500": 0.16,
+      "nominal_005000": 0.2,
+      "nominal_002500": 0.12,
+      "gain_0.61": 0.22,
+      "camera_shift": 0.05,
+      "camera_shift_far": 0.04,
+      "lighting": 0.1,
+      "target_relocation": 0.14
+    }
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-eval-v5a.zip",
+    "size_mb": 0.07,
+    "sha256": "9e1a42611f9e8c1f4c46600903bd839e73a333b067f12166c2ee6ec8e078f60f",
+    "imported": false
+  },
+  "session_wall_s": 6200.0,
+  "reading": "Halving the injected expert noise did not move nominal success (2.5k 0.11 / 5k 0.09 / 7.5k 0.16 / 10k 0.10, selected 7.5k at 0.16: the same band as v3 and v4) and weakened the gain probe (0.15 vs 0.20 / 0.22: the policy already commands smaller steps, 0.005 m mean). Under the near camera shift the 10k checkpoint scores 0.21 [0.14, 0.30] \u2014 above its own nominal 0.10 and above v4's 0.13 \u2014 while the far shift (0.05), lighting (0.09) and target_relocation (0.11) stay in the noise. Paired verdicts on identical seeds follow once the zip is imported."
+}
