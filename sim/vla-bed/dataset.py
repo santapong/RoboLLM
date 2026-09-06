@@ -56,6 +56,10 @@ FEATURE_KEYS = (
 )
 
 
+def feature_keys(wrist_camera: bool = False) -> tuple[str, ...]:
+    return FEATURE_KEYS + (("observation.images.wrist",) if wrist_camera else ())
+
+
 @dataclass(frozen=True)
 class Recipe:
     name: str
@@ -68,6 +72,7 @@ class Recipe:
     headroom: float = 1.0  # clean-label cap as a fraction of the safety limits (S2/S3)
     camera_jitter_deg: float = 0.0  # train-split camera azimuth ~ U(−j, +j) about the look-at point, seeded per episode
     camera_translate_m: float = 0.0  # train-split camera translation ~ U(−t, +t) on x and y, U(−t/4, +t/4) on z, orientation kept
+    wrist_camera: bool = False  # recipe v6: record a second image stream from the flange camera (both splits)
 
     def episodes(self, split: str) -> int:
         return self.train if split == "train" else self.evaluation
@@ -207,12 +212,12 @@ def record_split(
     if missing:
         raise RecordingFault(f"cells not IK-verified: {missing}")
 
-    features = dataset_features(height, width)
+    features = dataset_features(height, width, recipe.wrist_camera)
     dataset = _dataset_type(dataset_class).create(
         repo_id=f"{repo_id}-{split}", root=root, fps=FPS, robot_type=ROBOT_TYPE, features=features, use_videos=True
     )
     own_env = env is None
-    env = env or BedEnv(render=True, height=height, width=width)
+    env = env or BedEnv(render=True, height=height, width=width, wrist_camera=recipe.wrist_camera)
     wrapper = SafetyWrapper()
     experts: dict[float, Any] = {}
     rows: list[dict[str, Any]] = []
@@ -289,6 +294,7 @@ def record_split(
         "headroom": recipe.headroom,
         "camera_jitter_deg": recipe.camera_jitter_deg if split == "train" else 0.0,
         "camera_translate_m": recipe.camera_translate_m if split == "train" else 0.0,
+        "wrist_camera": recipe.wrist_camera,
         "episode_count": count,
         "frame_count": sum(r["frame_count"] for r in rows),
         "success_count": successes,
@@ -325,7 +331,7 @@ def validate_manifest(path: str | Path) -> dict:
     recipe = RECIPES.get(manifest.get("recipe", ""))
     if recipe is None:
         errors.append("unknown recipe")
-    if set(manifest.get("features", {})) != set(FEATURE_KEYS):
+    if set(manifest.get("features", {})) != set(feature_keys(bool(recipe and recipe.wrist_camera))):
         errors.append(f"feature set mismatch: {sorted(manifest.get('features', {}))}")
     if any("target" in k for k in manifest.get("features", {})):
         errors.append("target leaked into features")

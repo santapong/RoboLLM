@@ -125,3 +125,28 @@ def test_camera_translation_keeps_orientation_and_far_shift_variation(env):
     assert np.allclose(env.model.cam_pos[env.cam_id], pos0 + bed_env.CAMERA_SHIFT_FAR_M)
     env.reset(spec)
     assert np.allclose(env.model.cam_pos[env.cam_id], pos0)
+
+
+def test_wrist_camera_is_opt_in(tmp_path):
+    """Recipe v6 plumbing: the wrist stream appears only when asked for, and old observations are unchanged."""
+    import os
+    os.environ.setdefault("MUJOCO_GL", "egl")
+    pytest.importorskip("mink")
+    from env import BedEnv, dataset_features
+    from families import episode_specs
+    assert "observation.images.wrist" not in dataset_features() and "observation.images.wrist" in dataset_features(wrist_camera=True)
+    spec = episode_specs(1, 10_000, "evaluation")[0]
+    plain = BedEnv(render=True)
+    try:
+        obs = plain.reset(spec)
+        assert "observation.images.wrist" not in obs and obs["observation.images.front"].shape == (224, 224, 3)
+    finally:
+        plain.close()
+    wrist = BedEnv(render=True, wrist_camera=True)
+    try:
+        obs = wrist.reset(spec)
+        assert obs["observation.images.wrist"].shape == (224, 224, 3) and obs["observation.images.wrist"].dtype == np.uint8
+        assert not np.array_equal(obs["observation.images.wrist"], obs["observation.images.front"])
+        assert wrist.observation(render=False)["observation.images.wrist"] is None
+    finally:
+        wrist.close()

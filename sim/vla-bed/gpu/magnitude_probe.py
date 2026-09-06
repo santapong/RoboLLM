@@ -107,6 +107,12 @@ def probe(checkpoint: str, dataset_root: Path, repo_id: str, representation: str
         label = np.asarray(item["action"], dtype=np.float64).reshape(-1, 7)
         pad = np.asarray(item.get("action_is_pad", np.zeros(len(label), dtype=bool))).reshape(-1)
         batch = {"observation.images.front": img.to(dev), "observation.state": torch.from_numpy(state).to(dev), "task": instruction}
+        if "observation.images.wrist" in item:  # recipe v6
+            w = item["observation.images.wrist"]
+            w = torch.as_tensor(np.asarray(w)) if not hasattr(w, "dim") else w
+            if w.dim() == 3 and w.shape[-1] == 3:
+                w = w.permute(2, 0, 1).float().div(255.0)
+            batch["observation.images.wrist"] = w.float().to(dev)
         policy.reset()
         torch.manual_seed(seed + int(i))
         with torch.inference_mode():

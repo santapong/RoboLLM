@@ -49,6 +49,10 @@ GRIPPER_ACTUATOR = GRIPPER_PREFIX + "fingers_actuator"  # ctrl 0..255
 EE_SITE = GRIPPER_PREFIX + "pinch"  # fingertip frame; the bed's end-effector
 
 CAMERA_NAME = "front"
+WRIST_CAMERA_NAME = "wrist"  # recipe v6: on wrist_3_link, looking along the tool axis (+y, where the 2F-85 mounts at y = 0.107)
+WRIST_CAMERA_POS = np.array([0.0, 0.03, 0.10])  # 0.10 m off-axis: looks past the gripper body at the fingertips
+WRIST_CAMERA_TILT_DEG = 21.0  # optical axis meets the tool axis ≈ 0.26 m ahead, at the pinch site
+WRIST_CAMERA_FOVY = 70.0
 CAMERA_POS = np.array([1.35, -1.25, 0.95])
 CAMERA_LOOKAT = np.array([0.05, -0.35, 0.30])
 IMAGE_HW = (224, 224)
@@ -105,6 +109,9 @@ def build_spec(menagerie: Path | None = None) -> mujoco.MjSpec:
         xyaxes=_lookat_xyaxes(CAMERA_POS, CAMERA_LOOKAT),
         fovy=42.0,
     )
+    # Wrist camera (recipe v6): MuJoCo cameras look down −z; x_cam = link x, forward = +y tilted toward −z by the tilt.
+    s, c = np.sin(np.radians(WRIST_CAMERA_TILT_DEG)), np.cos(np.radians(WRIST_CAMERA_TILT_DEG))
+    spec.body("wrist_3_link").add_camera(name=WRIST_CAMERA_NAME, pos=WRIST_CAMERA_POS, xyaxes=[1.0, 0.0, 0.0, 0.0, s, c], fovy=WRIST_CAMERA_FOVY)
     spec.visual.global_.offwidth = max(spec.visual.global_.offwidth, 640)
     spec.visual.global_.offheight = max(spec.visual.global_.offheight, 480)
 

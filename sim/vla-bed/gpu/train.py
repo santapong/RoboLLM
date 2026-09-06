@@ -56,6 +56,19 @@ def output_dir(config: dict, run: dict, mode: str, output_root: Path | None = No
     return (Path(output_root) if output_root else ROOT / config["output_dir"]) / run["name"] / mode
 
 
+def rename_map_for(config: dict, dataset_root) -> dict:
+    """config['rename_map'] restricted to the image keys the dataset really has (meta/info.json), so a wrist entry
+    (recipe v6) does not break datasets without one."""
+    rename = dict(config.get("rename_map", {}))
+    try:
+        info = json.loads((Path(dataset_root) / "meta" / "info.json").read_text())
+        present = set(info.get("features", {}))
+        rename = {k: v for k, v in rename.items() if k in present}
+    except (OSError, ValueError):
+        pass
+    return rename
+
+
 def build_argv(config: dict, run: dict, mode: str, out: Path, overrides: dict | None = None) -> list[str]:
     ov = overrides or {}
     ds = config["dataset"]
@@ -69,7 +82,7 @@ def build_argv(config: dict, run: dict, mode: str, out: Path, overrides: dict | 
         f"--policy.path={config['model']}",
         f"--dataset.repo_id={ds['train_repo_id']}",
         f"--dataset.root={dataset_root}",
-        f"--rename_map={json.dumps(config['rename_map'])}",
+        f"--rename_map={json.dumps(rename_map_for(config, dataset_root))}",
         f"--batch_size={batch}",
         f"--num_workers={0 if mode == 'cpu-smoke' else config['num_workers']}",
         f"--steps={steps}",

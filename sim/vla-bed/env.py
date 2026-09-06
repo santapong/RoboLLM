@@ -66,9 +66,10 @@ class StepResult:
     executed: np.ndarray
 
 
-def dataset_features(height: int = 224, width: int = 224) -> dict[str, dict]:
+def dataset_features(height: int = 224, width: int = 224, wrist_camera: bool = False) -> dict[str, dict]:
     return {
         "observation.images.front": {"dtype": "video", "shape": (height, width, 3), "names": ["height", "width", "channels"]},
+        **({"observation.images.wrist": {"dtype": "video", "shape": (height, width, 3), "names": ["height", "width", "channels"]}} if wrist_camera else {}),
         "observation.state": {"dtype": "float32", "shape": (14,), "names": STATE_NAMES},
         "action": {"dtype": "float32", "shape": (7,), "names": ACTION_NAMES},
         "action.executed": {"dtype": "float32", "shape": (7,), "names": ACTION_NAMES},
@@ -78,8 +79,9 @@ def dataset_features(height: int = 224, width: int = 224) -> dict[str, dict]:
 
 
 class BedEnv:
-    def __init__(self, render: bool = True, height: int = 224, width: int = 224):
+    def __init__(self, render: bool = True, height: int = 224, width: int = 224, wrist_camera: bool = False):
         self.model = build_scene.load_model()
+        self.wrist_camera = wrist_camera  # recipe v6: a second image stream from the flange camera
         self.data = mujoco.MjData(self.model)
         physics_hz = 1.0 / self.model.opt.timestep
         self.substeps = int(round(physics_hz / FPS))
@@ -143,18 +145,22 @@ class BedEnv:
     def observation(self, render: bool = True) -> dict[str, np.ndarray]:
         """B1's observation dict. `render=False` skips the camera (image None) — the evaluator asks for a
         frame only when the policy is about to be queried; success and error are state-based."""
-        if not render:
-            image = None
-        elif self.renderer is not None:
-            self.renderer.update_scene(self.data, camera=self.camera)
-            image = self.renderer.render().copy()
-        else:
-            image = np.zeros((self.height, self.width, 3), dtype=np.uint8)
-        return {
-            "observation.images.front": image,
+        def frame(camera: str):
+            if not render:
+                return None
+            if self.renderer is not None:
+                self.renderer.update_scene(self.data, camera=camera)
+                return self.renderer.render().copy()
+            return np.zeros((self.height, self.width, 3), dtype=np.uint8)
+
+        obs = {
+            "observation.images.front": frame(self.camera),
             "observation.state": self.state(),
             "observation.camera_lag_ms": np.zeros(1, dtype=np.float32),
         }
+        if self.wrist_camera:
+            obs["observation.images.wrist"] = frame(build_scene.WRIST_CAMERA_NAME)
+        return obs
 
     def set_camera_azimuth(self, azimuth_deg: float) -> None:
         """Rotate the fixed camera about the world z axis through the scene's look-at point (distance and

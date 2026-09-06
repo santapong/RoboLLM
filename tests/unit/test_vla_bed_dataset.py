@@ -172,3 +172,8 @@ def test_v5_recipes_reduce_noise_and_keep_the_frozen_evaluation_split():
         assert r.sigma(1) == noise and r.sigma(0) == 0.0
         # the frozen suite: same base seed and episode count as v2 → identical evaluation seeds/targets
         assert (r.base_seed, r.evaluation) == (ds.RECIPES["v2"].base_seed, ds.RECIPES["v2"].evaluation)
+
+
+def test_feature_keys_add_the_wrist_stream_only_when_asked():
+    assert ds.feature_keys() == ds.FEATURE_KEYS and ds.feature_keys(True) == ds.FEATURE_KEYS + ("observation.images.wrist",)
+    assert all(not r.wrist_camera for r in ds.RECIPES.values())

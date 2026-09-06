@@ -38,12 +38,15 @@ PROTOCOL = "robollm.vla-bed.sim-server.v1"
 
 
 def encode_obs(obs: dict | None) -> dict | None:
+    """Every `observation.images.<name>` key travels as raw uint8 bytes + shape (None when not rendered)."""
     if obs is None:
         return None
-    image = obs.get("observation.images.front")
+    images = {}
+    for key, image in obs.items():
+        if key.startswith("observation.images."):
+            images[key.split(".")[-1]] = None if image is None else {"bytes": np.ascontiguousarray(image, dtype=np.uint8).tobytes(), "shape": list(image.shape)}
     return {
-        "image": None if image is None else np.ascontiguousarray(image, dtype=np.uint8).tobytes(),
-        "shape": None if image is None else list(image.shape),
+        "images": images,
         "state": np.asarray(obs["observation.state"], dtype=np.float32).tolist(),
         "camera_lag_ms": np.asarray(obs.get("observation.camera_lag_ms", [0.0]), dtype=np.float32).tolist(),
     }
@@ -52,12 +55,14 @@ def encode_obs(obs: dict | None) -> dict | None:
 def decode_obs(o: dict | None) -> dict | None:
     if o is None:
         return None
-    image = None if o.get("image") is None else np.frombuffer(o["image"], dtype=np.uint8).reshape(o["shape"]).copy()
-    return {
-        "observation.images.front": image,
+    out = {
         "observation.state": np.asarray(o["state"], dtype=np.float32),
         "observation.camera_lag_ms": np.asarray(o.get("camera_lag_ms", [0.0]), dtype=np.float32),
     }
+    for name, img in o.get("images", {}).items():
+        out[f"observation.images.{name}"] = None if img is None else np.frombuffer(img["bytes"], dtype=np.uint8).reshape(img["shape"]).copy()
+    out.setdefault("observation.images.front", None)
+    return out
 
 
 def safety_dict(safety) -> dict:

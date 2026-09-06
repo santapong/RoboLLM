@@ -158,6 +158,10 @@ class SmolVLAPolicy:
             "observation.state": torch.from_numpy(state).to(self.device),
             "task": self.instruction,
         }
+        wrist = observation.get("observation.images.wrist")
+        if wrist is not None:  # recipe v6: the checkpoint's own rename map routes it to camera2
+            wrist = np.zeros_like(np.asarray(wrist)) if self.blank_image else np.asarray(wrist)
+            batch["observation.images.wrist"] = torch.from_numpy(wrist.copy()).permute(2, 0, 1).float().div(255.0).to(self.device)
         with torch.inference_mode():
             chunk = self.post(self.policy.predict_action_chunk(self.pre(batch)))
         chunk = np.asarray(chunk.detach().cpu().numpy() if hasattr(chunk, "detach") else chunk, dtype=np.float64)
@@ -359,7 +363,9 @@ def evaluate(args) -> dict:
         from remote_env import RemoteEnv, ZmqTransport
         env = RemoteEnv(ZmqTransport(args.env))
     else:
-        env = BedEnv(render=True)
+        import dataset as ds
+        recipe = ds.RECIPES.get(str(manifest.get("recipe", "")))
+        env = BedEnv(render=True, wrist_camera=bool(recipe and recipe.wrist_camera))
     try:
         policy = make_policy(args.policy, env, args)
         t0 = time.perf_counter()
