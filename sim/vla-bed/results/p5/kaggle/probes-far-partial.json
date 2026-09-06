@@ -36,7 +36,37 @@
       }
     },
     "v3": {
-      "status": "pending"
+      "notebook": "santapongsondhi/probec151eebc4b",
+      "version": 2,
+      "inputs": [
+        "vla-bed-v3",
+        "train033260eb32 (output)"
+      ],
+      "launched": "2026-09-06 09:38 ICT",
+      "wall_s": 1066,
+      "suite": {
+        "label": "baseline/010000",
+        "variation": "camera_shift_far",
+        "n": 100,
+        "success_rate": 0.04,
+        "ci95_wilson_success": [
+          0.0156,
+          0.0983
+        ],
+        "safety": 0.49,
+        "progress_mean": 0.11,
+        "episode_len_mean": 97.59,
+        "rejected_fraction_mean": 0.1218,
+        "cmd_xyz_linf_mean": 0.0057,
+        "cmd_xyz_over_cap_fraction_mean": 0.0,
+        "minutes": 9.4
+      },
+      "output": {
+        "file": "/kaggle/working/vla-bed-baseline-probes-v3.zip",
+        "size_mb": 0.01,
+        "sha256": "5a57af518cad77ffe0d7a136f031dc86cb7e123cf398344e16087cfa3469b396",
+        "imported": false
+      }
     }
   },
   "comparison_points": {
@@ -45,5 +75,5 @@
     "v3_010000_camera_shift": 0.05,
     "v2_010000_camera_shift": 0.04
   },
-  "reading": "v2's final checkpoint under the far camera shift: 0.03 [0.01, 0.08], progress 0.09, safety 0.00 with 27 % of steps rejected (13 % over the S2 cap, as on v2's nominal suite) \u2014 the far view is as destructive as the near one for a single-view policy (camera_shift 0.04)."
+  "reading": "Three-way far camera shift (0.30, 0.20, 0) m on the final 10k checkpoints, identical seeds: v2 0.03 [0.01, 0.08], v3 0.04 [0.02, 0.10], v4 0.06 [0.03, 0.12] \u2014 inside the noise of one another; the far view defeats every recipe, including v4 whose \u00b10.20 m translation jitter made it invariant to the near shift (0.13). Safety differs (v2 0.00 with 27 % rejected and 13 % over the cap; v3 0.49; v4 0.62) for the same reason as on nominal: headroom removed the cap rejections. Paired verdicts follow once the zips are imported."
 }
