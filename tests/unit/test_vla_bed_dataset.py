@@ -163,3 +163,12 @@ def test_v4_recipe_adds_camera_translation_on_train_only(tmp_path):
     assert ds.camera_translation(ds.RECIPES["v4"], type("S", (), {"seed": 1})(), "evaluation") == (0.0, 0.0, 0.0)
     assert ds.camera_translation(ds.RECIPES["v3"], type("S", (), {"seed": 1})(), "train") == (0.0, 0.0, 0.0)
     assert result["success_rate"] == 1.0
+
+
+def test_v5_recipes_reduce_noise_and_keep_the_frozen_evaluation_split():
+    for name, noise in (("v5a", 0.25), ("v5b", 0.0)):
+        r = ds.RECIPES[name]
+        assert (r.noise_fraction, r.headroom, r.camera_jitter_deg, r.camera_translate_m) == (noise, 0.7, 20.0, 0.20)
+        assert r.sigma(1) == noise and r.sigma(0) == 0.0
+        # the frozen suite: same base seed and episode count as v2 → identical evaluation seeds/targets
+        assert (r.base_seed, r.evaluation) == (ds.RECIPES["v2"].base_seed, ds.RECIPES["v2"].evaluation)

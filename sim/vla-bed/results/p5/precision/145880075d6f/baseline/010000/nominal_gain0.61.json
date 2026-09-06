@@ -1,0 +1,112 @@
+{
+  "schema": "robollm.vla-bed.precision-curve.v1",
+  "source": "p5/145880075d6f/baseline/010000/nominal_gain0.61.json",
+  "host": "145880075d6f",
+  "recipe": "v4",
+  "label": "baseline/010000",
+  "variation": "nominal",
+  "post": "none",
+  "gain": 0.61,
+  "blank_image": false,
+  "n": 100,
+  "success_tolerance_m": 0.03,
+  "suite_success_rate": 0.2,
+  "reached_but_not_held": 2,
+  "curve": [
+    {
+      "tolerance_m": 0.03,
+      "k": 22,
+      "n": 100,
+      "success_rate": 0.22,
+      "ci95_wilson": [
+        0.15,
+        0.3107
+      ]
+    },
+    {
+      "tolerance_m": 0.04,
+      "k": 34,
+      "n": 100,
+      "success_rate": 0.34,
+      "ci95_wilson": [
+        0.2546,
+        0.4372
+      ]
+    },
+    {
+      "tolerance_m": 0.05,
+      "k": 44,
+      "n": 100,
+      "success_rate": 0.44,
+      "ci95_wilson": [
+        0.3467,
+        0.5377
+      ]
+    },
+    {
+      "tolerance_m": 0.06,
+      "k": 48,
+      "n": 100,
+      "success_rate": 0.48,
+      "ci95_wilson": [
+        0.3846,
+        0.5768
+      ]
+    },
+    {
+      "tolerance_m": 0.07,
+      "k": 59,
+      "n": 100,
+      "success_rate": 0.59,
+      "ci95_wilson": [
+        0.492,
+        0.6813
+      ]
+    },
+    {
+      "tolerance_m": 0.08,
+      "k": 62,
+      "n": 100,
+      "success_rate": 0.62,
+      "ci95_wilson": [
+        0.5221,
+        0.709
+      ]
+    },
+    {
+      "tolerance_m": 0.09,
+      "k": 69,
+      "n": 100,
+      "success_rate": 0.69,
+      "ci95_wilson": [
+        0.5937,
+        0.7722
+      ]
+    },
+    {
+      "tolerance_m": 0.1,
+      "k": 74,
+      "n": 100,
+      "success_rate": 0.74,
+      "ci95_wilson": [
+        0.6463,
+        0.816
+      ]
+    }
+  ],
+  "fit": {
+    "power_law": {
+      "slope": -0.8864,
+      "intercept": -3.2696,
+      "r2": 0.9563
+    },
+    "curse_of_precision": {
+      "c_m": 0.0,
+      "slope": 0.04404,
+      "intercept": -1.571,
+      "r2": 0.8691
+    },
+    "points_used": 8
+  },
+  "caveat": "Success at tolerance P counts an episode whose min_error_m ever dipped to P; the suite's own success needs five consecutive frames within 0.03 m, so the P = 0.03 m point is >= the suite's success rate (the gap = episodes that reached the radius and did not hold it). Episodes stop once they succeed, so min_error_m is right-censored at 0.03 m and the curve is valid for P >= 0.03 m only; larger P answers how much a wider acceptance radius would help."
+}

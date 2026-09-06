@@ -104,6 +104,7 @@ def main() -> int:
     e4 = load(R / "p5" / "kaggle" / "eval-v4-partial.json") if (R / "p5" / "kaggle" / "eval-v4-partial.json").exists() else None
     # imported Kaggle result files (schema v2 rows, paired comparisons, magnitude probes) — empty until gpu/kaggle_import.sh has run
     compares = sorted(R.glob("p5/*/*/*/compare_*.json"))
+    precision_files = sorted(R.glob("p5/precision/*/*/*/*.json"))
     magnitudes = sorted(R.glob("p5/*/*/*/magnitude.json"))
     v2rows = sorted(f for f in R.glob("p5/*/*/*/*.json") if f.name not in ("magnitude.json",) and not f.name.startswith("compare_") and "kaggle" not in f.parts and "santapong" not in f.parts)
     pol = kg["nominal_010000_100ep"]; quick = kg["quick_check_010000_50ep"]; tr = kg["train_record"]; sm = kg["smoke_v5"]
@@ -173,6 +174,41 @@ def main() -> int:
                 if far: rows_vp.append((f"{rec} · camera_shift_far (+0.30, +0.20 m)", far["success_rate"], tuple(far["ci95_wilson_success"]), amber))
             charts["viewpoint"] = hbar_chart("Viewpoint robustness: the 10k checkpoint of each recipe at the nominal and the shifted camera (same 100 seeds, Wilson 95 %)", rows_vp,
                                              note="Only v4 (train split recorded with a per-episode camera translation) keeps its nominal score under camera_shift; outside the jittered range (camera_shift_far) it falls back.")
+    prec_md, prec_html = "", ""
+    if precision_files:
+        import precision as pz
+        curves = [load(f) for f in precision_files]
+        def pick(recipe, ckpt, variation="nominal", gain=1.0, blank=False):
+            for c in curves:
+                if c["recipe"] == recipe and c["label"].endswith(ckpt) and c["variation"] == variation and (c["gain"] or 1.0) == gain and bool(c["blank_image"]) == blank and c["n"] == 100:
+                    return c
+            return None
+        series = []
+        for rec, ck, col in (("v2", "007500", teal), ("v3", "005000", "#7A5C99"), ("v4", "005000", "#2E7D4F")):
+            c = pick(rec, ck)
+            if c: series.append((f"{rec} · {int(ck)/1000:g}k nominal", c["curve"], col))
+        for rec, ck, var, col in (("v4", "010000", "camera_shift", "#6FB08A"), ("v4", "010000", "camera_shift_far", amber)):
+            c = pick(rec, ck, var)
+            if c: series.append((f"{rec} · {int(ck)/1000:g}k {var}", c["curve"], col))
+        charts["precision"] = pz.line_chart("Success against the acceptance radius: how much of the failure is precision (same 100 seeds, Wilson 95 %)", series,
+                                            note="Counts episodes that ever reached P; the suite's success needs 5 frames within 0.03 m. Valid for P ≥ 0.03 m (episodes stop at success).")
+        lines = ["## 3e. Precision curves — success against the acceptance radius (re-analysis of the committed rows, no GPU)", "",
+                 "| Suite (n = 100) | suite success | P = 0.03 | 0.04 | 0.05 | 0.06 | 0.08 | 0.10 m | power-law r² |", "|---|---|---|---|---|---|---|---|---|"]
+        for c in curves:
+            if c["n"] != 100 or c["blank_image"]:
+                continue
+            by = {q["tolerance_m"]: q["success_rate"] for q in c["curve"]}
+            what = f"{c['recipe']} {c['label'].split('/')[-1].lstrip('0') and int(c['label'].split('/')[-1])/1000:g}k {c['variation']}" + (f" gain {c['gain']}" if (c["gain"] or 1.0) != 1.0 else "") + (f" {c['post']}" if c["post"] not in (None, "none") else "")
+            lines.append(f"| {what} | {c['suite_success_rate']:.2f} | **{by[0.03]:.2f}** | {by[0.04]:.2f} | {by[0.05]:.2f} | {by[0.06]:.2f} | {by[0.08]:.2f} | {by[0.10]:.2f} | {c['fit'].get('power_law', {}).get('r2', '')} |")
+        lines += ["", "- **" + pz.CAVEAT + "**", "- **Reading: every recipe's success climbs steeply with the radius (three- to fourfold from 0.03 to 0.06 m, ≈ 0.7 at 0.10 m), so the failures are misses by a few centimetres, not wrong directions — a precision ceiling, as the Curse of Precision (2607.23108) predicts for a single third-person RGB camera; camera_shift_far is the exception (flatter: directional errors). The 1/(P − c) form never beats the plain power law on this range (c pins to 0), so these eight points describe the curve without establishing a law.**", ""]
+        prec_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith("Suite") else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+        prec_html = "<h2>Precision curves: success against the acceptance radius</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><div class=\"callout\">" + bold(esc(lines[-2])) + "</div>"
     steps = pol["n"] * pol["episode_len_mean"]
     rej = pol["faults"]["rejected"]
     charts["safety"] = hbar_chart("Commands rejected by the safety wrapper, per 100 policy steps (baseline, 10k)",
@@ -400,6 +436,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
 ![Learning curve, v2 baseline](report/learning-curve.svg)
 ![Learning curve: v2 vs v3 vs v4 on the same seeds](report/learning-curve-v2-vs-v3.svg)
 ![Viewpoint robustness: nominal vs shifted camera per recipe](report/viewpoint.svg)
+![Success against the acceptance radius](report/precision.svg)
 
 ## 3. Reading the results
 
@@ -429,7 +466,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{probes_md}{v3_md}{v4_md}{imported_md}## 4. Pending when this report was written
+{probes_md}{v3_md}{v4_md}{prec_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -475,7 +512,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{probes_html}{v3_html}{v4_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{v3_html}{v4_html}{prec_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """

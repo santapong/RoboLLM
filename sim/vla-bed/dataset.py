@@ -86,6 +86,10 @@ RECIPES: dict[str, Recipe] = {
     "v2b": Recipe("v2b", "noisy", 0.25, 400, 100, 10_000, 5),
     "v3": Recipe("v3", "noisy", 0.5, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0),
     "v4": Recipe("v4", "noisy", 0.5, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20),
+    # v5a/v5b: v4 with less (0.25×) or no injected trajectory diversity (Geometric Entropy, 2606.20871: harmful when fine-tuning a
+    # pre-trained VLA). The evaluation split stays byte-identical to v2's frozen suite while base_seed = 10_000 and evaluation = 100.
+    "v5a": Recipe("v5a", "noisy", 0.25, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20),
+    "v5b": Recipe("v5b", "noisy", 0.0, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20),
 }
 CAMERA_JITTER_SEED_OFFSET = 777_777
 CAMERA_TRANSLATE_SEED_OFFSET = 888_888
