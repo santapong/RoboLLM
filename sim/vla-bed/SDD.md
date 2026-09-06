@@ -419,7 +419,7 @@ the tool axis, tilted 21° so the optical axis meets the tool axis at the pinch 
 224²; `build_scene.WRIST_CAMERA_*`). SmolVLA-base takes up to three cameras; the stream maps
 to `camera2`, LIBERO's eye-in-hand slot, and the trainer renames only the cameras a dataset
 has, so v1–v5 keep training. Physics, seeds and labels are those of v5a (13,217 / 3,359
-frames, 100 % success), so v6 vs v5a paired isolates the sensor. Two cameras cost 1.94 s per
+frames, 100 % success, 0 faults; P2 gate PASS 6 Sep 2026), so v6 vs v5a paired isolates the sensor. Two cameras cost 1.94 s per
 step on the T4 (1.8 × v5a), 10k steps ≈ 5.4 h inside the 6 h guard; training session I
 running 6 Sep 2026, evaluation to follow.
 
