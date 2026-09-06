@@ -195,7 +195,8 @@ class StepClock:
 
 
 def cast_vlm(policy, dtype_name: str):
-    """Cast the frozen VLM (vision encoder + language model) after load; the action expert stays float32."""
+    """Cast the VLM (vision encoder + language model) after load; the action expert stays float32. float16 is inference-only
+    (the baseline keeps the VLM frozen); a run that trains the VLM (plastic) must use float32 — float16 AdamW diverged to NaN (6 Sep 2026)."""
     import torch
 
     vlm = policy.model.vlm_with_expert.vlm
@@ -282,7 +283,7 @@ def main() -> int:
     parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--save-freq", type=int, default=None)
     parser.add_argument("--max-hours", type=float, default=None)
-    parser.add_argument("--vlm-dtype", choices=("bfloat16", "float16"), default=None)
+    parser.add_argument("--vlm-dtype", choices=("bfloat16", "float16", "float32"), default=None, help="dtype the VLM is cast to after load; float32 for runs that train it (plastic) on a T4, where float16 training diverged")
     args = parser.parse_args()
     config = load_config(args.config)
     run = get_run(config, args.run)
