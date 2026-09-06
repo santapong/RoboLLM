@@ -1,0 +1,417 @@
+{
+ "schema": "robollm.vla-bed.kaggle-eval-transcript.v1",
+ "source": "Kaggle notebook santapongsondhi/evale5014be7b6 version 2 (session J of the 6 Sep 2026 plan, step 2): run plastic (VLM + vision encoder unfrozen, lr 2.5e-5, batch 8, VLM float32; train0aff199598, stopped by the 6 h guard at 9,394 steps, checkpoints 2.5k/5k/7.5k) on recipe v5a, evaluated on the frozen suite (identical 100 seeds); the train zip was truncated (disk full while packing) so eval.ipynb @ e304939 read the staged pack/ directory; log read 7 Sep 2026 04:15 ICT; GPU T4 x2, 2 sharded workers",
+ "recipe": "v5a",
+ "run": "plastic",
+ "train_record": {
+  "status": "stopped: wall-clock budget of 6.0 h reached after 9394 steps",
+  "steps_done": 9394,
+  "batch_size": 8,
+  "vlm_dtype": "float32",
+  "steps_per_s": 0.4356,
+  "wall_s": 21600.6,
+  "gpu": "Tesla T4",
+  "peak_vram_gb": 10.89,
+  "samples_seen": 75152,
+  "samples_seen_baseline_10k_batch32": 320000
+ },
+ "profile": {
+  "oracle_20ep_wall_s": 212,
+  "env_s_per_frame": 0.398,
+  "smolvla_3ep_wall_s": 79
+ },
+ "suites": [
+  {
+   "label": "plastic/007500",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.31,
+   "ci95_wilson_success": [
+    0.228,
+    0.406
+   ],
+   "safety": 0.68,
+   "progress_mean": 0.445,
+   "episode_len_mean": 81.23,
+   "rejected_fraction_mean": 0.019025,
+   "cmd_xyz_linf_mean": 0.005026200000000001,
+   "cmd_xyz_over_cap_fraction_mean": 0.007125,
+   "wall_s": 421.6
+  },
+  {
+   "label": "plastic/007500",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.01,
+   "ci95_wilson_success": [
+    0.002,
+    0.054
+   ],
+   "safety": 0.1,
+   "progress_mean": 0.04,
+   "episode_len_mean": 99.47,
+   "rejected_fraction_mean": 0.11870000000000003,
+   "cmd_xyz_linf_mean": 0.0058394,
+   "cmd_xyz_over_cap_fraction_mean": 0.0008,
+   "wall_s": 490.7,
+   "blank_image": true
+  },
+  {
+   "label": "plastic/007500",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.26,
+   "ci95_wilson_success": [
+    0.184,
+    0.354
+   ],
+   "safety": 1.0,
+   "progress_mean": 0.375,
+   "episode_len_mean": 87.3,
+   "rejected_fraction_mean": 0.0,
+   "cmd_xyz_linf_mean": 0.0032037,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 459.1,
+   "gain": 0.61
+  },
+  {
+   "label": "plastic/005000",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.24,
+   "ci95_wilson_success": [
+    0.167,
+    0.332
+   ],
+   "safety": 0.52,
+   "progress_mean": 0.36,
+   "episode_len_mean": 85.39,
+   "rejected_fraction_mean": 0.042454,
+   "cmd_xyz_linf_mean": 0.004915,
+   "cmd_xyz_over_cap_fraction_mean": 0.0077540000000000005,
+   "wall_s": 447.0
+  },
+  {
+   "label": "plastic/002500",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.29,
+   "ci95_wilson_success": [
+    0.21,
+    0.385
+   ],
+   "safety": 0.24,
+   "progress_mean": 0.42,
+   "episode_len_mean": 87.68,
+   "rejected_fraction_mean": 0.037025,
+   "cmd_xyz_linf_mean": 0.005218799999999999,
+   "cmd_xyz_over_cap_fraction_mean": 0.027538,
+   "wall_s": 457.5
+  },
+  {
+   "label": "plastic/007500",
+   "variation": "camera_shift",
+   "n": 100,
+   "success_rate": 0.34,
+   "ci95_wilson_success": [
+    0.255,
+    0.437
+   ],
+   "safety": 0.72,
+   "progress_mean": 0.49,
+   "episode_len_mean": 81.28,
+   "rejected_fraction_mean": 0.010249999999999999,
+   "cmd_xyz_linf_mean": 0.0050039,
+   "cmd_xyz_over_cap_fraction_mean": 0.005305,
+   "wall_s": 443.8
+  },
+  {
+   "label": "plastic/007500",
+   "variation": "camera_shift_far",
+   "n": 100,
+   "success_rate": 0.18,
+   "ci95_wilson_success": [
+    0.117,
+    0.267
+   ],
+   "safety": 0.71,
+   "progress_mean": 0.33,
+   "episode_len_mean": 89.94,
+   "rejected_fraction_mean": 0.031142,
+   "cmd_xyz_linf_mean": 0.005077100000000001,
+   "cmd_xyz_over_cap_fraction_mean": 0.004433,
+   "wall_s": 468.1
+  },
+  {
+   "label": "plastic/007500",
+   "variation": "lighting",
+   "n": 100,
+   "success_rate": 0.24,
+   "ci95_wilson_success": [
+    0.167,
+    0.332
+   ],
+   "safety": 0.72,
+   "progress_mean": 0.39,
+   "episode_len_mean": 87.68,
+   "rejected_fraction_mean": 0.011663000000000001,
+   "cmd_xyz_linf_mean": 0.004721800000000001,
+   "cmd_xyz_over_cap_fraction_mean": 0.005477999999999999,
+   "wall_s": 453.4
+  },
+  {
+   "label": "plastic/007500",
+   "variation": "target_relocation",
+   "n": 100,
+   "success_rate": 0.3,
+   "ci95_wilson_success": [
+    0.219,
+    0.396
+   ],
+   "safety": 0.76,
+   "progress_mean": 0.425,
+   "episode_len_mean": 80.98,
+   "rejected_fraction_mean": 0.015678,
+   "cmd_xyz_linf_mean": 0.0049866,
+   "cmd_xyz_over_cap_fraction_mean": 0.003978,
+   "wall_s": 427.7
+  }
+ ],
+ "selection": {
+  "run": "plastic",
+  "selected": "007500",
+  "success_rate": 0.31,
+  "within_ci": [
+   "002500",
+   "005000",
+   "007500"
+  ],
+  "rule": "R11"
+ },
+ "comparison_points_same_suites": {
+  "v5a_baseline": {
+   "nominal_010000": 0.1,
+   "nominal_007500": 0.16,
+   "nominal_005000": 0.09,
+   "nominal_002500": 0.11,
+   "gain_0.61": 0.15,
+   "camera_shift": 0.21,
+   "camera_shift_far": 0.05,
+   "lighting": 0.09,
+   "target_relocation": 0.11
+  },
+  "v6": {
+   "nominal_010000": 0.89
+  }
+ },
+ "output": {
+  "file": "/kaggle/working/vla-bed-plastic-eval-v5a.zip",
+  "size_mb": 0.06,
+  "sha256": "3583e1aeb97f8c72810d3d895f6d8557bae0da66012cba0ff87692bb49f47e58",
+  "imported": true,
+  "imported_at": "2026-09-07 04:15 ICT",
+  "imported_to": "results/p5/53f731baded6"
+ },
+ "session_wall_s": 4720.0,
+ "paired_comparisons": {
+  "files": "results/p5/53f731baded6/plastic/*/compare_*.json",
+  "headline": {
+   "v5a_baseline_vs_plastic_nominal_002500": {
+    "diff": 0.18,
+    "ci95": [
+     0.07,
+     0.29
+    ],
+    "discordant": [
+     25,
+     7
+    ],
+    "mcnemar_p": 0.0021,
+    "verdict": "B better"
+   },
+   "v5a_baseline_vs_plastic_nominal_005000": {
+    "diff": 0.15,
+    "ci95": [
+     0.07,
+     0.24
+    ],
+    "discordant": [
+     18,
+     3
+    ],
+    "mcnemar_p": 0.00149,
+    "verdict": "B better"
+   },
+   "plastic7500_vs_v6_10000_nominal": {
+    "diff": 0.58,
+    "ci95": [
+     0.47,
+     0.68
+    ],
+    "discordant": [
+     61,
+     3
+    ],
+    "mcnemar_p": 4.74e-15,
+    "verdict": "B better"
+   },
+   "plastic_nominal_vs_camera_shift": {
+    "diff": 0.03,
+    "ci95": [
+     -0.09,
+     0.16
+    ],
+    "discordant": [
+     22,
+     19
+    ],
+    "mcnemar_p": 0.755,
+    "verdict": "not separable at n = 100"
+   },
+   "plastic_nominal_vs_camera_shift_far": {
+    "diff": -0.13,
+    "ci95": [
+     -0.24,
+     -0.03
+    ],
+    "discordant": [
+     9,
+     22
+    ],
+    "mcnemar_p": 0.0294,
+    "verdict": "A better"
+   },
+   "plastic_nominal_vs_gain0.61": {
+    "diff": -0.05,
+    "ci95": [
+     -0.12,
+     0.02
+    ],
+    "discordant": [
+     4,
+     9
+    ],
+    "mcnemar_p": 0.267,
+    "verdict": "not separable at n = 100"
+   },
+   "plastic_nominal_vs_lighting": {
+    "diff": -0.07,
+    "ci95": [
+     -0.14,
+     0.0
+    ],
+    "discordant": [
+     4,
+     11
+    ],
+    "mcnemar_p": 0.118,
+    "verdict": "not separable at n = 100"
+   },
+   "plastic_nominal_vs_target_relocation": {
+    "diff": -0.01,
+    "ci95": [
+     -0.13,
+     0.1
+    ],
+    "discordant": [
+     17,
+     18
+    ],
+    "mcnemar_p": 1.0,
+    "verdict": "not separable at n = 100"
+   },
+   "v5a_baseline10k_vs_plastic7500_camera_shift": {
+    "diff": 0.13,
+    "ci95": [
+     0.02,
+     0.24
+    ],
+    "discordant": [
+     24,
+     11
+    ],
+    "mcnemar_p": 0.041,
+    "verdict": "B better"
+   },
+   "v5a_baseline10k_vs_plastic7500_camera_shift_far": {
+    "diff": 0.13,
+    "ci95": [
+     0.07,
+     0.2
+    ],
+    "discordant": [
+     13,
+     0
+    ],
+    "mcnemar_p": 0.000244,
+    "verdict": "B better"
+   },
+   "v5a_baseline10k_vs_plastic7500_lighting": {
+    "diff": 0.15,
+    "ci95": [
+     0.06,
+     0.24
+    ],
+    "discordant": [
+     19,
+     4
+    ],
+    "mcnemar_p": 0.0026,
+    "verdict": "B better"
+   },
+   "v5a_baseline10k_vs_plastic7500_nominal": {
+    "diff": 0.21,
+    "ci95": [
+     0.11,
+     0.31
+    ],
+    "discordant": [
+     25,
+     4
+    ],
+    "mcnemar_p": 0.000104,
+    "verdict": "B better"
+   },
+   "v5a_baseline10k_vs_plastic7500_nominal_gain0.61": {
+    "diff": 0.11,
+    "ci95": [
+     0.02,
+     0.2
+    ],
+    "discordant": [
+     16,
+     5
+    ],
+    "mcnemar_p": 0.0266,
+    "verdict": "B better"
+   },
+   "v5a_baseline10k_vs_plastic7500_target_relocation": {
+    "diff": 0.19,
+    "ci95": [
+     0.09,
+     0.29
+    ],
+    "discordant": [
+     25,
+     6
+    ],
+    "mcnemar_p": 0.000878,
+    "verdict": "B better"
+   },
+   "v5a_baseline_vs_plastic_nominal_007500": {
+    "diff": 0.15,
+    "ci95": [
+     0.05,
+     0.26
+    ],
+    "discordant": [
+     23,
+     8
+    ],
+    "mcnemar_p": 0.0107,
+    "verdict": "B better"
+   }
+  }
+ },
+ "reading": "Unfreezing the VLM and vision encoder (plastic) on the same v5a data lifts the frozen-suite success at every checkpoint: 2.5k 0.29 (baseline 0.11, +0.18 [+0.07, +0.29], p = 0.002), 5k 0.24 (0.09, +0.15, p = 0.0015), 7.5k 0.31 [0.23, 0.41] (0.16, +0.15 [+0.05, +0.26], p = 0.011; against the baseline's 10k 0.10: +0.21, p = 0.0001), selected 7.5k (all within CI). The variations move with it (camera_shift 0.34, far 0.18, lighting 0.24, target_relocation 0.30: +0.11 to +0.19 over the baseline's 10k, all p < 0.05), blank image 0.01, and within plastic the pattern matches the other single-camera runs (camera_shift not separable from nominal, far -0.13, gain 0.61 -0.05 inside the noise). Confounds: 75k samples seen (batch 8 x 9.4k) against the baseline's 320k, and 9.4k of 10k steps; both cut against plastic, so the gain is not an artefact of more training. Reading: representation updates buy about 15 points on a single third-person view (the Z-1 argument that perception-limited failures need VLM updates), but the wrist camera buys 79 points on a frozen VLM (v6 10k 0.89 vs plastic 7.5k 0.31: +0.58 [+0.47, +0.68], 61 vs 3 discordant) - the sensing lever dominates the representation lever by a factor of four at this budget, and a plastic run on v6 is the natural next variant."
+}

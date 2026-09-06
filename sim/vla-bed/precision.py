@@ -39,7 +39,7 @@ CAVEAT = ("Success at tolerance P counts an episode whose min_error_m ever dippe
           "within 0.03 m, so the P = 0.03 m point is >= the suite's success rate (the gap = episodes that reached the radius and did not hold it). "
           "Episodes stop once they succeed, so min_error_m is right-censored at 0.03 m and the curve is valid for P >= 0.03 m only; larger P "
           "answers how much a wider acceptance radius would help.")
-HOST_RECIPE = {"8ac6124fd05b": "v2", "7a90b7940018": "v2", "a85e64a183e5": "v2", "9f5dbf4dd492": "v3", "06f90d52039b": "v3", "145880075d6f": "v4", "8af08da6f6a2": "v5a", "bd883c780fba": "v6"}  # Kaggle hosts → recipe of the checkpoint
+HOST_RECIPE = {"8ac6124fd05b": "v2", "7a90b7940018": "v2", "a85e64a183e5": "v2", "9f5dbf4dd492": "v3", "06f90d52039b": "v3", "145880075d6f": "v4", "8af08da6f6a2": "v5a", "bd883c780fba": "v6", "53f731baded6": "v5a"}  # Kaggle hosts → recipe of the checkpoint
 
 
 def success_at_tolerance(rows: list[dict], tol_m: float) -> int:

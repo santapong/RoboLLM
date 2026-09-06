@@ -104,6 +104,7 @@ def main() -> int:
     e4 = load(R / "p5" / "kaggle" / "eval-v4-partial.json") if (R / "p5" / "kaggle" / "eval-v4-partial.json").exists() else None
     e5 = load(R / "p5" / "kaggle" / "eval-v5a-partial.json") if (R / "p5" / "kaggle" / "eval-v5a-partial.json").exists() else None
     e6 = load(R / "p5" / "kaggle" / "eval-v6-partial.json") if (R / "p5" / "kaggle" / "eval-v6-partial.json").exists() else None
+    e7 = load(R / "p5" / "kaggle" / "eval-plastic-v5a-partial.json") if (R / "p5" / "kaggle" / "eval-plastic-v5a-partial.json").exists() else None   # plastic variant on the v5a recipe
     # imported Kaggle result files (schema v2 rows, paired comparisons, magnitude probes) — empty until gpu/kaggle_import.sh has run
     compares = sorted(R.glob("p5/*/*/*/compare_*.json"))
     precision_files = sorted(R.glob("p5/precision/*/*/*/*.json"))
@@ -152,6 +153,7 @@ def main() -> int:
         v4curve = {int(su["label"].split("/")[-1]): su for su in e4["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e4 else {}
         v5curve = {int(su["label"].split("/")[-1]): su for su in e5["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e5 else {}
         v6curve = {int(su["label"].split("/")[-1]): su for su in e6["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e6 else {}
+        v7curve = {int(su["label"].split("/")[-1]): su for su in e7["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e7 else {}
         if v4curve:
             rows_lc = []
             for st, v in curve:
@@ -164,7 +166,9 @@ def main() -> int:
                     rows_lc.append((f"v5a · {st/1000:g}k (expert noise 0.25×)", v5curve[st]["success_rate"], tuple(v5curve[st]["ci95_wilson_success"]), "#B7791F"))
                 if st in v6curve:
                     rows_lc.append((f"v6 · {st/1000:g}k (+ wrist camera)", v6curve[st]["success_rate"], tuple(v6curve[st]["ci95_wilson_success"]), "#B03A2E"))
-        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3" + (" vs v4" if v4curve else "") + (" vs v5a" if v5curve else "") + (" vs v6" if v6curve else "") + " data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
+                if st in v7curve:
+                    rows_lc.append((f"v5a plastic · {st/1000:g}k (VLM unfrozen, batch 8)", v7curve[st]["success_rate"], tuple(v7curve[st]["ci95_wilson_success"]), "#6B6B6B"))
+        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3" + (" vs v4" if v4curve else "") + (" vs v5a" if v5curve else "") + (" vs v6" if v6curve else "") + (" (+ plastic on v5a)" if v7curve else "") + " data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
                                                        note="v3 caps the expert at 0.7 × the limits and jitters the camera azimuth ±20° on the train split; v4 adds a camera translation ±0.20 m (x, y), ±0.05 m (z); every v3/v4 checkpoint has 0 % over-cap steps.")
         if e4:
             def _suite(e, var, **kw):
@@ -270,6 +274,30 @@ def main() -> int:
                 tag = "th" if cells[0].startswith("Suite") else "td"
                 rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
         v6_html = "<h2>Session K: baseline trained on v6 (wrist camera), same frozen suite</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><p>" + bold(esc(lines[-4])) + "</p><div class=\"callout\">" + bold(esc("**" + e6["reading"] + "**")) + "</div>"
+    v7_md, v7_html = "", ""
+    if e7:
+        lines = ["## 3i. Session J — plastic variant (VLM + vision encoder unfrozen, lr 2.5e-5, batch 8, float32) on v5a, frozen suite (imported)", "",
+                 "| Suite (plastic checkpoint) | success | Wilson 95 % | safety | progress | rejected steps | cmd L∞ mean | v5a baseline same suite |", "|---|---|---|---|---|---|---|---|"]
+        v5ref = {}
+        if e5:
+            for su in e5["suites"]:
+                v5ref[(su["label"].split("/")[-1], su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0))] = su["success_rate"]
+        for su in e7["suites"]:
+            st = su["label"].split("/")[-1]; ci = su["ci95_wilson_success"]
+            what = f"{int(st)/1000:g}k " + su["variation"] + (" + camera blanked" if su.get("blank_image") else "") + (f" + gain {su['gain']}" if su.get("gain", 1.0) != 1.0 else "")
+            ref = v5ref.get((st, su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0)))
+            ref = f"{ref:.2f}" if isinstance(ref, float) else "not run"
+            lines.append(f"| {what} | **{su['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {su['safety']:.2f} | {su['progress_mean']:.2f} | {100*su['rejected_fraction_mean']:.0f} % | {su['cmd_xyz_linf_mean']:.4f} | {ref} |")
+        sel5 = e7["selection"]
+        lines += ["", f"Selected checkpoint (R11): **{int(sel5['selected'])/1000:g}k** at {sel5['success_rate']:.2f}; inside the best interval: {', '.join(f'{int(x)/1000:g}k' for x in sel5['within_ci'])}. Training: {e7['train_record']['steps_per_s']} steps/s, {e7['train_record']['wall_s']/3600:.2f} h.", "", "- **" + e7["reading"] + "**", ""]
+        v7_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith("Suite") else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+        v7_html = "<h2>Session J: plastic variant on v5a, same frozen suite</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><p>" + bold(esc(lines[-4])) + "</p><div class=\"callout\">" + bold(esc("**" + e7["reading"] + "**")) + "</div>"
     prec_md, prec_html = "", ""
     if precision_files:
         import precision as pz
@@ -562,7 +590,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{probes_md}{v3_md}{v4_md}{v5_md}{v6_md}{prec_md}{p5_md}{imported_md}## 4. Pending when this report was written
+{probes_md}{v3_md}{v4_md}{v5_md}{v6_md}{v7_md}{prec_md}{p5_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -608,7 +636,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{probes_html}{v3_html}{v4_html}{v5_html}{v6_html}{prec_html}{p5_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{v3_html}{v4_html}{v5_html}{v6_html}{v7_html}{prec_html}{p5_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """

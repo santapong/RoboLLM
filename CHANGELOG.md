@@ -29,8 +29,17 @@ after the touched demos verifiably run).
 - Transcripts `results/p5/kaggle/{train-v6,eval-v6}-partial.json`; per-episode files, 18 paired comparisons
   and precision curves under `results/p5/bd883c780fba` (zip sha256 159efdbd…, checksum verified); P2 gate
   PASS with v6; Kaggle dataset `vla-bed-v6`.
-- Plastic variant on v5a re-run with the VLM in float32 (session H #4): fits at 10 GB, 2.29 s/step, loss
-  finite; 10k steps exceed the 6 h guard, so the run stops at ≈ 9.4k with checkpoints 2.5k/5k/7.5k.
+- **Sessions H #4 + J — plastic variant** (VLM + vision encoder unfrozen, lr 2.5e-5, batch 8, VLM in float32
+  after the float16 run diverged; the 6 h guard stopped training at 9,394 steps, checkpoints 2.5k/5k/7.5k) on
+  the v5a data, frozen suite: nominal 2.5k 0.29 / 5k 0.24 / 7.5k **0.31** [0.23, 0.41], selected 7.5k. Paired
+  against the frozen-VLM baseline on identical seeds: +0.18 / +0.15 / +0.15 per checkpoint (McNemar p 0.002 /
+  0.0015 / 0.011), +0.21 [+0.11, +0.31] against the baseline's 10k; every variation +0.11 to +0.19 (all
+  p < 0.05); blank 0.01. Samples seen 75k vs 320k, which cuts against plastic. Representation updates buy
+  ≈ 15 points on the single view; the wrist camera buys 79 (v6 vs plastic +0.58, 61 vs 3 discordant).
+- The plastic train session filled Kaggle's disk while zipping its float32 checkpoints (truncated 1.3 GB zip);
+  `eval.ipynb` now falls back to the staged `pack/` directory that `train.ipynb` fills before zipping, so the
+  run was evaluated without retraining. Transcripts `train-plastic-fp32-v5a`, `eval-plastic-v5a`; rows and
+  15 comparisons under `results/p5/53f731baded6` (zip sha256 3583e1ae…, verified).
 - Corrected the P5 wording: the wire policy run matched the Kaggle in-process rate (3/20) but not the
   episodes (14/20 agreement); per-episode parity is claimed for the deterministic oracle/hold suites only.
 
