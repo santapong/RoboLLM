@@ -280,6 +280,23 @@ server steps physics **only** inside a `step` request.
 `{"error": code, "message": str}` with HTTP-style semantics: the episode is
 not advanced.
 
+**As built (P5, 6 Sep 2026, `sim_server.py` + `remote_env.py`).** The evaluator reads more
+of the episode than the table above carries, so the implemented contract extends it
+without changing its semantics: `reset` takes the full frozen-suite `EpisodeSpec`
+(`seed, split, family, cell, target, initial_q`) plus `camera_azimuth_deg` and
+`camera_translation_m`, because the suite's targets are IK-verified draws, not
+re-derivable from the seed alone; `step` replies add `error_m`, `min_error_m`,
+`progress`, `decision {ok, code, depth}`, `executed [7]` and a `safety {safe,
+rejections, measured, worst_depth}` block (§4's S1–S7 tallies live on the server);
+`observation {render}` returns a frame without stepping (the render-on-demand path);
+`query` returns `commanded_ee {pos, rot}`, `target`, the errors and `safety` so the
+scripted oracle can run on the client; `info` adds `home_rot`, `image_shape`, `fps`,
+`max_frames` and the step limits. Measured on the tailnet (Pi server, workstation
+client): 24.5 ms per request without rendering (oracle suite, 10,522 requests in 259 s)
+and 46 ms per request rendering every frame (hold suite, 20,202 requests in 934 s);
+both suites reproduce the in-process rows with 0 field mismatches over 2 × 100
+episodes (`results/p5/santapong/{oracle,hold}/nominal_zmq.json`).
+
 ### 6.5 Viewer
 
 mjviser in library mode: `ViserMujocoScene(server, model)` updated from our own
