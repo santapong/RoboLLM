@@ -174,6 +174,30 @@ def main() -> int:
                 if far: rows_vp.append((f"{rec} · camera_shift_far (+0.30, +0.20 m)", far["success_rate"], tuple(far["ci95_wilson_success"]), amber))
             charts["viewpoint"] = hbar_chart("Viewpoint robustness: the 10k checkpoint of each recipe at the nominal and the shifted camera (same 100 seeds, Wilson 95 %)", rows_vp,
                                              note="Only v4 (train split recorded with a per-episode camera translation) keeps its nominal score under camera_shift; outside the jittered range (camera_shift_far) it falls back.")
+    p5_md, p5_html = "", ""
+    zmq_files = sorted(R.glob("p5/santapong/*/**/nominal_zmq.json"))
+    if zmq_files:
+        lines = ["## 3f. P5 — the bed served over ZeroMQ (Pi simulator, workstation client)", "",
+                 "| Suite through the wire | n | success | Wilson 95 % | safety | progress | policy call | requests | wire time | wall | in-process rows |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+        for f in zmq_files:
+            d = load(f); lab = d["policy"]["label"]; b = d[lab]; e = d.get("env", {}); ci = b["ci95_wilson_success"]
+            local = f.with_name("nominal.json")
+            same = ""
+            if local.exists():
+                ld = load(local); lrows = {r["seed"]: r for r in ld["episodes"][ld["policy"]["label"]]}
+                fields = ("success", "progress", "frames", "final_error_m", "min_error_m", "safe", "rejections", "measured", "worst_depth")
+                mism = sum(1 for r in d["episodes"][lab] if r["seed"] in lrows for k in fields if r.get(k) != lrows[r["seed"]].get(k))
+                same = f"{mism} field mismatches"
+            lines.append(f"| {lab} ({d['policy']['name']}) | {b['n']} | **{b['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {b['safety']:.2f} | {b['progress_mean']:.2f} | {b.get('latency_s_mean', 0):.1f} s | {e.get('requests', '')} | {e.get('wire_s_total', 0):.0f} s | {d['wall_s']/60:.0f} min | {same} |")
+        lines += ["", "- **The split works: the oracle and hold suites reproduce the in-process rows field for field, a request round trip (Pi physics or render + transfer) costs ≈ 25 ms without rendering and ≈ 46 ms with, and in the policy suite that round trip is 0.9 % of the wall time — the ≈ 32 s CPU policy call is the whole budget. SDD question Q-A is answered.**", ""]
+        p5_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith("Suite") else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+        p5_html = "<h2>P5: the bed served over ZeroMQ</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><div class=\"callout\">" + bold(esc(lines[-2])) + "</div>"
     prec_md, prec_html = "", ""
     if precision_files:
         import precision as pz
@@ -466,7 +490,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{probes_md}{v3_md}{v4_md}{prec_md}{imported_md}## 4. Pending when this report was written
+{probes_md}{v3_md}{v4_md}{prec_md}{p5_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -512,7 +536,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{probes_html}{v3_html}{v4_html}{prec_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{v3_html}{v4_html}{prec_html}{p5_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """

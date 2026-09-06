@@ -10,6 +10,25 @@ after the touched demos verifiably run).
 
 ## 2026-09-06 — UR5e VLA sim bed: v4 (camera-translation jitter) trained and evaluated for $0
 
+### Added (next-phase plan, steps 0–5 and P5)
+
+- `sim/vla-bed/precision.py` — success against the acceptance radius from the committed per-episode rows
+  (Wilson CIs, power-law / Curse-of-Precision fits, paired at every tolerance); chart and section in the report.
+  Every recipe's success climbs three- to fourfold from 0.03 to 0.06 m: the failures are centimetre misses.
+- Far camera shift on the v2 and v3 final checkpoints (two 15-min probe sessions, `probe.ipynb MODE = "far"`):
+  0.03 / 0.04 / 0.06 for v2 / v3 / v4, all pairs inside the noise — the far view defeats every recipe.
+- Recipes **v5a** (v4 with expert noise 0.25×; recorded, gate PASS, Kaggle dataset, trained: loss 0.591 at 10k,
+  quick check 0.06 on 50 episodes) and v5b (clean labels, registered only); the P2 gate iterates the required
+  recipes so an unrecorded optional recipe does not fail it.
+- **P5 ZeroMQ split verified**: `sim_server.py` (REQ/REP, msgpack) on the Pi + `remote_env.RemoteEnv` +
+  `evaluate.py --env zmq://host:5555`; oracle/hold suites over the wire reproduce the in-process rows with
+  0 mismatches; the v3 5k checkpoint on the workstation CPU drove the Pi for 20 episodes (0.15, same 3 seeds
+  as in-process; the wire cost 0.9 % of 94 min). SDD §6.4 carries the as-built contract, §8 P5 reads Verified.
+- Wrist camera plumbing (flag-gated, recipe v6 pending): flange camera in the scene, second image stream in
+  env / dataset / evaluator / server / probe; the trainer renames only the cameras a dataset has.
+- `dagger.py` (one DAgger round: the policy drives fresh seeds, the capped oracle labels; LeRobot
+  `aggregate_datasets` merge), recipe v7, `kaggle/dagger.ipynb`, and a merge step in `train.ipynb`.
+
 ### Results
 
 - **Sessions D + E** (baseline retrained on recipe v4 = v3 + per-episode camera translation
