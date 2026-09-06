@@ -190,8 +190,8 @@ def main() -> int:
         for rec, ck, var, col in (("v4", "010000", "camera_shift", "#6FB08A"), ("v4", "010000", "camera_shift_far", amber)):
             c = pick(rec, ck, var)
             if c: series.append((f"{rec} · {int(ck)/1000:g}k {var}", c["curve"], col))
-        charts["precision"] = pz.line_chart("Success against the acceptance radius: how much of the failure is precision (same 100 seeds, Wilson 95 %)", series,
-                                            note="Counts episodes that ever reached P; the suite's success needs 5 frames within 0.03 m. Valid for P ≥ 0.03 m (episodes stop at success).")
+        charts["precision"] = pz.line_chart("Success against the acceptance radius (same 100 seeds, Wilson 95 %)", series,
+                                            note="Counts episodes that ever reached P; the suite's own success needs 5 consecutive frames within 0.03 m.")
         lines = ["## 3e. Precision curves — success against the acceptance radius (re-analysis of the committed rows, no GPU)", "",
                  "| Suite (n = 100) | suite success | P = 0.03 | 0.04 | 0.05 | 0.06 | 0.08 | 0.10 m | power-law r² |", "|---|---|---|---|---|---|---|---|---|"]
         for c in curves:

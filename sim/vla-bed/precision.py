@@ -127,7 +127,7 @@ def pair_at_tolerances(a: dict, b: dict, tolerances=TOLERANCES_M) -> dict:
     return {"schema": "robollm.vla-bed.precision-paired.v1", "a": la, "b": lb, "caveat": CAVEAT, "at_tolerance": out}
 
 
-def line_chart(title: str, series: list[tuple[str, list[dict], str]], width: int = 640, note: str = "") -> str:
+def line_chart(title: str, series: list[tuple[str, list[dict], str]], width: int = 720, note: str = "") -> str:
     """Success vs tolerance, one polyline per series with Wilson whiskers; same palette and typography as report.hbar_chart."""
     left, right, top, bottom = 56, 24, 46, 52
     height = 320
@@ -143,7 +143,7 @@ def line_chart(title: str, series: list[tuple[str, list[dict], str]], width: int
         svg.append(f'<text x="{left-8}" y="{y+4:.1f}" text-anchor="end" fill="#5A6874" font-size="11">{t/5:g}</text>')
     for p in xs:
         svg.append(f'<text x="{x_of(p):.1f}" y="{height-bottom+16}" text-anchor="middle" fill="#5A6874" font-size="11">{p:g}</text>')
-    svg.append(f'<text x="{left+pw/2:.1f}" y="{height-bottom+32}" text-anchor="middle" fill="#5A6874" font-size="11">acceptance radius P (m); shaded = censored below 0.03 m</text>')
+    svg.append(f'<text x="{left+pw/2:.1f}" y="{height-bottom+32}" text-anchor="middle" fill="#5A6874" font-size="11">acceptance radius P (m), valid for P ≥ 0.03 m (episodes stop at success)</text>')
     for i, (label, pts, colour) in enumerate(series):
         poly = " ".join(f"{x_of(q['tolerance_m']):.1f},{y_of(q['success_rate']):.1f}" for q in pts)
         svg.append(f'<polyline points="{poly}" fill="none" stroke="{colour}" stroke-width="2"/>')
