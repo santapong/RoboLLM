@@ -1,0 +1,120 @@
+{
+ "schema": "robollm.vla-bed.kaggle-train-transcript.v1",
+ "source": "Kaggle notebook santapongsondhi/train0aff199598 version 2 (session H #4 of the 6 Sep 2026 plan, step 2): run plastic (VLM + vision encoder unfrozen, lr 2.5e-5) on recipe v5a at batch 8 with the VLM kept in float32 (gpu/train.py --vlm-dtype float32, c994e60) after H #2's float16 run diverged and H #3 failed on the argparse choice; train.ipynb @ c994e60; GPU T4 x2; log transcribed 7 Sep 2026 02:15 ICT",
+ "recipe": "v5a",
+ "run": "plastic",
+ "train_record": {
+  "status": "stopped: wall-clock budget of 6.0 h reached after 9394 steps",
+  "steps_done": 9394,
+  "steps_requested": 10000,
+  "batch_size": 8,
+  "vlm_dtype": "float32",
+  "policy_overrides": {
+   "train_expert_only": false,
+   "freeze_vision_encoder": false,
+   "optimizer_lr": 2.5e-05
+  },
+  "steps_per_s": 0.4356,
+  "seconds_per_step": 2.29,
+  "wall_s": 21600.6,
+  "gpu": "Tesla T4",
+  "peak_vram_gb": 10.89,
+  "samples_seen": 75152,
+  "samples_seen_baseline_10k_batch32": 320000,
+  "checkpoints": [
+   "002500",
+   "005000",
+   "007500"
+  ],
+  "note": "the 6 h StepClock guard raised TimeBudgetExceeded at 9,394 steps; LeRobot's last saved checkpoint is 7.5k (save_freq 2500), so `last` = 7.5k",
+  "loss_curve": {
+   "note": "lerobot train log: step, flow-matching loss, grad norm, lr (captured rows)",
+   "rows": [
+    [
+     400,
+     1.07,
+     7.867,
+     2.2e-05
+    ],
+    [
+     600,
+     1.006,
+     5.96,
+     2.5e-05
+    ],
+    [
+     1000,
+     0.936,
+     4.572,
+     2.4e-05
+    ],
+    [
+     2000,
+     0.915,
+     4.539,
+     2.4e-05
+    ],
+    [
+     3000,
+     0.837,
+     3.761,
+     2.1e-05
+    ],
+    [
+     7000,
+     0.716,
+     2.916,
+     8.6e-06
+    ],
+    [
+     9000,
+     0.718,
+     2.787,
+     3.2e-06
+    ],
+    [
+     9200,
+     0.686,
+     2.725,
+     2.9e-06
+    ]
+   ]
+  }
+ },
+ "quick_check_last_50ep": {
+  "policy": "plastic/last",
+  "checkpoint": "007500",
+  "variation": "nominal",
+  "n": 50,
+  "success_rate": 0.38,
+  "safety": 0.7,
+  "progress_mean": 0.48,
+  "episode_len_mean": 77.2,
+  "rejected_fraction_mean": 0.022,
+  "per_family_success": {
+   "front_high": 0.75,
+   "front_low": 0.3333,
+   "left": 0.5,
+   "near": 0.0,
+   "right": 0.125
+  },
+  "faults": {
+   "rejected": {
+    "S2_xyz_step": 20,
+    "S4_workspace": 60,
+    "S3_rpy_step": 1
+   },
+   "measured": {}
+  },
+  "note": "single worker, 50 episodes, same seeds as the v5a baseline (0.06), v4 (0.12), v3 (0.14) and v6 (0.84) quick checks"
+ },
+ "output": {
+  "file": "/kaggle/working/vla-bed-plastic-output-v5a.zip",
+  "size_mb": 1310,
+  "sha256": null,
+  "imported": false,
+  "status": "TRUNCATED: the pack step filled /kaggle/working (OSError: No space left on device at 22301 s) \u2014 three float32 checkpoints with optimizer state \u2248 16 GB plus the staged copies; the Output tab keeps the staged pack/ directory with the complete pretrained_model copies, which eval.ipynb now reads when the zip is unreadable"
+ },
+ "session_wall_s": 22307.0,
+ "reading": "Unfreezing the VLM and vision encoder in float32 trains stably on a T4 (batch 8, 10.9 GB, loss 1.07 \u2192 0.69) at 2.29 s/step, so 10k steps do not fit the 6 h guard (stopped at 9,394; last checkpoint 7.5k). The 50-episode quick check of the 7.5k checkpoint scores 0.38 against 0.06 for the frozen-VLM baseline on the same v5a data and seeds \u2014 the first single-camera number above 0.2 \u2014 with 75k samples seen against the baseline's 320k (a confound the frozen suite's per-checkpoint pairing cannot remove). The frozen 100-seed suite (session J) decides; the wrist camera (v6, 0.84 on the same quick check) remains the larger lever."
+}
