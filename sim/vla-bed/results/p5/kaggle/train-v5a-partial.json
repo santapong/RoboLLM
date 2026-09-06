@@ -1,0 +1,162 @@
+{
+  "schema": "robollm.vla-bed.kaggle-train-transcript.v1",
+  "source": "Kaggle notebook santapongsondhi/train6f33ce1832 version 2 (session F of the 6 Sep 2026 plan, step 1), log transcribed 6 Sep 2026 13:02 ICT; recipe v5a (v4 with expert noise 0.25 x limit: headroom 0.7, camera azimuth +-20 deg and translation +-0.20 m jitter on train), train.ipynb @ b167b48, repo clone ea3eed9; GPU T4 x2",
+  "recipe": "v5a",
+  "run": "baseline",
+  "train_record": {
+    "status": "completed",
+    "steps_done": 10000,
+    "batch_size": 32,
+    "vlm_dtype": "float16",
+    "steps_per_s": 0.917,
+    "wall_s": 10941.1,
+    "gpu": "Tesla T4",
+    "peak_vram_gb": 4.87,
+    "peak_rss_mb": 4067.6,
+    "checkpoints": [
+      "002500",
+      "005000",
+      "007500",
+      "010000"
+    ],
+    "loss_curve": {
+      "note": "lerobot train log every 200 steps to 1k then every 1k: step, flow-matching loss, grad norm, lr",
+      "rows": [
+        [
+          200,
+          1.317,
+          4.581,
+          3e-05
+        ],
+        [
+          400,
+          1.003,
+          3.145,
+          8.7e-05
+        ],
+        [
+          600,
+          0.96,
+          3.022,
+          9.9e-05
+        ],
+        [
+          800,
+          0.911,
+          2.392,
+          9.9e-05
+        ],
+        [
+          1000,
+          0.897,
+          2.555,
+          9.8e-05
+        ],
+        [
+          2000,
+          0.82,
+          1.895,
+          9.5e-05
+        ],
+        [
+          3000,
+          0.76,
+          1.857,
+          8.6e-05
+        ],
+        [
+          4000,
+          0.703,
+          1.463,
+          7.3e-05
+        ],
+        [
+          5000,
+          0.664,
+          1.4,
+          5.9e-05
+        ],
+        [
+          6000,
+          0.625,
+          1.305,
+          4.4e-05
+        ],
+        [
+          7000,
+          0.613,
+          1.317,
+          2.9e-05
+        ],
+        [
+          8000,
+          0.593,
+          1.311,
+          1.7e-05
+        ],
+        [
+          9000,
+          0.586,
+          1.27,
+          7.8e-06
+        ],
+        [
+          10000,
+          0.591,
+          1.308,
+          3.1e-06
+        ]
+      ]
+    }
+  },
+  "quick_check_010000_50ep": {
+    "policy": "baseline/last",
+    "variation": "nominal",
+    "n": 50,
+    "success_rate": 0.06,
+    "safety": 0.7,
+    "progress_mean": 0.25,
+    "episode_len_mean": 95.3,
+    "rejected_fraction_mean": 0.053,
+    "cmd_xyz_linf_mean": 0.0049668,
+    "cmd_xyz_over_cap_fraction_mean": 0.0,
+    "per_family_success": {
+      "front_high": 0.1667,
+      "front_low": 0.0,
+      "left": 0.0,
+      "near": 0.125,
+      "right": 0.0
+    },
+    "faults": {
+      "rejected": {
+        "S4_workspace": 256
+      },
+      "measured": {}
+    },
+    "wall_s": 404.3,
+    "note": "single worker, 50 episodes, same seeds as the v3 (0.14) and v4 (0.12) quick checks"
+  },
+  "comparison_points_same_step": {
+    "loss_at_5000": {
+      "v4": 0.778,
+      "v5a": 0.664
+    },
+    "loss_at_10000": {
+      "v4": 0.685,
+      "v5a": 0.591
+    },
+    "quick_check_50ep": {
+      "v3": 0.14,
+      "v4": 0.12,
+      "v5a": 0.06
+    }
+  },
+  "output": {
+    "file": "/kaggle/working/vla-bed-baseline-output-v5a.zip",
+    "size_mb": 3521,
+    "sha256": "2f3db6ee081b02c94f97da1abeb5a27943cf69ef55e8cf4fdf114e5d96ae8ae6",
+    "imported": false
+  },
+  "session_wall_s": 12400.0,
+  "reading": "Halving the injected expert noise lowered the training loss at every step (0.664 vs 0.778 at 5k, 0.591 vs 0.685 at 10k: cleaner labels are easier to fit) but the 50-episode quick check of the final checkpoint reads 0.06 [0.02, 0.16] against 0.12 (v4) and 0.14 (v3) on the same seeds, with a smaller mean commanded step (0.0050 vs 0.0057 m) \u2014 a hint, inside the noise of n = 50, that the policy moves more timidly. Safety unchanged (0 % over the cap, 5.3 % rejected, all S4). Session G (100 frozen seeds, four checkpoints, paired against v4 and v3) decides the Geometric-Entropy prediction."
+}
