@@ -375,7 +375,7 @@ def main() -> int:
                 lines.append(f"| {f.parent.parent.name}/{f.parent.name} | {msum['rows']} | {x['ratio_pred_over_label']} | {100*x['label_at_cap_fraction']:.0f} % | {100*x['pred_over_cap_fraction']:.0f} % | {100*(x['pred_over_cap_fraction_given_label_at_cap'] or 0):.0f} % | {msum['direction_cosine_xyz_mean']} |")
             lines.append("")
         if compares:
-            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `9f5dbf4dd492` the v3 baseline, `145880075d6f` the v4 baseline; names of the form `vX … vs vY …` pair two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
+            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `a85e64a183e5` the v2 far-shift probe, `9f5dbf4dd492` the v3 baseline, `06f90d52039b` the v3 far-shift probe, `145880075d6f` the v4 baseline; names of the form `vX … vs vY …` pair two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
             for f in compares:
                 d = load(f); dd = d["discordant"]; ci = d["success_diff_ci95_paired_bootstrap"]
                 name = f.stem.replace("compare_", "").replace("_", " ")

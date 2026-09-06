@@ -32,7 +32,9 @@
         "file": "/kaggle/working/vla-bed-baseline-probes.zip",
         "size_mb": 0.01,
         "sha256": "9c2179c7b627907938d5d8588862cc411a9f7b5b4f67ad1068aac8f75ddee950",
-        "imported": false
+        "imported": true,
+        "imported_to": "results/p5/a85e64a183e5",
+        "imported_at": "2026-09-06 10:02 ICT"
       }
     },
     "v3": {
@@ -65,7 +67,9 @@
         "file": "/kaggle/working/vla-bed-baseline-probes-v3.zip",
         "size_mb": 0.01,
         "sha256": "5a57af518cad77ffe0d7a136f031dc86cb7e123cf398344e16087cfa3469b396",
-        "imported": false
+        "imported": true,
+        "imported_to": "results/p5/06f90d52039b",
+        "imported_at": "2026-09-06 10:02 ICT"
       }
     }
   },

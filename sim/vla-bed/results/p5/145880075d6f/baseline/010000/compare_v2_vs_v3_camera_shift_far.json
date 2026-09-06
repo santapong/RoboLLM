@@ -1,0 +1,48 @@
+{
+  "schema": "robollm.vla-bed.paired-comparison.v1",
+  "a": {
+    "label": "baseline/010000",
+    "variation": "camera_shift_far",
+    "post": "none",
+    "gain": 1.0,
+    "checkpoint": "/tmp/vla-bed-unpacked/artifacts/baseline/kaggle/010000/pretrained_model"
+  },
+  "b": {
+    "label": "baseline/010000",
+    "variation": "camera_shift_far",
+    "post": "none",
+    "gain": 1.0,
+    "checkpoint": "/tmp/vla-bed-unpacked/artifacts/baseline/kaggle/010000/pretrained_model"
+  },
+  "n_pairs": 100,
+  "success_a": 0.03,
+  "success_b": 0.04,
+  "success_diff_b_minus_a": 0.01,
+  "success_diff_ci95_paired_bootstrap": [
+    -0.04,
+    0.06
+  ],
+  "discordant": {
+    "a_fail_b_success": 4,
+    "a_success_b_fail": 3,
+    "both_success": 0,
+    "both_fail": 93
+  },
+  "mcnemar_exact_p": 1.0,
+  "progress_a": 0.09,
+  "progress_b": 0.11,
+  "progress_diff_ci95_paired_bootstrap": [
+    -0.04,
+    0.08
+  ],
+  "rejected_fraction_a": 0.267233,
+  "rejected_fraction_b": 0.12180000000000002,
+  "per_family_success_diff": {
+    "front_high": 0.05,
+    "front_low": 0.05,
+    "left": -0.05,
+    "near": 0.0,
+    "right": 0.0
+  },
+  "verdict": "not separable at n = 100"
+}
