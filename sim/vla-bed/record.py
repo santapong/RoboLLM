@@ -21,7 +21,7 @@ import dataset as ds  # noqa: E402
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--recipe", choices=sorted(ds.RECIPES), required=True)
+    parser.add_argument("--recipe", choices=sorted(n for n, r in ds.RECIPES.items() if r.expert != "dagger"), required=True)  # v7 is made by dagger.py
     parser.add_argument("--split", choices=("train", "evaluation"), default="train")
     parser.add_argument("--episodes", type=int, default=None, help="override the recipe's episode count")
     parser.add_argument("--output-root", type=Path, default=ds.DEFAULT_OUTPUT_ROOT)
