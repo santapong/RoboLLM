@@ -8,6 +8,32 @@ Notable changes to **RoboLLM**. Format follows
 versioned — entries are grouped by date on `develop` (merged to `main`
 after the touched demos verifiably run).
 
+## 2026-09-07 — UR5e VLA sim bed: the wrist camera (recipe v6) lifts success from 0.10 to 0.89 for $0
+
+### Results
+
+- **Sessions I + K** (baseline trained on recipe v6 = v5a plus a wrist camera as a second image stream —
+  identical seeds, labels and physics; 10k steps at 0.513 steps/s, 5.43 h, 7.1 GB VRAM; evaluated on the
+  identical frozen suite in 1.66 h): nominal 2.5k 0.80 / 5k 0.87 / 7.5k 0.89 / 10k **0.89** [0.81, 0.94],
+  selected 10k (5k and 7.5k within its CI). Paired on the same seeds, v5a → v6 is **+0.79** [+0.71, +0.87]
+  with 79 vs 0 discordant pairs (McNemar p = 3e-24); the previous best of any recipe (0.20) → v6 is +0.69
+  [+0.58, +0.79] (p = 4e-18). The 2.5k checkpoint alone (0.80) beats every single-camera number.
+- The variations move with it: `camera_shift` 0.86 (v5a 0.21; not separable from v6's nominal, p = 0.63),
+  lighting 0.85, target_relocation 0.90 (inside the noise of nominal), `camera_shift_far` 0.75 (v5a 0.05;
+  −0.14 vs nominal, p = 0.004, still the weakest view), blank image 0.05, rejected steps 0.3 %. The
+  gain-0.61 probe that helped every single-camera recipe now hurts (0.75, −0.14, p = 0.004).
+- Reading: the tolerance sweep said the failures were centimetre misses; the eye-in-hand view removes the
+  depth ambiguity of one third-person 224² image and turns a 0.1–0.2 policy into a 0.9 policy at the same
+  demonstration count and 1.8× the training compute (Curse-of-Precision wrist ablation 2607.23108, Fourier
+  features 2606.12334). v6 becomes the base recipe for the DAgger round and the gripper / chunkwise variants.
+- Transcripts `results/p5/kaggle/{train-v6,eval-v6}-partial.json`; per-episode files, 18 paired comparisons
+  and precision curves under `results/p5/bd883c780fba` (zip sha256 159efdbd…, checksum verified); P2 gate
+  PASS with v6; Kaggle dataset `vla-bed-v6`.
+- Plastic variant on v5a re-run with the VLM in float32 (session H #4): fits at 10 GB, 2.29 s/step, loss
+  finite; 10k steps exceed the 6 h guard, so the run stops at ≈ 9.4k with checkpoints 2.5k/5k/7.5k.
+- Corrected the P5 wording: the wire policy run matched the Kaggle in-process rate (3/20) but not the
+  episodes (14/20 agreement); per-episode parity is claimed for the deterministic oracle/hold suites only.
+
 ## 2026-09-06 — UR5e VLA sim bed: v4 (camera-translation jitter) trained and evaluated for $0
 
 ### Added (next-phase plan, steps 0–5 and P5)

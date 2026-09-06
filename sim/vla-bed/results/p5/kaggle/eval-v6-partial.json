@@ -1,0 +1,480 @@
+{
+ "schema": "robollm.vla-bed.kaggle-eval-transcript.v1",
+ "source": "Kaggle notebook santapongsondhi/evalf40a57294f version 2 (session K of the 6 Sep 2026 plan, step 4): baseline trained on recipe v6 (v5a + wrist camera), evaluated on the frozen suite (identical 100 seeds); log read 7 Sep 2026 00:45 ICT; eval.ipynb @ e397616 (RUN/RUN_TAG/RECIPE auto), train notebook train6cefe12118; GPU T4 x2, 2 sharded workers",
+ "recipe": "v6",
+ "run": "baseline",
+ "train_record": {
+  "status": "completed",
+  "steps_done": 10000,
+  "steps_per_s": 0.5126,
+  "wall_s": 19554.6,
+  "gpu": "Tesla T4",
+  "peak_vram_gb": 7.1
+ },
+ "profile": {
+  "oracle_20ep_wall_s": 389,
+  "env_s_per_frame": 0.729,
+  "smolvla_3ep_wall_s": 82,
+  "policy_call_s": 0.57,
+  "note": "the wrist render doubles the environment cost per frame (v5a 0.404 s) and the two-camera policy call is 0.57 s (v5a 0.43 s)"
+ },
+ "suites": [
+  {
+   "label": "baseline/010000",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.89,
+   "ci95_wilson_success": [
+    0.814,
+    0.937
+   ],
+   "safety": 0.89,
+   "progress_mean": 0.935,
+   "episode_len_mean": 46.59,
+   "rejected_fraction_mean": 0.0027300000000000002,
+   "cmd_xyz_linf_mean": 0.0060013,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 439.6
+  },
+  {
+   "label": "baseline/010000",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.05,
+   "ci95_wilson_success": [
+    0.022,
+    0.112
+   ],
+   "safety": 0.05,
+   "progress_mean": 0.05,
+   "episode_len_mean": 96.05,
+   "rejected_fraction_mean": 0.33070000000000005,
+   "cmd_xyz_linf_mean": 0.0066356,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 779.6,
+   "blank_image": true
+  },
+  {
+   "label": "baseline/010000",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.75,
+   "ci95_wilson_success": [
+    0.657,
+    0.825
+   ],
+   "safety": 1.0,
+   "progress_mean": 0.855,
+   "episode_len_mean": 66.86,
+   "rejected_fraction_mean": 0.0,
+   "cmd_xyz_linf_mean": 0.0035470000000000007,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 594.0,
+   "gain": 0.61
+  },
+  {
+   "label": "baseline/007500",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.89,
+   "ci95_wilson_success": [
+    0.814,
+    0.937
+   ],
+   "safety": 0.91,
+   "progress_mean": 0.935,
+   "episode_len_mean": 47.81,
+   "rejected_fraction_mean": 0.0020080000000000002,
+   "cmd_xyz_linf_mean": 0.0058993,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 453.0
+  },
+  {
+   "label": "baseline/005000",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.87,
+   "ci95_wilson_success": [
+    0.79,
+    0.922
+   ],
+   "safety": 0.88,
+   "progress_mean": 0.92,
+   "episode_len_mean": 46.37,
+   "rejected_fraction_mean": 0.002448,
+   "cmd_xyz_linf_mean": 0.005962,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 431.9
+  },
+  {
+   "label": "baseline/002500",
+   "variation": "nominal",
+   "n": 100,
+   "success_rate": 0.8,
+   "ci95_wilson_success": [
+    0.711,
+    0.867
+   ],
+   "safety": 0.82,
+   "progress_mean": 0.885,
+   "episode_len_mean": 53.58,
+   "rejected_fraction_mean": 0.008214,
+   "cmd_xyz_linf_mean": 0.0060103,
+   "cmd_xyz_over_cap_fraction_mean": 0.001,
+   "wall_s": 498.0
+  },
+  {
+   "label": "baseline/010000",
+   "variation": "camera_shift",
+   "n": 100,
+   "success_rate": 0.86,
+   "ci95_wilson_success": [
+    0.779,
+    0.915
+   ],
+   "safety": 0.77,
+   "progress_mean": 0.905,
+   "episode_len_mean": 47.01,
+   "rejected_fraction_mean": 0.018221,
+   "cmd_xyz_linf_mean": 0.006199400000000001,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 445.8
+  },
+  {
+   "label": "baseline/010000",
+   "variation": "camera_shift_far",
+   "n": 100,
+   "success_rate": 0.75,
+   "ci95_wilson_success": [
+    0.657,
+    0.825
+   ],
+   "safety": 0.77,
+   "progress_mean": 0.825,
+   "episode_len_mean": 55.12,
+   "rejected_fraction_mean": 0.037875,
+   "cmd_xyz_linf_mean": 0.0058486000000000015,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 502.7
+  },
+  {
+   "label": "baseline/010000",
+   "variation": "lighting",
+   "n": 100,
+   "success_rate": 0.85,
+   "ci95_wilson_success": [
+    0.767,
+    0.907
+   ],
+   "safety": 0.86,
+   "progress_mean": 0.915,
+   "episode_len_mean": 48.64,
+   "rejected_fraction_mean": 0.004152,
+   "cmd_xyz_linf_mean": 0.0058081,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 459.6
+  },
+  {
+   "label": "baseline/010000",
+   "variation": "target_relocation",
+   "n": 100,
+   "success_rate": 0.9,
+   "ci95_wilson_success": [
+    0.826,
+    0.945
+   ],
+   "safety": 0.91,
+   "progress_mean": 0.945,
+   "episode_len_mean": 45.64,
+   "rejected_fraction_mean": 0.003053,
+   "cmd_xyz_linf_mean": 0.005968200000000002,
+   "cmd_xyz_over_cap_fraction_mean": 0.0,
+   "wall_s": 444.8
+  }
+ ],
+ "selection": {
+  "run": "baseline",
+  "selected": "010000",
+  "success_rate": 0.89,
+  "within_ci": [
+   "005000",
+   "007500",
+   "010000"
+  ],
+  "rule": "R11"
+ },
+ "comparison_points_same_suites": {
+  "v5a": {
+   "nominal_010000": 0.1,
+   "nominal_007500": 0.16,
+   "nominal_005000": 0.09,
+   "nominal_002500": 0.11,
+   "gain_0.61": 0.15,
+   "camera_shift": 0.21,
+   "camera_shift_far": 0.05,
+   "lighting": 0.09,
+   "target_relocation": 0.11
+  },
+  "v4": {
+   "nominal_010000": 0.09,
+   "camera_shift": 0.13,
+   "camera_shift_far": 0.06
+  },
+  "v3": {
+   "nominal_005000": 0.2,
+   "camera_shift": 0.05
+  },
+  "v2": {
+   "nominal_007500": 0.2
+  }
+ },
+ "output": {
+  "file": "/kaggle/working/vla-bed-baseline-eval-v6.zip",
+  "size_mb": 0.06,
+  "sha256": "159efdbdbc8877473cbc641c2ba4104175a6b4fbf574d37fec895467ea8362bd",
+  "imported": true,
+  "imported_at": "2026-09-07 00:45 ICT",
+  "imported_to": "results/p5/bd883c780fba"
+ },
+ "session_wall_s": 5966.0,
+ "paired_comparisons": {
+  "files": "results/p5/bd883c780fba/baseline/*/compare_*.json",
+  "headline": {
+   "v5a_vs_v6_nominal_002500": {
+    "diff": 0.69,
+    "ci95": [
+     0.59,
+     0.78
+    ],
+    "discordant": [
+     71,
+     2
+    ],
+    "mcnemar_p": 5.72e-19,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_nominal_005000": {
+    "diff": 0.78,
+    "ci95": [
+     0.69,
+     0.86
+    ],
+    "discordant": [
+     80,
+     2
+    ],
+    "mcnemar_p": 1.41e-21,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_nominal_007500": {
+    "diff": 0.73,
+    "ci95": [
+     0.63,
+     0.82
+    ],
+    "discordant": [
+     75,
+     2
+    ],
+    "mcnemar_p": 3.98e-20,
+    "verdict": "B better"
+   },
+   "v2best_7500_vs_v6best_10000": {
+    "diff": 0.69,
+    "ci95": [
+     0.58,
+     0.79
+    ],
+    "discordant": [
+     72,
+     3
+    ],
+    "mcnemar_p": 3.73e-18,
+    "verdict": "B better"
+   },
+   "v3best_5000_vs_v6best_10000": {
+    "diff": 0.69,
+    "ci95": [
+     0.58,
+     0.79
+    ],
+    "discordant": [
+     72,
+     3
+    ],
+    "mcnemar_p": 3.73e-18,
+    "verdict": "B better"
+   },
+   "v4_vs_v6_camera_shift": {
+    "diff": 0.73,
+    "ci95": [
+     0.64,
+     0.81
+    ],
+    "discordant": [
+     73,
+     0
+    ],
+    "mcnemar_p": 2.12e-22,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_camera_shift": {
+    "diff": 0.65,
+    "ci95": [
+     0.56,
+     0.74
+    ],
+    "discordant": [
+     65,
+     0
+    ],
+    "mcnemar_p": 5.42e-20,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_camera_shift_far": {
+    "diff": 0.7,
+    "ci95": [
+     0.61,
+     0.79
+    ],
+    "discordant": [
+     70,
+     0
+    ],
+    "mcnemar_p": 1.69e-21,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_lighting": {
+    "diff": 0.76,
+    "ci95": [
+     0.66,
+     0.85
+    ],
+    "discordant": [
+     78,
+     2
+    ],
+    "mcnemar_p": 5.36e-21,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_nominal_010000": {
+    "diff": 0.79,
+    "ci95": [
+     0.71,
+     0.87
+    ],
+    "discordant": [
+     79,
+     0
+    ],
+    "mcnemar_p": 3.31e-24,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_nominal_gain0.61": {
+    "diff": 0.6,
+    "ci95": [
+     0.49,
+     0.71
+    ],
+    "discordant": [
+     63,
+     3
+    ],
+    "mcnemar_p": 1.3e-15,
+    "verdict": "B better"
+   },
+   "v5a_vs_v6_target_relocation": {
+    "diff": 0.79,
+    "ci95": [
+     0.71,
+     0.87
+    ],
+    "discordant": [
+     79,
+     0
+    ],
+    "mcnemar_p": 3.31e-24,
+    "verdict": "B better"
+   },
+   "v5abest_7500_vs_v6best_10000": {
+    "diff": 0.73,
+    "ci95": [
+     0.63,
+     0.82
+    ],
+    "discordant": [
+     74,
+     1
+    ],
+    "mcnemar_p": 4.02e-21,
+    "verdict": "B better"
+   },
+   "v6_nominal_vs_camera_shift": {
+    "diff": -0.03,
+    "ci95": [
+     -0.11,
+     0.05
+    ],
+    "discordant": [
+     7,
+     10
+    ],
+    "mcnemar_p": 0.629,
+    "verdict": "not separable at n = 100"
+   },
+   "v6_nominal_vs_camera_shift_far": {
+    "diff": -0.14,
+    "ci95": [
+     -0.23,
+     -0.05
+    ],
+    "discordant": [
+     4,
+     18
+    ],
+    "mcnemar_p": 0.00434,
+    "verdict": "A better"
+   },
+   "v6_nominal_vs_gain0.61": {
+    "diff": -0.14,
+    "ci95": [
+     -0.23,
+     -0.05
+    ],
+    "discordant": [
+     4,
+     18
+    ],
+    "mcnemar_p": 0.00434,
+    "verdict": "A better"
+   },
+   "v6_nominal_vs_lighting": {
+    "diff": -0.04,
+    "ci95": [
+     -0.11,
+     0.03
+    ],
+    "discordant": [
+     4,
+     8
+    ],
+    "mcnemar_p": 0.388,
+    "verdict": "not separable at n = 100"
+   },
+   "v6_nominal_vs_target_relocation": {
+    "diff": 0.01,
+    "ci95": [
+     -0.07,
+     0.09
+    ],
+    "discordant": [
+     9,
+     8
+    ],
+    "mcnemar_p": 1.0,
+    "verdict": "not separable at n = 100"
+   }
+  }
+ },
+ "reading": "The wrist camera is the lever. With seeds, labels and physics identical to v5a, v6 scores 0.89 [0.81, 0.94] on the frozen suite against 0.10 (paired +0.79 [+0.71, +0.87], 79 vs 0 discordant, McNemar p = 3e-24) and beats every earlier best (v3 5k / v2 7.5k 0.20 -> +0.69, p = 4e-18). Every checkpoint from 2.5k (0.80) up is above any single-camera number, so the gain is not a checkpoint-selection effect. The variations move with it: camera_shift 0.86 (not separable from nominal, p = 0.63), lighting 0.85, target_relocation 0.90 (both inside the noise of nominal), camera_shift_far 0.75 (-0.14 vs nominal, p = 0.004: still the weakest view but 0.70 above v5a), blank image 0.05 (the policy uses the images). The gain-0.61 probe, which helped every single-camera recipe, now hurts (0.75, -0.14, p = 0.004): the policy no longer overshoots. Rejected steps 0.3 %, mean episode 46.6 frames (oracle 33.6). Reading against the literature: the Curse-of-Precision wrist-camera ablation (2607.23108) moved the precision floor from 2.35 to 3.85 mm; here, at a 30 mm acceptance radius that every single-camera recipe missed by centimetres, the eye-in-hand view removes the depth ambiguity of one third-person 224^2 image (2606.12334) and turns a 0.1-0.2 policy into a 0.9 policy at the same demo count and training budget (1.8x compute)."
+}

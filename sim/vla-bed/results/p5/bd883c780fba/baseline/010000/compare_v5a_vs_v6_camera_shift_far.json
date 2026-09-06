@@ -1,0 +1,48 @@
+{
+  "schema": "robollm.vla-bed.paired-comparison.v1",
+  "a": {
+    "label": "baseline/010000",
+    "variation": "camera_shift_far",
+    "post": "none",
+    "gain": 1.0,
+    "checkpoint": "/tmp/vla-bed-unpacked/artifacts/baseline/kaggle/010000/pretrained_model"
+  },
+  "b": {
+    "label": "baseline/010000",
+    "variation": "camera_shift_far",
+    "post": "none",
+    "gain": 1.0,
+    "checkpoint": "/tmp/vla-bed-unpacked/artifacts/baseline/kaggle/010000/pretrained_model"
+  },
+  "n_pairs": 100,
+  "success_a": 0.05,
+  "success_b": 0.75,
+  "success_diff_b_minus_a": 0.7,
+  "success_diff_ci95_paired_bootstrap": [
+    0.61,
+    0.79
+  ],
+  "discordant": {
+    "a_fail_b_success": 70,
+    "a_success_b_fail": 0,
+    "both_success": 5,
+    "both_fail": 25
+  },
+  "mcnemar_exact_p": 1.6940658945086007e-21,
+  "progress_a": 0.115,
+  "progress_b": 0.825,
+  "progress_diff_ci95_paired_bootstrap": [
+    0.635,
+    0.785
+  ],
+  "rejected_fraction_a": 0.058856,
+  "rejected_fraction_b": 0.037875,
+  "per_family_success_diff": {
+    "front_high": 0.75,
+    "front_low": 0.9,
+    "left": 0.75,
+    "near": 0.85,
+    "right": 0.25
+  },
+  "verdict": "B better"
+}
