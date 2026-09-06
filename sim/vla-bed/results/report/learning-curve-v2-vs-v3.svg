@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 524" width="640" height="524" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="13">
-<rect width="640" height="524" fill="#FFFFFF"/>
-<text x="16" y="24" font-size="15" font-weight="600" fill="#1A232C">Baseline on v2 vs v3 vs v4 data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)</text>
-<line x1="230.0" y1="40" x2="230.0" y2="488" stroke="#E3E8EC" stroke-width="1"/>
-<text x="230.0" y="506" text-anchor="middle" fill="#5A6874" font-size="11">0</text>
-<line x1="304.0" y1="40" x2="304.0" y2="488" stroke="#E3E8EC" stroke-width="1"/>
-<text x="304.0" y="506" text-anchor="middle" fill="#5A6874" font-size="11">0.2</text>
-<line x1="378.0" y1="40" x2="378.0" y2="488" stroke="#E3E8EC" stroke-width="1"/>
-<text x="378.0" y="506" text-anchor="middle" fill="#5A6874" font-size="11">0.4</text>
-<line x1="452.0" y1="40" x2="452.0" y2="488" stroke="#E3E8EC" stroke-width="1"/>
-<text x="452.0" y="506" text-anchor="middle" fill="#5A6874" font-size="11">0.6</text>
-<line x1="526.0" y1="40" x2="526.0" y2="488" stroke="#E3E8EC" stroke-width="1"/>
-<text x="526.0" y="506" text-anchor="middle" fill="#5A6874" font-size="11">0.8</text>
-<line x1="600.0" y1="40" x2="600.0" y2="488" stroke="#E3E8EC" stroke-width="1"/>
-<text x="600.0" y="506" text-anchor="middle" fill="#5A6874" font-size="11">1</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 668" width="640" height="668" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="13">
+<rect width="640" height="668" fill="#FFFFFF"/>
+<text x="16" y="24" font-size="15" font-weight="600" fill="#1A232C">Baseline on v2 vs v3 vs v4 vs v5a data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)</text>
+<line x1="230.0" y1="40" x2="230.0" y2="632" stroke="#E3E8EC" stroke-width="1"/>
+<text x="230.0" y="650" text-anchor="middle" fill="#5A6874" font-size="11">0</text>
+<line x1="304.0" y1="40" x2="304.0" y2="632" stroke="#E3E8EC" stroke-width="1"/>
+<text x="304.0" y="650" text-anchor="middle" fill="#5A6874" font-size="11">0.2</text>
+<line x1="378.0" y1="40" x2="378.0" y2="632" stroke="#E3E8EC" stroke-width="1"/>
+<text x="378.0" y="650" text-anchor="middle" fill="#5A6874" font-size="11">0.4</text>
+<line x1="452.0" y1="40" x2="452.0" y2="632" stroke="#E3E8EC" stroke-width="1"/>
+<text x="452.0" y="650" text-anchor="middle" fill="#5A6874" font-size="11">0.6</text>
+<line x1="526.0" y1="40" x2="526.0" y2="632" stroke="#E3E8EC" stroke-width="1"/>
+<text x="526.0" y="650" text-anchor="middle" fill="#5A6874" font-size="11">0.8</text>
+<line x1="600.0" y1="40" x2="600.0" y2="632" stroke="#E3E8EC" stroke-width="1"/>
+<text x="600.0" y="650" text-anchor="middle" fill="#5A6874" font-size="11">1</text>
 <text x="220" y="63.0" text-anchor="end" fill="#1A232C">v2 · 2.5k</text>
 <rect x="230" y="46" width="33.3" height="26" fill="#0E7C86" rx="2"/>
 <line x1="247.8" y1="59.0" x2="290.0" y2="59.0" stroke="#1A232C" stroke-width="1.5"/>
@@ -31,59 +31,83 @@
 <line x1="242.6" y1="125.0" x2="242.6" y2="137.0" stroke="#1A232C" stroke-width="1.5"/>
 <line x1="280.7" y1="125.0" x2="280.7" y2="137.0" stroke="#1A232C" stroke-width="1.5"/>
 <text x="288.7" y="135.0" fill="#1A232C" font-size="12">0.07</text>
-<text x="220" y="171.0" text-anchor="end" fill="#1A232C">v2 · 5k</text>
-<rect x="230" y="154" width="48.1" height="26" fill="#0E7C86" rx="2"/>
-<line x1="258.7" y1="167.0" x2="307.6" y2="167.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="258.7" y1="161.0" x2="258.7" y2="173.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="307.6" y1="161.0" x2="307.6" y2="173.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="315.6" y="171.0" fill="#1A232C" font-size="12">0.13</text>
-<text x="220" y="207.0" text-anchor="end" fill="#1A232C">v3 · 5k (headroom + azimuth jitter)</text>
-<rect x="230" y="190" width="74.0" height="26" fill="#7A5C99" rx="2"/>
-<line x1="279.2" y1="203.0" x2="336.9" y2="203.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="279.2" y1="197.0" x2="279.2" y2="209.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="336.9" y1="197.0" x2="336.9" y2="209.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="344.9" y="207.0" fill="#1A232C" font-size="12">0.20</text>
-<text x="220" y="243.0" text-anchor="end" fill="#1A232C">v4 · 5k (+ camera translation jitter)</text>
-<rect x="230" y="226" width="48.1" height="26" fill="#2E7D4F" rx="2"/>
-<line x1="258.9" y1="239.0" x2="307.7" y2="239.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="258.9" y1="233.0" x2="258.9" y2="245.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="307.7" y1="233.0" x2="307.7" y2="245.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="315.7" y="243.0" fill="#1A232C" font-size="12">0.13</text>
-<text x="220" y="279.0" text-anchor="end" fill="#1A232C">v2 · 7.5k</text>
-<rect x="230" y="262" width="74.0" height="26" fill="#0E7C86" rx="2"/>
-<line x1="279.3" y1="275.0" x2="336.9" y2="275.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="279.3" y1="269.0" x2="279.3" y2="281.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="336.9" y1="269.0" x2="336.9" y2="281.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="344.9" y="279.0" fill="#1A232C" font-size="12">0.20</text>
-<text x="220" y="315.0" text-anchor="end" fill="#1A232C">v3 · 7.5k (headroom + azimuth jitter)</text>
-<rect x="230" y="298" width="59.2" height="26" fill="#7A5C99" rx="2"/>
-<line x1="267.4" y1="311.0" x2="320.3" y2="311.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="267.4" y1="305.0" x2="267.4" y2="317.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="320.3" y1="305.0" x2="320.3" y2="317.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="328.3" y="315.0" fill="#1A232C" font-size="12">0.16</text>
-<text x="220" y="351.0" text-anchor="end" fill="#1A232C">v4 · 7.5k (+ camera translation jitter)</text>
-<rect x="230" y="334" width="33.3" height="26" fill="#2E7D4F" rx="2"/>
-<line x1="247.8" y1="347.0" x2="289.9" y2="347.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="247.8" y1="341.0" x2="247.8" y2="353.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="289.9" y1="341.0" x2="289.9" y2="353.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="297.9" y="351.0" fill="#1A232C" font-size="12">0.09</text>
-<text x="220" y="387.0" text-anchor="end" fill="#1A232C">v2 · 10k</text>
-<rect x="230" y="370" width="48.1" height="26" fill="#0E7C86" rx="2"/>
-<line x1="258.7" y1="383.0" x2="307.6" y2="383.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="258.7" y1="377.0" x2="258.7" y2="389.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="307.6" y1="377.0" x2="307.6" y2="389.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="315.6" y="387.0" fill="#1A232C" font-size="12">0.13</text>
-<text x="220" y="423.0" text-anchor="end" fill="#1A232C">v3 · 10k (headroom + azimuth jitter)</text>
-<rect x="230" y="406" width="37.0" height="26" fill="#7A5C99" rx="2"/>
-<line x1="250.3" y1="419.0" x2="294.4" y2="419.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="250.3" y1="413.0" x2="250.3" y2="425.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="294.4" y1="413.0" x2="294.4" y2="425.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="302.4" y="423.0" fill="#1A232C" font-size="12">0.10</text>
-<text x="220" y="459.0" text-anchor="end" fill="#1A232C">v4 · 10k (+ camera translation jitter)</text>
-<rect x="230" y="442" width="33.3" height="26" fill="#2E7D4F" rx="2"/>
-<line x1="247.8" y1="455.0" x2="289.9" y2="455.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="247.8" y1="449.0" x2="247.8" y2="461.0" stroke="#1A232C" stroke-width="1.5"/>
-<line x1="289.9" y1="449.0" x2="289.9" y2="461.0" stroke="#1A232C" stroke-width="1.5"/>
-<text x="297.9" y="459.0" fill="#1A232C" font-size="12">0.09</text>
-<text x="16" y="520" fill="#5A6874" font-size="11">v3 caps the expert at 0.7 × the limits and jitters the camera azimuth ±20° on the train split; v4 adds a camera translation ±0.20 m (x, y), ±0.05 m (z); every v3/v4 checkpoint has 0 % over-cap steps.</text>
+<text x="220" y="171.0" text-anchor="end" fill="#1A232C">v5a · 2.5k (expert noise 0.25×)</text>
+<rect x="230" y="154" width="40.7" height="26" fill="#B7791F" rx="2"/>
+<line x1="252.9" y1="167.0" x2="298.8" y2="167.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="252.9" y1="161.0" x2="252.9" y2="173.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="298.8" y1="161.0" x2="298.8" y2="173.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="306.8" y="171.0" fill="#1A232C" font-size="12">0.11</text>
+<text x="220" y="207.0" text-anchor="end" fill="#1A232C">v2 · 5k</text>
+<rect x="230" y="190" width="48.1" height="26" fill="#0E7C86" rx="2"/>
+<line x1="258.7" y1="203.0" x2="307.6" y2="203.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="258.7" y1="197.0" x2="258.7" y2="209.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="307.6" y1="197.0" x2="307.6" y2="209.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="315.6" y="207.0" fill="#1A232C" font-size="12">0.13</text>
+<text x="220" y="243.0" text-anchor="end" fill="#1A232C">v3 · 5k (headroom + azimuth jitter)</text>
+<rect x="230" y="226" width="74.0" height="26" fill="#7A5C99" rx="2"/>
+<line x1="279.2" y1="239.0" x2="336.9" y2="239.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="279.2" y1="233.0" x2="279.2" y2="245.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="336.9" y1="233.0" x2="336.9" y2="245.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="344.9" y="243.0" fill="#1A232C" font-size="12">0.20</text>
+<text x="220" y="279.0" text-anchor="end" fill="#1A232C">v4 · 5k (+ camera translation jitter)</text>
+<rect x="230" y="262" width="48.1" height="26" fill="#2E7D4F" rx="2"/>
+<line x1="258.9" y1="275.0" x2="307.7" y2="275.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="258.9" y1="269.0" x2="258.9" y2="281.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="307.7" y1="269.0" x2="307.7" y2="281.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="315.7" y="279.0" fill="#1A232C" font-size="12">0.13</text>
+<text x="220" y="315.0" text-anchor="end" fill="#1A232C">v5a · 5k (expert noise 0.25×)</text>
+<rect x="230" y="298" width="33.3" height="26" fill="#B7791F" rx="2"/>
+<line x1="247.8" y1="311.0" x2="289.9" y2="311.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="247.8" y1="305.0" x2="247.8" y2="317.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="289.9" y1="305.0" x2="289.9" y2="317.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="297.9" y="315.0" fill="#1A232C" font-size="12">0.09</text>
+<text x="220" y="351.0" text-anchor="end" fill="#1A232C">v2 · 7.5k</text>
+<rect x="230" y="334" width="74.0" height="26" fill="#0E7C86" rx="2"/>
+<line x1="279.3" y1="347.0" x2="336.9" y2="347.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="279.3" y1="341.0" x2="279.3" y2="353.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="336.9" y1="341.0" x2="336.9" y2="353.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="344.9" y="351.0" fill="#1A232C" font-size="12">0.20</text>
+<text x="220" y="387.0" text-anchor="end" fill="#1A232C">v3 · 7.5k (headroom + azimuth jitter)</text>
+<rect x="230" y="370" width="59.2" height="26" fill="#7A5C99" rx="2"/>
+<line x1="267.4" y1="383.0" x2="320.3" y2="383.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="267.4" y1="377.0" x2="267.4" y2="389.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="320.3" y1="377.0" x2="320.3" y2="389.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="328.3" y="387.0" fill="#1A232C" font-size="12">0.16</text>
+<text x="220" y="423.0" text-anchor="end" fill="#1A232C">v4 · 7.5k (+ camera translation jitter)</text>
+<rect x="230" y="406" width="33.3" height="26" fill="#2E7D4F" rx="2"/>
+<line x1="247.8" y1="419.0" x2="289.9" y2="419.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="247.8" y1="413.0" x2="247.8" y2="425.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="289.9" y1="413.0" x2="289.9" y2="425.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="297.9" y="423.0" fill="#1A232C" font-size="12">0.09</text>
+<text x="220" y="459.0" text-anchor="end" fill="#1A232C">v5a · 7.5k (expert noise 0.25×)</text>
+<rect x="230" y="442" width="59.2" height="26" fill="#B7791F" rx="2"/>
+<line x1="267.0" y1="455.0" x2="320.3" y2="455.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="267.0" y1="449.0" x2="267.0" y2="461.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="320.3" y1="449.0" x2="320.3" y2="461.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="328.3" y="459.0" fill="#1A232C" font-size="12">0.16</text>
+<text x="220" y="495.0" text-anchor="end" fill="#1A232C">v2 · 10k</text>
+<rect x="230" y="478" width="48.1" height="26" fill="#0E7C86" rx="2"/>
+<line x1="258.7" y1="491.0" x2="307.6" y2="491.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="258.7" y1="485.0" x2="258.7" y2="497.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="307.6" y1="485.0" x2="307.6" y2="497.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="315.6" y="495.0" fill="#1A232C" font-size="12">0.13</text>
+<text x="220" y="531.0" text-anchor="end" fill="#1A232C">v3 · 10k (headroom + azimuth jitter)</text>
+<rect x="230" y="514" width="37.0" height="26" fill="#7A5C99" rx="2"/>
+<line x1="250.3" y1="527.0" x2="294.4" y2="527.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="250.3" y1="521.0" x2="250.3" y2="533.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="294.4" y1="521.0" x2="294.4" y2="533.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="302.4" y="531.0" fill="#1A232C" font-size="12">0.10</text>
+<text x="220" y="567.0" text-anchor="end" fill="#1A232C">v4 · 10k (+ camera translation jitter)</text>
+<rect x="230" y="550" width="33.3" height="26" fill="#2E7D4F" rx="2"/>
+<line x1="247.8" y1="563.0" x2="289.9" y2="563.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="247.8" y1="557.0" x2="247.8" y2="569.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="289.9" y1="557.0" x2="289.9" y2="569.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="297.9" y="567.0" fill="#1A232C" font-size="12">0.09</text>
+<text x="220" y="603.0" text-anchor="end" fill="#1A232C">v5a · 10k (expert noise 0.25×)</text>
+<rect x="230" y="586" width="37.0" height="26" fill="#B7791F" rx="2"/>
+<line x1="250.3" y1="599.0" x2="294.4" y2="599.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="250.3" y1="593.0" x2="250.3" y2="605.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="294.4" y1="593.0" x2="294.4" y2="605.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="302.4" y="603.0" fill="#1A232C" font-size="12">0.10</text>
+<text x="16" y="664" fill="#5A6874" font-size="11">v3 caps the expert at 0.7 × the limits and jitters the camera azimuth ±20° on the train split; v4 adds a camera translation ±0.20 m (x, y), ±0.05 m (z); every v3/v4 checkpoint has 0 % over-cap steps.</text>
 </svg>

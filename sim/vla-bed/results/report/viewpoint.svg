@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 344" width="640" height="344" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="13">
-<rect width="640" height="344" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 452" width="640" height="452" font-family="IBM Plex Sans, Helvetica, Arial, sans-serif" font-size="13">
+<rect width="640" height="452" fill="#FFFFFF"/>
 <text x="16" y="24" font-size="15" font-weight="600" fill="#1A232C">Viewpoint robustness: the 10k checkpoint of each recipe at the nominal and the shifted camera (same 100 seeds, Wilson 95 %)</text>
-<line x1="230.0" y1="40" x2="230.0" y2="308" stroke="#E3E8EC" stroke-width="1"/>
-<text x="230.0" y="326" text-anchor="middle" fill="#5A6874" font-size="11">0</text>
-<line x1="304.0" y1="40" x2="304.0" y2="308" stroke="#E3E8EC" stroke-width="1"/>
-<text x="304.0" y="326" text-anchor="middle" fill="#5A6874" font-size="11">0.2</text>
-<line x1="378.0" y1="40" x2="378.0" y2="308" stroke="#E3E8EC" stroke-width="1"/>
-<text x="378.0" y="326" text-anchor="middle" fill="#5A6874" font-size="11">0.4</text>
-<line x1="452.0" y1="40" x2="452.0" y2="308" stroke="#E3E8EC" stroke-width="1"/>
-<text x="452.0" y="326" text-anchor="middle" fill="#5A6874" font-size="11">0.6</text>
-<line x1="526.0" y1="40" x2="526.0" y2="308" stroke="#E3E8EC" stroke-width="1"/>
-<text x="526.0" y="326" text-anchor="middle" fill="#5A6874" font-size="11">0.8</text>
-<line x1="600.0" y1="40" x2="600.0" y2="308" stroke="#E3E8EC" stroke-width="1"/>
-<text x="600.0" y="326" text-anchor="middle" fill="#5A6874" font-size="11">1</text>
+<line x1="230.0" y1="40" x2="230.0" y2="416" stroke="#E3E8EC" stroke-width="1"/>
+<text x="230.0" y="434" text-anchor="middle" fill="#5A6874" font-size="11">0</text>
+<line x1="304.0" y1="40" x2="304.0" y2="416" stroke="#E3E8EC" stroke-width="1"/>
+<text x="304.0" y="434" text-anchor="middle" fill="#5A6874" font-size="11">0.2</text>
+<line x1="378.0" y1="40" x2="378.0" y2="416" stroke="#E3E8EC" stroke-width="1"/>
+<text x="378.0" y="434" text-anchor="middle" fill="#5A6874" font-size="11">0.4</text>
+<line x1="452.0" y1="40" x2="452.0" y2="416" stroke="#E3E8EC" stroke-width="1"/>
+<text x="452.0" y="434" text-anchor="middle" fill="#5A6874" font-size="11">0.6</text>
+<line x1="526.0" y1="40" x2="526.0" y2="416" stroke="#E3E8EC" stroke-width="1"/>
+<text x="526.0" y="434" text-anchor="middle" fill="#5A6874" font-size="11">0.8</text>
+<line x1="600.0" y1="40" x2="600.0" y2="416" stroke="#E3E8EC" stroke-width="1"/>
+<text x="600.0" y="434" text-anchor="middle" fill="#5A6874" font-size="11">1</text>
 <text x="220" y="63.0" text-anchor="end" fill="#1A232C">v2 · nominal</text>
 <rect x="230" y="46" width="48.1" height="26" fill="#0E7C86" rx="2"/>
 <line x1="258.7" y1="59.0" x2="307.6" y2="59.0" stroke="#1A232C" stroke-width="1.5"/>
@@ -55,5 +55,23 @@
 <line x1="240.0" y1="269.0" x2="240.0" y2="281.0" stroke="#1A232C" stroke-width="1.5"/>
 <line x1="275.9" y1="269.0" x2="275.9" y2="281.0" stroke="#1A232C" stroke-width="1.5"/>
 <text x="283.9" y="279.0" fill="#1A232C" font-size="12">0.06</text>
-<text x="16" y="340" fill="#5A6874" font-size="11">Only v4 (train split recorded with a per-episode camera translation) keeps its nominal score under camera_shift; outside the jittered range (camera_shift_far) it falls back.</text>
+<text x="220" y="315.0" text-anchor="end" fill="#1A232C">v5a · nominal</text>
+<rect x="230" y="298" width="37.0" height="26" fill="#B7791F" rx="2"/>
+<line x1="250.3" y1="311.0" x2="294.4" y2="311.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="250.3" y1="305.0" x2="250.3" y2="317.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="294.4" y1="305.0" x2="294.4" y2="317.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="302.4" y="315.0" fill="#1A232C" font-size="12">0.10</text>
+<text x="220" y="351.0" text-anchor="end" fill="#1A232C">v5a · camera_shift (+0.15, +0.10 m)</text>
+<rect x="230" y="334" width="77.7" height="26" fill="#D9A441" rx="2"/>
+<line x1="282.2" y1="347.0" x2="340.6" y2="347.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="282.2" y1="341.0" x2="282.2" y2="353.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="340.6" y1="341.0" x2="340.6" y2="353.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="348.6" y="351.0" fill="#1A232C" font-size="12">0.21</text>
+<text x="220" y="387.0" text-anchor="end" fill="#1A232C">v5a · camera_shift_far (+0.30, +0.20 m)</text>
+<rect x="230" y="370" width="18.5" height="26" fill="#B7791F" rx="2"/>
+<line x1="237.8" y1="383.0" x2="271.1" y2="383.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="237.8" y1="377.0" x2="237.8" y2="389.0" stroke="#1A232C" stroke-width="1.5"/>
+<line x1="271.1" y1="377.0" x2="271.1" y2="389.0" stroke="#1A232C" stroke-width="1.5"/>
+<text x="279.1" y="387.0" fill="#1A232C" font-size="12">0.05</text>
+<text x="16" y="448" fill="#5A6874" font-size="11">Only v4 (train split recorded with a per-episode camera translation) keeps its nominal score under camera_shift; outside the jittered range (camera_shift_far) it falls back.</text>
 </svg>

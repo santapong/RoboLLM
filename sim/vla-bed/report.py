@@ -102,6 +102,7 @@ def main() -> int:
     pr = load(R / "p5" / "kaggle" / "probes-v2-partial.json") if (R / "p5" / "kaggle" / "probes-v2-partial.json").exists() else None
     e3 = load(R / "p5" / "kaggle" / "eval-v3-partial.json") if (R / "p5" / "kaggle" / "eval-v3-partial.json").exists() else None
     e4 = load(R / "p5" / "kaggle" / "eval-v4-partial.json") if (R / "p5" / "kaggle" / "eval-v4-partial.json").exists() else None
+    e5 = load(R / "p5" / "kaggle" / "eval-v5a-partial.json") if (R / "p5" / "kaggle" / "eval-v5a-partial.json").exists() else None
     # imported Kaggle result files (schema v2 rows, paired comparisons, magnitude probes) — empty until gpu/kaggle_import.sh has run
     compares = sorted(R.glob("p5/*/*/*/compare_*.json"))
     precision_files = sorted(R.glob("p5/precision/*/*/*/*.json"))
@@ -148,6 +149,7 @@ def main() -> int:
             if st in v3curve:
                 rows_lc.append((f"v3 · {st/1000:g}k (headroom + jitter)", v3curve[st]["success_rate"], tuple(v3curve[st]["ci95_wilson_success"]), "#7A5C99"))
         v4curve = {int(su["label"].split("/")[-1]): su for su in e4["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e4 else {}
+        v5curve = {int(su["label"].split("/")[-1]): su for su in e5["suites"] if su["variation"] == "nominal" and not su.get("blank_image") and su.get("gain", 1.0) == 1.0} if e5 else {}
         if v4curve:
             rows_lc = []
             for st, v in curve:
@@ -156,7 +158,9 @@ def main() -> int:
                     rows_lc.append((f"v3 · {st/1000:g}k (headroom + azimuth jitter)", v3curve[st]["success_rate"], tuple(v3curve[st]["ci95_wilson_success"]), "#7A5C99"))
                 if st in v4curve:
                     rows_lc.append((f"v4 · {st/1000:g}k (+ camera translation jitter)", v4curve[st]["success_rate"], tuple(v4curve[st]["ci95_wilson_success"]), "#2E7D4F"))
-        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3" + (" vs v4" if v4curve else "") + " data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
+                if st in v5curve:
+                    rows_lc.append((f"v5a · {st/1000:g}k (expert noise 0.25×)", v5curve[st]["success_rate"], tuple(v5curve[st]["ci95_wilson_success"]), "#B7791F"))
+        charts["learning-curve-v2-vs-v3"] = hbar_chart("Baseline on v2 vs v3" + (" vs v4" if v4curve else "") + (" vs v5a" if v5curve else "") + " data: closed-loop success per checkpoint (same 100 seeds, Wilson 95 %)", rows_lc,
                                                        note="v3 caps the expert at 0.7 × the limits and jitters the camera azimuth ±20° on the train split; v4 adds a camera translation ±0.20 m (x, y), ±0.05 m (z); every v3/v4 checkpoint has 0 % over-cap steps.")
         if e4:
             def _suite(e, var, **kw):
@@ -167,7 +171,9 @@ def main() -> int:
             rows_vp = [("v2 · nominal", pol["success_rate"], tuple(pol["ci95_wilson_success"]), teal)]
             if cam:
                 rows_vp.append(("v2 · camera_shift (+0.15, +0.10 m)", cam["success_rate"], tuple(cam["ci95_wilson_success"]), "#5FB0B7"))
-            for rec, e, col, col2 in (("v3", e3, "#7A5C99", "#A98BC4"), ("v4", e4, "#2E7D4F", "#6FB08A")):
+            for rec, e, col, col2 in (("v3", e3, "#7A5C99", "#A98BC4"), ("v4", e4, "#2E7D4F", "#6FB08A"), ("v5a", e5, "#B7791F", "#D9A441")):
+                if e is None:
+                    continue
                 nom, cs, far = _suite(e, "nominal"), _suite(e, "camera_shift"), _suite(e, "camera_shift_far")
                 if nom: rows_vp.append((f"{rec} · nominal", nom["success_rate"], tuple(nom["ci95_wilson_success"]), col))
                 if cs: rows_vp.append((f"{rec} · camera_shift (+0.15, +0.10 m)", cs["success_rate"], tuple(cs["ci95_wilson_success"]), col2))
@@ -198,6 +204,30 @@ def main() -> int:
                 tag = "th" if cells[0].startswith("Suite") else "td"
                 rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
         p5_html = "<h2>P5: the bed served over ZeroMQ</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><div class=\"callout\">" + bold(esc(lines[-2])) + "</div>"
+    v5_md, v5_html = "", ""
+    if e5:
+        lines = ["## 3g. Session G — baseline trained on v5a (v4 with expert noise 0.25×), frozen suite (transcribed)", "",
+                 "| Suite (v5a checkpoint) | success | Wilson 95 % | safety | progress | rejected steps | cmd L∞ mean | v4 same suite |", "|---|---|---|---|---|---|---|---|"]
+        v4ref = {}
+        if e4:
+            for su in e4["suites"]:
+                v4ref[(su["label"].split("/")[-1], su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0))] = su["success_rate"]
+        for su in e5["suites"]:
+            st = su["label"].split("/")[-1]; ci = su["ci95_wilson_success"]
+            what = f"{int(st)/1000:g}k " + su["variation"] + (" + camera blanked" if su.get("blank_image") else "") + (f" + gain {su['gain']}" if su.get("gain", 1.0) != 1.0 else "")
+            ref = v4ref.get((st, su["variation"], bool(su.get("blank_image")), su.get("gain", 1.0)))
+            ref = f"{ref:.2f}" if isinstance(ref, float) else "not run"
+            lines.append(f"| {what} | **{su['success_rate']:.2f}** | [{ci[0]:.3f}, {ci[1]:.3f}] | {su['safety']:.2f} | {su['progress_mean']:.2f} | {100*su['rejected_fraction_mean']:.0f} % | {su['cmd_xyz_linf_mean']:.4f} | {ref} |")
+        sel5 = e5["selection"]
+        lines += ["", f"Selected checkpoint (R11): **{int(sel5['selected'])/1000:g}k** at {sel5['success_rate']:.2f}; inside the best interval: {', '.join(f'{int(x)/1000:g}k' for x in sel5['within_ci'])}. Training: {e5['train_record']['steps_per_s']} steps/s, {e5['train_record']['wall_s']/3600:.2f} h.", "", "- **" + e5["reading"] + "**", ""]
+        v5_md = chr(10).join(lines) + chr(10)
+        rows_html = ""
+        for line in lines:
+            if line.startswith("| ") and not line.startswith("|---"):
+                cells = [c.strip() for c in line.strip("|").split("|")]
+                tag = "th" if cells[0].startswith("Suite") else "td"
+                rows_html += "<tr>" + "".join(f"<{tag}>{bold(esc(c))}</{tag}>" for c in cells) + "</tr>"
+        v5_html = "<h2>Session G: baseline trained on v5a, same frozen suite</h2><div class=\"tablewrap\"><table>" + rows_html + "</table></div><p>" + bold(esc(lines[-4])) + "</p><div class=\"callout\">" + bold(esc("**" + e5["reading"] + "**")) + "</div>"
     prec_md, prec_html = "", ""
     if precision_files:
         import precision as pz
@@ -399,7 +429,7 @@ def main() -> int:
                 lines.append(f"| {f.parent.parent.name}/{f.parent.name} | {msum['rows']} | {x['ratio_pred_over_label']} | {100*x['label_at_cap_fraction']:.0f} % | {100*x['pred_over_cap_fraction']:.0f} % | {100*(x['pred_over_cap_fraction_given_label_at_cap'] or 0):.0f} % | {msum['direction_cosine_xyz_mean']} |")
             lines.append("")
         if compares:
-            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `a85e64a183e5` the v2 far-shift probe, `9f5dbf4dd492` the v3 baseline, `06f90d52039b` the v3 far-shift probe, `145880075d6f` the v4 baseline; names of the form `vX … vs vY …` pair two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
+            lines += ["Files under `results/p5/8ac6124fd05b` are the v2 baseline (eval v2), `7a90b7940018` the v2 probe session, `a85e64a183e5` the v2 far-shift probe, `9f5dbf4dd492` the v3 baseline, `06f90d52039b` the v3 far-shift probe, `145880075d6f` the v4 baseline, `8af08da6f6a2` the v5a baseline; names of the form `vX … vs vY …` pair two datasets on identical seeds.", "", "| Paired comparison (same 100 seeds) | A → B success | diff [paired bootstrap 95 %] | discordant (A fail/B ok vs A ok/B fail) | McNemar p | verdict |", "|---|---|---|---|---|---|"]
             for f in compares:
                 d = load(f); dd = d["discordant"]; ci = d["success_diff_ci95_paired_bootstrap"]
                 name = f.stem.replace("compare_", "").replace("_", " ")
@@ -490,7 +520,7 @@ transcribed in `results/p5/kaggle/eval-v2-partial.json`.
   within its interval (82 % measured, 90 published), so the low bed number is a property of
   the trained policy, not of the measuring instrument.
 
-{probes_md}{v3_md}{v4_md}{prec_md}{p5_md}{imported_md}## 4. Pending when this report was written
+{probes_md}{v3_md}{v4_md}{v5_md}{prec_md}{p5_md}{imported_md}## 4. Pending when this report was written
 
 {chr(10).join('- ' + p for p in kg['pending'])}
 
@@ -536,7 +566,7 @@ ul{{max-width:72ch;padding-left:20px}} li{{margin:8px 0}} .callout{{border-left:
 <div class="tablewrap"><table><tr><th>measurement</th><th>result</th><th>uncertainty</th><th>where</th></tr>{rows_html}</table></div>
 <h2>Charts</h2>{blocks}
 <h2>Reading the results</h2><ul>{items}</ul>
-{probes_html}{v3_html}{v4_html}{prec_html}{p5_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
+{probes_html}{v3_html}{v4_html}{v5_html}{prec_html}{p5_html}{imported_html}<h2>Pending</h2><ul>{pending}</ul>
 <div class="callout">Charts are drawn from <code>results/</code> by <code>sim/vla-bed/report.py</code>; the Markdown twin with the same SVGs is committed as <code>results/REPORT-{a.date}.md</code>.</div>
 </main>
 """

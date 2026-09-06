@@ -96,6 +96,8 @@ RECIPES: dict[str, Recipe] = {
     # pre-trained VLA). The evaluation split stays byte-identical to v2's frozen suite while base_seed = 10_000 and evaluation = 100.
     "v5a": Recipe("v5a", "noisy", 0.25, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20),
     "v5b": Recipe("v5b", "noisy", 0.0, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20),
+    # v6: v5a plus the flange camera (Curse of Precision 2607.23108: the sensor lever); both splits carry the second stream
+    "v6": Recipe("v6", "noisy", 0.25, 400, 100, 10_000, 5, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20, wrist_camera=True),
     # v7: one DAgger round — the policy trained on `base` drives 400 fresh train seeds (block 20_000), the capped oracle labels every
     # frame (dagger.py); evaluated on the base recipe's frozen suite. `base` is set when the round is run.
     "v7": Recipe("v7", "dagger", 0.0, 400, 0, 20_000, None, headroom=0.7, camera_jitter_deg=20.0, camera_translate_m=0.20, base=None),

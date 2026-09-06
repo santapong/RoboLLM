@@ -176,4 +176,4 @@ def test_v5_recipes_reduce_noise_and_keep_the_frozen_evaluation_split():
 
 def test_feature_keys_add_the_wrist_stream_only_when_asked():
     assert ds.feature_keys() == ds.FEATURE_KEYS and ds.feature_keys(True) == ds.FEATURE_KEYS + ("observation.images.wrist",)
-    assert all(not r.wrist_camera for r in ds.RECIPES.values())
+    assert [n for n, r in ds.RECIPES.items() if r.wrist_camera] == ["v6"] and ds.RECIPES["v6"].noise_fraction == 0.25 and ds.RECIPES["v6"].base is None

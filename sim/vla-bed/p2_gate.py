@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import dataset as ds  # noqa: E402
 import resources  # noqa: E402
 
-REQUIRED_SUCCESS = {"v1": 1.0, "v2": 0.95, "v2b": 0.95, "v3": 0.95, "v4": 0.95, "v5a": 0.95}  # v5b joins when recorded (only if v5a moves the needle)
+REQUIRED_SUCCESS = {"v1": 1.0, "v2": 0.95, "v2b": 0.95, "v3": 0.95, "v4": 0.95, "v5a": 0.95, "v6": 0.95}  # v5b joins when recorded (only if v5a moves the needle)
 
 
 def main() -> int:
