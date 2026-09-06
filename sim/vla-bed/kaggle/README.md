@@ -57,3 +57,7 @@ check; `compare.py` pairs every probe with the nominal suite on the same seeds. 
 as `WORKERS` shards (`evaluate.py --shard i/n`, merged with `--merge`), and checkpoints are
 unpacked under `/tmp`, so the Output tab holds only `vla-bed-<run>-probes.zip` (results JSONs,
 < 1 MB) → `gpu/kaggle_import.sh <zip> <sha256>` on the workstation.
+
+## DAgger round (recipe v7, plan step 5)
+
+`dagger.ipynb` — inputs: the base dataset `vla-bed-<recipe>` and the train notebook's output whose selected checkpoint should drive (attach the eval output too if `selected.json` should pick the step). The checkpoint runs 400 fresh train-split seeds (seed block 20 000) while the capped oracle labels every frame; packs `vla-bed-v7.zip` (≈ 50 MB). Then `train.ipynb` with inputs `vla-bed-<recipe>` **and** the dagger notebook's output merges base ∪ rollouts (`dagger.py merge`) and trains on the union; its output zip is named `vla-bed-baseline-v7-output-<recipe>.zip`, so `eval.ipynb` needs `RUN_TAG = "baseline-v7"`.
