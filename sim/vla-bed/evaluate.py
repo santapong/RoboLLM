@@ -355,7 +355,11 @@ def evaluate(args) -> dict:
 
     shard = parse_shard(args.shard)
     manifest, specs = load_suite(args.manifest, "evaluation", args.episodes, shard)
-    env = BedEnv(render=True)
+    if args.env and args.env != "local":  # P5: the bed served by sim_server.py on another machine (SDD §6.4)
+        from remote_env import RemoteEnv, ZmqTransport
+        env = RemoteEnv(ZmqTransport(args.env))
+    else:
+        env = BedEnv(render=True)
     try:
         policy = make_policy(args.policy, env, args)
         t0 = time.perf_counter()
@@ -369,6 +373,7 @@ def evaluate(args) -> dict:
         "phase": "P5" if args.policy == "smolvla" else "P4-pre",
         "route": "M",
         "host": {"hostname": socket.gethostname(), "machine": platform.machine(), "python": platform.python_version(), "MUJOCO_GL": os.environ.get("MUJOCO_GL", "")},
+        "env": ({"transport": args.env, "server": getattr(env, "info", None), "wire_s_total": round(getattr(env, "wire_s", 0.0), 2), "requests": getattr(env, "requests", 0)} if args.env and args.env != "local" else {"transport": "local"}),
         "task": INSTRUCTION,
         "embodiment": "ur5e+2f85",
         "schedule": {"manifest": str(Path(args.manifest).relative_to(ROOT)) if str(args.manifest).startswith(str(ROOT)) else str(args.manifest), "recipe": manifest["recipe"], "split": "evaluation", "base_seed": manifest["splits"]["evaluation"]["base_seed"], "episodes": len(specs), "cells": manifest["cells"], "variation": args.variation, "fps": FPS, "max_frames": MAX_FRAMES, "shard": args.shard},
@@ -416,6 +421,8 @@ def default_out(args) -> Path:
         suffix += f"_ens{args.replan_every or args.n_action_steps}"
     if args.vlm_dtype and args.vlm_dtype != "float32":
         suffix += f"_{args.vlm_dtype}"
+    if getattr(args, "env", "local") not in (None, "local"):
+        suffix += "_zmq"
     if args.shard:
         i, n = parse_shard(args.shard)
         suffix += f"_shard{i}of{n}"
@@ -430,6 +437,7 @@ def main() -> int:
     parser.add_argument("--representation", default=None, choices=labels.REPRESENTATIONS)
     parser.add_argument("--n-action-steps", type=int, default=None)
     parser.add_argument("--episodes", type=int, default=None)
+    parser.add_argument("--env", default="local", help='"local" (in-process BedEnv) or zmq://host:5555 (sim_server.py on the Pi, SDD §6.4)')
     parser.add_argument("--variation", default="nominal")
     parser.add_argument("--gain", type=float, default=1.0)
     parser.add_argument("--blank-image", action="store_true")
