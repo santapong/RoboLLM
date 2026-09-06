@@ -1,0 +1,49 @@
+{
+  "schema": "robollm.vla-bed.kaggle-probe-transcript.v1",
+  "source": "Kaggle probe notebooks in MODE=far (probe.ipynb @ b167b48): camera_shift_far (0.30, 0.20, 0) m on the final (10k) checkpoint of the v2 and v3 baselines, identical frozen seeds; transcribed 6 Sep 2026",
+  "sessions": {
+    "v2": {
+      "notebook": "santapongsondhi/probe12928bf2ae",
+      "version": 2,
+      "inputs": [
+        "vla-bed-v2",
+        "vla-bed-train (output)"
+      ],
+      "launched": "2026-09-06 09:13 ICT",
+      "wall_s": 1020,
+      "suite": {
+        "label": "baseline/010000",
+        "variation": "camera_shift_far",
+        "n": 100,
+        "success_rate": 0.03,
+        "ci95_wilson_success": [
+          0.0102,
+          0.0845
+        ],
+        "safety": 0.0,
+        "progress_mean": 0.09,
+        "episode_len_mean": 98.37,
+        "rejected_fraction_mean": 0.2672,
+        "cmd_xyz_linf_mean": 0.0073,
+        "cmd_xyz_over_cap_fraction_mean": 0.1299,
+        "minutes": 9.1
+      },
+      "output": {
+        "file": "/kaggle/working/vla-bed-baseline-probes.zip",
+        "size_mb": 0.01,
+        "sha256": "9c2179c7b627907938d5d8588862cc411a9f7b5b4f67ad1068aac8f75ddee950",
+        "imported": false
+      }
+    },
+    "v3": {
+      "status": "pending"
+    }
+  },
+  "comparison_points": {
+    "v4_010000_camera_shift_far": 0.06,
+    "v4_010000_camera_shift": 0.13,
+    "v3_010000_camera_shift": 0.05,
+    "v2_010000_camera_shift": 0.04
+  },
+  "reading": "v2's final checkpoint under the far camera shift: 0.03 [0.01, 0.08], progress 0.09, safety 0.00 with 27 % of steps rejected (13 % over the S2 cap, as on v2's nominal suite) \u2014 the far view is as destructive as the near one for a single-view policy (camera_shift 0.04)."
+}
