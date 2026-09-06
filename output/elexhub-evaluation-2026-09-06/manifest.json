@@ -1,0 +1,1186 @@
+{
+  "suite": {
+    "schema_version": 1,
+    "seed": 20260906,
+    "trials": [
+      {
+        "seed": 20260906,
+        "target_mat_m": [
+          0.13063908625379844,
+          0.07195100299295532
+        ],
+        "height_m": 0.09401480899676834
+      },
+      {
+        "seed": 20260907,
+        "target_mat_m": [
+          0.12799516651948034,
+          0.060458700801099455
+        ],
+        "height_m": 0.10276055844403105
+      },
+      {
+        "seed": 20260908,
+        "target_mat_m": [
+          0.05142023148729857,
+          0.07286991843497635
+        ],
+        "height_m": 0.10054173973105289
+      },
+      {
+        "seed": 20260909,
+        "target_mat_m": [
+          0.0971150358239477,
+          0.057113855945159546
+        ],
+        "height_m": 0.07511634221900691
+      },
+      {
+        "seed": 20260910,
+        "target_mat_m": [
+          0.06093495357672592,
+          0.06619935201271562
+        ],
+        "height_m": 0.09217929037054941
+      },
+      {
+        "seed": 20260911,
+        "target_mat_m": [
+          0.09416971218529155,
+          0.057470593423210634
+        ],
+        "height_m": 0.08915293781816419
+      },
+      {
+        "seed": 20260912,
+        "target_mat_m": [
+          0.14307804763324225,
+          0.05687113436746417
+        ],
+        "height_m": 0.1019973579832602
+      },
+      {
+        "seed": 20260913,
+        "target_mat_m": [
+          0.054518130996984424,
+          0.10198908340148757
+        ],
+        "height_m": 0.0939795184766904
+      },
+      {
+        "seed": 20260914,
+        "target_mat_m": [
+          0.0707287759143817,
+          0.07840464263615776
+        ],
+        "height_m": 0.06517407837631849
+      },
+      {
+        "seed": 20260915,
+        "target_mat_m": [
+          0.12387807507072235,
+          0.07862692806433846
+        ],
+        "height_m": 0.07400117416372905
+      },
+      {
+        "seed": 20260916,
+        "target_mat_m": [
+          0.14728976834110874,
+          0.0828163900837033
+        ],
+        "height_m": 0.10339666106171388
+      },
+      {
+        "seed": 20260917,
+        "target_mat_m": [
+          0.13636342190132647,
+          0.07221061153139578
+        ],
+        "height_m": 0.06608333307550456
+      },
+      {
+        "seed": 20260918,
+        "target_mat_m": [
+          0.05968923987463909,
+          0.047614676496340796
+        ],
+        "height_m": 0.07748477074709562
+      },
+      {
+        "seed": 20260919,
+        "target_mat_m": [
+          0.08614452274767825,
+          0.09079508321501883
+        ],
+        "height_m": 0.0871336802401758
+      },
+      {
+        "seed": 20260920,
+        "target_mat_m": [
+          0.09659957202765787,
+          0.10247206826669747
+        ],
+        "height_m": 0.07575295491626403
+      },
+      {
+        "seed": 20260921,
+        "target_mat_m": [
+          0.0885917330263851,
+          0.07170316582041379
+        ],
+        "height_m": 0.07399344797882616
+      },
+      {
+        "seed": 20260922,
+        "target_mat_m": [
+          0.11971356922906778,
+          0.10337011990016176
+        ],
+        "height_m": 0.08738332714051095
+      },
+      {
+        "seed": 20260923,
+        "target_mat_m": [
+          0.06621929931968265,
+          0.06652994435939173
+        ],
+        "height_m": 0.09918095877392238
+      },
+      {
+        "seed": 20260924,
+        "target_mat_m": [
+          0.08325912770620533,
+          0.05407971069624927
+        ],
+        "height_m": 0.07800113585086461
+      },
+      {
+        "seed": 20260925,
+        "target_mat_m": [
+          0.13506206131940093,
+          0.08435509686505663
+        ],
+        "height_m": 0.10478794128372601
+      },
+      {
+        "seed": 20260926,
+        "target_mat_m": [
+          0.0632456733926256,
+          0.09338565020594983
+        ],
+        "height_m": 0.10170211849997823
+      },
+      {
+        "seed": 20260927,
+        "target_mat_m": [
+          0.08584881797484688,
+          0.04527721651995122
+        ],
+        "height_m": 0.08844783598992591
+      },
+      {
+        "seed": 20260928,
+        "target_mat_m": [
+          0.12607960692375858,
+          0.05447147504780534
+        ],
+        "height_m": 0.1031461346489049
+      },
+      {
+        "seed": 20260929,
+        "target_mat_m": [
+          0.11423045713665311,
+          0.07944408639476726
+        ],
+        "height_m": 0.10224257134177657
+      },
+      {
+        "seed": 20260930,
+        "target_mat_m": [
+          0.10056732844080751,
+          0.05133618547617613
+        ],
+        "height_m": 0.06708854282411458
+      },
+      {
+        "seed": 20260931,
+        "target_mat_m": [
+          0.07816822471166915,
+          0.0832465838642705
+        ],
+        "height_m": 0.092249995385757
+      },
+      {
+        "seed": 20260932,
+        "target_mat_m": [
+          0.026125846428644076,
+          0.050430904925730866
+        ],
+        "height_m": 0.07501439443730865
+      },
+      {
+        "seed": 20260933,
+        "target_mat_m": [
+          0.05603316794807804,
+          0.05944160487684491
+        ],
+        "height_m": 0.10197672004184437
+      },
+      {
+        "seed": 20260934,
+        "target_mat_m": [
+          0.10753920059813352,
+          0.09412865500261527
+        ],
+        "height_m": 0.10363002002211799
+      },
+      {
+        "seed": 20260935,
+        "target_mat_m": [
+          0.03657044898619771,
+          0.09515635122596525
+        ],
+        "height_m": 0.08340452073487092
+      },
+      {
+        "seed": 20260936,
+        "target_mat_m": [
+          0.0771891847319946,
+          0.05703830250037514
+        ],
+        "height_m": 0.07432655839267749
+      },
+      {
+        "seed": 20260937,
+        "target_mat_m": [
+          0.06134099481596821,
+          0.06422665445535083
+        ],
+        "height_m": 0.10156142814948389
+      },
+      {
+        "seed": 20260938,
+        "target_mat_m": [
+          0.1340875069390699,
+          0.07103658441968216
+        ],
+        "height_m": 0.0908145287263128
+      },
+      {
+        "seed": 20260939,
+        "target_mat_m": [
+          0.11439042121798024,
+          0.07220300688378015
+        ],
+        "height_m": 0.09172830991986536
+      },
+      {
+        "seed": 20260940,
+        "target_mat_m": [
+          0.14702242617978287,
+          0.07270933769061583
+        ],
+        "height_m": 0.10334522547284804
+      },
+      {
+        "seed": 20260941,
+        "target_mat_m": [
+          0.1536375541966632,
+          0.06337246266468653
+        ],
+        "height_m": 0.10493179047901172
+      },
+      {
+        "seed": 20260942,
+        "target_mat_m": [
+          0.04402369034422031,
+          0.06849564770246776
+        ],
+        "height_m": 0.0892804896777139
+      },
+      {
+        "seed": 20260943,
+        "target_mat_m": [
+          0.0896605022386451,
+          0.09091011389821019
+        ],
+        "height_m": 0.08179221627927488
+      },
+      {
+        "seed": 20260944,
+        "target_mat_m": [
+          0.02824120002978115,
+          0.07475574919537264
+        ],
+        "height_m": 0.09401102686523931
+      },
+      {
+        "seed": 20260945,
+        "target_mat_m": [
+          0.032730028594815025,
+          0.07760706336454085
+        ],
+        "height_m": 0.08570116584591075
+      },
+      {
+        "seed": 20260946,
+        "target_mat_m": [
+          0.0897790870667936,
+          0.05661416821190629
+        ],
+        "height_m": 0.0969641237029302
+      },
+      {
+        "seed": 20260947,
+        "target_mat_m": [
+          0.025873771307845274,
+          0.062000188144337366
+        ],
+        "height_m": 0.08717669101605906
+      },
+      {
+        "seed": 20260948,
+        "target_mat_m": [
+          0.03134895695602655,
+          0.09931838162860146
+        ],
+        "height_m": 0.07128050843576855
+      },
+      {
+        "seed": 20260949,
+        "target_mat_m": [
+          0.030443924441937213,
+          0.0929784395622595
+        ],
+        "height_m": 0.09615568907512297
+      },
+      {
+        "seed": 20260950,
+        "target_mat_m": [
+          0.0748144572206898,
+          0.06809280570026102
+        ],
+        "height_m": 0.07320337625939603
+      },
+      {
+        "seed": 20260951,
+        "target_mat_m": [
+          0.03792536603993925,
+          0.0896782176872746
+        ],
+        "height_m": 0.09140724124631192
+      },
+      {
+        "seed": 20260952,
+        "target_mat_m": [
+          0.04019599969769271,
+          0.10019226876336926
+        ],
+        "height_m": 0.087109438466956
+      },
+      {
+        "seed": 20260953,
+        "target_mat_m": [
+          0.10911218983489995,
+          0.0970791550569769
+        ],
+        "height_m": 0.10264853727935418
+      },
+      {
+        "seed": 20260954,
+        "target_mat_m": [
+          0.10940144993720197,
+          0.08400505464838925
+        ],
+        "height_m": 0.06685134112652812
+      },
+      {
+        "seed": 20260955,
+        "target_mat_m": [
+          0.13281405878957234,
+          0.05798950293018805
+        ],
+        "height_m": 0.07068317658444029
+      },
+      {
+        "seed": 20260956,
+        "target_mat_m": [
+          0.035610301311354405,
+          0.06081955627255692
+        ],
+        "height_m": 0.09197711245674209
+      },
+      {
+        "seed": 20260957,
+        "target_mat_m": [
+          0.05259732994111262,
+          0.0802614308053987
+        ],
+        "height_m": 0.06866654441135568
+      },
+      {
+        "seed": 20260958,
+        "target_mat_m": [
+          0.10060664959095891,
+          0.045999497143193534
+        ],
+        "height_m": 0.06754306160217922
+      },
+      {
+        "seed": 20260959,
+        "target_mat_m": [
+          0.08480645601664442,
+          0.08563145797437507
+        ],
+        "height_m": 0.10446847377453403
+      },
+      {
+        "seed": 20260960,
+        "target_mat_m": [
+          0.09949448070990219,
+          0.06345201818887176
+        ],
+        "height_m": 0.10322166684385942
+      },
+      {
+        "seed": 20260961,
+        "target_mat_m": [
+          0.08745994343933665,
+          0.10152801354678724
+        ],
+        "height_m": 0.08703263586111099
+      },
+      {
+        "seed": 20260962,
+        "target_mat_m": [
+          0.13531995232412122,
+          0.062014941407456156
+        ],
+        "height_m": 0.09313238410996985
+      },
+      {
+        "seed": 20260963,
+        "target_mat_m": [
+          0.0922918621604377,
+          0.10290471070657534
+        ],
+        "height_m": 0.09350354700587135
+      },
+      {
+        "seed": 20260964,
+        "target_mat_m": [
+          0.026279485850397098,
+          0.06047473238928877
+        ],
+        "height_m": 0.08945396337229757
+      },
+      {
+        "seed": 20260965,
+        "target_mat_m": [
+          0.027962641202667185,
+          0.07969211704102905
+        ],
+        "height_m": 0.07956639896777695
+      },
+      {
+        "seed": 20260966,
+        "target_mat_m": [
+          0.11440240640126617,
+          0.05395885866695454
+        ],
+        "height_m": 0.10243506500180408
+      },
+      {
+        "seed": 20260967,
+        "target_mat_m": [
+          0.0955872189036498,
+          0.056731661447011084
+        ],
+        "height_m": 0.07204705683598245
+      },
+      {
+        "seed": 20260968,
+        "target_mat_m": [
+          0.06388380015730614,
+          0.08037901601436068
+        ],
+        "height_m": 0.10110954146857927
+      },
+      {
+        "seed": 20260969,
+        "target_mat_m": [
+          0.10499214417581879,
+          0.05972822369903325
+        ],
+        "height_m": 0.09251135143218125
+      },
+      {
+        "seed": 20260970,
+        "target_mat_m": [
+          0.1306024045379547,
+          0.09497655411430296
+        ],
+        "height_m": 0.07440568013628457
+      },
+      {
+        "seed": 20260971,
+        "target_mat_m": [
+          0.05960315583723111,
+          0.09436253476137141
+        ],
+        "height_m": 0.08235363032690309
+      },
+      {
+        "seed": 20260972,
+        "target_mat_m": [
+          0.1366525272949994,
+          0.0642617918547666
+        ],
+        "height_m": 0.10406921916197774
+      },
+      {
+        "seed": 20260973,
+        "target_mat_m": [
+          0.11626938362403158,
+          0.049951770498012096
+        ],
+        "height_m": 0.07173903075910347
+      },
+      {
+        "seed": 20260974,
+        "target_mat_m": [
+          0.11487803599292651,
+          0.06635436093856342
+        ],
+        "height_m": 0.10404537533968902
+      },
+      {
+        "seed": 20260975,
+        "target_mat_m": [
+          0.15032295700999307,
+          0.08055089208877318
+        ],
+        "height_m": 0.0834452490878767
+      },
+      {
+        "seed": 20260976,
+        "target_mat_m": [
+          0.08174514549381018,
+          0.05742963697837134
+        ],
+        "height_m": 0.06651908944312068
+      },
+      {
+        "seed": 20260977,
+        "target_mat_m": [
+          0.10751220024101907,
+          0.05614636085789504
+        ],
+        "height_m": 0.0660264924656752
+      },
+      {
+        "seed": 20260978,
+        "target_mat_m": [
+          0.11624608390927554,
+          0.06787129771917702
+        ],
+        "height_m": 0.10360360818606942
+      },
+      {
+        "seed": 20260979,
+        "target_mat_m": [
+          0.0901845509306324,
+          0.08771803936021502
+        ],
+        "height_m": 0.0706600518799456
+      },
+      {
+        "seed": 20260980,
+        "target_mat_m": [
+          0.13194066895957443,
+          0.0838390226818342
+        ],
+        "height_m": 0.07969162378431058
+      },
+      {
+        "seed": 20260981,
+        "target_mat_m": [
+          0.10241474776770171,
+          0.06851438207401016
+        ],
+        "height_m": 0.10065968582727236
+      },
+      {
+        "seed": 20260982,
+        "target_mat_m": [
+          0.031042746757396926,
+          0.09692682755023238
+        ],
+        "height_m": 0.08237038263470657
+      },
+      {
+        "seed": 20260983,
+        "target_mat_m": [
+          0.1311382530752617,
+          0.0806376351319605
+        ],
+        "height_m": 0.09770593249643868
+      },
+      {
+        "seed": 20260984,
+        "target_mat_m": [
+          0.10922041890169054,
+          0.09497208795952039
+        ],
+        "height_m": 0.06768891616730668
+      },
+      {
+        "seed": 20260985,
+        "target_mat_m": [
+          0.03443228374729713,
+          0.07436120885816078
+        ],
+        "height_m": 0.06978173872507988
+      },
+      {
+        "seed": 20260986,
+        "target_mat_m": [
+          0.10547304592888804,
+          0.09419699740346119
+        ],
+        "height_m": 0.0790752820851456
+      },
+      {
+        "seed": 20260987,
+        "target_mat_m": [
+          0.10847702656177471,
+          0.09240858942046362
+        ],
+        "height_m": 0.0786003623319156
+      },
+      {
+        "seed": 20260988,
+        "target_mat_m": [
+          0.07852647636763571,
+          0.056696242437808894
+        ],
+        "height_m": 0.06685303788031036
+      },
+      {
+        "seed": 20260989,
+        "target_mat_m": [
+          0.07637816902990141,
+          0.058503913630030234
+        ],
+        "height_m": 0.09027400765842566
+      },
+      {
+        "seed": 20260990,
+        "target_mat_m": [
+          0.05752850965835037,
+          0.07955316410593966
+        ],
+        "height_m": 0.09340679590830034
+      },
+      {
+        "seed": 20260991,
+        "target_mat_m": [
+          0.051888408412521306,
+          0.08180314366773461
+        ],
+        "height_m": 0.08324724766107892
+      },
+      {
+        "seed": 20260992,
+        "target_mat_m": [
+          0.048459592593959724,
+          0.10004260827136213
+        ],
+        "height_m": 0.07245241028829456
+      },
+      {
+        "seed": 20260993,
+        "target_mat_m": [
+          0.07928595925014345,
+          0.0826480978993687
+        ],
+        "height_m": 0.08461869521688892
+      },
+      {
+        "seed": 20260994,
+        "target_mat_m": [
+          0.07667074508354702,
+          0.09765628663505209
+        ],
+        "height_m": 0.06545009097183062
+      },
+      {
+        "seed": 20260995,
+        "target_mat_m": [
+          0.13615024400352063,
+          0.0519376883042303
+        ],
+        "height_m": 0.06959421024809488
+      },
+      {
+        "seed": 20260996,
+        "target_mat_m": [
+          0.12741505639985298,
+          0.10492562862930635
+        ],
+        "height_m": 0.09612501933819798
+      },
+      {
+        "seed": 20260997,
+        "target_mat_m": [
+          0.13509970020414322,
+          0.07083695961135578
+        ],
+        "height_m": 0.08006946576752241
+      },
+      {
+        "seed": 20260998,
+        "target_mat_m": [
+          0.1146380372950899,
+          0.09800484995126851
+        ],
+        "height_m": 0.07090510473123317
+      },
+      {
+        "seed": 20260999,
+        "target_mat_m": [
+          0.1306791011441917,
+          0.07084659207563189
+        ],
+        "height_m": 0.08581284663728457
+      },
+      {
+        "seed": 20261000,
+        "target_mat_m": [
+          0.10821337763436789,
+          0.06206215925902059
+        ],
+        "height_m": 0.06542027353187665
+      },
+      {
+        "seed": 20261001,
+        "target_mat_m": [
+          0.06176146664233767,
+          0.06781261826905635
+        ],
+        "height_m": 0.06562863046062263
+      },
+      {
+        "seed": 20261002,
+        "target_mat_m": [
+          0.11534461666506135,
+          0.05669329699477938
+        ],
+        "height_m": 0.07529650283931251
+      },
+      {
+        "seed": 20261003,
+        "target_mat_m": [
+          0.06174225064966169,
+          0.10124046892341998
+        ],
+        "height_m": 0.09947086622591547
+      },
+      {
+        "seed": 20261004,
+        "target_mat_m": [
+          0.1014216933963343,
+          0.07966648844493429
+        ],
+        "height_m": 0.0693137345040151
+      },
+      {
+        "seed": 20261005,
+        "target_mat_m": [
+          0.09618303228965336,
+          0.05958668165705805
+        ],
+        "height_m": 0.10034465259058606
+      }
+    ],
+    "success_threshold_m": 0.015,
+    "dwell_s": 0.5,
+    "conditions": [
+      "A",
+      "B",
+      "C"
+    ],
+    "C_observation": "simulator TCP (oracle); no camera noise or hardware evidence"
+  },
+  "suite_sha256": "dbcd619e73f91f15439e7752b2b8c5bde413663b0c43d262a0394b32386003dd",
+  "profile_hash": "65d73d75c3840842e1f03644",
+  "profile": {
+    "schema_version": 2,
+    "embodiment_id": "elexhub-6servo",
+    "runtime": "simulation",
+    "calibrated": true,
+    "commissioning_allowed": false,
+    "state_source": "commanded",
+    "actuator_backend": "pca9685",
+    "command_timeout_ms": 750,
+    "control_rate_hz": 20,
+    "pca9685": {
+      "address": 64,
+      "oe_pin": 22,
+      "pwm_hz": 50
+    },
+    "evidence": {
+      "topology": null,
+      "power_review": null,
+      "ground_and_polarity": null,
+      "cutoff": null,
+      "oe_default_disabled": null,
+      "joint_calibration": null,
+      "home_repetitions": null,
+      "watchdog": null,
+      "geometry": null,
+      "camera_to_base": null
+    },
+    "power": {
+      "battery_chemistry": null,
+      "battery_cells": null,
+      "battery_capacity_mah": null,
+      "battery_min_v": null,
+      "battery_full_v": null,
+      "battery_discharge_a": null,
+      "bms_continuous_a": null,
+      "regulator_model": null,
+      "regulator_input_min_v": null,
+      "regulator_input_max_v": null,
+      "servo_rail_v": null,
+      "regulator_continuous_a": null,
+      "regulator_peak_a": null,
+      "fuse_a": null,
+      "wire_rating_a": null,
+      "cutoff_rating_a": null,
+      "charger_model": null
+    },
+    "joints": [
+      {
+        "name": "base_yaw",
+        "pwm_channel": 0,
+        "offset_deg": 90,
+        "sign": 1,
+        "min_deg": 10,
+        "max_deg": 170,
+        "home_deg": 90,
+        "max_velocity_deg_s": 30,
+        "calibration_verified": false,
+        "measured": {
+          "model": null,
+          "datasheet": null,
+          "calibration_record": null,
+          "voltage_min_v": null,
+          "voltage_max_v": null,
+          "stall_current_a": null,
+          "pulse_min_us": null,
+          "pulse_max_us": null
+        },
+        "commission_min": null,
+        "commission_max": null
+      },
+      {
+        "name": "shoulder",
+        "pwm_channel": 1,
+        "offset_deg": 90,
+        "sign": 1,
+        "min_deg": 10,
+        "max_deg": 170,
+        "home_deg": 100,
+        "max_velocity_deg_s": 30,
+        "calibration_verified": false,
+        "measured": {
+          "model": null,
+          "datasheet": null,
+          "calibration_record": null,
+          "voltage_min_v": null,
+          "voltage_max_v": null,
+          "stall_current_a": null,
+          "pulse_min_us": null,
+          "pulse_max_us": null
+        },
+        "commission_min": null,
+        "commission_max": null
+      },
+      {
+        "name": "elbow",
+        "pwm_channel": 2,
+        "offset_deg": 90,
+        "sign": 1,
+        "min_deg": 10,
+        "max_deg": 170,
+        "home_deg": 140,
+        "max_velocity_deg_s": 30,
+        "calibration_verified": false,
+        "measured": {
+          "model": null,
+          "datasheet": null,
+          "calibration_record": null,
+          "voltage_min_v": null,
+          "voltage_max_v": null,
+          "stall_current_a": null,
+          "pulse_min_us": null,
+          "pulse_max_us": null
+        },
+        "commission_min": null,
+        "commission_max": null
+      },
+      {
+        "name": "wrist_pitch",
+        "pwm_channel": 3,
+        "offset_deg": 80,
+        "sign": 1,
+        "min_deg": 10,
+        "max_deg": 170,
+        "home_deg": 155,
+        "max_velocity_deg_s": 30,
+        "calibration_verified": false,
+        "measured": {
+          "model": null,
+          "datasheet": null,
+          "calibration_record": null,
+          "voltage_min_v": null,
+          "voltage_max_v": null,
+          "stall_current_a": null,
+          "pulse_min_us": null,
+          "pulse_max_us": null
+        },
+        "commission_min": null,
+        "commission_max": null
+      },
+      {
+        "name": "wrist_roll",
+        "pwm_channel": 4,
+        "offset_deg": 90,
+        "sign": 1,
+        "min_deg": 10,
+        "max_deg": 170,
+        "home_deg": 90,
+        "max_velocity_deg_s": 30,
+        "calibration_verified": false,
+        "measured": {
+          "model": null,
+          "datasheet": null,
+          "calibration_record": null,
+          "voltage_min_v": null,
+          "voltage_max_v": null,
+          "stall_current_a": null,
+          "pulse_min_us": null,
+          "pulse_max_us": null
+        },
+        "commission_min": null,
+        "commission_max": null
+      }
+    ],
+    "gripper": {
+      "pwm_channel": 5,
+      "open_percent": 0,
+      "closed_percent": 100,
+      "max_velocity_percent_s": 100,
+      "calibration_verified": false,
+      "measured": {
+        "model": null,
+        "datasheet": null,
+        "calibration_record": null,
+        "voltage_min_v": null,
+        "voltage_max_v": null,
+        "stall_current_a": null,
+        "pulse_min_us": null,
+        "pulse_max_us": null
+      },
+      "commission_min": null,
+      "commission_max": null
+    },
+    "geometry": {
+      "status": "provisional",
+      "notice": "Illustrative dimensions, NOT measured Elexhub CAD. Replace after joint-center and mass measurements.",
+      "base_size_m": [
+        0.105,
+        0.105,
+        0.025
+      ],
+      "base_mass_kg": 0.25,
+      "base_origin_m": [
+        0,
+        0,
+        0.025
+      ],
+      "links": [
+        {
+          "name": "turret",
+          "joint": "base_yaw",
+          "offset_m": [
+            0,
+            0,
+            0
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "length_m": 0.055,
+          "width_m": 0.045,
+          "depth_m": 0.04,
+          "mass_kg": 0.12
+        },
+        {
+          "name": "upper_arm",
+          "joint": "shoulder",
+          "offset_m": [
+            0,
+            0,
+            0.055
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "length_m": 0.105,
+          "width_m": 0.038,
+          "depth_m": 0.028,
+          "mass_kg": 0.16
+        },
+        {
+          "name": "forearm",
+          "joint": "elbow",
+          "offset_m": [
+            0,
+            0,
+            0.105
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "length_m": 0.1,
+          "width_m": 0.032,
+          "depth_m": 0.028,
+          "mass_kg": 0.13
+        },
+        {
+          "name": "wrist",
+          "joint": "wrist_pitch",
+          "offset_m": [
+            0,
+            0,
+            0.1
+          ],
+          "axis": [
+            0,
+            1,
+            0
+          ],
+          "length_m": 0.045,
+          "width_m": 0.038,
+          "depth_m": 0.035,
+          "mass_kg": 0.085
+        },
+        {
+          "name": "tool",
+          "joint": "wrist_roll",
+          "offset_m": [
+            0,
+            0,
+            0.045
+          ],
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "length_m": 0.025,
+          "width_m": 0.04,
+          "depth_m": 0.03,
+          "mass_kg": 0.06
+        }
+      ],
+      "gripper": {
+        "opening_m": 0.035,
+        "finger_length_m": 0.038,
+        "finger_width_m": 0.006,
+        "finger_depth_m": 0.018,
+        "finger_mass_kg": 0.012
+      },
+      "table": {
+        "mat_origin_m": [
+          0.25,
+          -0.09,
+          0
+        ],
+        "mat_yaw_rad": 1.5707963267948966,
+        "workspace_m": [
+          0.18,
+          0.12
+        ]
+      },
+      "camera": {
+        "width": 640,
+        "height": 480,
+        "fovy_deg": 46,
+        "position_m": [
+          0.42,
+          -0.42,
+          0.48
+        ],
+        "look_at_m": [
+          0.12,
+          0,
+          0.05
+        ]
+      },
+      "object": {
+        "edge_m": 0.02,
+        "mass_kg": 0.008
+      },
+      "actuator_reference": {
+        "kp": 18,
+        "kv": 1.8,
+        "force_limit": 1.5,
+        "delay_s": 0.06,
+        "deadband_rad": 0.01
+      }
+    }
+  },
+  "python": "3.12.14",
+  "versions": {
+    "numpy": "1.26.4",
+    "mujoco": "3.10.0",
+    "mink": "1.3.0",
+    "opencv-contrib-python": "4.10.0.84"
+  },
+  "git_commit": "838eafeca4d8312eae4f197ab1919d0680b55088",
+  "git_working_tree_dirty": true,
+  "domain": "provisional_simulation",
+  "physical_evidence": false,
+  "source_sha256": {
+    "src/robollm/elexhub/__init__.py": "d14cc2ccf78f4f9c3116fdd86210d6b82aed44f8ca1e92fe71c5a32a906f9aa6",
+    "src/robollm/elexhub/capture.py": "a7fe885fca2f65befc521fa5cdff903ad91262ceca08e6e7edf03f4141392ff5",
+    "src/robollm/elexhub/cli.py": "2230a6d26d09f1f7b6f6dac6be3b8f0669ad4b6d6bb81b4cdee9a7e6cf27542e",
+    "src/robollm/elexhub/evaluation.py": "bc2ad6cb5fc76c615d76729b4f8a443d254ce6c80418aa4253658bfda64330bb",
+    "src/robollm/elexhub/hardware.py": "852c9f2446dd178de2a9740045eaae35fbb9871b63bf4781c0b118bdcda96f45",
+    "src/robollm/elexhub/interaction.py": "de02ae4d4f96d343554c22dbf7f8c59fd3a1985a7b0f8b082a14ed7a5327bebb",
+    "src/robollm/elexhub/model.py": "9ff2ec7b116c77162cc160f14e3dde2ab0c5ec75de51170ddec7826746a5c74f",
+    "src/robollm/elexhub/printables.py": "2cb3a09d44cf8c37a3c4a9a47b273015f5a8876427fd402a3411cfa719b9fdbc",
+    "src/robollm/elexhub/simulation.py": "5e37be81a533aaa9aba2a60397e88af0db42a33409451f329966141cd70c6e2f",
+    "src/robollm/elexhub/speech.py": "5b721cd303af66ec556b16bca5345e6f56eaff9523d2f7792298ea45be97fe68",
+    "src/robollm/elexhub/vision.py": "3c249bf33786805fe0f10dfa9862f574ad22820c7a56008a80ca2ba0020cf35b",
+    "src/robollm/elexhub/web.py": "7a550696749783ca9b488afce63ca00d628d2328a59a83781e19265425a44e5d",
+    "ros2/robo_arm_driver/robo_arm_driver/__init__.py": "0d873dfd6698073cbbe46155c8d3e3b8de1081f1fb7a0d197caef23f09c56969",
+    "ros2/robo_arm_driver/robo_arm_driver/arm_serial.py": "152a527f467e1e270e309872966e90d5b1904f5bc385d217931bf85771afd4ad",
+    "ros2/robo_arm_driver/robo_arm_driver/config.py": "866fd0292b7c1e2482645ee08a0ab21393ebcb57492ee9fbb4818ec7c156a4c2",
+    "ros2/robo_arm_driver/robo_arm_driver/elexhub_profile.py": "8b6d13f0ba219f0c55573f6e5e6775b21364ec0cbf4760b7543d0f2479cf3ad3",
+    "ros2/robo_arm_driver/robo_arm_driver/node.py": "2af06ef3c498366d1e83c778c2804d536e171c76965614f600031bf723263251",
+    "ros2/robo_arm_driver/robo_arm_driver/pca_sim.py": "621b75fd812a7a80606aa5cf6b1d35afef697b827ef8285d29d9b3799dfcb9f0",
+    "ros2/robo_arm_driver/robo_arm_driver/safety.py": "c4cd909ce13de534445b3d38c8bb019e2904e02b345460ebf3f9447d8cbf5487"
+  },
+  "source_snapshot_note": "Captured during the run before subsequent implementation changes; simulator and evaluator sources were unchanged from run startup."
+}

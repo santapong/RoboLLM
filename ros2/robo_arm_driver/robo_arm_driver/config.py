@@ -4,11 +4,12 @@ Raw hobby-servo values are degrees. Public robot joint values are radians.
 Keeping that conversion here prevents ROS, learning, or planning code from
 ever handling PWM-facing coordinates directly.
 """
+
 from __future__ import annotations
 
 import math
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -25,13 +26,16 @@ class ConfigError(ValueError):
 class JointConfig:
     name: str
     channel: int
-    servo_pin: int
+    servo_pin: int | None
     offset_deg: float
     sign: float
     min_deg: float
     max_deg: float
     home_deg: float
     max_velocity_deg_s: float
+    pwm_channel: int | None = None
+    pulse_min_us: float | None = None
+    pulse_max_us: float | None = None
 
     @property
     def min_rad(self) -> float:
@@ -58,7 +62,8 @@ class JointConfig:
         if not self.min_deg <= raw_deg <= self.max_deg:
             raise ConfigError(
                 f"{self.name}: {raw_deg:.2f} deg outside configured "
-                f"[{self.min_deg:.2f}, {self.max_deg:.2f}]")
+                f"[{self.min_deg:.2f}, {self.max_deg:.2f}]"
+            )
         return raw_deg
 
     def require_rad(self, radians: float) -> float:
@@ -68,21 +73,27 @@ class JointConfig:
         if not self.min_rad <= radians <= self.max_rad:
             raise ConfigError(
                 f"{self.name}: {radians:.4f} rad outside configured "
-                f"[{self.min_rad:.4f}, {self.max_rad:.4f}]")
+                f"[{self.min_rad:.4f}, {self.max_rad:.4f}]"
+            )
         return radians
 
 
 @dataclass(frozen=True)
 class GripperConfig:
-    servo_pin: int
+    servo_pin: int | None
     open_percent: float
     closed_percent: float
     max_velocity_percent_s: float
+    pwm_channel: int | None = None
+    pulse_min_us: float | None = None
+    pulse_max_us: float | None = None
 
     def logical_to_wire(self, value: float) -> float:
         value = float(value)
         if not math.isfinite(value) or not 0.0 <= value <= 1.0:
-            raise ConfigError(f"gripper: expected a finite value in [0, 1], got {value!r}")
+            raise ConfigError(
+                f"gripper: expected a finite value in [0, 1], got {value!r}"
+            )
         return self.open_percent + value * (self.closed_percent - self.open_percent)
 
     def wire_to_logical(self, percent: float) -> float:
@@ -99,6 +110,16 @@ class ArmConfig:
     control_rate_hz: float
     joints: tuple[JointConfig, ...]
     gripper: GripperConfig
+    schema_version: int = 1
+    actuator_backend: str = "direct_pwm"
+    simulation: bool = False
+    commissioning_allowed: bool = True
+    profile_hash: str = ""
+    profile_data: dict = field(default_factory=dict)
+
+    @property
+    def njoints(self) -> int:
+        return len(self.joints)
 
     @property
     def joint_names(self) -> tuple[str, ...]:
@@ -109,7 +130,12 @@ class ArmConfig:
             raise ConfigError(
                 "arm is not calibrated; complete docs/physical-arm/"
                 "HARDWARE_WORKSHEET.md, update joints.yaml, regenerate the "
-                "firmware config, and set calibrated: true")
+                "firmware config, and set calibrated: true"
+            )
+
+    def require_commissioning(self) -> None:
+        if self.calibrated or not self.commissioning_allowed:
+            raise ConfigError("commissioning is disabled for this profile")
 
 
 def default_config_path() -> Path:
@@ -124,9 +150,15 @@ def default_config_path() -> Path:
     try:
         from ament_index_python.packages import get_package_share_directory
 
-        return Path(get_package_share_directory("robo_arm_driver")) / "config" / "joints.yaml"
+        return (
+            Path(get_package_share_directory("robo_arm_driver"))
+            / "config"
+            / "joints.yaml"
+        )
     except (ImportError, LookupError) as exc:
-        raise ConfigError("cannot locate joints.yaml; set ARM_CONFIG explicitly") from exc
+        raise ConfigError(
+            "cannot locate joints.yaml; set ARM_CONFIG explicitly"
+        ) from exc
 
 
 def _number(item: dict[str, Any], key: str, context: str) -> float:
@@ -148,6 +180,10 @@ def load_arm_config(path: str | os.PathLike[str] | None = None) -> ArmConfig:
     except yaml.YAMLError as exc:
         raise ConfigError(f"invalid YAML in {source}: {exc}") from exc
 
+    if isinstance(raw, dict) and raw.get("schema_version") == 2:
+        from .elexhub_profile import load_v2
+
+        return load_v2(raw, source)
     if not isinstance(raw, dict) or raw.get("schema_version") != 1:
         raise ConfigError(f"{source}: schema_version must be 1")
     if not isinstance(raw.get("calibrated"), bool):
@@ -157,8 +193,14 @@ def load_arm_config(path: str | os.PathLike[str] | None = None) -> ArmConfig:
         raise ConfigError(f"{source}: state_source must be commanded or measured")
 
     timeout = raw.get("command_timeout_ms")
-    if isinstance(timeout, bool) or not isinstance(timeout, int) or not 100 <= timeout <= 5000:
-        raise ConfigError(f"{source}: command_timeout_ms must be an integer in [100, 5000]")
+    if (
+        isinstance(timeout, bool)
+        or not isinstance(timeout, int)
+        or not 100 <= timeout <= 5000
+    ):
+        raise ConfigError(
+            f"{source}: command_timeout_ms must be an integer in [100, 5000]"
+        )
     rate = _number(raw, "control_rate_hz", str(source))
     if not 1.0 <= rate <= 100.0:
         raise ConfigError(f"{source}: control_rate_hz must be in [1, 100]")
@@ -209,7 +251,9 @@ def load_arm_config(path: str | os.PathLike[str] | None = None) -> ArmConfig:
         joints.append(joint)
 
     if sorted(j.channel for j in joints) != list(range(NJOINTS)):
-        raise ConfigError(f"{source}: joint channels must be unique values 0..{NJOINTS - 1}")
+        raise ConfigError(
+            f"{source}: joint channels must be unique values 0..{NJOINTS - 1}"
+        )
     if len({j.name for j in joints}) != NJOINTS:
         raise ConfigError(f"{source}: joint names must be unique")
     if len({j.servo_pin for j in joints}) != NJOINTS:
@@ -230,8 +274,9 @@ def load_arm_config(path: str | os.PathLike[str] | None = None) -> ArmConfig:
         closed_percent=_number(grip_raw, "closed_percent", "gripper"),
         max_velocity_percent_s=_number(grip_raw, "max_velocity_percent_s", "gripper"),
     )
-    if not (0.0 <= gripper.open_percent <= 100.0 and
-            0.0 <= gripper.closed_percent <= 100.0):
+    if not (
+        0.0 <= gripper.open_percent <= 100.0 and 0.0 <= gripper.closed_percent <= 100.0
+    ):
         raise ConfigError(f"{source}: gripper endpoints must be in [0, 100]")
     if gripper.open_percent == gripper.closed_percent:
         raise ConfigError(f"{source}: gripper endpoints must differ")

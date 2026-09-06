@@ -1,0 +1,8 @@
+{
+  "status": "TEMPLATE_ONLY_NOT_CALIBRATION",
+  "measurement_record": null,
+  "fit_pairs": [],
+  "held_out_pairs": [],
+  "T_toolmarker_tcp": null,
+  "point_pair_format": {"mat_m": ["measured x", "measured y", "measured z"], "base_m": ["measured x", "measured y", "measured z"]}
+}

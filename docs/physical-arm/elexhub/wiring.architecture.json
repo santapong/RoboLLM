@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {"title": "Elexhub: control and servo power", "quality_profile": "showcase", "locale": "en", "viewBox": [1160, 640]},
+  "components": [
+    {"id": "pi", "type": "backend", "label": "Raspberry Pi", "sublabel": "Execution and recording", "pos": [40, 100], "size": [190, 76]},
+    {"id": "mega", "type": "backend", "label": "Arduino Mega", "sublabel": "Limits and watchdog", "pos": [330, 100], "size": [190, 76]},
+    {"id": "pca", "type": "messagebus", "label": "PCA9685", "sublabel": "PWM; no position feedback", "pos": [620, 100], "size": [190, 76]},
+    {"id": "arm", "type": "external", "label": "Six servos", "sublabel": "Five joints and gripper", "pos": [910, 100], "size": [190, 76]},
+    {"id": "battery", "type": "external", "label": "Protected battery", "sublabel": "Ratings pending identification", "pos": [40, 380], "size": [190, 76]},
+    {"id": "cutoff", "type": "security", "label": "Fuse and cutoff", "sublabel": "DC current rating required", "pos": [330, 380], "size": [190, 76]},
+    {"id": "regulator", "type": "backend", "label": "Regulator / BEC", "sublabel": "Servo voltage and peak load", "pos": [620, 380], "size": [190, 76]},
+    {"id": "bus", "type": "messagebus", "label": "Power distribution", "sublabel": "Rated wiring and common GND", "pos": [910, 380], "size": [190, 76]}
+  ],
+  "connections": [
+    {"id": "usb", "from": "pi", "to": "mega", "label": "USB serial"},
+    {"id": "i2c", "from": "mega", "to": "pca", "label": "I2C + OE"},
+    {"id": "pwm", "from": "pca", "to": "arm", "label": "PWM signals"},
+    {"id": "protected", "from": "battery", "to": "cutoff", "label": "Protected DC"},
+    {"id": "switched", "from": "cutoff", "to": "regulator", "label": "Switched DC"},
+    {"id": "regulated", "from": "regulator", "to": "bus", "label": "Regulated rail"},
+    {"id": "servo-power", "from": "bus", "to": "arm", "label": "Servo power", "variant": "security"}
+  ],
+  "cards": [
+    {"dot": "cyan", "title": "Signal wiring", "items": ["Mega D20 to SDA; D21 to SCL", "Mega 5 V to VCC; shared GND", "D22 to OE with verified default disable"]},
+    {"dot": "amber", "title": "Measurement gate", "items": ["Voltage, current and fuse remain unset", "Verify battery, BMS, regulator and servos", "No servo power from the Mega 5 V pin"]},
+    {"dot": "rose", "title": "Cutoff distinction", "items": ["OE disables PWM, not the power rail", "Physical cutoff isolates the servo supply", "Bench commissioning is still required"]}
+  ]
+}

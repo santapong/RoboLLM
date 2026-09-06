@@ -1,0 +1,19 @@
+{
+  "status": "unexecuted",
+  "physical_evidence": false,
+  "reach_attempts": 108,
+  "intent_attempts": 30,
+  "pick_place_attempts": 20,
+  "prerequisites": [
+    "verified hardware profile",
+    "power/cutoff and watchdog checks",
+    "camera registration",
+    "condition B/C actuator identification",
+    "same goals and starting poses across A/B/C"
+  ],
+  "metrics": {
+    "reach": "3D TCP <=15 mm continuously for 0.5 s, camera measured",
+    "intent": "source/destination agreement before motion, including clarification rate",
+    "pick_place": "verified lift >35 mm and released object XY <=20 mm, stable for 0.5 s"
+  }
+}

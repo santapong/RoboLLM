@@ -1,0 +1,92 @@
+<mujoco model="elexhub_provisional">
+  <compiler angle="radian" autolimits="true" />
+  <option timestep="0.002" integrator="implicitfast" gravity="0 0 -9.81" />
+  <visual>
+    <global offwidth="640" offheight="480" />
+  </visual>
+  <default>
+    <joint damping="0.04" armature="0.002" />
+    <geom friction="1.2 0.01 0.001" condim="4" />
+  </default>
+  <asset>
+    <mesh name="turret" file="meshes/turret.obj" />
+    <mesh name="upper_arm" file="meshes/upper_arm.obj" />
+    <mesh name="forearm" file="meshes/forearm.obj" />
+    <mesh name="wrist" file="meshes/wrist.obj" />
+    <mesh name="tool" file="meshes/tool.obj" />
+    <texture name="floor_tex" type="2d" builtin="checker" width="256" height="256" rgb1=".86 .87 .87" rgb2=".79 .81 .82" />
+    <material name="floor_mat" texture="floor_tex" texrepeat="8 8" />
+  </asset>
+  <worldbody>
+    <light pos="0 -.3 1" diffuse=".8 .8 .8" />
+    <geom name="table" type="plane" size=".6 .6 .02" material="floor_mat" />
+    <geom name="mat" type="box" pos="0.19 0 0.0001" size="0.06 0.09 0.0001" rgba=".95 .95 .92 1" contype="0" conaffinity="0" />
+    <body name="base">
+      <geom name="base_collision" type="box" size="0.0525 0.0525 0.0125" pos="0 0 0.0125" rgba=".2 .24 .3 1" />
+      <body name="turret" pos="0 0 0.025">
+        <joint name="base_yaw" type="hinge" axis="0 0 1" range="-1.3962634 1.3962634" />
+        <inertial pos="0 0 0.0275" mass="0.12" diaginertia="4.625e-05 5.05e-05 3.625e-05" />
+        <geom name="turret_visual" type="mesh" mesh="turret" rgba=".55 .61 .67 1" contype="0" conaffinity="0" group="1" />
+        <geom name="turret_collision" type="capsule" fromto="0 0 0.008 0 0 0.047" size="0.0172" rgba="0 0 0 0" group="3" />
+        <body name="upper_arm" pos="0 0 0.055">
+          <joint name="shoulder" type="hinge" axis="0 1 0" range="-1.3962634 1.3962634" />
+          <inertial pos="0 0 0.0525" mass="0.16" diaginertia="0.000157453333 0.000166253333 2.97066667e-05" />
+          <geom name="upper_arm_visual" type="mesh" mesh="upper_arm" rgba=".55 .61 .67 1" contype="0" conaffinity="0" group="1" />
+          <geom name="upper_arm_collision" type="capsule" fromto="0 0 0.008 0 0 0.097" size="0.01204" rgba="0 0 0 0" group="3" />
+          <body name="forearm" pos="0 0 0.105">
+            <joint name="elbow" type="hinge" axis="0 1 0" range="-1.3962634 1.3962634" />
+            <inertial pos="0 0 0.05" mass="0.13" diaginertia="0.000116826667 0.000119426667 1.95866667e-05" />
+            <geom name="forearm_visual" type="mesh" mesh="forearm" rgba=".55 .61 .67 1" contype="0" conaffinity="0" group="1" />
+            <geom name="forearm_collision" type="capsule" fromto="0 0 0.008 0 0 0.092" size="0.01204" rgba="0 0 0 0" group="3" />
+            <body name="wrist" pos="0 0 0.1">
+              <joint name="wrist_pitch" type="hinge" axis="0 1 0" range="-1.22173048 1.57079633" />
+              <inertial pos="0 0 0.0225" mass="0.085" diaginertia="2.30208333e-05 2.45720833e-05 1.89054167e-05" />
+              <geom name="wrist_visual" type="mesh" mesh="wrist" rgba=".55 .61 .67 1" contype="0" conaffinity="0" group="1" />
+              <geom name="wrist_collision" type="capsule" fromto="0 0 0.008 0 0 0.037" size="0.015050000000000001" rgba="0 0 0 0" group="3" />
+              <body name="tool" pos="0 0 0.045">
+                <joint name="wrist_roll" type="hinge" axis="0 0 1" range="-1.3962634 1.3962634" />
+                <inertial pos="0 0 0.0125" mass="0.06" diaginertia="7.625e-06 1.1125e-05 1.25e-05" />
+                <geom name="tool_visual" type="mesh" mesh="tool" rgba=".55 .61 .67 1" contype="0" conaffinity="0" group="1" />
+                <geom name="tool_collision" type="capsule" fromto="0 0 0.008 0 0 0.017" size="0.0129" rgba="0 0 0 0" group="3" />
+                <site name="tcp" pos="0 0 0.0535" size=".003" rgba=".1 .9 .6 1" />
+                <body name="finger_left" pos="0 -0.0205 0.025">
+                  <joint name="finger_left" type="slide" axis="0 1 0" range="0 0.0175" damping="1" />
+                  <geom name="finger_left_pad" type="box" size="0.009 0.003 0.019" pos="0 0 0.019" mass="0.012" rgba=".18 .2 .23 1" friction="2 0.01 0.001" />
+                </body>
+                <body name="finger_right" pos="0 0.0205 0.025">
+                  <joint name="finger_right" type="slide" axis="0 -1 0" range="0 0.0175" damping="1" />
+                  <geom name="finger_right_pad" type="box" size="0.009 0.003 0.019" pos="0 0 0.019" mass="0.012" rgba=".18 .2 .23 1" friction="2 0.01 0.001" />
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+    <body name="red_box" pos="0.2 -0.02 0.0102">
+      <freejoint name="object_free" />
+      <geom name="red_box_geom" type="box" size="0.01 0.01 0.01" mass="0.008" rgba=".85 .08 .06 1" />
+    </body>
+    <camera name="webcam" pos="0.42 -0.42 0.48" xyaxes="0.813733471 0.581238194 -0 -0.372040255 0.520856357 0.768306387" fovy="46" />
+  </worldbody>
+  <contact>
+    <exclude body1="base" body2="turret" />
+    <exclude body1="turret" body2="upper_arm" />
+    <exclude body1="upper_arm" body2="forearm" />
+    <exclude body1="forearm" body2="wrist" />
+    <exclude body1="wrist" body2="tool" />
+    <exclude body1="tool" body2="finger_left" />
+    <exclude body1="tool" body2="finger_right" />
+  </contact>
+  <actuator>
+    <position name="base_yaw_servo" joint="base_yaw" kp="18" kv="1.8" ctrlrange="-1.3962634 1.3962634" forcerange="-1.5 1.5" />
+    <position name="shoulder_servo" joint="shoulder" kp="18" kv="1.8" ctrlrange="-1.3962634 1.3962634" forcerange="-1.5 1.5" />
+    <position name="elbow_servo" joint="elbow" kp="18" kv="1.8" ctrlrange="-1.3962634 1.3962634" forcerange="-1.5 1.5" />
+    <position name="wrist_pitch_servo" joint="wrist_pitch" kp="18" kv="1.8" ctrlrange="-1.22173048 1.57079633" forcerange="-1.5 1.5" />
+    <position name="wrist_roll_servo" joint="wrist_roll" kp="18" kv="1.8" ctrlrange="-1.3962634 1.3962634" forcerange="-1.5 1.5" />
+    <position name="gripper_servo" joint="finger_left" kp="250" kv="3" ctrlrange="0 0.0175" forcerange="-3 3" />
+  </actuator>
+  <equality>
+    <joint joint1="finger_left" joint2="finger_right" polycoef="0 1 0 0 0" solref=".005 1" />
+  </equality>
+</mujoco>

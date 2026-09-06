@@ -41,5 +41,12 @@ assets/**/*.stp
 assets/**/*.step
 assets/**/*.mp4
 !assets/**/.gitkeep
+!assets/elexhub/provisional/elexhub.step
+# Private webcam captures, perception weights and local sessions.
+.cache/
+captures/
+output/elexhub-sessions/
+output/elexhub-bundle.zip
+*.FCBak
 # claude harness — personal overrides stay local
 .claude/settings.local.json

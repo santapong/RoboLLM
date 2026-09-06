@@ -1,0 +1,71 @@
+{
+  "conditions": {
+    "A": {
+      "n": 100,
+      "successes": 100,
+      "success_rate": 1.0,
+      "wilson_95": [
+        0.9630065017930143,
+        1
+      ],
+      "failure_count": 0,
+      "median_error_m_completed_only": 0.005160581768580745,
+      "p90_error_m_completed_only": 0.0068760541914354295,
+      "aborted": 0
+    },
+    "B": {
+      "n": 100,
+      "successes": 100,
+      "success_rate": 1.0,
+      "wilson_95": [
+        0.9630065017930143,
+        1
+      ],
+      "failure_count": 0,
+      "median_error_m_completed_only": 0.0018047840019802769,
+      "p90_error_m_completed_only": 0.002463377711155125,
+      "aborted": 0
+    },
+    "C": {
+      "n": 100,
+      "successes": 100,
+      "success_rate": 1.0,
+      "wilson_95": [
+        0.9630065017930143,
+        1
+      ],
+      "failure_count": 0,
+      "median_error_m_completed_only": 0.0018047840019802769,
+      "p90_error_m_completed_only": 0.002463377711155125,
+      "aborted": 0
+    }
+  },
+  "paired": {
+    "B-A": {
+      "paired_n": 100,
+      "success_rate_difference": 0.0,
+      "paired_bootstrap_95": [
+        0.0,
+        0.0
+      ]
+    },
+    "C-B": {
+      "paired_n": 100,
+      "success_rate_difference": 0.0,
+      "paired_bootstrap_95": [
+        0.0,
+        0.0
+      ]
+    },
+    "C-A": {
+      "paired_n": 100,
+      "success_rate_difference": 0.0,
+      "paired_bootstrap_95": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "physical_evidence": false,
+  "interpretation": "Internal simulation validation with provisional dimensions and actuator parameters. C uses oracle TCP feedback."
+}

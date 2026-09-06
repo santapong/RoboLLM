@@ -1,0 +1,14 @@
+{
+  "profile_hash": "65d73d75c3840842e1f03644",
+  "geometry_status": "provisional",
+  "hardware_ready": false,
+  "notice": "Illustrative dimensions, NOT measured Elexhub CAD. Replace after joint-center and mass measurements.",
+  "inertias": "box approximations; not system-identified",
+  "joint_names": [
+    "base_yaw",
+    "shoulder",
+    "elbow",
+    "wrist_pitch",
+    "wrist_roll"
+  ]
+}

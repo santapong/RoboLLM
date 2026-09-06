@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """ROS 2 trajectory controller boundary for the physical RoboLLM arm."""
+
 from __future__ import annotations
 
 import json
@@ -12,7 +13,8 @@ from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.node import Node
 from rclpy.task import Future
 from sensor_msgs.msg import JointState
-from std_msgs.msg import String
+from std_msgs.msg import Empty, Float64, String
+from std_srvs.srv import SetBool
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
 from .arm_serial import ArmSerial
@@ -25,7 +27,7 @@ class ArmBridge(Node):
         super().__init__("robo_arm_driver")
         self.declare_parameter("port", "")
         self.declare_parameter("config_file", "")
-        self.declare_parameter("enable_on_start", True)
+        self.declare_parameter("enable_on_start", False)
 
         port = self.get_parameter("port").value or None
         config_file = self.get_parameter("config_file").value or None
@@ -39,9 +41,16 @@ class ArmBridge(Node):
         self._action_terminal: tuple[str, str] | None = None
         self._action_wake: Future | None = None
         self._action_group = ReentrantCallbackGroup()
+        self._gripper_target = None
+        self._last_supervisor = 0.0
 
         self.joint_pub = self.create_publisher(JointState, "/joint_states", 10)
         self.status_pub = self.create_publisher(String, "/arm/status", 10)
+        self.create_service(SetBool, "/arm/enable", self.on_enable)
+        self.create_subscription(Float64, "/arm/gripper_command", self.on_gripper, 10)
+        self.create_subscription(
+            Empty, "/arm/operator_heartbeat", self.on_supervisor_heartbeat, 10
+        )
         self.create_subscription(
             JointTrajectory,
             "/arm_controller/joint_trajectory",
@@ -62,20 +71,65 @@ class ArmBridge(Node):
 
         self.get_logger().info(
             f"Arduino on {self.arm.port}: {self.arm.ping()}; "
-            f"config={self.config.source}; calibrated={self.config.calibrated}")
+            f"config={self.config.source}; calibrated={self.config.calibrated}"
+        )
         if self.config.calibrated and self.get_parameter("enable_on_start").value:
             self.last_state = self.arm.enable()
         elif not self.config.calibrated:
             self.get_logger().warn(
-                "commissioning lock is active: state is readable but trajectories are rejected")
+                "commissioning lock is active: state is readable but trajectories are rejected"
+            )
 
     @staticmethod
     def _point_time(point) -> float:
         return float(point.time_from_start.sec) + point.time_from_start.nanosec / 1e9
 
+    def on_enable(self, request, response):
+        try:
+            if request.data:
+                if self.sampler is not None or self._active_goal_handle is not None:
+                    raise ConfigError("cannot enable during an active trajectory")
+                self.last_state = self.arm.enable()
+                self._last_supervisor = time.monotonic()
+            else:
+                self.sampler = None
+                self._gripper_target = None
+                self.last_state = self.arm.relax()
+                if self._active_goal_handle is not None:
+                    self._action_terminal = ("aborted", "operator disabled PWM")
+            response.success = True
+            response.message = (
+                "PWM enabled"
+                if request.data
+                else "PWM disabled; use the physical cutoff for servo power"
+            )
+        except Exception as exc:  # noqa: BLE001 - every I/O error is returned as a refused enable
+            response.success = False
+            response.message = str(exc)
+        return response
+
+    def on_supervisor_heartbeat(self, message):
+        self._last_supervisor = time.monotonic()
+
+    def on_gripper(self, message):
+        try:
+            self.config.require_calibrated()
+            self.config.gripper.logical_to_wire(message.data)
+            if self.sampler is not None or self._active_goal_handle is not None:
+                raise ConfigError("gripper command rejected during arm trajectory")
+            if self.config.schema_version == 2 and not self.last_state.enabled:
+                raise ConfigError("explicit PWM enable required")
+            self._gripper_target = float(message.data)
+        except (ValueError, ConfigError) as exc:
+            self.last_error = str(exc)
+
     def validate_message(self, msg: JointTrajectory):
         """Validate a ROS trajectory without changing driver state."""
         self.config.require_calibrated()
+        if self.config.schema_version == 2 and not self.last_state.enabled:
+            raise ConfigError("explicit PWM enable required")
+        if self._gripper_target is not None:
+            raise ConfigError("wait for the gripper command to finish")
         if msg.header.stamp.sec or msg.header.stamp.nanosec:
             raise ConfigError("scheduled trajectory start times are not supported")
         return validate_trajectory(
@@ -109,21 +163,31 @@ class ArmBridge(Node):
         if self._active_goal_handle is not None or self.sampler is not None:
             self.get_logger().warn("action goal rejected: another trajectory is active")
             return GoalResponse.REJECT
-        if (goal_request.path_tolerance or goal_request.goal_tolerance or
-                goal_request.component_path_tolerance or
-                goal_request.component_goal_tolerance):
+        if (
+            goal_request.path_tolerance
+            or goal_request.goal_tolerance
+            or goal_request.component_path_tolerance
+            or goal_request.component_goal_tolerance
+        ):
             self.get_logger().warn(
-                "action goal rejected: path/goal tolerances require measured joint feedback")
+                "action goal rejected: path/goal tolerances require measured joint feedback"
+            )
             return GoalResponse.REJECT
-        if (goal_request.multi_dof_trajectory.joint_names or
-                goal_request.multi_dof_trajectory.points):
+        if (
+            goal_request.multi_dof_trajectory.joint_names
+            or goal_request.multi_dof_trajectory.points
+        ):
             self.get_logger().warn(
-                "action goal rejected: multi-DOF trajectories are not supported")
+                "action goal rejected: multi-DOF trajectories are not supported"
+            )
             return GoalResponse.REJECT
-        if (goal_request.goal_time_tolerance.sec or
-                goal_request.goal_time_tolerance.nanosec):
+        if (
+            goal_request.goal_time_tolerance.sec
+            or goal_request.goal_time_tolerance.nanosec
+        ):
             self.get_logger().warn(
-                "action goal rejected: goal_time_tolerance is not supported")
+                "action goal rejected: goal_time_tolerance is not supported"
+            )
             return GoalResponse.REJECT
         try:
             self.validate_message(goal_request.trajectory)
@@ -156,8 +220,11 @@ class ArmBridge(Node):
         feedback.desired = JointTrajectoryPoint(positions=list(self._last_target))
         feedback.actual = JointTrajectoryPoint(positions=list(self.last_state.q))
         feedback.error = JointTrajectoryPoint(
-            positions=[desired - actual for desired, actual in
-                       zip(self._last_target, self.last_state.q)])
+            positions=[
+                desired - actual
+                for desired, actual in zip(self._last_target, self.last_state.q)
+            ]
+        )
         goal_handle.publish_feedback(feedback)
 
     async def wait_for_control_tick(self) -> None:
@@ -174,7 +241,8 @@ class ArmBridge(Node):
             except (ConfigError, ValueError) as exc:
                 goal_handle.abort()
                 return self._make_action_result(
-                    FollowJointTrajectory.Result.INVALID_GOAL, str(exc))
+                    FollowJointTrajectory.Result.INVALID_GOAL, str(exc)
+                )
 
             while rclpy.ok():
                 if goal_handle.is_cancel_requested:
@@ -193,7 +261,8 @@ class ArmBridge(Node):
                     if state == "succeeded":
                         goal_handle.succeed()
                         return self._make_action_result(
-                            FollowJointTrajectory.Result.SUCCESSFUL, message)
+                            FollowJointTrajectory.Result.SUCCESSFUL, message
+                        )
                     goal_handle.abort()
                     return self._make_action_result(
                         FollowJointTrajectory.Result.PATH_TOLERANCE_VIOLATED,
@@ -217,9 +286,34 @@ class ArmBridge(Node):
             self._active_goal_handle = None
 
     def control_tick(self) -> None:
+        if (
+            self.config.schema_version == 2
+            and self.last_state.enabled
+            and time.monotonic() - self._last_supervisor > 0.6
+        ):
+            self.sampler = None
+            self._gripper_target = None
+            self.last_error = "operator heartbeat expired; PWM disabled"
+            if self._active_goal_handle is not None:
+                self._action_terminal = ("aborted", self.last_error)
+            try:
+                self.last_state = self.arm.relax()
+            except Exception as exc:  # noqa: BLE001 - log lost I/O; independent firmware watchdog expires
+                self.get_logger().error(f"PWM disable failed: {exc}")
+            self.publish_state()
+            self.publish_status()
+            if self._action_wake is not None and not self._action_wake.done():
+                self._action_wake.set_result(None)
+            return
         try:
-            if self.sampler is None:
-                self.last_state = self.arm.get_state()
+            if self.sampler is None and self._gripper_target is not None:
+                self.last_state = self.arm.set_action(
+                    self.last_state.q, self._gripper_target
+                )
+                if abs(self.last_state.gripper - self._gripper_target) < 0.005:
+                    self._gripper_target = None
+            elif self.sampler is None:
+                self.last_state = self.arm.hold()
             else:
                 target, done = self.sampler.sample(time.monotonic())
                 self._last_target = target
@@ -229,16 +323,17 @@ class ArmBridge(Node):
                     if self._active_goal_handle is not None:
                         self._action_terminal = ("succeeded", "trajectory completed")
             self.last_error = ""
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - any controller I/O failure stops the action
             self.sampler = None
+            self._gripper_target = None
             self.last_error = str(exc)
             if self._active_goal_handle is not None:
                 self._action_terminal = ("aborted", self.last_error)
             self.get_logger().error(f"arm I/O stopped: {exc}")
             try:
                 self.arm.relax()
-            except Exception:
-                pass
+            except Exception as stop_error:  # noqa: BLE001 - best effort; the board has its own watchdog
+                self.get_logger().error(f"PWM disable failed: {stop_error}")
         self.publish_state()
         self.publish_status()
         if self._action_wake is not None and not self._action_wake.done():
@@ -253,14 +348,24 @@ class ArmBridge(Node):
 
     def publish_status(self) -> None:
         msg = String()
-        msg.data = json.dumps({
-            "calibrated": self.config.calibrated,
-            "state_source": self.config.state_source,
-            "trajectory_active": self.sampler is not None,
-            "action_active": self._active_goal_handle is not None,
-            "last_error": self.last_error,
-            "arduino_time_ms": self.last_state.t_arduino_ms,
-        }, separators=(",", ":"))
+        msg.data = json.dumps(
+            {
+                "calibrated": self.config.calibrated,
+                "state_source": self.config.state_source,
+                "profile_hash": self.config.profile_hash,
+                "actuator_backend": self.config.actuator_backend,
+                "controller_enabled": self.last_state.enabled,
+                "controller_fault": self.last_state.fault,
+                "trajectory_active": self.sampler is not None,
+                "action_active": self._active_goal_handle is not None,
+                "last_error": self.last_error,
+                "arduino_time_ms": self.last_state.t_arduino_ms,
+                "joint_names": list(self.config.joint_names),
+                "q_commanded": list(self.last_state.q),
+                "gripper_commanded": self.last_state.gripper,
+            },
+            separators=(",", ":"),
+        )
         self.status_pub.publish(msg)
 
 

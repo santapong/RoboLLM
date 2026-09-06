@@ -1,0 +1,21 @@
+{
+  "status": "provisional",
+  "freecad_version": [
+    "1",
+    "1",
+    "3",
+    "20260725 (Git shallow)",
+    "Unknown",
+    "2026/07/25 04:52:02",
+    "grafted,grafted",
+    "145529fe741292ff0b3977a01195bf0247425794"
+  ],
+  "valid_solids": 23,
+  "profile_hash": "65d73d75c3840842e1f03644",
+  "step_exported": true,
+  "fcstd_saved": true,
+  "fcstd_reopened": true,
+  "step_reopened": true,
+  "step_volume_mm3": 479362.80000004655,
+  "global_placements_verified": true
+}

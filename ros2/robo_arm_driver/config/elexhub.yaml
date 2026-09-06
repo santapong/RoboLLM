@@ -1,0 +1,281 @@
+# PROVISIONAL geometry and command defaults. Measured fields are unset.
+schema_version: 2
+embodiment_id: elexhub-6servo
+runtime: hardware
+calibrated: false
+commissioning_allowed: false
+state_source: commanded
+actuator_backend: pca9685
+command_timeout_ms: 750
+control_rate_hz: 20
+pca9685:
+  address: 64
+  oe_pin: 22
+  pwm_hz: 50
+evidence:
+  topology: null
+  power_review: null
+  ground_and_polarity: null
+  cutoff: null
+  oe_default_disabled: null
+  joint_calibration: null
+  home_repetitions: null
+  watchdog: null
+  geometry: null
+  camera_to_base: null
+power:
+  battery_chemistry: null
+  battery_cells: null
+  battery_capacity_mah: null
+  battery_min_v: null
+  battery_full_v: null
+  battery_discharge_a: null
+  bms_continuous_a: null
+  regulator_model: null
+  regulator_input_min_v: null
+  regulator_input_max_v: null
+  servo_rail_v: null
+  regulator_continuous_a: null
+  regulator_peak_a: null
+  fuse_a: null
+  wire_rating_a: null
+  cutoff_rating_a: null
+  charger_model: null
+joints:
+- name: base_yaw
+  pwm_channel: 0
+  offset_deg: 90
+  sign: 1
+  min_deg: 10
+  max_deg: 170
+  home_deg: 90
+  max_velocity_deg_s: 30
+  calibration_verified: false
+  measured:
+    model: null
+    datasheet: null
+    calibration_record: null
+    voltage_min_v: null
+    voltage_max_v: null
+    stall_current_a: null
+    pulse_min_us: null
+    pulse_max_us: null
+  commission_min: null
+  commission_max: null
+- name: shoulder
+  pwm_channel: 1
+  offset_deg: 90
+  sign: 1
+  min_deg: 10
+  max_deg: 170
+  home_deg: 100
+  max_velocity_deg_s: 30
+  calibration_verified: false
+  measured:
+    model: null
+    datasheet: null
+    calibration_record: null
+    voltage_min_v: null
+    voltage_max_v: null
+    stall_current_a: null
+    pulse_min_us: null
+    pulse_max_us: null
+  commission_min: null
+  commission_max: null
+- name: elbow
+  pwm_channel: 2
+  offset_deg: 90
+  sign: 1
+  min_deg: 10
+  max_deg: 170
+  home_deg: 140
+  max_velocity_deg_s: 30
+  calibration_verified: false
+  measured:
+    model: null
+    datasheet: null
+    calibration_record: null
+    voltage_min_v: null
+    voltage_max_v: null
+    stall_current_a: null
+    pulse_min_us: null
+    pulse_max_us: null
+  commission_min: null
+  commission_max: null
+- name: wrist_pitch
+  pwm_channel: 3
+  offset_deg: 80
+  sign: 1
+  min_deg: 10
+  max_deg: 170
+  home_deg: 155
+  max_velocity_deg_s: 30
+  calibration_verified: false
+  measured:
+    model: null
+    datasheet: null
+    calibration_record: null
+    voltage_min_v: null
+    voltage_max_v: null
+    stall_current_a: null
+    pulse_min_us: null
+    pulse_max_us: null
+  commission_min: null
+  commission_max: null
+- name: wrist_roll
+  pwm_channel: 4
+  offset_deg: 90
+  sign: 1
+  min_deg: 10
+  max_deg: 170
+  home_deg: 90
+  max_velocity_deg_s: 30
+  calibration_verified: false
+  measured:
+    model: null
+    datasheet: null
+    calibration_record: null
+    voltage_min_v: null
+    voltage_max_v: null
+    stall_current_a: null
+    pulse_min_us: null
+    pulse_max_us: null
+  commission_min: null
+  commission_max: null
+gripper:
+  pwm_channel: 5
+  open_percent: 0
+  closed_percent: 100
+  max_velocity_percent_s: 100
+  calibration_verified: false
+  measured:
+    model: null
+    datasheet: null
+    calibration_record: null
+    voltage_min_v: null
+    voltage_max_v: null
+    stall_current_a: null
+    pulse_min_us: null
+    pulse_max_us: null
+  commission_min: null
+  commission_max: null
+geometry:
+  status: provisional
+  notice: Illustrative dimensions, NOT measured Elexhub CAD. Replace after joint-center
+    and mass measurements.
+  base_size_m:
+  - 0.105
+  - 0.105
+  - 0.025
+  base_mass_kg: 0.25
+  base_origin_m:
+  - 0
+  - 0
+  - 0.025
+  links:
+  - name: turret
+    joint: base_yaw
+    offset_m:
+    - 0
+    - 0
+    - 0
+    axis:
+    - 0
+    - 0
+    - 1
+    length_m: 0.055
+    width_m: 0.045
+    depth_m: 0.04
+    mass_kg: 0.12
+  - name: upper_arm
+    joint: shoulder
+    offset_m:
+    - 0
+    - 0
+    - 0.055
+    axis:
+    - 0
+    - 1
+    - 0
+    length_m: 0.105
+    width_m: 0.038
+    depth_m: 0.028
+    mass_kg: 0.16
+  - name: forearm
+    joint: elbow
+    offset_m:
+    - 0
+    - 0
+    - 0.105
+    axis:
+    - 0
+    - 1
+    - 0
+    length_m: 0.1
+    width_m: 0.032
+    depth_m: 0.028
+    mass_kg: 0.13
+  - name: wrist
+    joint: wrist_pitch
+    offset_m:
+    - 0
+    - 0
+    - 0.1
+    axis:
+    - 0
+    - 1
+    - 0
+    length_m: 0.045
+    width_m: 0.038
+    depth_m: 0.035
+    mass_kg: 0.085
+  - name: tool
+    joint: wrist_roll
+    offset_m:
+    - 0
+    - 0
+    - 0.045
+    axis:
+    - 0
+    - 0
+    - 1
+    length_m: 0.025
+    width_m: 0.04
+    depth_m: 0.03
+    mass_kg: 0.06
+  gripper:
+    opening_m: 0.035
+    finger_length_m: 0.038
+    finger_width_m: 0.006
+    finger_depth_m: 0.018
+    finger_mass_kg: 0.012
+  table:
+    mat_origin_m:
+    - 0.25
+    - -0.09
+    - 0
+    mat_yaw_rad: 1.5707963267948966
+    workspace_m:
+    - 0.18
+    - 0.12
+  camera:
+    width: 640
+    height: 480
+    fovy_deg: 46
+    position_m:
+    - 0.42
+    - -0.42
+    - 0.48
+    look_at_m:
+    - 0.12
+    - 0
+    - 0.05
+  object:
+    edge_m: 0.02
+    mass_kg: 0.008
+  actuator_reference:
+    kp: 18
+    kv: 1.8
+    force_limit: 1.5
+    delay_s: 0.06
+    deadband_rad: 0.01

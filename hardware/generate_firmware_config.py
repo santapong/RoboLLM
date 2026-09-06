@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Generate the arm controller's safety constants from canonical joints YAML."""
+
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import sys
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "ros2" / "robo_arm_driver"))
 
-from robo_arm_driver.config import load_arm_config  # noqa: E402
+from robo_arm_driver.config import load_arm_config
 
 
 def _array(values) -> str:
@@ -17,6 +18,8 @@ def _array(values) -> str:
 
 
 def render(config) -> str:
+    if config.schema_version == 2:
+        return render_pca(config)
     calibrated = "true" if config.calibrated else "false"
     pins = _array(str(joint.servo_pin) for joint in config.joints)
     minimums = _array(f"{joint.min_deg:.2f}f" for joint in config.joints)
@@ -24,7 +27,8 @@ def render(config) -> str:
     homes = _array(f"{joint.home_deg:.2f}f" for joint in config.joints)
     steps = _array(
         f"{joint.max_velocity_deg_s / config.control_rate_hz:.4f}f"
-        for joint in config.joints)
+        for joint in config.joints
+    )
     grip_min = min(config.gripper.open_percent, config.gripper.closed_percent)
     grip_max = max(config.gripper.open_percent, config.gripper.closed_percent)
     grip_step = config.gripper.max_velocity_percent_s / config.control_rate_hz
@@ -35,7 +39,7 @@ def render(config) -> str:
 #pragma once
 
 const bool ARM_CALIBRATED = {calibrated};
-const uint8_t NJOINTS = 6;
+const uint8_t NJOINTS = {config.njoints};
 const uint8_t SERVO_PIN[NJOINTS] = {pins};
 const uint8_t GRIPPER_PIN = {config.gripper.servo_pin};
 const float JMIN[NJOINTS] = {minimums};
@@ -49,6 +53,53 @@ const float GMAX_STEP = {grip_step:.4f}f;
 const uint16_t TICK_MS = {tick_ms};
 const unsigned long COMMAND_TIMEOUT_MS = {config.command_timeout_ms}UL;
 """
+
+
+def render_pca(config) -> str:
+    """Unmeasured profiles compile to disabled outputs and zero pulse bounds."""
+    raw = config.profile_data
+    servos = raw["joints"] + [raw["gripper"]]
+    channels = _array(str(s["pwm_channel"]) for s in servos)
+    pulse_lo = _array(str(s["measured"].get("pulse_min_us") or 0) for s in servos)
+    pulse_hi = _array(str(s["measured"].get("pulse_max_us") or 0) for s in servos)
+    low = [j.min_deg for j in config.joints] + [
+        min(config.gripper.open_percent, config.gripper.closed_percent)
+    ]
+    high = [j.max_deg for j in config.joints] + [
+        max(config.gripper.open_percent, config.gripper.closed_percent)
+    ]
+    homes = [j.home_deg for j in config.joints] + [config.gripper.open_percent]
+    rates = [j.max_velocity_deg_s for j in config.joints] + [
+        config.gripper.max_velocity_percent_s
+    ]
+    arrays = {
+        "MIN_RAW": low,
+        "MAX_RAW": high,
+        "HOME_RAW": homes,
+        "MAX_RATE": rates,
+        "COMMISSION_MIN": [s.get("commission_min") or 0 for s in servos],
+        "COMMISSION_MAX": [s.get("commission_max") or 0 for s in servos],
+    }
+    fields = "\n".join(
+        f"const float {name}[NSERVOS] = {_array(f'{v:.6f}f' for v in values)};"
+        for name, values in arrays.items()
+    )
+    return f'''// GENERATED from the selected Elexhub profile. Never edit limits here.
+#pragma once
+const uint8_t NJOINTS = {config.njoints};
+const uint8_t NSERVOS = NJOINTS + 1;
+const uint8_t CHANNEL[NSERVOS] = {channels};
+const uint16_t PULSE_MIN[NSERVOS] = {pulse_lo};
+const uint16_t PULSE_MAX[NSERVOS] = {pulse_hi};
+{fields}
+const bool ARM_CALIBRATED = {str(config.calibrated and not config.simulation).lower()};
+const bool COMMISSIONING_ALLOWED = {str(config.commissioning_allowed and not config.simulation).lower()};
+const char PROFILE_HASH[] = "{config.profile_hash}";
+const uint8_t PCA_ADDRESS = 0x40;
+const uint8_t OE_PIN = 22;
+const uint16_t TICK_MS = {round(1000 / config.control_rate_hz)};
+const uint16_t COMMAND_TIMEOUT_MS = {config.command_timeout_ms};
+'''
 
 
 def main() -> int:
@@ -65,7 +116,16 @@ def main() -> int:
     )
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    expected = render(load_arm_config(args.config))
+    config = load_arm_config(args.config)
+    if (
+        config.schema_version == 2
+        and args.output.name == "arm_config.h"
+        and args.output.parent.name == "arm_firmware"
+    ):
+        parser.error(
+            "PCA9685 firmware needs --output hardware/firmware/elexhub_pca9685/arm_config.h"
+        )
+    expected = render(config)
     if args.check:
         actual = args.output.read_text(encoding="utf-8") if args.output.exists() else ""
         if actual != expected:
