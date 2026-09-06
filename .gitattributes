@@ -1,0 +1,7 @@
+# Preserve the exact validated bytes of generated engineering artifacts.
+assets/elexhub/**/*.FCStd binary
+assets/elexhub/**/*.step -text whitespace=-blank-at-eol
+assets/elexhub/**/meshes/*.obj -text whitespace=-blank-at-eof
+output/elexhub-evaluation-*/model/meshes/*.obj -text whitespace=-blank-at-eof
+docs/physical-arm/elexhub/trials/*.csv -text whitespace=cr-at-eol
+output/pdf/*.pdf binary
