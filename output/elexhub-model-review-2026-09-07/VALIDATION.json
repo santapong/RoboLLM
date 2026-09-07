@@ -1,0 +1,22 @@
+{
+  "checked_date": "2026-09-07",
+  "branch": "experiment/elexhub-webcam",
+  "profile_hash": "15f8e3f40ebaa9bca8bd4f1f",
+  "physical_evidence": false,
+  "unit_tests": {
+    "passed": 56,
+    "warnings": 2,
+    "evidence": "unit-tests.txt"
+  },
+  "final_visual_tests": {
+    "passed": 2,
+    "evidence": "final-visual-tests.txt"
+  },
+  "lint": "Ruff check with mount-specific EXE002 exclusion passed; format check passed",
+  "environment": "uv pip check passed for 64 packages",
+  "cad": "283 valid solids; FCStd and STEP reopened; colors and global bounds verified",
+  "render_artifact_hashes_match_delivered_files": true,
+  "frozen_evaluation_unchanged": true,
+  "research": "docs/physical-arm/elexhub/DIMENSIONS-AND-COMPONENTS-2026-09-07.md",
+  "remaining": "Actual joint-center distances, component identity, masses, actuator behavior and claw linkage remain unmeasured"
+}

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elexhub · Inspect the 3D model</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101620;color:#edf2f7;font:15px/1.5 system-ui}main{max-width:1400px;margin:auto;padding:28px}header{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:22px}.eyebrow{color:#68d5c0;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}h1{font-size:28px;letter-spacing:-.8px;margin:4px 0}p{color:#b1bfd0;margin:8px 0}a{color:#8fe3d0}button,a.button{font:inherit;padding:9px 15px;border:1px solid #3c495c;border-radius:8px;background:#1e2939;color:#edf2f7;cursor:pointer;text-decoration:none}button:hover,a.button:hover{border-color:#7edbc7}button:focus-visible,canvas:focus-visible,a:focus-visible{outline:3px solid #39b49b;outline-offset:3px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px}.viewer{background:#ecf0f1;border:1px solid #3c495c;border-radius:16px;overflow:hidden;position:relative}canvas{display:block;width:100%;height:610px;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:14px;background:#172130}.hint{color:#9fbdc8;font-size:12px;margin-left:auto;align-self:center}.notes{background:#182231;border:1px solid #303d50;padding:22px;border-radius:16px}h2{font-size:16px;margin:0 0 12px}.notes ul{padding-left:20px;color:#c7d1dc}.notes li{margin:8px 0}.notice{padding:14px;background:#302a1d;color:#f1d59b;border:1px solid #685334;border-radius:9px;font-size:13px;margin:20px 0}.links{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}.small{font-size:12px;color:#a1b2c8}.error{position:absolute;inset:25px;color:#733b1b;background:#fff1dd;padding:20px;border-radius:12px;height:max-content}footer{margin-top:20px;display:flex;gap:22px;flex-wrap:wrap;font-size:13px}details{margin-top:20px}summary{cursor:pointer;color:#bbcbdc}dl{font-size:13px}dt{color:#a3b4c8;margin-top:10px}dd{margin:0;color:#edf2f7}@media(max-width:900px){main{padding:16px}.layout{grid-template-columns:1fr}header{align-items:flex-start}canvas{height:480px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+<main>
+<header><div><div class="eyebrow">RoboLLM / Elexhub</div><h1>Inspect the black metal arm</h1><p>Original 3D reconstruction using Elexhub’s product photographs.</p></div><a class="button" href="/">Experiment console</a></header>
+<div class="layout">
+<section class="viewer" aria-label="Interactive CAD model">
+<canvas id="model" tabindex="0" aria-label="3D Elexhub robot arm. Drag or use arrow keys to rotate; scroll or use plus and minus to zoom."></canvas>
+<div class="toolbar" aria-label="Model views"><button data-view="angle">Angle</button><button data-view="front">Front</button><button data-view="side">Side</button><button data-view="top">Top</button><button data-view="reset">Reset view</button><span class="hint">Drag to rotate · Scroll to zoom</span></div>
+<div class="error" id="error" hidden>This browser could not display the 3D view. The FreeCAD, STEP and GLB downloads remain available.</div>
+</section>
+<aside class="notes"><h2>Matched construction</h2><ul><li>Two perforated base plates</li><li>Black U-shaped metal brackets</li><li>Six exposed servo assemblies</li><li>Bearing discs and mounting screws</li><li>Linkage claw and pivot screws</li><li>Cable looms and servo leads</li></ul>
+<div class="notice"><strong>Photo reference · dimensions unverified</strong><br>This is a closer visual model of the confirmed kit. Joint centres, masses, claw linkage motion and actuator limits still need measurements from your arm.</div>
+<p class="small">Five positioning joints + one gripper. This viewer displays the open assembly and cannot move hardware.</p>
+<details><summary>Provisional dimensions</summary><dl id="dimensions"></dl></details>
+<details><summary>Published component references</summary>
+<p class="small">These specifications describe catalog parts and a related kit. They are not verified measurements of your Elexhub arm.</p>
+<dl><dt>MG996R envelope · TowerPro</dt><dd>40.7 × 19.7 × 42.9 mm</dd><dt>Long U-bracket · Olimex</dt><dd>56 × 25 × 65 mm</dd><dt>Multifunction bracket · Sinoning</dt><dd>58 × 37 × 25 mm; 2 mm plate</dd><dt>Related ROT3U kit · diymore</dt><dd>460 mm listed height; 55 mm claw opening. Different assembly; not adopted as Elexhub dimensions.</dd></dl>
+<p class="small"><a href="https://towerpro.com.tw/product/mg996R/" target="_blank" rel="noreferrer">Servo specification ↗</a> · <a href="https://www.olimex.com/Products/Robot-CNC-Parts/ServoMotors/MS-BRACKET-U/" target="_blank" rel="noreferrer">U-bracket specification ↗</a> · <a href="https://www.sinoning.com/product/black-robot-arm-robotic-part-accessory-platfrom-u-beam-servo-bracket-for-standard-servo-steering-bearing-bracket-steam-diy-parts/" target="_blank" rel="noreferrer">Bracket catalog ↗</a> · <a href="https://www.diymore.cc/products/diymore-rot3u-6dof-aluminium-robot-arm-mechanical-robotic-clamp-claw-kit-for-arduino-mega2560" target="_blank" rel="noreferrer">Related kit ↗</a></p>
+</details>
+<div class="links"><a class="button" data-file="elexhub.FCStd" data-artifact="cad" href="elexhub.FCStd">FreeCAD</a><a class="button" data-file="elexhub.step" data-artifact="step" href="elexhub.step">STEP</a><a class="button" data-file="elexhub.glb" data-artifact="glb" href="elexhub.glb">GLB</a></div>
+</aside></div>
+<footer><a href="https://elexhub.com/shop/XvAAPZ" target="_blank" rel="noreferrer">Elexhub product reference ↗</a><a href="https://elexhub.com/images/items/XvAAPZ2.jpg" target="_blank" rel="noreferrer">Assembly photograph ↗</a><span class="small">Checked 7 September 2026 · Training workspace unchanged</span></footer>
+</main>
+<script id="model-data" type="application/json">__MODEL_DATA__</script>
+<script>
+const model=JSON.parse(document.getElementById('model-data').textContent),canvas=document.getElementById('model');
+for(const a of document.querySelectorAll('[data-artifact]'))if(location.protocol!=='file:')a.href='/artifact/'+a.dataset.artifact;
+for(const [label,value] of Object.entries(model.dimensions)){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;document.getElementById('dimensions').append(dt,dd)}
+try{
+  const gl=canvas.getContext('webgl2',{antialias:true,alpha:false});if(!gl)throw Error('WebGL unavailable');
+  function shader(kind,source){const s=gl.createShader(kind);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s}
+  const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,`#version 300 es
+    in vec3 position;in vec3 normal;uniform mat4 vp;out vec3 n;out vec3 world;
+    void main(){n=normal;world=position;gl_Position=vp*vec4(position,1.0);}`));
+  gl.attachShader(program,shader(gl.FRAGMENT_SHADER,`#version 300 es
+    precision highp float;in vec3 n;in vec3 world;uniform vec4 color;uniform vec3 eye;out vec4 frag;
+    void main(){vec3 normal=normalize(n);if(!gl_FrontFacing)normal=-normal;vec3 light=normalize(vec3(0.2,-0.5,0.9));float diff=max(dot(normal,light),0.0);float fill=max(dot(normal,normalize(vec3(-0.5,0.5,0.7))),0.0);vec3 halfV=normalize(light+normalize(eye-world));float spec=pow(max(dot(normal,halfV),0.0),48.0)*0.20;frag=vec4(color.rgb*(0.58+0.62*diff+0.25*fill)+spec,1.0);}`));
+  gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+  const position=gl.getAttribLocation(program,'position'),normal=gl.getAttribLocation(program,'normal'),vpLocation=gl.getUniformLocation(program,'vp'),colorLocation=gl.getUniformLocation(program,'color'),eyeLocation=gl.getUniformLocation(program,'eye');
+  const meshes=model.meshes.map(mesh=>{const vao=gl.createVertexArray();gl.bindVertexArray(vao);for(const [attribute,values] of [[position,mesh.positions],[normal,mesh.normals]]){const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(values),gl.STATIC_DRAW);gl.enableVertexAttribArray(attribute);gl.vertexAttribPointer(attribute,3,gl.FLOAT,false,0,0)}const indices=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,indices);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(mesh.indices),gl.STATIC_DRAW);return {vao,count:mesh.indices.length,color:mesh.color}});
+  const sub=(a,b)=>a.map((v,i)=>v-b[i]),dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0),unit=a=>{const d=Math.hypot(...a);return a.map(v=>v/d)},cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  function multiply(a,b){const out=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)out[c*4+r]+=a[k*4+r]*b[c*4+k];return out}
+  const center=model.center,radius=model.radius;let yaw=-.65,pitch=.33,distance=radius*3.5,pointer=null;
+  function draw(){const ratio=Math.min(devicePixelRatio||1,2),w=Math.round(canvas.clientWidth*ratio),h=Math.round(canvas.clientHeight*ratio);if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}gl.viewport(0,0,w,h);gl.clearColor(.925,.945,.950,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+    const eye=[center[0]+distance*Math.cos(pitch)*Math.cos(yaw),center[1]+distance*Math.cos(pitch)*Math.sin(yaw),center[2]+distance*Math.sin(pitch)],z=unit(sub(eye,center)),x=unit(cross([0,0,1],z)),y=cross(z,x);
+    const view=[x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1],near=.005,far=10,f=1/Math.tan(.65/2),project=[f/(w/h),0,0,0,0,f,0,0,0,0,(far+near)/(near-far),-1,0,0,2*far*near/(near-far),0];
+    gl.uniformMatrix4fv(vpLocation,false,multiply(project,view));gl.uniform3fv(eyeLocation,eye);for(const mesh of meshes){gl.bindVertexArray(mesh.vao);gl.uniform4fv(colorLocation,mesh.color);gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_INT,0)}}
+  function clamp(){pitch=Math.max(-1.35,Math.min(1.52,pitch));distance=Math.max(radius*1.4,Math.min(radius*7,distance));draw()}
+  canvas.onpointerdown=e=>{pointer=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!pointer)return;yaw-=(e.clientX-pointer[0])*.007;pitch+=(e.clientY-pointer[1])*.007;pointer=[e.clientX,e.clientY];clamp()};canvas.onpointerup=canvas.onpointercancel=()=>pointer=null;
+  canvas.addEventListener('wheel',e=>{e.preventDefault();distance*=Math.exp(e.deltaY*.001);clamp()},{passive:false});
+  canvas.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','+','-','='].includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')yaw-=.12;if(e.key==='ArrowRight')yaw+=.12;if(e.key==='ArrowUp')pitch+=.12;if(e.key==='ArrowDown')pitch-=.12;if(e.key==='+'||e.key==='=')distance*=.9;if(e.key==='-')distance*=1.1;clamp()};
+  for(const button of document.querySelectorAll('[data-view]'))button.onclick=()=>{yaw=button.dataset.view==='side'?-Math.PI/2:button.dataset.view==='front'?0:-.65;pitch=button.dataset.view==='top'?1.50:(button.dataset.view==='angle'||button.dataset.view==='reset')?0.33:0.08;distance=radius*3.5;draw()};
+  new ResizeObserver(draw).observe(canvas);draw();
+}catch(error){document.getElementById('error').hidden=false;console.error('Model view unavailable:',error.message)}
+</script></html>

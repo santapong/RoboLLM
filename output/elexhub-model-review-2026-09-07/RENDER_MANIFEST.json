@@ -1,0 +1,19 @@
+{
+  "appearance_revision": "elexhub-black-metal-photo-v1",
+  "profile_hash": "15f8e3f40ebaa9bca8bd4f1f",
+  "geometry_status": "provisional",
+  "physical_evidence": false,
+  "rendered_views": [
+    "angle",
+    "front",
+    "side",
+    "workspace"
+  ],
+  "artifact_sha256": {
+    "elexhub.xml": "1623e822c0b556bf8fa9c4ce12b019a621befc23f1ca0fbd38ecf240cb764892",
+    "elexhub.FCStd": "e39d569eea5ea1945a5f7e4049cf6272f0c65c8bf29c249e498a53b777fd38cb",
+    "elexhub.step": "85de377617053b454e3f9ab5f1f11a044dfb27a5166a9e8692ba6e60f58e0ba4",
+    "elexhub.glb": "dd87226502044234f1f902455566c506c4485c465c292b43d58caf13c4dbc88b",
+    "cad-description.json": "5d93e82a9b0f8e4096221fe60331e23be901f5e6c582648c23f77e98ef7e92b2"
+  }
+}

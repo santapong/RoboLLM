@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-09-07T10:50:09+07:00",
+  "checks": {
+    "api/camera-setup/state": {
+      "status": 200,
+      "bytes": 291,
+      "body": {
+        "enabled": true,
+        "state": "idle",
+        "running": false,
+        "frame_available": false,
+        "corners": 0,
+        "resolution": null,
+        "views": 0,
+        "minimum_views": 12,
+        "recommended_views": 20,
+        "maximum_views": 40,
+        "can_capture": false,
+        "calibrating": false,
+        "error": null,
+        "calibration": null,
+        "session_directory": null,
+        "robot_control": false
+      }
+    },
+    "api/camera-setup/frame.jpg": {
+      "status": 204,
+      "bytes": 0
+    },
+    "api/frame.jpg?camera=true": {
+      "status": 204,
+      "bytes": 0
+    },
+    "artifact/sheets": {
+      "status": 200,
+      "bytes": 66893
+    },
+    "artifact/wiring-pdf": {
+      "status": 200,
+      "bytes": 4698
+    },
+    "camera": {
+      "status": 200,
+      "bytes": 13844
+    },
+    "model": {
+      "status": 200,
+      "bytes": 1613430
+    }
+  }
+}

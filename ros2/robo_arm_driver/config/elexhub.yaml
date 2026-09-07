@@ -161,8 +161,9 @@ gripper:
   commission_max: null
 geometry:
   status: provisional
-  notice: Illustrative dimensions, NOT measured Elexhub CAD. Replace after joint-center
-    and mass measurements.
+  notice: Photo-referenced black metal kit; dimensions are estimates, NOT measured
+    Elexhub CAD. Claw opening/length estimates were revised on 2026-09-07. Replace
+    after joint-center, claw and mass measurements.
   base_size_m:
   - 0.105
   - 0.105
@@ -244,14 +245,14 @@ geometry:
     depth_m: 0.03
     mass_kg: 0.06
   gripper:
-    opening_m: 0.035
-    finger_length_m: 0.038
+    opening_m: 0.055
+    finger_length_m: 0.065
     finger_width_m: 0.006
     finger_depth_m: 0.018
     finger_mass_kg: 0.012
   table:
     mat_origin_m:
-    - 0.25
+    - 0.23
     - -0.09
     - 0
     mat_yaw_rad: 1.5707963267948966

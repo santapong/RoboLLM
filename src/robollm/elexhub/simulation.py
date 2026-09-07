@@ -118,11 +118,14 @@ class SimArm:
             "tcp",
             "site",
             position_cost=1.0,
-            orientation_cost=[0.3, 0.3, 0] if downward else 0.0,
+            orientation_cost=0.3 if downward else 0.0,
             lm_damping=1e-3,
         )
         rot = (
-            np.diag([1, -1, -1])
+            # Pitch-down is attainable with the wrist roll near zero. The old
+            # roll-down target was outside its range and a zero yaw weight
+            # allowed the claw to spin between grasp and lift.
+            np.diag([-1, 1, -1])
             if downward
             else kin.data.site("tcp").xmat.reshape(3, 3)
         )

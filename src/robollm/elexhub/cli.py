@@ -152,6 +152,11 @@ def main(argv=None):
     p.add_argument("--output", type=Path, default=ROOT / "assets/elexhub/provisional")
     p = sub.add_parser("cad")
     p.add_argument("--freecad", required=True)
+    p.add_argument(
+        "--gui-colors",
+        action="store_true",
+        help="use a FreeCAD GUI executable offscreen to save CAD materials",
+    )
     p.add_argument("--output", type=Path, default=ROOT / "assets/elexhub/provisional")
     p = sub.add_parser("printables")
     p.add_argument("--output", type=Path, default=ROOT / "output/pdf")
@@ -231,14 +236,18 @@ def main(argv=None):
 
             value = build_assets(config, args.output)
             if args.command == "cad":
+                build_id = str(time.time_ns())
                 env = {
                     **os.environ,
                     "ELEXHUB_CAD_DESCRIPTOR": str(
                         (args.output / "cad-description.json").resolve()
                     ),
                 }
+                env["ELEXHUB_CAD_BUILD_ID"] = build_id
                 command = [args.freecad]
-                if Path(args.freecad).name == "AppRun":
+                if args.gui_colors:
+                    env.update(QT_QPA_PLATFORM="offscreen", ELEXHUB_CAD_QUIT="1")
+                elif Path(args.freecad).name == "AppRun":
                     command += ["freecadcmd"]
                 subprocess.run(
                     command + [str(ROOT / "cad/build_elexhub_freecad.py")],
@@ -246,6 +255,10 @@ def main(argv=None):
                     check=True,
                 )
                 value = json.loads((args.output / "CAD_VALIDATION.json").read_text())
+                if value.get("build_id") != build_id:
+                    raise RuntimeError(
+                        "FreeCAD did not produce fresh validation for this build"
+                    )
         elif args.command == "printables":
             from .printables import generate
 

@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-09-07T10:50:09+07:00",
+  "scope": "local software; fake devices and synthetic board images",
+  "base_head": "295f05043b4568d9c756caffdd91a18616c8872f",
+  "branch": "experiment/elexhub-webcam",
+  "working_tree_changes": "includes preserved uncommitted photo-model work and this camera workflow",
+  "unit_tests": {
+    "passed": 64,
+    "warnings": 2,
+    "log": "unit-tests.txt"
+  },
+  "lint": "passed",
+  "javascript_syntax": "passed node --check",
+  "browser_review": {
+    "viewport": [
+      666,
+      726
+    ],
+    "horizontal_overflow": false,
+    "camera_off": true,
+    "capture_disabled": true,
+    "calibrate_disabled": true,
+    "scope": "visible initial state and responsive layout; device interactions tested through fake API"
+  },
+  "camera_access": "none; real setup session remains idle",
+  "physical_evidence": false,
+  "hardware_ready": false,
+  "frozen_evaluation_unchanged": true,
+  "files": {
+    "src/robollm/elexhub/camera_setup.py": "8af82469d98787b9390a9c2be92a13000f68004d61dd7755a34d56436cc23e60",
+    "src/robollm/elexhub/camera_setup.html": "249b693b3448501bf68d931f591ebfb8b1898e9e8c18b42daaaa411cb3d05040",
+    "src/robollm/elexhub/web.py": "f84b45b8d4607282d0984153b2d62dc9db9bd28bd94694ea1540782c4c927c90",
+    "src/robollm/elexhub/console.html": "0753639e88b16100f68e3ef19728a50d67cb807d247741f3cbfc26f04a74ac1a",
+    "tests/unit/test_elexhub_camera_setup.py": "0ef021e2fcf702bd3b6b399ecc93477e3ccbb1b491f57a996fb3491ded6e7768",
+    "docs/physical-arm/elexhub/COMMISSIONING.md": "3a44a71b1ea8a359da211a8e83b78279b88ab1e19bc578e4c31e41891dbaec79",
+    "docs/physical-arm/elexhub/CAMERA-SETUP-2026-09-07.md": "e00fd5a9e93b867cf3153ba73954769e3dafc8f0de31539de1d361bb80a07176"
+  },
+  "logs": {
+    "unit-tests.txt": "b5f7920fbd59ebf80c30d7e036992c833a4c7c4f04afbc5dcba88e4107b73a78",
+    "lint.txt": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "http-checks.json": "3198f2d46b05dae7602bb78f9223ab6483d2fc9233adbe8238b342d4161073eb",
+    "doctor.json": "9c3b2935f071acd8335810505c72a4e0ea3d1465cc9c2d11392d1b5b7c78d5b9"
+  }
+}

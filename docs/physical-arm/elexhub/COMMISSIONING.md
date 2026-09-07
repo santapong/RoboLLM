@@ -50,7 +50,16 @@ The host-facing API accepts radians and normalized gripper values. The canonical
 
 Print the reference pack on **A4, actual size / 100%, no fit-to-page**. Measure the 100 mm scale. ChArUco uses `DICT_5X5_100`, 7 × 5 squares, 30 mm square width, 22 mm marker width. The workspace grid is 180 × 120 mm, 10 mm cells. Workspace marker IDs are 50–53. Tool tag 60 has a 20 mm black edge; box tag 70 has a 15 mm black edge. The white margin is not part of the marker's measured size. Use a rigid, flat print; mark the robot-base axes on the bench separately.
 
-Capture at least 12 usable views (20 recommended) at the final camera resolution, varying board position and tilt:
+For guided capture, run the local simulation console and open **Set up webcam** at `http://127.0.0.1:8767/camera`:
+
+1. Print and check the reference sheets, connect the webcam to the console computer, and choose its index and resolution. Opening the page leaves the camera off; **Start camera** opens it explicitly.
+2. Capture at least 12 usable views (20 recommended), varying the board's position, distance and tilt. Each saved view needs at least ten detected ChArUco corners. Keep focus and zoom fixed. Check the **actual resolution** reported by the camera.
+3. Click **Calibrate camera**, inspect the reprojection error and download the intrinsics JSON. The page records unannotated PNGs, a `SESSION.json` with image hashes, and the calibration under `captures/camera-setup/session-…/`. Earlier sessions remain on disk; raw captures are ignored by Git and excluded from the experiment bundle.
+4. Click **Stop camera** when finished. Leaving the page also requests a stop, but a browser or network failure can prevent that request; stop the local console if the device remains open. Starting another capture session preserves previous files but clears the page's current result.
+
+The page runs only in simulation mode with no other webcam owner. Its calibration preview is separate from the experiment's registered webcam feed. Missing/stale frames show **Cannot detect**; they do not become simulator images. Calibration checks file integrity, image resolution, board tilt diversity and RMS ≤1 px. Passing this check creates **lens intrinsics only**, with no base/tool registration or hardware enablement. Retain the saved calibration and capture directory; apply registration below using that calibration path. A moved camera/base/mat requires renewed alignment; a changed focus, zoom or image resolution requires a fresh lens calibration.
+
+The equivalent terminal workflow remains available. Capture at least 12 usable views (20 recommended) at the final camera resolution, varying board position and tilt:
 
 ```sh
 .venv/bin/python examples/elexhub/run.py capture-calibration --camera 0 --output captures/calibration

@@ -107,8 +107,13 @@ def waypoints(config, intent, source_base=None):
     source = np.asarray(source_base, float)
     if source.shape != (3,) or not np.isfinite(source).all():
         raise IntentError("invalid object position")
-    clearance = 0.050
-    grasp = max(0.012, float(source[2]))
+    clearance = 0.052
+    # TCP lies at 75% of finger length. Keep the remaining fingertip above
+    # the table when the provisional claw dimensions are revised.
+    fingertip_below_tcp = (
+        config.profile_data["geometry"]["gripper"]["finger_length_m"] * 0.25
+    )
+    grasp = max(0.012, float(source[2]), fingertip_below_tcp + 0.0025)
     return [
         ("APPROACH", np.r_[source[:2], clearance], True),
         ("DESCEND", np.r_[source[:2], grasp], True),
@@ -247,7 +252,14 @@ class TaskExecutor:
                 self.emit("stage", preview_id=token)
                 guard()
                 if stage == "GRASP":
-                    self.arm.set_gripper(0.70, guard=guard)
+                    geometry = self.arm.config.profile_data["geometry"]
+                    # Preserve the demonstration's nominal jaw compression when
+                    # the open-claw estimate changes. Force limits stay intact.
+                    gap = max(0.005, geometry["object"]["edge_m"] * 0.5)
+                    closure = min(
+                        0.95, max(0.0, 1 - gap / geometry["gripper"]["opening_m"])
+                    )
+                    self.arm.set_gripper(closure, guard=guard)
                 elif stage == "RELEASE":
                     self.arm.set_gripper(0, guard=guard)
                 elif target is not None:

@@ -13,7 +13,7 @@ The first deliverable is a reproducible measured-robot experiment. Learning a ne
 | 1. Inventory and measurement | Single profile, readiness checker, printable worksheet | Photographs; link/joint centers; servo labels; power-chain ratings; gripper topology |
 | 2. Digital model | Parameterized CAD/STEP/OBJ/MJCF/URDF; FK parity and collision checks | Replace provisional geometry, verify several measured poses and jaw travel |
 | 3. Actuation | Variable joint count; PCA protocol 3.0; handshake, OE, bounds, slew, timeout; PTY peer | Wiring inspection; power/current checks; polarity; cutoff; pulse calibration; repeated home tests |
-| 4. Webcam | ChArUco calibration, mat pose, metric ray-plane projection, tool/box tags, hand selection, offline speech | Calibrate the user's webcam, measure base/tag transforms, test held-out points and latency |
+| 4. Webcam | Guided camera setup at `/camera`, ChArUco calibration with capture hashes, mat pose, metric ray-plane projection, tool/box tags, hand selection, offline speech | Calibrate the user's webcam, measure base/tag transforms, test held-out points and latency |
 | 5. Task execution | Preview/token/expiry/confirmation; bounded reach and pick/place; abort and outcome verification | Shadow checks followed by slow physical reach; only then pick/place |
 | 6. Evaluation | Frozen suite, manifests, paired summaries, Wilson intervals, blank physical schedules | Actual A/B/C runs and intent/pick-place trials, with failed attempts retained |
 

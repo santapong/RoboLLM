@@ -16,6 +16,8 @@ def main():
         "docs/physical-arm/elexhub",
         "output/pdf",
         "output/elexhub-evaluation-2026-09-06",
+        "output/elexhub-model-review-2026-09-07",
+        "output/elexhub-camera-setup-review-2026-09-07",
         "src/robollm/elexhub",
         "ros2/robo_arm_driver",
         "hardware/firmware/elexhub_pca9685",
@@ -32,6 +34,8 @@ def main():
         "requirements/ros-constraints.txt",
         "tests/conftest.py",
         "tests/unit/test_elexhub.py",
+        "tests/unit/test_elexhub_camera_setup.py",
+        "tests/unit/test_arm_driver_foundation.py",
         "output/final-unit-tests.txt",
         "output/final-lint.txt",
     ]

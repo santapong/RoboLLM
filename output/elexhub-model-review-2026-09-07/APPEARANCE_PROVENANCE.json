@@ -1,0 +1,52 @@
+{
+  "revision": "elexhub-black-metal-photo-v1",
+  "checked_date": "2026-09-07",
+  "variant": "black metal kit, rectangular two-plate base, linkage claw",
+  "variant_confirmation": "user confirmed matching variant on 2026-09-07",
+  "sources": [
+    {
+      "url": "https://elexhub.com/shop/XvAAPZ",
+      "use": "kit identity and photographs"
+    },
+    {
+      "url": "https://elexhub.com/shop/KMPxZc",
+      "use": "six MG996 motor variant listing"
+    },
+    {
+      "url": "https://elexhub.com/images/items/XvAAPZ0.jpg",
+      "use": "base, U brackets, exposed servos, fasteners and claw"
+    },
+    {
+      "url": "https://elexhub.com/images/items/XvAAPZ1.jpg",
+      "use": "front claw and servo arrangement"
+    },
+    {
+      "url": "https://elexhub.com/images/items/XvAAPZ2.jpg",
+      "use": "side structure, bearing discs and cable routing"
+    },
+    {
+      "url": "https://towerpro.com.tw/product/mg996R/",
+      "use": "nominal servo envelope reference only; user's servo model unverified"
+    }
+  ],
+  "servo_reference_envelope_mm": [
+    40.7,
+    19.7,
+    42.9
+  ],
+  "estimated_visual_parameters_mm": {
+    "plate_thickness": 2.0,
+    "yoke_outer_width": 51.0,
+    "bearing_disc_diameter": 18.0,
+    "mounting_hole_diameter": 3.2,
+    "base_plate_separation": 20.0,
+    "claw_opening": 55.0,
+    "claw_length": 65.0
+  },
+  "metric_accuracy": "unverified; photos are perspective references, not metrology",
+  "physics": "provisional joint centres and dynamics; claw opening/length revised to photo estimates; collision proxies remain simplified",
+  "gripper": "linkage appearance at open pose; coupled sliding contact jaws remain an approximation",
+  "cables": "illustrative local routing, not a deformable cable simulation",
+  "hardware_ready": false,
+  "remote_media_vendored": false
+}

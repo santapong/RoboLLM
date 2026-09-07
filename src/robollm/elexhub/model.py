@@ -9,11 +9,14 @@ from __future__ import annotations
 import json
 import math
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
 import trimesh
 from robo_arm_driver.config import ArmConfig, ConfigError
+
+from . import appearance
 
 
 def vec(value) -> str:
@@ -105,42 +108,6 @@ def mat_to_base(config, xy, height=0.0):
     )
 
 
-def components(link):
-    """Simple editable solids: servo body and two metal side plates, in metres."""
-    w, d, length = (link[k] for k in ["width_m", "depth_m", "length_m"])
-    plate = 0.002
-    return [
-        {
-            "name": "servo",
-            "kind": "box",
-            "size": [w * 0.78, d, min(0.035, length * 0.6)],
-            "center": [0, 0, min(0.035, length * 0.6) / 2],
-            "color": [0.12, 0.14, 0.17, 1],
-        },
-        {
-            "name": "plate_left",
-            "kind": "box",
-            "size": [plate, d, length],
-            "center": [-w / 2 + plate / 2, 0, length / 2],
-            "color": [0.65, 0.69, 0.73, 1],
-        },
-        {
-            "name": "plate_right",
-            "kind": "box",
-            "size": [plate, d, length],
-            "center": [w / 2 - plate / 2, 0, length / 2],
-            "color": [0.65, 0.69, 0.73, 1],
-        },
-        {
-            "name": "crossbar",
-            "kind": "box",
-            "size": [w, d, plate],
-            "center": [0, 0, length - plate / 2],
-            "color": [0.82, 0.44, 0.13, 1],
-        },
-    ]
-
-
 def build_assets(config: ArmConfig, out: Path) -> dict:
     g = geometry(config)
     out.mkdir(parents=True, exist_ok=True)
@@ -148,72 +115,93 @@ def build_assets(config: ArmConfig, out: Path) -> dict:
     meshes.mkdir(exist_ok=True)
     home = [j.raw_to_rad(j.home_deg) for j in config.joints]
     frames, _ = forward(config, home)
+    solids_by_body = appearance.parts(g)
+    visual_meshes = appearance.export_meshes(solids_by_body, meshes)
     descriptor = {
         "profile_hash": config.profile_hash,
         "status": g["status"],
         "units": "m",
-        "notice": g.get("notice", ""),
+        "notice": "Photo-referenced appearance; dimensions and dynamics remain provisional. "
+        + g.get("notice", ""),
+        "appearance": appearance.REFERENCE,
+        "visual_meshes": visual_meshes,
         "parts": [],
     }
-    for link in g["links"]:
-        solids = components(link)
-        mesh_parts = []
-        for solid in solids:
-            mesh = trimesh.creation.box(extents=solid["size"])
-            mesh.apply_translation(solid["center"])
-            mesh_parts.append(mesh)
-        trimesh.util.concatenate(mesh_parts).export(meshes / f"{link['name']}.obj")
-        descriptor["parts"].append(
-            {
-                "name": link["name"],
-                "frame": frames[link["name"]].tolist(),
-                "solids": solids,
-                "joint": link["joint"],
-                "axis": link["axis"],
-            }
-        )
-    base = {
-        "name": "base",
-        "frame": np.eye(4).tolist(),
-        "solids": [
-            {
-                "name": "foot",
-                "kind": "box",
-                "size": g["base_size_m"],
-                "center": [0, 0, g["base_size_m"][2] / 2],
-                "color": [0.24, 0.28, 0.33, 1],
-            }
-        ],
-    }
-    descriptor["parts"].insert(0, base)
+    frames["base"] = np.eye(4)
     grip = g["gripper"]
     for sign, name in [(-1, "finger_left"), (1, "finger_right")]:
-        descriptor["parts"].append(
+        frames[name] = frames[g["links"][-1]["name"]] @ transform(
+            [
+                0,
+                sign * (grip["opening_m"] + grip["finger_width_m"]) / 2,
+                g["links"][-1]["length_m"],
+            ]
+        )
+    links = {link["name"]: link for link in g["links"]}
+    scene = trimesh.Scene()
+    for name, solids in solids_by_body.items():
+        part = {"name": name, "frame": frames[name].tolist(), "solids": solids}
+        if name in links:
+            part.update(joint=links[name]["joint"], axis=links[name]["axis"])
+        descriptor["parts"].append(part)
+        groups = defaultdict(list)
+        for solid in solids:
+            mesh = appearance.mesh_for(solid)
+            world_mesh = mesh.copy()
+            world_mesh.apply_transform(frames[name])
+            solid["world_mesh_bounds_m"] = world_mesh.bounds.tolist()
+            groups[solid["material"]].append(mesh)
+        for material, items in groups.items():
+            mesh = trimesh.util.concatenate(items)
+            mesh.visual = trimesh.visual.TextureVisuals(
+                material=trimesh.visual.material.PBRMaterial(
+                    name=material,
+                    baseColorFactor=np.array(appearance.MATERIALS[material]) * 255,
+                    metallicFactor=0.6 if material in {"steel", "anodized"} else 0.0,
+                    roughnessFactor=0.36 if material == "steel" else 0.65,
+                )
+            )
+            scene.add_geometry(
+                mesh, node_name=name + "_" + material, transform=frames[name]
+            )
+    viewer = {
+        "meshes": [],
+        "center": scene.bounds.mean(axis=0).tolist(),
+        "radius": float(np.linalg.norm(scene.extents) / 2),
+        "dimensions": {
+            "Base collision footprint": f"{g['base_size_m'][0] * 1000:g} × {g['base_size_m'][1] * 1000:g} mm (estimate; visual plates have a narrower outline)",
+            "Upper arm / forearm": f"{g['links'][1]['length_m'] * 1000:g} / {g['links'][2]['length_m'] * 1000:g} mm (joint spacing unverified)",
+            "Claw opening / length": f"{grip['opening_m'] * 1000:g} / {grip['finger_length_m'] * 1000:g} mm (photo estimates)",
+            "Servo reference": "40.7 × 19.7 × 42.9 mm; actual motor unverified",
+        },
+    }
+    for node in scene.graph.nodes_geometry:
+        pose, mesh_name = scene.graph[node]
+        mesh = scene.geometry[mesh_name].copy()
+        material = mesh.visual.material.name
+        mesh.apply_transform(pose)
+        viewer["meshes"].append(
             {
-                "name": name,
-                "frame": frames[g["links"][-1]["name"]].tolist(),
-                "solids": [
-                    {
-                        "name": "jaw",
-                        "kind": "box",
-                        "size": [
-                            grip["finger_depth_m"],
-                            grip["finger_width_m"],
-                            grip["finger_length_m"],
-                        ],
-                        "center": [
-                            0,
-                            sign * (grip["opening_m"] + grip["finger_width_m"]) / 2,
-                            g["links"][-1]["length_m"] + grip["finger_length_m"] / 2,
-                        ],
-                        "color": [0.20, 0.24, 0.29, 1],
-                    }
-                ],
+                "positions": mesh.vertices.round(7).ravel().tolist(),
+                "normals": mesh.vertex_normals.round(5).ravel().tolist(),
+                "indices": mesh.faces.ravel().tolist(),
+                "color": appearance.MATERIALS[material],
             }
         )
+    template = Path(__file__).with_name("model_viewer.html").read_text()
+    (out / "model.html").write_text(
+        template.replace("__MODEL_DATA__", json.dumps(viewer, separators=(",", ":")))
+    )
+    # glTF viewers conventionally use +Y up; CAD/MuJoCo/URDF use +Z up.
+    gltf = scene.copy()
+    gltf.apply_transform(transform(rot=rotation([1, 0, 0], -math.pi / 2)))
+    gltf.export(out / "elexhub.glb")
     (out / "cad-description.json").write_text(json.dumps(descriptor, indent=2) + "\n")
-    (out / "elexhub.xml").write_text(mjcf(config))
-    (out / "elexhub.urdf").write_text(urdf(config))
+    (out / "elexhub.xml").write_text(mjcf(config, visual_meshes))
+    (out / "elexhub.urdf").write_text(urdf(config, visual_meshes))
+    (out / "APPEARANCE_PROVENANCE.json").write_text(
+        json.dumps(appearance.REFERENCE, indent=2) + "\n"
+    )
     (out / "MODEL_STATUS.json").write_text(
         json.dumps(
             {
@@ -225,6 +213,10 @@ def build_assets(config: ArmConfig, out: Path) -> dict:
                 "notice": g.get("notice", ""),
                 "inertias": "box approximations; not system-identified",
                 "joint_names": config.joint_names,
+                "appearance_revision": appearance.REVISION,
+                "appearance_source": "Elexhub product photographs; user confirmed kit variant",
+                "dimensions_verified": False,
+                "collision_geometry": "provisional proxies; decorative parts are not collision geometry",
             },
             indent=2,
         )
@@ -238,7 +230,35 @@ def _xml(root):
     return ET.tostring(root, encoding="unicode") + "\n"
 
 
-def mjcf(config):
+def _visuals(parent, records, *, urdf=False):
+    for record in records:
+        if urdf:
+            visual = ET.SubElement(parent, "visual", name=record["name"])
+            ET.SubElement(
+                ET.SubElement(visual, "geometry"),
+                "mesh",
+                filename=f"meshes/{record['name']}.obj",
+            )
+            material = ET.SubElement(visual, "material", name=record["material"])
+            ET.SubElement(
+                material, "color", rgba=vec(appearance.MATERIALS[record["material"]])
+            )
+        else:
+            ET.SubElement(
+                parent,
+                "geom",
+                name=record["name"] + "_visual",
+                type="mesh",
+                mesh=record["name"],
+                material=record["material"],
+                mass="0",
+                contype="0",
+                conaffinity="0",
+                group="1",
+            )
+
+
+def mjcf(config, visual_meshes):
     g = geometry(config)
     root = ET.Element("mujoco", model="elexhub_" + g["status"])
     ET.SubElement(root, "compiler", angle="radian", autolimits="true")
@@ -252,9 +272,30 @@ def mjcf(config):
     ET.SubElement(default, "joint", damping="0.04", armature="0.002")
     ET.SubElement(default, "geom", friction="1.2 0.01 0.001", condim="4")
     asset = ET.SubElement(root, "asset")
-    for link in g["links"]:
+    ET.SubElement(
+        asset,
+        "texture",
+        name="studio_sky",
+        type="skybox",
+        builtin="flat",
+        width="256",
+        height="1536",
+        rgb1=".93 .95 .96",
+        rgb2=".93 .95 .96",
+    )
+    for records in visual_meshes.values():
+        for record in records:
+            ET.SubElement(
+                asset, "mesh", name=record["name"], file=f"meshes/{record['name']}.obj"
+            )
+    for name, color in appearance.MATERIALS.items():
         ET.SubElement(
-            asset, "mesh", name=link["name"], file=f"meshes/{link['name']}.obj"
+            asset,
+            "material",
+            name=name,
+            rgba=vec(color),
+            specular="0.6" if name == "steel" else "0.25",
+            shininess="0.4",
         )
     ET.SubElement(
         asset,
@@ -271,7 +312,12 @@ def mjcf(config):
         asset, "material", name="floor_mat", texture="floor_tex", texrepeat="8 8"
     )
     world = ET.SubElement(root, "worldbody")
-    ET.SubElement(world, "light", pos="0 -.3 1", diffuse=".8 .8 .8")
+    ET.SubElement(
+        world, "light", pos="0 -.3 1", diffuse=".8 .8 .8", ambient=".28 .28 .28"
+    )
+    ET.SubElement(
+        world, "light", pos="-.3 .4 .7", diffuse=".55 .55 .55", castshadow="false"
+    )
     ET.SubElement(
         world,
         "geom",
@@ -294,6 +340,7 @@ def mjcf(config):
         conaffinity="0",
     )
     base = ET.SubElement(world, "body", name="base")
+    _visuals(base, visual_meshes["base"])
     ET.SubElement(
         base,
         "geom",
@@ -301,7 +348,8 @@ def mjcf(config):
         type="box",
         size=vec(np.array(g["base_size_m"]) / 2),
         pos=vec([0, 0, g["base_size_m"][2] / 2]),
-        rgba=".2 .24 .3 1",
+        rgba="0 0 0 0",
+        group="3",
     )
     parent = base
     contact = ET.SubElement(root, "contact")
@@ -338,17 +386,7 @@ def mjcf(config):
             mass=str(link["mass_kg"]),
             diaginertia=vec(inertia),
         )
-        ET.SubElement(
-            body,
-            "geom",
-            name=link["name"] + "_visual",
-            type="mesh",
-            mesh=link["name"],
-            rgba=".55 .61 .67 1",
-            contype="0",
-            conaffinity="0",
-            group="1",
-        )
+        _visuals(body, visual_meshes[link["name"]])
         ET.SubElement(
             body,
             "geom",
@@ -403,6 +441,7 @@ def mjcf(config):
             range=vec([0, grip["opening_m"] / 2]),
             damping="1",
         )
+        _visuals(body, visual_meshes[name])
         ET.SubElement(
             body,
             "geom",
@@ -417,7 +456,8 @@ def mjcf(config):
             ),
             pos=vec([0, 0, grip["finger_length_m"] / 2]),
             mass=str(grip["finger_mass_kg"]),
-            rgba=".18 .2 .23 1",
+            rgba="0 0 0 0",
+            group="3",
             friction="2 0.01 0.001",
         )
         ET.SubElement(contact, "exclude", body1=parent.get("name"), body2=name)
@@ -469,22 +509,15 @@ def mjcf(config):
     return _xml(root)
 
 
-def urdf(config):
+def urdf(config, visual_meshes):
     g = geometry(config)
     root = ET.Element("robot", name="elexhub_" + g["status"])
     base = ET.SubElement(root, "link", name="base_link")
-    vis = ET.SubElement(base, "visual")
-    ET.SubElement(vis, "origin", xyz=vec([0, 0, g["base_size_m"][2] / 2]))
-    ET.SubElement(ET.SubElement(vis, "geometry"), "box", size=vec(g["base_size_m"]))
+    _visuals(base, visual_meshes["base"], urdf=True)
     parent = "base_link"
     for i, (link, j) in enumerate(zip(g["links"], config.joints)):
         node = ET.SubElement(root, "link", name=link["name"])
-        visual = ET.SubElement(node, "visual")
-        ET.SubElement(
-            ET.SubElement(visual, "geometry"),
-            "mesh",
-            filename=f"meshes/{link['name']}.obj",
-        )
+        _visuals(node, visual_meshes[link["name"]], urdf=True)
         dims = np.array([link["width_m"], link["depth_m"], link["length_m"]])
         c = [0, 0, dims[2] / 2]
         collision = ET.SubElement(node, "collision")
@@ -538,7 +571,8 @@ def urdf(config):
     grip = g["gripper"]
     for sign, name in [(-1, "finger_left"), (1, "finger_right")]:
         node = ET.SubElement(root, "link", name=name)
-        for kind in ["visual", "collision"]:
+        _visuals(node, visual_meshes[name], urdf=True)
+        for kind in ["collision"]:
             v = ET.SubElement(node, kind)
             ET.SubElement(v, "origin", xyz=vec([0, 0, grip["finger_length_m"] / 2]))
             ET.SubElement(

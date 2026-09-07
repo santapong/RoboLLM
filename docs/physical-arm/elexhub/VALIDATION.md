@@ -1,5 +1,7 @@
 # Validation record — 2026-09-06
 
+Historical record for the original provisional model. The later photo-referenced model, revised claw/setup and fresh checks are documented in [MODEL-REVIEW-2026-09-07.md](MODEL-REVIEW-2026-09-07.md). The frozen evaluator and raw results below remain unchanged.
+
 This record covers software and generated artifacts in `experiment/elexhub-webcam`, based on develop `838eafe`. It is not a physical-robot commissioning certificate.
 
 | Check | Observed result |

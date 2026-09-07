@@ -9,7 +9,10 @@ import json
 import os
 import subprocess
 import sys
+import threading
+import time
 import wave
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -19,6 +22,7 @@ import cv2
 import mujoco
 import numpy as np
 import pytest
+import trimesh
 from robo_arm_driver.arm_serial import ArmSerial, FirmwareError
 from robo_arm_driver.config import ConfigError, load_arm_config
 from robo_arm_driver.elexhub_profile import hardware_gaps, load_v2
@@ -268,12 +272,57 @@ def test_mujoco_kinematics_match_independent_chain(arm):
     assert arm.model.nq == 14
 
 
+def test_photo_model_export_frames_and_visual_physics_boundary(arm, tmp_path):
+    directory = tmp_path / "model"
+    descriptor = json.loads((directory / "cad-description.json").read_text())
+    status = json.loads((directory / "MODEL_STATUS.json").read_text())
+    assert status["hardware_ready"] is False
+    assert status["dimensions_verified"] is False
+    assert descriptor["appearance"]["remote_media_vendored"] is False
+    for part in descriptor["parts"]:
+        pose = np.asarray(part["frame"])
+        np.testing.assert_allclose(
+            pose[:3, 3], arm.data.body(part["name"]).xpos, atol=1e-8
+        )
+        np.testing.assert_allclose(
+            pose[:3, :3], arm.data.body(part["name"]).xmat.reshape(3, 3), atol=1e-8
+        )
+    for link in arm.geometry["links"]:
+        assert arm.model.body(link["name"]).mass == pytest.approx(link["mass_kg"])
+    for name in ["finger_left", "finger_right"]:
+        assert arm.model.body(name).mass == pytest.approx(
+            arm.geometry["gripper"]["finger_mass_kg"]
+        )
+    visual = arm.model.geom_group == 1
+    assert visual.any()
+    assert np.all(arm.model.geom_contype[visual] == 0)
+    assert np.all(arm.model.geom_conaffinity[visual] == 0)
+    robot = ET.parse(directory / "elexhub.urdf")
+    for mesh in robot.findall(".//visual/geometry/mesh"):
+        path = directory / mesh.attrib["filename"]
+        loaded = trimesh.load_mesh(path)
+        assert loaded.is_watertight and loaded.volume > 0
+    assert trimesh.load(directory / "elexhub.glb").geometry
+
+
 def test_render_and_reach(arm):
     image = arm.render()
     assert image.shape == (480, 640, 3) and image.std() > 10
     arm.reach([0.17, 0, 0.08], "C")
     assert np.linalg.norm(arm.tcp() - [0.17, 0, 0.08]) < 0.005
     assert not arm.collisions()
+
+
+def test_downward_transfer_keeps_claw_orientation(arm):
+    q = arm.home.copy()
+    orientations = []
+    for target in [[0.15, 0, 0.052], [0.15, 0, 0.01875], [0.15, 0.01, 0.052]]:
+        q = arm.solve(target, start=q, downward=True, allow_grasp=True)
+        _, frame = forward(arm.config, q)
+        orientations.append(frame[:3, :3])
+    for orientation in orientations:
+        assert orientation[2, 2] < -0.99
+        np.testing.assert_allclose(orientation, orientations[0], atol=0.025)
 
 
 @pytest.mark.parametrize(
@@ -512,3 +561,58 @@ def test_hardware_adapter_refuses_sim_profile_before_ros(arm, tmp_path):
 
     with pytest.raises(MotionRejected, match="verified physical"):
         HardwareArm(arm.config, tmp_path, None)
+
+
+def test_web_frame_availability_and_source_isolation(arm, tmp_path):
+    from fastapi.testclient import TestClient
+
+    from robollm.elexhub.web import create_app
+
+    app = create_app(arm, tmp_path)
+    client = TestClient(app)
+    assert client.get("/api/frame.jpg").status_code == 204
+    app.state.runtime.update(jpeg=b"sim-frame", jpeg_at=time.monotonic())
+    response = client.get("/api/frame.jpg")
+    assert response.status_code == 200 and response.content == b"sim-frame"
+    assert response.headers["content-type"] == "image/jpeg"
+    # Selecting an absent camera must never return the available simulator.
+    response = client.get("/api/frame.jpg?camera=true")
+    assert response.status_code == 204 and response.content == b""
+    assert response.headers["cache-control"] == "no-store"
+    app.state.runtime["jpeg_at"] = time.monotonic() - 5
+    assert client.get("/api/frame.jpg").status_code == 204
+    app.state.runtime["jpeg_at"] = time.monotonic()
+    assert client.get("/api/frame.jpg").content == b"sim-frame"
+
+
+def test_webcam_frame_disconnect_and_recovery(arm, tmp_path):
+    from fastapi.testclient import TestClient
+
+    from robollm.elexhub.capture import Webcam
+    from robollm.elexhub.web import create_app
+
+    # Feed the capture loop without opening a device or loading perception models.
+    webcam = Webcam.__new__(Webcam)
+    webcam.lock = threading.Lock()
+    webcam.stopped = threading.Event()
+    webcam.latest = {"captured_at_monotonic": time.monotonic()}
+    webcam.jpeg = b"camera-frame"
+    app = create_app(arm, tmp_path, webcam=webcam)
+    app.state.runtime.update(jpeg=b"sim-frame", jpeg_at=time.monotonic())
+    client = TestClient(app)
+    assert client.get("/api/frame.jpg?camera=true").content == b"camera-frame"
+    webcam.latest["captured_at_monotonic"] = time.monotonic() - 5
+    assert client.get("/api/frame.jpg?camera=true").status_code == 204
+
+    def disconnected():
+        webcam.stopped.set()
+        return False, None
+
+    webcam.capture = SimpleNamespace(read=disconnected)
+    webcam._run()
+    assert webcam.jpeg is None
+    assert webcam.observe()["reference_visible"] is False
+    assert client.get("/api/frame.jpg?camera=true").status_code == 204
+    webcam.latest = {"captured_at_monotonic": time.monotonic()}
+    webcam.jpeg = b"recovered-frame"
+    assert client.get("/api/frame.jpg?camera=true").content == b"recovered-frame"

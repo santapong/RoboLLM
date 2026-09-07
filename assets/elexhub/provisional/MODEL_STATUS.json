@@ -1,8 +1,8 @@
 {
-  "profile_hash": "65d73d75c3840842e1f03644",
+  "profile_hash": "15f8e3f40ebaa9bca8bd4f1f",
   "geometry_status": "provisional",
   "hardware_ready": false,
-  "notice": "Illustrative dimensions, NOT measured Elexhub CAD. Replace after joint-center and mass measurements.",
+  "notice": "Photo-referenced black metal kit; dimensions are estimates, NOT measured Elexhub CAD. Claw opening/length estimates were revised on 2026-09-07. Replace after joint-center, claw and mass measurements.",
   "inertias": "box approximations; not system-identified",
   "joint_names": [
     "base_yaw",
@@ -10,5 +10,9 @@
     "elbow",
     "wrist_pitch",
     "wrist_roll"
-  ]
+  ],
+  "appearance_revision": "elexhub-black-metal-photo-v1",
+  "appearance_source": "Elexhub product photographs; user confirmed kit variant",
+  "dimensions_verified": false,
+  "collision_geometry": "provisional proxies; decorative parts are not collision geometry"
 }

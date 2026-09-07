@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict
 from robo_arm_driver.elexhub_profile import hardware_gaps
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from .camera_setup import CameraSetup, camera_router
 from .interaction import TaskExecutor, parse_instruction, select_pointed_object
 from .model import mat_to_base
 
@@ -42,8 +43,10 @@ class SelectionRequest(BaseModel):
     pixel: list[float] | None = None
 
 
-def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
+def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=None):
     root = Path(root)
+    setup = camera_setup or CameraSetup(root)
+    setup.enabled = setup.enabled and mode == "sim" and webcam is None
     sessions = root / "output/elexhub-sessions"
     sessions.mkdir(parents=True, exist_ok=True)
     logfile = sessions / f"session-{time.time_ns()}.jsonl"
@@ -60,6 +63,7 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
     stopped = threading.Event()
     state = {
         "jpeg": None,
+        "jpeg_at": 0.0,
         "future": None,
         "result": None,
         "error": None,
@@ -78,7 +82,9 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
                     [cv2.IMWRITE_JPEG_QUALITY, 85],
                 )
                 if ok:
-                    state["jpeg"] = jpeg.tobytes()
+                    state.update(jpeg=jpeg.tobytes(), jpeg_at=time.monotonic())
+                else:
+                    state["jpeg"] = None
                 if (
                     mode == "hardware"
                     and getattr(arm, "enabled", False)
@@ -88,6 +94,7 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
                     state["error"] = "console connection lost; PWM disabled"
                 stopped.wait(0.08)
         finally:
+            state["jpeg"] = None
             arm.close()
 
     thread = threading.Thread(target=rendering, daemon=True)
@@ -102,6 +109,7 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
         thread.join(timeout=3)
         if webcam:
             webcam.close()
+        setup.close()
 
     app = FastAPI(title="Elexhub experiment console", lifespan=lifespan)
     app.add_middleware(
@@ -109,6 +117,8 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
     )
     app.state.task = task
     app.state.runtime = state
+    app.state.camera_setup = setup
+    app.include_router(camera_router(setup))
 
     @app.middleware("http")
     async def local_mutations(request: Request, call_next):
@@ -122,7 +132,7 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
         response.headers["Cache-Control"] = "no-store"
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'"
+            "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; frame-ancestors 'none'"
         )
         return response
 
@@ -137,6 +147,12 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
     @app.get("/")
     def home():
         return HTMLResponse((Path(__file__).parent / "console.html").read_text())
+
+    @app.get("/model")
+    def model_view():
+        return FileResponse(
+            root / "assets/elexhub/provisional/model.html", media_type="text/html"
+        )
 
     @app.get("/api/state")
     def status():
@@ -158,9 +174,13 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
 
     @app.get("/api/frame.jpg")
     def frame(camera: bool = False):
-        jpg = webcam.jpeg if camera and webcam else state["jpeg"]
+        if camera:
+            jpg = webcam.frame() if webcam else None
+        else:
+            jpg = state["jpeg"] if time.monotonic() - state["jpeg_at"] <= 1.0 else None
         if jpg is None:
-            raise HTTPException(503, "frame not ready")
+            # An absent feed is an ordinary empty state, never another source.
+            return Response(status_code=204)
         return Response(jpg, media_type="image/jpeg")
 
     @app.post("/api/heartbeat")
@@ -309,6 +329,7 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None):
     artifacts = {
         "cad": root / "assets/elexhub/provisional/elexhub.FCStd",
         "step": root / "assets/elexhub/provisional/elexhub.step",
+        "glb": root / "assets/elexhub/provisional/elexhub.glb",
         "sheets": root / "output/pdf/elexhub-reference-sheets.pdf",
         "wiring-pdf": root / "output/pdf/elexhub-wiring-and-measurements.pdf",
         "wiring": root / "docs/physical-arm/elexhub/wiring.html",

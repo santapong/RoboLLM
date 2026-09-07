@@ -1,5 +1,7 @@
 {
   "status": "provisional",
+  "build_id": "1788749903318836177",
+  "descriptor_sha256": "5d93e82a9b0f8e4096221fe60331e23be901f5e6c582648c23f77e98ef7e92b2",
   "freecad_version": [
     "1",
     "1",
@@ -10,12 +12,16 @@
     "grafted,grafted",
     "145529fe741292ff0b3977a01195bf0247425794"
   ],
-  "valid_solids": 23,
-  "profile_hash": "65d73d75c3840842e1f03644",
+  "valid_solids": 283,
+  "appearance_revision": "elexhub-black-metal-photo-v1",
+  "editable_features": "boxes, cylinders, bores, sketch outlines and plate extrusions",
+  "profile_hash": "15f8e3f40ebaa9bca8bd4f1f",
   "step_exported": true,
   "fcstd_saved": true,
   "fcstd_reopened": true,
   "step_reopened": true,
-  "step_volume_mm3": 479362.80000004655,
-  "global_placements_verified": true
+  "step_volume_mm3": 338295.7705584182,
+  "global_placements_verified": true,
+  "cad_mesh_bounds_tolerance_mm": 0.15,
+  "colors_saved_and_reopened": true
 }

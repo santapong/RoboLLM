@@ -35,6 +35,7 @@ class Webcam:
             stamp = time.monotonic()
             if not ok:
                 with self.lock:
+                    self.jpeg = None
                     self.latest = {
                         "error": "camera disconnected",
                         "reference_visible": False,
@@ -78,6 +79,12 @@ class Webcam:
     def observe(self):
         with self.lock:
             return dict(self.latest)
+
+    def frame(self):
+        with self.lock:
+            if time.monotonic() - self.latest.get("captured_at_monotonic", 0) > 1.0:
+                return None
+            return self.jpeg
 
     def public_observation(self):
         value = self.observe()
