@@ -1,0 +1,27 @@
+{
+  "verified_at": "2026-09-08T17:03:15.005234+00:00",
+  "source_run": "/home/santapong/RoboLLM-harness-wam/artifacts/harness-wam/pilot-2026-09-08",
+  "record_sha256": "077524fb713ff047eb50a6dcfb61fd64f56fa0522682cca1626b28faeb341da8",
+  "archived_sha256": {
+    "record.json": "077524fb713ff047eb50a6dcfb61fd64f56fa0522682cca1626b28faeb341da8",
+    "oracle.json": "a31e202098a5cd243be0ad1cdc741650a8b9c5217cb4a057cbfce3c0452a8d10",
+    "hold.json": "c23b06ec6fc296f3749e264ec7349dfbe13c7ba03d679b4e70d1f935f992b4a8",
+    "bc.json": "34097522097d2c212174b22fdad52a63a6258d4e217d3fdefbdf3eb272b3837d",
+    "bc_visibility.json": "cd0f70143525d2d980c998348fe2fa9101e37f075aec951fad199d3af009a7e9",
+    "aux_future.json": "06e4e440313c7743b41eff8a6fe67df9f17d5d05bf5b4a6d42aa20fc07bd39e2",
+    "aux_future_visibility.json": "63e13b8ede96d2ec7fd82070e1566cb6099487ab04f04093fe77210ef4e5d898",
+    "shuffled_future.json": "3a2d9d433b040fba0acd4852728b8590407f435e55e680a749990150993b87f0",
+    "shuffled_future_visibility.json": "c1a1d5e7a11e8bdc7b936b7705068145e81f1641269066ae4dc93e978476335d",
+    "bc_blank.json": "91aef9c33e98b1d3be3e5244eb596a87d11413dab3f751b01f5d4463af6986de"
+  },
+  "checks": [
+    "complete stages",
+    "oracle/hold controls",
+    "unique equal episode seeds",
+    "raw/aggregate agreement",
+    "checkpoint hashes",
+    "normalizer hash",
+    "paired comparisons"
+  ],
+  "checkpoint_files": "retained in local ignored run directory; hashes archived in record.json"
+}

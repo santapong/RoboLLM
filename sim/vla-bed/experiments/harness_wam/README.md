@@ -6,6 +6,12 @@ experiment. This intentionally inherits that work instead of starting from the
 older integration branch. The original checkout remains on
 `experiment/ur5e-vla-bed`.
 
+**Pilot completed:** [results and raw evidence](pilot-2026-09-08/RESULTS.md).
+Nine CPU training fits and 180 simulated episodes took 447.4 seconds. Predictive
+supervision improved offline errors but did not pass the closed-loop advancement
+gate. The execution started 8 September and finished 9 September 2026 (Bangkok).
+This is a recorded negative/inconclusive mechanism pilot, not a v6 improvement.
+
 ## What the terms mean
 
 | Concept | Input → output | What changes when it learns? | RoboLLM example |
@@ -28,6 +34,12 @@ action-learning objective used by SmolVLA. Reinforcement learning instead learns
 from reward-driven interaction; DAgger collects learner-visited states and asks
 an expert for labels. This pilot uses supervised imitation, with an optional
 predictive auxiliary loss. It performs neither RL nor DAgger.
+The foundational [DAgger paper, Ross et al., 1011.0686v3](https://arxiv.org/abs/1011.0686v3)
+explains why errors can move a learner away from the expert's training states;
+§3 iteratively collects learner-visited states, requests expert actions and
+aggregates the labeled dataset. Selected primary introduction/method sections
+were read; its theoretical guarantees are conditional and are not asserted for
+this pilot. RoboLLM already has a separate [DAgger driver](../../dagger.py).
 
 ## Papers and what we actually checked
 
@@ -147,8 +159,8 @@ The protocol and implementation are recorded before running the experiment.
   20 episodes. The initial command has a 15-minute process limit; partial results
   remain identifiable and must not be reported complete. Record actual costs.
 
-**Decision rule:** stop on mismatched provenance, nonfinite data/training, or
-failed oracle/hold controls. A direction merits further study only if action
+**Decision rule:** stop on mismatched provenance or nonfinite data/training;
+reject the run's scientific conclusions if oracle/hold controls fail. A direction merits further study only if action
 error improves consistently over BC across all three seeds, the correctly
 paired future objective beats shuffled targets, and closed-loop joint
 success-and-safety improves without more measured faults. A tie or failure is
@@ -178,6 +190,19 @@ are refused, preventing accidental replacement of evidence. Models and detailed
 run records stay in ignored `artifacts/`; a compact checked result is filed next
 to this protocol. Checkpoint files contain local state dictionaries; load with
 `torch.load(..., weights_only=True)`.
+
+Archive a completed run into a **new** evidence directory with:
+
+```bash
+/home/santapong/RoboLLM/.venv-lerobot/bin/python \
+  sim/vla-bed/experiments/harness_wam/summarize.py \
+  artifacts/harness-wam/pilot-2026-09-08 /tmp/harness-wam-evidence-new
+```
+
+Session verification: 24 tests passed across the new pilot, the existing
+evaluator and safety checks; Ruff passed. Input, source, manifest, checkpoint
+and normalizer SHA256 values were rechecked after execution. All nine rollout
+arms have the same 20 unique seeds and consistent raw/aggregate counts.
 
 ## Follow-up on the actual v6 VLA
 
