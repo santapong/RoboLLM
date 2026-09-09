@@ -324,7 +324,7 @@ def main(argv=None):
 
                 if not config.simulation:
                     raise ValueError("demo is simulation-only")
-                arm = SimArm(config, ROOT / "assets/elexhub/provisional")
+                arm = SimArm(config, ROOT / "assets/elexhub/provisional", rebuild=False)
                 try:
                     task = TaskExecutor(arm)
                     intent = parse_instruction(
@@ -368,14 +368,21 @@ def main(argv=None):
                         raise ValueError(
                             "simulation/shadow mode requires a simulation profile"
                         )
-                    arm = SimArm(config, ROOT / "assets/elexhub/provisional")
+                    arm = SimArm(
+                        config, ROOT / "assets/elexhub/provisional", rebuild=False
+                    )
                 speech = None
                 if args.speech_model.is_dir():
                     from .speech import Speech
 
                     speech = Speech(args.speech_model)
                 app = create_app(
-                    arm, ROOT, mode=args.mode, webcam=camera, speech=speech
+                    arm,
+                    ROOT,
+                    mode=args.mode,
+                    webcam=camera,
+                    speech=speech,
+                    hand_model=args.hand_model,
                 )
                 print(
                     f"Local {args.mode} console: http://127.0.0.1:{args.port} (hardware starts disabled)",

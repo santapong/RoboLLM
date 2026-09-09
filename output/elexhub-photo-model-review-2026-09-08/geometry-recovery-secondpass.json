@@ -1,0 +1,25 @@
+{
+  "zero_length_edges": [],
+  "failed_solids": [],
+  "failed_group_meshes": [],
+  "failed_individual_roundtrip": [],
+  "failed_combined_body_meshes": [
+    "base",
+    "turret",
+    "upper_arm",
+    "forearm",
+    "wrist",
+    "tool"
+  ],
+  "solid_count": 210,
+  "part_counts": {
+    "base": 23,
+    "turret": 28,
+    "upper_arm": 31,
+    "forearm": 51,
+    "wrist": 32,
+    "tool": 15,
+    "finger_left": 15,
+    "finger_right": 15
+  }
+}

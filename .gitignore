@@ -47,6 +47,8 @@ assets/**/*.mp4
 captures/
 output/elexhub-sessions/
 output/elexhub-bundle.zip
+output/elexhub-robot-model.zip
+output/elexhub-robot-model.sha256
 *.FCBak
 # claude harness — personal overrides stay local
 .claude/settings.local.json

@@ -11,8 +11,8 @@
     "wrist_pitch",
     "wrist_roll"
   ],
-  "appearance_revision": "elexhub-black-metal-photo-v1",
-  "appearance_source": "Elexhub product photographs; user confirmed kit variant",
+  "appearance_revision": "elexhub-owner-photo-v2",
+  "appearance_source": "Owner's five robot photographs; catalog references for component context only",
   "dimensions_verified": false,
   "collision_geometry": "provisional proxies; decorative parts are not collision geometry"
 }

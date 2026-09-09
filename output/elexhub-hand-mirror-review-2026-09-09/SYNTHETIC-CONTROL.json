@@ -1,0 +1,42 @@
+{
+  "checked_date": "2026-09-09",
+  "scope": "Synthetic normalized left-hand samples driving the local SimArm through HandMirrorController and MuJoCo; no camera or physical hardware used.",
+  "test": "tests/unit/test_elexhub_hand_control.py::test_synthetic_hand_sweep_moves_actual_tcp_and_gripper_without_rejections",
+  "command": "MUJOCO_GL=egl .venv/bin/python -m pytest tests/unit/test_elexhub_hand_control.py -k synthetic_hand_sweep -q -s",
+  "result": "1 passed, 18 deselected in 5.05s",
+  "sample_count": 120,
+  "control_interval_s": 0.05,
+  "synthetic_duration_s": 6.0,
+  "rejected_steps": 0,
+  "tcp_span_m": [
+    0.016557069730808616,
+    0.024792362563002348,
+    0.024472734137405305
+  ],
+  "final_target_m": [
+    0.18193908271676248,
+    0.0,
+    0.16129020886567572
+  ],
+  "final_actual_tcp_m": [
+    0.1814589634450492,
+    -0.0013691278279211493,
+    0.16057565638172425
+  ],
+  "final_target_error_m": 0.0016172850016554908,
+  "gripper_closure_range": [0.0, 1.0],
+  "gripper_convention": "0 open, 1 closed",
+  "related_validation": {
+    "command": "MUJOCO_GL=egl .venv/bin/python -m pytest tests/unit/test_elexhub_hand_control.py -q",
+    "result": "18 passed in 6.99s before the synthetic sweep test was added",
+    "checks": [
+      "Existing assets load without rebuild and source artifact hashes remain unchanged",
+      "Sample validation rejects wrong handedness, low confidence, invalid coordinates, and stale/future timestamps",
+      "Acquisition, recentering, and reacquisition anchor at current TCP",
+      "Heartbeat expiry requires explicit restart",
+      "Real physics tracks a small target from home with bounded joint and gripper command rates and no contacts",
+      "Expired samples and collision rejection do not commit trial physics",
+      "Stop returns promptly while sample retrieval is blocked and prevents late motion"
+    ]
+  }
+}

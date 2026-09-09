@@ -1,0 +1,248 @@
+{
+  "baseline": [
+    {
+      "body": "base",
+      "shared_vertices": [
+        {
+          "solids": [
+            "base_yaw_servo_back_cap",
+            "base_yaw_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "base_yaw_servo_case",
+            "base_yaw_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "turret",
+      "shared_vertices": [
+        {
+          "solids": [
+            "shoulder_servo_back_cap",
+            "shoulder_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "shoulder_servo_case",
+            "shoulder_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "upper_arm",
+      "shared_vertices": [
+        {
+          "solids": [
+            "elbow_servo_back_cap",
+            "elbow_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "elbow_servo_case",
+            "elbow_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "forearm",
+      "shared_vertices": [
+        {
+          "solids": [
+            "wrist_pitch_servo_back_cap",
+            "wrist_pitch_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "wrist_pitch_servo_case",
+            "wrist_pitch_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "wrist",
+      "shared_vertices": [
+        {
+          "solids": [
+            "wrist_roll_servo_back_cap",
+            "wrist_roll_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "wrist_roll_servo_case",
+            "wrist_roll_servo_gear_cap"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "roll_horn",
+            "wrist_roll_servo_shaft"
+          ],
+          "count": 1
+        }
+      ]
+    },
+    {
+      "body": "tool",
+      "shared_vertices": [
+        {
+          "solids": [
+            "gripper_servo_back_cap",
+            "gripper_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "gripper_servo_case",
+            "gripper_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "current": [
+    {
+      "body": "base",
+      "shared_vertices": [
+        {
+          "solids": [
+            "base_yaw_servo_back_cap",
+            "base_yaw_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "base_yaw_servo_case",
+            "base_yaw_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "turret",
+      "shared_vertices": [
+        {
+          "solids": [
+            "shoulder_servo_back_cap",
+            "shoulder_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "shoulder_servo_case",
+            "shoulder_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "upper_arm",
+      "shared_vertices": [
+        {
+          "solids": [
+            "elbow_servo_back_cap",
+            "elbow_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "elbow_servo_case",
+            "elbow_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "forearm",
+      "shared_vertices": [
+        {
+          "solids": [
+            "wrist_pitch_servo_back_cap",
+            "wrist_pitch_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "wrist_pitch_servo_case",
+            "wrist_pitch_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    },
+    {
+      "body": "wrist",
+      "shared_vertices": [
+        {
+          "solids": [
+            "wrist_roll_servo_back_cap",
+            "wrist_roll_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "wrist_roll_servo_case",
+            "wrist_roll_servo_gear_cap"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "roll_horn",
+            "wrist_roll_servo_shaft"
+          ],
+          "count": 1
+        }
+      ]
+    },
+    {
+      "body": "tool",
+      "shared_vertices": [
+        {
+          "solids": [
+            "gripper_servo_back_cap",
+            "gripper_servo_case"
+          ],
+          "count": 4
+        },
+        {
+          "solids": [
+            "gripper_servo_case",
+            "gripper_servo_gear_cap"
+          ],
+          "count": 4
+        }
+      ]
+    }
+  ]
+}

@@ -11,46 +11,48 @@
   <asset>
     <texture name="studio_sky" type="skybox" builtin="flat" width="256" height="1536" rgb1=".93 .95 .96" rgb2=".93 .95 .96" />
     <mesh name="base__anodized" file="meshes/base__anodized.obj" />
-    <mesh name="base__rubber" file="meshes/base__rubber.obj" />
     <mesh name="base__steel" file="meshes/base__steel.obj" />
     <mesh name="base__servo" file="meshes/base__servo.obj" />
     <mesh name="base__cap" file="meshes/base__cap.obj" />
+    <mesh name="base__brown" file="meshes/base__brown.obj" />
+    <mesh name="base__red" file="meshes/base__red.obj" />
+    <mesh name="base__orange" file="meshes/base__orange.obj" />
     <mesh name="turret__anodized" file="meshes/turret__anodized.obj" />
     <mesh name="turret__steel" file="meshes/turret__steel.obj" />
-    <mesh name="turret__rubber" file="meshes/turret__rubber.obj" />
+    <mesh name="turret__servo" file="meshes/turret__servo.obj" />
+    <mesh name="turret__cap" file="meshes/turret__cap.obj" />
     <mesh name="turret__brown" file="meshes/turret__brown.obj" />
     <mesh name="turret__red" file="meshes/turret__red.obj" />
     <mesh name="turret__orange" file="meshes/turret__orange.obj" />
-    <mesh name="turret__servo" file="meshes/turret__servo.obj" />
-    <mesh name="turret__cap" file="meshes/turret__cap.obj" />
+    <mesh name="turret__rubber" file="meshes/turret__rubber.obj" />
     <mesh name="upper_arm__anodized" file="meshes/upper_arm__anodized.obj" />
     <mesh name="upper_arm__steel" file="meshes/upper_arm__steel.obj" />
-    <mesh name="upper_arm__rubber" file="meshes/upper_arm__rubber.obj" />
     <mesh name="upper_arm__brown" file="meshes/upper_arm__brown.obj" />
     <mesh name="upper_arm__red" file="meshes/upper_arm__red.obj" />
     <mesh name="upper_arm__orange" file="meshes/upper_arm__orange.obj" />
+    <mesh name="upper_arm__rubber" file="meshes/upper_arm__rubber.obj" />
     <mesh name="upper_arm__servo" file="meshes/upper_arm__servo.obj" />
     <mesh name="upper_arm__cap" file="meshes/upper_arm__cap.obj" />
     <mesh name="forearm__anodized" file="meshes/forearm__anodized.obj" />
     <mesh name="forearm__steel" file="meshes/forearm__steel.obj" />
-    <mesh name="forearm__rubber" file="meshes/forearm__rubber.obj" />
+    <mesh name="forearm__servo" file="meshes/forearm__servo.obj" />
+    <mesh name="forearm__cap" file="meshes/forearm__cap.obj" />
     <mesh name="forearm__brown" file="meshes/forearm__brown.obj" />
     <mesh name="forearm__red" file="meshes/forearm__red.obj" />
     <mesh name="forearm__orange" file="meshes/forearm__orange.obj" />
-    <mesh name="forearm__servo" file="meshes/forearm__servo.obj" />
-    <mesh name="forearm__cap" file="meshes/forearm__cap.obj" />
+    <mesh name="forearm__rubber" file="meshes/forearm__rubber.obj" />
     <mesh name="wrist__anodized" file="meshes/wrist__anodized.obj" />
     <mesh name="wrist__steel" file="meshes/wrist__steel.obj" />
-    <mesh name="wrist__rubber" file="meshes/wrist__rubber.obj" />
     <mesh name="wrist__brown" file="meshes/wrist__brown.obj" />
     <mesh name="wrist__red" file="meshes/wrist__red.obj" />
     <mesh name="wrist__orange" file="meshes/wrist__orange.obj" />
+    <mesh name="wrist__rubber" file="meshes/wrist__rubber.obj" />
     <mesh name="wrist__servo" file="meshes/wrist__servo.obj" />
     <mesh name="wrist__cap" file="meshes/wrist__cap.obj" />
     <mesh name="tool__anodized" file="meshes/tool__anodized.obj" />
+    <mesh name="tool__steel" file="meshes/tool__steel.obj" />
     <mesh name="tool__servo" file="meshes/tool__servo.obj" />
     <mesh name="tool__cap" file="meshes/tool__cap.obj" />
-    <mesh name="tool__steel" file="meshes/tool__steel.obj" />
     <mesh name="finger_left__anodized" file="meshes/finger_left__anodized.obj" />
     <mesh name="finger_left__steel" file="meshes/finger_left__steel.obj" />
     <mesh name="finger_right__anodized" file="meshes/finger_right__anodized.obj" />
@@ -73,32 +75,34 @@
     <geom name="mat" type="box" pos="0.17 0 0.0001" size="0.06 0.09 0.0001" rgba=".95 .95 .92 1" contype="0" conaffinity="0" />
     <body name="base">
       <geom name="base__anodized_visual" type="mesh" mesh="base__anodized" material="anodized" mass="0" contype="0" conaffinity="0" group="1" />
-      <geom name="base__rubber_visual" type="mesh" mesh="base__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
       <geom name="base__steel_visual" type="mesh" mesh="base__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
       <geom name="base__servo_visual" type="mesh" mesh="base__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
       <geom name="base__cap_visual" type="mesh" mesh="base__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
+      <geom name="base__brown_visual" type="mesh" mesh="base__brown" material="brown" mass="0" contype="0" conaffinity="0" group="1" />
+      <geom name="base__red_visual" type="mesh" mesh="base__red" material="red" mass="0" contype="0" conaffinity="0" group="1" />
+      <geom name="base__orange_visual" type="mesh" mesh="base__orange" material="orange" mass="0" contype="0" conaffinity="0" group="1" />
       <geom name="base_collision" type="box" size="0.0525 0.0525 0.0125" pos="0 0 0.0125" rgba="0 0 0 0" group="3" />
       <body name="turret" pos="0 0 0.025">
         <joint name="base_yaw" type="hinge" axis="0 0 1" range="-1.3962634 1.3962634" />
         <inertial pos="0 0 0.0275" mass="0.12" diaginertia="4.625e-05 5.05e-05 3.625e-05" />
         <geom name="turret__anodized_visual" type="mesh" mesh="turret__anodized" material="anodized" mass="0" contype="0" conaffinity="0" group="1" />
         <geom name="turret__steel_visual" type="mesh" mesh="turret__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
-        <geom name="turret__rubber_visual" type="mesh" mesh="turret__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
+        <geom name="turret__servo_visual" type="mesh" mesh="turret__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
+        <geom name="turret__cap_visual" type="mesh" mesh="turret__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
         <geom name="turret__brown_visual" type="mesh" mesh="turret__brown" material="brown" mass="0" contype="0" conaffinity="0" group="1" />
         <geom name="turret__red_visual" type="mesh" mesh="turret__red" material="red" mass="0" contype="0" conaffinity="0" group="1" />
         <geom name="turret__orange_visual" type="mesh" mesh="turret__orange" material="orange" mass="0" contype="0" conaffinity="0" group="1" />
-        <geom name="turret__servo_visual" type="mesh" mesh="turret__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
-        <geom name="turret__cap_visual" type="mesh" mesh="turret__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
+        <geom name="turret__rubber_visual" type="mesh" mesh="turret__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
         <geom name="turret_collision" type="capsule" fromto="0 0 0.008 0 0 0.047" size="0.0172" rgba="0 0 0 0" group="3" />
         <body name="upper_arm" pos="0 0 0.055">
           <joint name="shoulder" type="hinge" axis="0 1 0" range="-1.3962634 1.3962634" />
           <inertial pos="0 0 0.0525" mass="0.16" diaginertia="0.000157453333 0.000166253333 2.97066667e-05" />
           <geom name="upper_arm__anodized_visual" type="mesh" mesh="upper_arm__anodized" material="anodized" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm__steel_visual" type="mesh" mesh="upper_arm__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
-          <geom name="upper_arm__rubber_visual" type="mesh" mesh="upper_arm__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm__brown_visual" type="mesh" mesh="upper_arm__brown" material="brown" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm__red_visual" type="mesh" mesh="upper_arm__red" material="red" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm__orange_visual" type="mesh" mesh="upper_arm__orange" material="orange" mass="0" contype="0" conaffinity="0" group="1" />
+          <geom name="upper_arm__rubber_visual" type="mesh" mesh="upper_arm__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm__servo_visual" type="mesh" mesh="upper_arm__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm__cap_visual" type="mesh" mesh="upper_arm__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
           <geom name="upper_arm_collision" type="capsule" fromto="0 0 0.008 0 0 0.097" size="0.01204" rgba="0 0 0 0" group="3" />
@@ -107,22 +111,22 @@
             <inertial pos="0 0 0.05" mass="0.13" diaginertia="0.000116826667 0.000119426667 1.95866667e-05" />
             <geom name="forearm__anodized_visual" type="mesh" mesh="forearm__anodized" material="anodized" mass="0" contype="0" conaffinity="0" group="1" />
             <geom name="forearm__steel_visual" type="mesh" mesh="forearm__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
-            <geom name="forearm__rubber_visual" type="mesh" mesh="forearm__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
+            <geom name="forearm__servo_visual" type="mesh" mesh="forearm__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
+            <geom name="forearm__cap_visual" type="mesh" mesh="forearm__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
             <geom name="forearm__brown_visual" type="mesh" mesh="forearm__brown" material="brown" mass="0" contype="0" conaffinity="0" group="1" />
             <geom name="forearm__red_visual" type="mesh" mesh="forearm__red" material="red" mass="0" contype="0" conaffinity="0" group="1" />
             <geom name="forearm__orange_visual" type="mesh" mesh="forearm__orange" material="orange" mass="0" contype="0" conaffinity="0" group="1" />
-            <geom name="forearm__servo_visual" type="mesh" mesh="forearm__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
-            <geom name="forearm__cap_visual" type="mesh" mesh="forearm__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
+            <geom name="forearm__rubber_visual" type="mesh" mesh="forearm__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
             <geom name="forearm_collision" type="capsule" fromto="0 0 0.008 0 0 0.092" size="0.01204" rgba="0 0 0 0" group="3" />
             <body name="wrist" pos="0 0 0.1">
               <joint name="wrist_pitch" type="hinge" axis="0 1 0" range="-1.22173048 1.57079633" />
               <inertial pos="0 0 0.0225" mass="0.085" diaginertia="2.30208333e-05 2.45720833e-05 1.89054167e-05" />
               <geom name="wrist__anodized_visual" type="mesh" mesh="wrist__anodized" material="anodized" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist__steel_visual" type="mesh" mesh="wrist__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
-              <geom name="wrist__rubber_visual" type="mesh" mesh="wrist__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist__brown_visual" type="mesh" mesh="wrist__brown" material="brown" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist__red_visual" type="mesh" mesh="wrist__red" material="red" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist__orange_visual" type="mesh" mesh="wrist__orange" material="orange" mass="0" contype="0" conaffinity="0" group="1" />
+              <geom name="wrist__rubber_visual" type="mesh" mesh="wrist__rubber" material="rubber" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist__servo_visual" type="mesh" mesh="wrist__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist__cap_visual" type="mesh" mesh="wrist__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
               <geom name="wrist_collision" type="capsule" fromto="0 0 0.008 0 0 0.037" size="0.015050000000000001" rgba="0 0 0 0" group="3" />
@@ -130,9 +134,9 @@
                 <joint name="wrist_roll" type="hinge" axis="0 0 1" range="-1.3962634 1.3962634" />
                 <inertial pos="0 0 0.0125" mass="0.06" diaginertia="7.625e-06 1.1125e-05 1.25e-05" />
                 <geom name="tool__anodized_visual" type="mesh" mesh="tool__anodized" material="anodized" mass="0" contype="0" conaffinity="0" group="1" />
+                <geom name="tool__steel_visual" type="mesh" mesh="tool__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
                 <geom name="tool__servo_visual" type="mesh" mesh="tool__servo" material="servo" mass="0" contype="0" conaffinity="0" group="1" />
                 <geom name="tool__cap_visual" type="mesh" mesh="tool__cap" material="cap" mass="0" contype="0" conaffinity="0" group="1" />
-                <geom name="tool__steel_visual" type="mesh" mesh="tool__steel" material="steel" mass="0" contype="0" conaffinity="0" group="1" />
                 <geom name="tool_collision" type="capsule" fromto="0 0 0.008 0 0 0.017" size="0.0129" rgba="0 0 0 0" group="3" />
                 <site name="tcp" pos="0 0 0.07375" size=".003" rgba=".1 .9 .6 1" />
                 <body name="finger_left" pos="0 -0.0305 0.025">

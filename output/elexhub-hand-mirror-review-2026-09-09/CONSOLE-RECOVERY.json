@@ -1,0 +1,25 @@
+{
+  "checked_at": "2026-09-09T09:27:54.430039+07:00",
+  "reported_problem": "Start button cannot be clicked",
+  "observed_cause": "No listener on127.0.0.1:8767; state endpoint connection refused. Browser disables start on disconnect.",
+  "old_process_exit_reason": "not established",
+  "recovery": "Started transient systemd user unit robollm-elexhub-console.service, independent of the tool command process. No boot enablement.",
+  "service": [
+    "ActiveState=active",
+    "SubState=running",
+    "UnitFileState=transient",
+    "Transient=yes",
+    "MainPID=1018953"
+  ],
+  "camera_running": true,
+  "frame_available": true,
+  "resolution": [
+    640,
+    480
+  ],
+  "tracking_state": "no_hand",
+  "controller_running": false,
+  "model_verified": true,
+  "physical_robot_control": false,
+  "backup_suffix": "2026-09-09-092754"
+}

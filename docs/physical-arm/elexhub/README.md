@@ -2,7 +2,21 @@
 
 This is an isolated, CPU-only Elexhub experiment workspace. It contains a working MuJoCo demonstrator, editable provisional CAD, a webcam interface, a PCA9685 firmware backend, and reproducible trial tools. **It does not access Kaggle or modify the UR5e VLA-bed experiment.**
 
-The hardware layout is **five arm joints plus one gripper: six motors total**. The appearance now follows Elexhub's photographs of the black metal kit, which the owner confirmed matches their arm. Dimensions, masses, joint zeros and actuator parameters remain provisional. See [the photo-model review](MODEL-REVIEW-2026-09-07.md) for sources, estimates and validation, and [the dimension/component research](DIMENSIONS-AND-COMPONENTS-2026-09-07.md) for published parts and their limits.
+The hardware layout is **five arm joints plus one gripper: six motors total**. The 8 September visual revision follows five photographs of the owner's actual arm, including its silver forearm connector and short mounting cradles. Dimensions, masses, joint zeros and actuator parameters remain provisional. See [the current model review](../../../output/elexhub-photo-model-review-2026-09-08/REVIEW.md), [the measurement guide](MEASUREMENTS-PHOTO-MODEL.md), and [the saved component research](DIMENSIONS-AND-COMPONENTS-2026-09-07.md). The [7 September review](MODEL-REVIEW-2026-09-07.md) describes the earlier product-photo reconstruction.
+
+## Robot-only model
+
+Unzip `output/elexhub-robot-model.zip` and open `model.html` to inspect the arm and
+download the adjacent editable CAD or GLB. The package includes FreeCAD, STEP,
+GLB, URDF, OBJ meshes, and `elexhub-robot.xml`, plus validation and measurement
+notes. Keep `meshes/` beside the robot descriptions. Original room photographs
+and the tabletop experiment scene are excluded from this package.
+
+The robot-only MuJoCo model has a fixed base, five arm hinges and two coupled jaw
+coordinates controlled by one gripper actuator (seven coordinates, six controls).
+The experiment continues to use `elexhub.xml`, which includes its table and test
+object. CAD, GLB, and browser exports retain the original home/open pose; the
+review's alternate pose is recorded separately and is not a physical calibration.
 
 ## Open the demonstrator
 
@@ -29,6 +43,18 @@ The service binds only to loopback. No Pi deployment, physical USB connection, c
 
 ## Guided webcam preparation
 
+For an immediate hand-control experiment, open [Mirror your left hand](http://127.0.0.1:8767/mirror).
+Click **Start camera**, show one left palm, then **Start mirroring**. Hand movement
+steers the simulated gripper and a thumb–index pinch closes the claw. **Hold
+position** pauses movement, **Recenter** resets the neutral hand position, and
+**Camera off** releases the device. Tracking loss holds the arm and reacquisition
+starts from its current position. See [the hand-mirroring guide](HAND-MIRROR.md).
+
+This mode works without a calibration mat: image position and apparent palm size
+provide relative controls, not metric hand coordinates. It uses the local camera
+at index 0 by default and keeps frames in memory. The intrinsic-calibration page
+below is a separate workflow; the two pages share exclusive camera ownership.
+
 Open [Set up webcam](http://127.0.0.1:8767/camera) in the local simulation console. Print the supplied ChArUco sheet, click **Start camera**, capture 12–20 varied views, then **Calibrate camera** and download the intrinsics JSON. The page shows the actual resolution, detected corners, capture count and reprojection RMS. Opening the page does not start the camera. Missing/stale frames show **Cannot detect**.
 
 Captured photos stay in the ignored `captures/camera-setup/` directory and are excluded from the bundle. This step calibrates the lens; measured camera/base/tool registration and real hardware checks remain pending. Follow [the commissioning guide](COMMISSIONING.md#print-and-calibrate) for the next steps. Software validation uses fake camera devices and synthetic board images, not the owner's webcam. See [the camera setup review](CAMERA-SETUP-2026-09-07.md).
@@ -37,12 +63,15 @@ Captured photos stay in the ignored `captures/camera-setup/` directory and are e
 
 | Item | Location | Meaning |
 |---|---|---|
-| Editable FreeCAD | `assets/elexhub/provisional/elexhub.FCStd` | 283 valid solids; editable plate sketches, extrusions, boxes and cylinders; colors and reopen verified |
+| Editable FreeCAD | `assets/elexhub/provisional/elexhub.FCStd` | Editable plate sketches, extrusions, boxes and cylinders; fresh solid/reopen/color results in `CAD_VALIDATION.json` |
 | STEP | `assets/elexhub/provisional/elexhub.step` | Reimported; solid count, volume and global placements verified |
 | MuJoCo | `assets/elexhub/provisional/elexhub.xml` | Five arm hinge joints, coupled jaws, free red box |
+| Robot-only MuJoCo | `assets/elexhub/provisional/elexhub-robot.xml` | Same robot and six controls, with a fixed base and no table, mat, object or workspace camera |
 | URDF and OBJ | `assets/elexhub/provisional/` | Same joint frames and geometry source |
 | Interactive model / GLB | `assets/elexhub/provisional/model.html`, `elexhub.glb` | Rotate, zoom, inspect and download; GLB uses Y-up |
-| Photo-model review | `output/elexhub-model-review-2026-09-07/` | Four MuJoCo renders, hashes, test and CAD evidence; no physical evidence |
+| Owner-photo model review | `output/elexhub-photo-model-review-2026-09-08/` | Robot-only home/inspection views, artifact hashes, tests and CAD validation |
+| Earlier model review | `output/elexhub-model-review-2026-09-07/` | Historical 7 September product-photo model evidence |
+| Robot model package | `output/elexhub-robot-model.zip` | Standalone model, required meshes, offline viewer, review evidence and measurement guide |
 | Reference pack | `output/pdf/elexhub-reference-sheets.pdf` | Three A4 pages: ChArUco, workspace mat, tool/object markers |
 | Wiring/worksheet | `output/pdf/elexhub-wiring-and-measurements.pdf` | Two A4 pages; unknown ratings remain blank |
 | Editable print graphics | `output/pdf/*.svg` | Metric SVG versions |

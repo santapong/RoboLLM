@@ -18,9 +18,12 @@ from pydantic import BaseModel, ConfigDict
 from robo_arm_driver.elexhub_profile import hardware_gaps
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from .camera_setup import CameraSetup, camera_router
+from .camera_setup import CameraRequest, CameraSetup, camera_router
+from .hand_camera import HandMirrorCamera
+from .hand_control import HandMirrorController
 from .interaction import TaskExecutor, parse_instruction, select_pointed_object
 from .model import mat_to_base
+from .simulation import SimArm
 
 
 class PreviewRequest(BaseModel):
@@ -43,10 +46,33 @@ class SelectionRequest(BaseModel):
     pixel: list[float] | None = None
 
 
-def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=None):
+def create_app(
+    arm,
+    root,
+    *,
+    mode="sim",
+    webcam=None,
+    speech=None,
+    camera_setup=None,
+    hand_camera=None,
+    hand_model=None,
+):
     root = Path(root)
     setup = camera_setup or CameraSetup(root)
     setup.enabled = setup.enabled and mode == "sim" and webcam is None
+    hand = hand_camera or HandMirrorCamera(
+        root, ownership=setup.ownership, model_path=hand_model
+    )
+    if hand.status()["running"]:
+        raise ValueError("Create the app before starting its hand camera")
+    hand.ownership = setup.ownership
+    mirror_enabled = (
+        mode == "sim"
+        and webcam is None
+        and isinstance(arm, SimArm)
+        and arm.config.simulation
+    )
+    mirror = HandMirrorController(arm, hand.sample) if mirror_enabled else None
     sessions = root / "output/elexhub-sessions"
     sessions.mkdir(parents=True, exist_ok=True)
     logfile = sessions / f"session-{time.time_ns()}.jsonl"
@@ -102,14 +128,19 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
     @asynccontextmanager
     async def lifespan(app):
         thread.start()
-        yield
-        task.abort()
-        stopped.set()
-        pool.shutdown(wait=True, cancel_futures=True)
-        thread.join(timeout=3)
-        if webcam:
-            webcam.close()
-        setup.close()
+        try:
+            yield
+        finally:
+            if mirror:
+                mirror.close()
+            hand.close()
+            task.abort()
+            stopped.set()
+            pool.shutdown(wait=True, cancel_futures=True)
+            thread.join(timeout=3)
+            if webcam:
+                webcam.close()
+            setup.close()
 
     app = FastAPI(title="Elexhub experiment console", lifespan=lifespan)
     app.add_middleware(
@@ -118,6 +149,8 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
     app.state.task = task
     app.state.runtime = state
     app.state.camera_setup = setup
+    app.state.hand_camera = hand
+    app.state.hand_control = mirror
     app.include_router(camera_router(setup))
 
     @app.middleware("http")
@@ -154,6 +187,101 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
             root / "assets/elexhub/provisional/model.html", media_type="text/html"
         )
 
+    def mirror_state():
+        return {
+            "enabled": mirror_enabled,
+            "mode": mode,
+            "camera": hand.status(),
+            "controller": mirror.status()
+            if mirror
+            else {
+                "running": False,
+                "state": "stopped",
+                "error": "Hand mirroring requires the simulation console",
+            },
+            "model": {
+                "dimensions": "estimated_from_photos",
+                "positioning_joints": 5,
+                "gripper_actuators": 1,
+                "gripper_mechanics": "coupled_sliding_jaws",
+            },
+            "physical_robot_control": False,
+        }
+
+    def require_mirror():
+        if not mirror_enabled:
+            raise ValueError("Hand mirroring is available only in simulation mode")
+
+    def mirror_busy():
+        return mirror is not None and mirror.status()["running"]
+
+    def require_idle_task():
+        if task.busy or (state["future"] and not state["future"].done()):
+            raise ValueError("Wait for the current simulation task to stop")
+
+    @app.get("/mirror")
+    def mirror_page():
+        return HTMLResponse(Path(__file__).with_name("hand_mirror.html").read_text())
+
+    @app.get("/api/hand-mirror/state")
+    def hand_state():
+        return mirror_state()
+
+    @app.get("/api/hand-mirror/frame.jpg")
+    def hand_frame():
+        jpeg = hand.frame() if mirror_enabled else None
+        return (
+            Response(jpeg, media_type="image/jpeg")
+            if jpeg
+            else Response(status_code=204)
+        )
+
+    @app.post("/api/hand-mirror/camera/start")
+    def start_hand_camera(body: CameraRequest):
+        with api_lock:
+            require_mirror()
+            hand.start(body.device, body.width, body.height)
+            return mirror_state()
+
+    @app.post("/api/hand-mirror/camera/stop")
+    def stop_hand_camera():
+        with api_lock:
+            if mirror:
+                mirror.stop()
+            hand.stop()
+            return mirror_state()
+
+    @app.post("/api/hand-mirror/start")
+    def start_mirror():
+        with api_lock:
+            require_mirror()
+            require_idle_task()
+            if not hand.status()["running"]:
+                raise ValueError("Start the camera before mirroring your left hand")
+            mirror.start()
+            task.previewed = None
+            return mirror_state()
+
+    @app.post("/api/hand-mirror/stop")
+    def stop_mirror():
+        with api_lock:
+            if mirror:
+                mirror.stop()
+            return mirror_state()
+
+    @app.post("/api/hand-mirror/recenter")
+    def recenter_mirror():
+        with api_lock:
+            require_mirror()
+            mirror.recenter()
+            return mirror_state()
+
+    @app.post("/api/hand-mirror/heartbeat")
+    def mirror_heartbeat():
+        require_mirror()
+        mirror.heartbeat()
+        return {"ok": True}
+
     @app.get("/api/state")
     def status():
         obs = webcam.public_observation() if webcam else None
@@ -170,6 +298,7 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
             "hardware_enabled": bool(getattr(arm, "enabled", False)),
             "hardware_gaps": hardware_gaps(arm.config.profile_data),
             "events": task.history[-8:],
+            "hand_mirror_active": mirror_busy(),
         }
 
     @app.get("/api/frame.jpg")
@@ -220,6 +349,8 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
     @app.post("/api/preview")
     def preview(body: PreviewRequest):
         with api_lock:
+            if mirror_busy():
+                raise ValueError("Stop hand mirroring before previewing a task")
             if state["future"] and not state["future"].done():
                 raise ValueError("task is busy")
             source = None
@@ -256,6 +387,8 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
     @app.post("/api/execute")
     def execute(body: ExecuteRequest):
         with api_lock:
+            if mirror_busy():
+                raise ValueError("Stop hand mirroring before executing a task")
             if state["future"] and not state["future"].done():
                 raise ValueError("task is busy")
             if not body.workspace_clear:
@@ -283,7 +416,11 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
 
     @app.post("/api/abort")
     def abort():
-        task.abort()
+        with api_lock:
+            if mirror:
+                mirror.stop()
+            hand.stop()
+            task.abort()
         return {
             "aborted": True,
             "servo_power": "use the physical cutoff to disconnect power",
@@ -296,6 +433,8 @@ def create_app(arm, root, *, mode="sim", webcam=None, speech=None, camera_setup=
                 raise ValueError("reset is available only in simulation")
             if state["future"] and not state["future"].done():
                 raise ValueError("wait for the current task to stop")
+            if mirror:
+                mirror.stop()
             arm.reset()
             task.previewed = None
             task.stage = "IDLE"

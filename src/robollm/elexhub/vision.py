@@ -340,13 +340,24 @@ class HandTracker:
         )
         result = self.landmarker.detect_for_video(image, timestamp_ms)
         h, w = frame.shape[:2]
-        return [
-            {
-                "tip_px": [hand[8].x * w, hand[8].y * h],
-                "landmarks_px": [[p.x * w, p.y * h] for p in hand],
-            }
-            for hand in result.hand_landmarks
-        ]
+        hands = []
+        for index, hand in enumerate(result.hand_landmarks):
+            categories = (
+                result.handedness[index] if index < len(result.handedness) else []
+            )
+            category = categories[0] if categories else None
+            hands.append(
+                {
+                    "tip_px": [hand[8].x * w, hand[8].y * h],
+                    "landmarks_px": [[p.x * w, p.y * h] for p in hand],
+                    "landmarks_norm": [[float(p.x), float(p.y)] for p in hand],
+                    # This wrapper does not flip calibrated camera pixels. Callers
+                    # that use handedness must supply the intended image convention.
+                    "handedness": category.category_name if category else None,
+                    "confidence": float(category.score) if category else None,
+                }
+            )
+        return hands
 
     def close(self):
         self.landmarker.close()

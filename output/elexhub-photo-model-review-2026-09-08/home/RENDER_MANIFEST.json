@@ -1,0 +1,213 @@
+{
+  "appearance_revision": "elexhub-owner-photo-v2",
+  "profile_hash": "15f8e3f40ebaa9bca8bd4f1f",
+  "geometry_status": "provisional",
+  "physical_evidence": false,
+  "robot_only": true,
+  "model_file": "elexhub-robot.xml",
+  "pose": {
+    "source": "profile home",
+    "joint_names": [
+      "base_yaw",
+      "shoulder",
+      "elbow",
+      "wrist_pitch",
+      "wrist_roll"
+    ],
+    "joint_positions_rad": [
+      0.0,
+      0.17453292519943295,
+      0.8726646259971648,
+      1.3089969389957472,
+      0.0
+    ],
+    "gripper": "open; existing sliding-jaw approximation",
+    "canonical_home_changed": false,
+    "static_exports_pose": "profile home"
+  },
+  "owner_photo_reference": {
+    "source": "five owner-supplied robot-arm photographs",
+    "received_date": "2026-09-08",
+    "checked_date": "2026-09-08",
+    "capture_date": null,
+    "images_vendored": false,
+    "photos": [
+      {
+        "id": "photo-1",
+        "file": "1-Photo-1.jpg",
+        "sha256": "b9c6d801a3251a4949eef3943550270525326bc0dfe132d0065e989dfccb936e",
+        "use": "side silhouette, spacer flanges, wrist and attached leads"
+      },
+      {
+        "id": "photo-2",
+        "file": "2-Photo-2.jpg",
+        "sha256": "1cedaf0320de20f9e61c84434858df372c76341a2b80a9a3de82a9666e5c29d9",
+        "use": "perforated cradle faces, tube alignment and bearing hardware"
+      },
+      {
+        "id": "photo-3",
+        "file": "3-Photo-3.jpg",
+        "sha256": "ad538abf3542867ac94c9668824f2f48a974d4340693db5edf1e20a37fdc2b63",
+        "use": "overall side construction, upper-arm cheeks and compact base"
+      },
+      {
+        "id": "photo-4",
+        "file": "4-Photo-4.jpg",
+        "sha256": "bac9f620e3636f8b17cfa09fc5a00f16b378e3e0777e5f975a264037fca5e2e8",
+        "use": "top view, bracket widths, spacer ends and servo placement"
+      },
+      {
+        "id": "photo-5",
+        "file": "5-Photo-5.jpg",
+        "sha256": "0061002cd1541067811a180a29ed6a3aad27256a3562d4509ec1ea00fadd5e0a",
+        "use": "claw silhouette, layered linkage plates and front servo housing"
+      }
+    ]
+  },
+  "visual_bounds_m": [
+    [
+      -0.05249999836087248,
+      -0.04724999889731426,
+      6.8267631131435635e-12
+    ],
+    [
+      0.19499171134397003,
+      0.04724999889731426,
+      0.2703727528516571
+    ]
+  ],
+  "rendered_views": [
+    "angle",
+    "front",
+    "side",
+    "top",
+    "back",
+    "claw"
+  ],
+  "view_cameras": {
+    "angle": {
+      "look_at_m": [
+        0.07124585649154877,
+        0.0,
+        0.13518637642924194
+      ],
+      "distance_m": 0.49208704334500347,
+      "azimuth_deg": 135,
+      "elevation_deg": -20
+    },
+    "front": {
+      "look_at_m": [
+        0.07124585649154877,
+        0.0,
+        0.13518637642924194
+      ],
+      "distance_m": 0.49208704334500347,
+      "azimuth_deg": 180,
+      "elevation_deg": -5
+    },
+    "side": {
+      "look_at_m": [
+        0.07124585649154877,
+        0.0,
+        0.13518637642924194
+      ],
+      "distance_m": 0.49208704334500347,
+      "azimuth_deg": 90,
+      "elevation_deg": -5
+    },
+    "top": {
+      "look_at_m": [
+        0.07124585649154877,
+        0.0,
+        0.13518637642924194
+      ],
+      "distance_m": 0.49208704334500347,
+      "azimuth_deg": 180,
+      "elevation_deg": -89
+    },
+    "back": {
+      "look_at_m": [
+        0.07124585649154877,
+        0.0,
+        0.13518637642924194
+      ],
+      "distance_m": 0.49208704334500347,
+      "azimuth_deg": 0,
+      "elevation_deg": -5
+    },
+    "claw": {
+      "look_at_m": [
+        0.16299513046634367,
+        0.0,
+        0.171833491079925
+      ],
+      "distance_m": 0.1952587859615787,
+      "azimuth_deg": 135,
+      "elevation_deg": -20
+    }
+  },
+  "artifact_sha256": {
+    "elexhub-robot.xml": "06b3e2d07bd32afcf8762a961adb70022506ab8b2e3493c1dd56267d05e4e918",
+    "elexhub.FCStd": "c575f98f0bf8b495fa1c09e93f6957047a7a9403748701c7283a2c2600188a9c",
+    "elexhub.step": "899aface06e0c8dbb122e3736ac22a5ddefaafb43274245529dbe5888f2bb43a",
+    "elexhub.glb": "4d5e7f02cd225e527fef51de1c1bb79ce2eb8c245d963f276df53f61b6faa072",
+    "elexhub.urdf": "9e89f1e0b121e26a3654699fbaf2260c07f0d977535feb51cbee4ca983b06e72",
+    "cad-description.json": "bdd645f568bec13b7d2ec70fdb6e1c638dc75b588ceb338483786d2249c21917",
+    "APPEARANCE_PROVENANCE.json": "73aa50efc1493983396aed246467ddee3a9a0e4ead0473053285db29e2f1c4d0",
+    "meshes/base__anodized.obj": "d0dd86f6ded9ff20a663ffbdcc7687506a74d2030990be1b084d364855bf62cd",
+    "meshes/base__brown.obj": "dc283de4fd388baf490ffd52e22c1ee4f92c4e403a161a5dd7e51a08cb88316b",
+    "meshes/base__cap.obj": "ac965dd1742f51ed118495193d9252c1e469dac615c6e6c7d38ed38a8bf43185",
+    "meshes/base__orange.obj": "dd09b7435b80447d8e2c02f6274a0f9d192c83750b4100eec2e36d1186fc6e11",
+    "meshes/base__red.obj": "764cce4858e2b03d1392c36f51b90f915c991489cf7889b501c7bd8453f06f57",
+    "meshes/base__servo.obj": "8af88e7a3c9643faadf4d017af9baf50dea98984b11f9c4a3d995cfb9e0241a0",
+    "meshes/base__steel.obj": "80b001a37e518d93387fdf29c8700a068ba0d18e06d7e2f7b6f57f7f939309a2",
+    "meshes/finger_left__anodized.obj": "559a6f7340c78ae346e5a6ea5cd0da66d79376ecd87808bd88ce764b7bc3c5cd",
+    "meshes/finger_left__steel.obj": "100fa206fe5e85832e74f3f601a1ac0760aad72aa9e91fb006481ea6639a4a90",
+    "meshes/finger_right__anodized.obj": "a1deb6ec1ad863dac81c7dd1c8975eff9b12101f4ccd56600d33473cb6ae4168",
+    "meshes/finger_right__steel.obj": "0d9e32f0ab5335eb4deba166fe6ca4615ad81b8bf6028202f8d4c17e783c27c5",
+    "meshes/forearm__anodized.obj": "16355df7ff5d7145f5237b76c0a57756cf38117438ac765343343bccdb729fca",
+    "meshes/forearm__brown.obj": "c16f1a265805e10da31bf2d85409cfbc9eae49cfa84a848deddb4cc6e1e9d125",
+    "meshes/forearm__cap.obj": "28b470ea108f3ab4e430942f9f413589b40696ad3ef5bc34355fc21f177d2135",
+    "meshes/forearm__orange.obj": "1e4738971ca76d922e64a807fe13ab2f8065911240dfde981fdee341626f19f3",
+    "meshes/forearm__red.obj": "82aa8eb51ccebc3db26641cf80ea9ad379feed387a6869ed9902a57c7d36b083",
+    "meshes/forearm__rubber.obj": "e3a1e3b13330533a1c2ec66da0660765de7c478a1d9542afa070f68512bd6c45",
+    "meshes/forearm__servo.obj": "55f150cfd38d828b42fcba9ae23d6e6e1768e6a7ec6b6c04881a5d93151ca67c",
+    "meshes/forearm__steel.obj": "9832d6283211738e19f6adfe92dd41629c5916cc8ecf68a2951964a9c378707f",
+    "meshes/tool__anodized.obj": "d0ba807d275027f27cda0cc742d01194bedfe0f9094f95dd9cb9255bb09c87fd",
+    "meshes/tool__cap.obj": "71d9757c6b1653653797c1becb53711f8dd6b87c72e0562bff26bab8934e95e2",
+    "meshes/tool__servo.obj": "7503b0c748f3d85d57e6524153d6cb1f30862018e29409bf2a9b33019e0bc6bb",
+    "meshes/tool__steel.obj": "9726d874f8c065d62c6d2666eccbf619cab77fccb1ec2ea30f4483ced4da7a19",
+    "meshes/turret__anodized.obj": "279a66e6e560c58e46caeb514e9de9de162aa0e43c7a56fbe8fffc5bb3baf119",
+    "meshes/turret__brown.obj": "9121de2311ec0e86c3f4faf32afb2aeb008b116b70d237dc776bb868c7d225ca",
+    "meshes/turret__cap.obj": "0b126bc32f3b2765f8a138e9825105430ac71fe46807ee3ad2708dfe5c6d811c",
+    "meshes/turret__orange.obj": "c57a9b1e8c47a95e956265a5187a4ee3c6d46dfe8795f6fa4d046756ba4685ec",
+    "meshes/turret__red.obj": "2da53c025ae2842bc83f6bff4f992daf89f2cb58b216e15dc12817e2512f13db",
+    "meshes/turret__rubber.obj": "3a45102541d616ec6ff36197b7086cfb849669b2c1e7aade3aaee748c257f9e2",
+    "meshes/turret__servo.obj": "c65651f3ce20cc8ad69da535ed7a0e808756b082f11cceaac9c81334726c26ce",
+    "meshes/turret__steel.obj": "2a4a2702ea72dd46dcf275241af7269d1020e98757fc9ddcfa69593bd6bfdbea",
+    "meshes/upper_arm__anodized.obj": "b4f1cac5bf80c2bfc9ee8fe19b14d77c381922021f17bd9c765f3a5294e1ed26",
+    "meshes/upper_arm__brown.obj": "3856e4d9a7ec28732981694ca9ecd1d7adde5274fc677c2b55495a0f961f99f2",
+    "meshes/upper_arm__cap.obj": "42a5408a1e5726ff3abe7a59bf7aa5d84c16020067dc058ce7b8dfaa2aff44f3",
+    "meshes/upper_arm__orange.obj": "4622b8d5d9c77af32fd21b4107e575cea51c5fa82a553f07c3f1c6c1658fd184",
+    "meshes/upper_arm__red.obj": "99de36f916046ceed6ca7500412d3c316ed1686c53ee5d21f7da9c34171954bc",
+    "meshes/upper_arm__rubber.obj": "5a14720a3f029401db89efdd8be5dac6546129f923aaea791fed6eaf70535300",
+    "meshes/upper_arm__servo.obj": "b79b4ab1c801650819774846e0d92406e62f99d2f44c462c2e734f219fa5b746",
+    "meshes/upper_arm__steel.obj": "d4c49a597a883592ecc405f65428e2746e1e0c04f4225068ab09496ae81d2282",
+    "meshes/wrist__anodized.obj": "792324fd76a0b7ae3f5a43f71e4b97e050501a81f6c43ebfcca35aa8c44bd409",
+    "meshes/wrist__brown.obj": "3d7cac963b9af53f7975032a34e758d366b9148df2dc3e527f0d19383d3dff58",
+    "meshes/wrist__cap.obj": "26adf2cec14d35fe7197fdee612495530242b9269073456cb4603a3ce3e39004",
+    "meshes/wrist__orange.obj": "12b1dc74a7f1caeb7b07aca3f9f8cb94bec331496e519aba7448cf6512a44bac",
+    "meshes/wrist__red.obj": "af54fe9ba0384c9ace18936bbc725413aa7c6bf1eda77f4bd7516f3bd9cf7459",
+    "meshes/wrist__rubber.obj": "c7d3d199c380400733ec9a91dc71d3c206084ae455c34a3fef99cd4428c93b67",
+    "meshes/wrist__servo.obj": "b2e28e7b08d3629025ff2f9e8e4e1ab98ed175070885b0aaaf873fcf673950e7",
+    "meshes/wrist__steel.obj": "fb986e98f7a1bc74d1d86a574f5d781206189df10df2cc519114a7d1f64d57db"
+  },
+  "render_sha256": {
+    "angle.png": "bc009b76bb2d91ed593aa785ead012fde3c671030c6b8ac57262be0ce7482d97",
+    "front.png": "3cb5c08f1a306c157994cbdd33bc27422998615d97c54b2a8d880501e992ba88",
+    "side.png": "ef84fc44f2e4e44fea4e9b1721cd86a9242bc294b9a371e8925dc6c645442910",
+    "top.png": "19f51cdfd2ccc93a348b467ae850d630b3081c3aae79b601affcab8ceaf1ec69",
+    "back.png": "24b3e6ece1e835de2406e9824851743cce21ad0f5a5a6a78ed7014f306fef5b4",
+    "claw.png": "4c8a77119ffb7179cac2225fc70e8c0e462a1e55122b180ad2ec9e14a225c7dc"
+  }
+}

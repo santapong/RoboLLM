@@ -4,15 +4,18 @@ from __future__ import annotations
 
 import copy
 import csv
+import hashlib
 import io
 import json
 import os
+import runpy
 import subprocess
 import sys
 import threading
 import time
 import wave
 import xml.etree.ElementTree as ET
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -303,6 +306,191 @@ def test_photo_model_export_frames_and_visual_physics_boundary(arm, tmp_path):
         loaded = trimesh.load_mesh(path)
         assert loaded.is_watertight and loaded.volume > 0
     assert trimesh.load(directory / "elexhub.glb").geometry
+
+
+def test_robot_only_export_preserves_robot_and_joint_frames(arm, tmp_path):
+    directory = tmp_path / "model"
+    scene_xml = ET.parse(directory / "elexhub.xml")
+    robot_xml = ET.parse(directory / "elexhub-robot.xml")
+    world = robot_xml.find("worldbody")
+    assert [body.get("name") for body in world.findall("body")] == ["base"]
+    assert not world.findall("geom")
+    assert not world.findall("camera")
+    assert not robot_xml.findall(".//freejoint")
+    assert robot_xml.find(".//*[@name='red_box']") is None
+
+    def contents(element):
+        return (
+            element.tag,
+            element.attrib,
+            (element.text or "").strip(),
+            tuple(contents(child) for child in element),
+        )
+
+    for path in ["worldbody/body[@name='base']", "contact", "actuator", "equality"]:
+        assert contents(robot_xml.find(path)) == contents(scene_xml.find(path))
+    robot = mujoco.MjModel.from_xml_path(str(directory / "elexhub-robot.xml"))
+    assert (robot.nq, robot.nv, robot.nu) == (7, 7, 6)
+    assert (arm.model.nq, arm.model.nv, arm.model.nu) == (14, 13, 6)
+    np.testing.assert_array_equal(
+        robot.actuator_ctrlrange, arm.model.actuator_ctrlrange
+    )
+    np.testing.assert_array_equal(robot.body_mass, arm.model.body_mass[: robot.nbody])
+    robot_data, scene_data = mujoco.MjData(robot), mujoco.MjData(arm.model)
+    rng = np.random.default_rng(908)
+    for _ in range(8):
+        angles = [rng.uniform(j.min_rad, j.max_rad) for j in arm.config.joints]
+        jaws = rng.uniform(0, arm.geometry["gripper"]["opening_m"] / 2)
+        robot_data.qpos[:] = [*angles, jaws, jaws]
+        scene_data.qpos[: robot.nq] = robot_data.qpos
+        mujoco.mj_forward(robot, robot_data)
+        mujoco.mj_forward(arm.model, scene_data)
+        for body_id in range(1, robot.nbody):
+            name = robot.body(body_id).name
+            np.testing.assert_allclose(
+                robot_data.body(name).xpos, scene_data.body(name).xpos, atol=1e-10
+            )
+            np.testing.assert_allclose(
+                robot_data.body(name).xmat, scene_data.body(name).xmat, atol=1e-10
+            )
+        _, expected = forward(arm.config, angles)
+        np.testing.assert_allclose(
+            robot_data.site("tcp").xpos, expected[:3, 3], atol=1e-8
+        )
+
+
+@pytest.fixture(scope="module")
+def review_helpers():
+    return runpy.run_path(str(ROOT / "examples/elexhub/render_model.py"))
+
+
+def test_review_pose_uses_existing_home_and_rejects_invalid_angles(
+    config, review_helpers
+):
+    choose = review_helpers["review_pose"]
+    home = [joint.raw_to_rad(joint.home_deg) for joint in config.joints]
+    np.testing.assert_array_equal(choose(config), home)
+    for invalid in [[0, 0], [0, 0, np.nan, 0, 0], [0, 0, np.inf, 0, 0]]:
+        with pytest.raises(ValueError, match="five finite"):
+            choose(config, invalid)
+    invalid = home.copy()
+    invalid[2] = config.joints[2].max_rad + 0.01
+    with pytest.raises(ValueError, match="elbow joint limits"):
+        choose(config, invalid)
+    np.testing.assert_array_equal(
+        [joint.raw_to_rad(joint.home_deg) for joint in config.joints], home
+    )
+
+
+def test_review_visual_bounds_follow_pose_and_mesh_coordinates(
+    arm, tmp_path, review_helpers
+):
+    directory = tmp_path / "model"
+    descriptor = json.loads((directory / "cad-description.json").read_text())
+    measure = review_helpers["visual_bounds"]
+    home_bounds = measure(arm.model, arm.data)
+    recorded = np.asarray(
+        [
+            solid["world_mesh_bounds_m"]
+            for part in descriptor["parts"]
+            for solid in part["solids"]
+        ]
+    )
+    np.testing.assert_allclose(
+        home_bounds, [recorded[:, 0].min(axis=0), recorded[:, 1].max(axis=0)], atol=2e-7
+    )
+    changed = mujoco.MjData(arm.model)
+    changed.qpos[: arm.n] = [(j.min_rad + j.max_rad) / 2 for j in arm.config.joints]
+    mujoco.mj_forward(arm.model, changed)
+    changed_bounds = measure(arm.model, changed)
+    assert not np.allclose(home_bounds, changed_bounds, atol=1e-3)
+    for selection in [None, {"tool", "finger_left", "finger_right"}]:
+        vertices = []
+        for part in descriptor["parts"]:
+            if selection is not None and part["name"] not in selection:
+                continue
+            mesh = trimesh.load_mesh(directory / "meshes" / f"{part['name']}.obj")
+            body = changed.body(part["name"])
+            vertices.append(mesh.vertices @ body.xmat.reshape(3, 3).T + body.xpos)
+        vertices = np.concatenate(vertices)
+        np.testing.assert_allclose(
+            measure(arm.model, changed, selection),
+            [vertices.min(axis=0), vertices.max(axis=0)],
+            atol=2e-7,
+        )
+
+
+def test_model_bundle_excludes_scene_and_photos_and_rejects_stale_review(tmp_path):
+    helpers = runpy.run_path(str(ROOT / "examples/elexhub/bundle_model.py"))
+    model_dir, review_dir = tmp_path / "model", tmp_path / "review"
+    model_dir.mkdir()
+    review_dir.mkdir()
+    for name in helpers["MODEL_FILES"]:
+        (model_dir / name).write_text(name)
+    descriptor = {
+        "status": "provisional",
+        "profile_hash": "test-profile",
+        "appearance": {"revision": "test-revision"},
+        "parts": [{"name": "arm"}],
+        "visual_meshes": {"arm": [{"name": "arm__steel"}]},
+    }
+    (model_dir / "meshes").mkdir()
+    (model_dir / "meshes/arm.obj").write_text("robot mesh")
+    (model_dir / "meshes/arm__steel.obj").write_text("robot visual mesh")
+    (model_dir / "cad-description.json").write_text(json.dumps(descriptor))
+    descriptor_hash = hashlib.sha256(
+        (model_dir / "cad-description.json").read_bytes()
+    ).hexdigest()
+    (model_dir / "CAD_VALIDATION.json").write_text(
+        json.dumps({"descriptor_sha256": descriptor_hash})
+    )
+    (model_dir / "elexhub.xml").write_text("scene with table and red box")
+    (model_dir / "Photo 1.jpg").write_bytes(b"private room photo")
+    (review_dir / "Photo 2.jpg").write_bytes(b"private room photo")
+    image = review_dir / "angle.png"
+    image.write_bytes(b"generated robot render")
+    manifest = {
+        "robot_only": True,
+        "model_file": "elexhub-robot.xml",
+        "artifact_sha256": {
+            "elexhub.step": hashlib.sha256(
+                (model_dir / "elexhub.step").read_bytes()
+            ).hexdigest(),
+            "meshes/arm__steel.obj": hashlib.sha256(
+                (model_dir / "meshes/arm__steel.obj").read_bytes()
+            ).hexdigest(),
+        },
+        "rendered_views": ["angle"],
+        "render_sha256": {"angle.png": hashlib.sha256(image.read_bytes()).hexdigest()},
+    }
+    (review_dir / "RENDER_MANIFEST.json").write_text(json.dumps(manifest))
+    measurement = tmp_path / "measurements.md"
+    measurement.write_text("Dimensions remain provisional.")
+    output = tmp_path / "robot.zip"
+    result = helpers["bundle"](model_dir, review_dir, measurement, output)
+    assert result["verified"] is True
+    with zipfile.ZipFile(output) as archive:
+        names = set(archive.namelist())
+        assert {
+            "model.html",
+            "elexhub.step",
+            "elexhub-robot.xml",
+            "review/angle.png",
+        } <= names
+        assert "elexhub.xml" not in names
+        assert not any(name.endswith(".jpg") for name in names)
+        packed = json.loads(archive.read("BUNDLE_MANIFEST.json"))
+        for name, metadata in packed["files"].items():
+            assert hashlib.sha256(archive.read(name)).hexdigest() == metadata["sha256"]
+    previous = output.read_bytes()
+    for name in ["elexhub.step", "meshes/arm__steel.obj"]:
+        path = model_dir / name
+        before = path.read_bytes()
+        path.write_text("changed after rendering")
+        with pytest.raises(ValueError, match="stale or unsupported"):
+            helpers["bundle"](model_dir, review_dir, measurement, output)
+        assert output.read_bytes() == previous
+        path.write_bytes(before)
 
 
 def test_render_and_reach(arm):

@@ -1,0 +1,48 @@
+{
+  "checked_at": "2026-09-09T09:07:31.640393+07:00",
+  "camera_device": 0,
+  "resolution": [
+    640,
+    480
+  ],
+  "samples": 24,
+  "observed_tracking_states": [
+    "no_hand",
+    "unavailable"
+  ],
+  "observed_controller_states": [
+    "waiting_for_left"
+  ],
+  "fps_min_max": [
+    8.190294088141084,
+    15.767974786085782
+  ],
+  "frame_age_ms_min_max": [
+    58.9047970061074,
+    447.76402699790196
+  ],
+  "tcp_span_mm": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "local_model_verified": true,
+  "anatomical_left_right_confirmed": false,
+  "physical_robot_control": false,
+  "images_recorded": false,
+  "browser_checks": [
+    "real_camera_0_preview",
+    "failed_device_63_error_visible",
+    "camera_0_restart_recovery",
+    "start_mirroring_waits_for_left_hand",
+    "no_browser_console_errors",
+    "hold_position_pauses",
+    "camera_off_releases_device",
+    "camera_frame_returns_204_after_stop"
+  ],
+  "handoff_state": {
+    "camera_running": false,
+    "mirroring_running": false,
+    "page": "http://127.0.0.1:8767/mirror"
+  }
+}

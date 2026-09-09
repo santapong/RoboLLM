@@ -1,8 +1,47 @@
 {
-  "revision": "elexhub-black-metal-photo-v1",
-  "checked_date": "2026-09-07",
-  "variant": "black metal kit, rectangular two-plate base, linkage claw",
+  "revision": "elexhub-owner-photo-v2",
+  "checked_date": "2026-09-08",
+  "variant": "owner's black metal kit, two-plate base, silver forearm spacer, linkage claw",
   "variant_confirmation": "user confirmed matching variant on 2026-09-07",
+  "owner_photo_reference": {
+    "source": "five owner-supplied robot-arm photographs",
+    "received_date": "2026-09-08",
+    "checked_date": "2026-09-08",
+    "capture_date": null,
+    "images_vendored": false,
+    "photos": [
+      {
+        "id": "photo-1",
+        "file": "1-Photo-1.jpg",
+        "sha256": "b9c6d801a3251a4949eef3943550270525326bc0dfe132d0065e989dfccb936e",
+        "use": "side silhouette, spacer flanges, wrist and attached leads"
+      },
+      {
+        "id": "photo-2",
+        "file": "2-Photo-2.jpg",
+        "sha256": "1cedaf0320de20f9e61c84434858df372c76341a2b80a9a3de82a9666e5c29d9",
+        "use": "perforated cradle faces, tube alignment and bearing hardware"
+      },
+      {
+        "id": "photo-3",
+        "file": "3-Photo-3.jpg",
+        "sha256": "ad538abf3542867ac94c9668824f2f48a974d4340693db5edf1e20a37fdc2b63",
+        "use": "overall side construction, upper-arm cheeks and compact base"
+      },
+      {
+        "id": "photo-4",
+        "file": "4-Photo-4.jpg",
+        "sha256": "bac9f620e3636f8b17cfa09fc5a00f16b378e3e0777e5f975a264037fca5e2e8",
+        "use": "top view, bracket widths, spacer ends and servo placement"
+      },
+      {
+        "id": "photo-5",
+        "file": "5-Photo-5.jpg",
+        "sha256": "0061002cd1541067811a180a29ed6a3aad27256a3562d4509ec1ea00fadd5e0a",
+        "use": "claw silhouette, layered linkage plates and front servo housing"
+      }
+    ]
+  },
   "sources": [
     {
       "url": "https://elexhub.com/shop/XvAAPZ",
@@ -34,19 +73,65 @@
     19.7,
     42.9
   ],
+  "installed_servo_model": "unverified; labels are unreadable in the owner photographs",
   "estimated_visual_parameters_mm": {
     "plate_thickness": 2.0,
-    "yoke_outer_width": 51.0,
+    "upper_arm_outer_width": 51.0,
+    "upper_arm_cheek_width": 28.0,
+    "forearm_cradle_outer_width": 46.0,
+    "forearm_cradle_depth": 18.0,
+    "forearm_cradle_cheek_width": 30.0,
+    "forearm_spacer_diameter": 12.0,
+    "forearm_flange_diameter": 23.0,
+    "forearm_flange_thickness": 3.0,
+    "wrist_outer_width": 53.0,
+    "turret_outer_width": 49.0,
+    "turret_panel_width": 42.0,
     "bearing_disc_diameter": 18.0,
+    "bearing_disc_thickness": 2.0,
+    "servo_horn_diameter": 14.0,
     "mounting_hole_diameter": 3.2,
-    "base_plate_separation": 20.0,
-    "claw_opening": 55.0,
-    "claw_length": 65.0
+    "pivot_bore_diameter": 6.4,
+    "bracket_access_hole_diameter": 10.0,
+    "bracket_tongue_access_hole_diameter": 10.4,
+    "bracket_tongue_width": 15.0,
+    "bracket_tongue_length": 27.0,
+    "bolt_head_diameter": 5.4,
+    "bolt_head_height": 1.6,
+    "bolt_socket_diameter": 2.2,
+    "servo_case_body_height": 34.0,
+    "servo_gear_cap_height": 4.0,
+    "servo_back_cap_height": 2.4,
+    "servo_mount_ear_span": 54.0,
+    "servo_mount_ear_thickness": 2.2,
+    "claw_palm_width": 52.0,
+    "claw_palm_length": 44.0,
+    "claw_plate_thickness": 3.0,
+    "claw_knuckle_width": 16.0,
+    "claw_tip_width": 8.0,
+    "claw_link_width": 7.0,
+    "claw_drive_disc_diameter": 16.0,
+    "claw_idler_disc_diameter": 9.0,
+    "claw_link_layer_pitch": 3.0,
+    "claw_pivot_shaft_diameter": 2.6,
+    "claw_pivot_spacer_diameter": 4.8,
+    "wire_diameter": 0.96,
+    "wire_pitch": 1.1,
+    "cable_tie_width": 2.0,
+    "cable_tie_outer_diameter": 4.5
+  },
+  "profile_derived_dimensions": {
+    "base_footprint": "geometry.base_size_m; visual depth is 0.9 times profile depth",
+    "joint_spans": "geometry.links[*].length_m; all joint frames remain unchanged",
+    "forearm_spacer_length": "forearm length minus twice the cradle depth (64 mm at the unchanged 100 mm profile length)",
+    "claw_opening_and_length": "geometry.gripper; unchanged 55 mm opening and 65 mm finger length at this revision"
   },
   "metric_accuracy": "unverified; photos are perspective references, not metrology",
-  "physics": "provisional joint centres and dynamics; claw opening/length revised to photo estimates; collision proxies remain simplified",
-  "gripper": "linkage appearance at open pose; coupled sliding contact jaws remain an approximation",
-  "cables": "illustrative local routing, not a deformable cable simulation",
+  "physics": "unchanged provisional joint centres, dynamics and simplified collision proxies; silver spacer is a fixed visual component",
+  "gripper": "refined linkage silhouette at canonical open pose; rigid visuals follow coupled sliding contact jaws, so closed-pose pivot alignment remains approximate",
+  "cables": "fine attached servo leads and short ties; cosmetic rigid segments without loose tails or deformable cable simulation",
+  "unresolved": "metric scale, hidden supports, servo identity, joint limits, masses and full claw linkage motion",
+  "robot_only": true,
   "hardware_ready": false,
   "remote_media_vendored": false
 }

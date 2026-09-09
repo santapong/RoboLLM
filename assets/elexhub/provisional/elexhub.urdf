@@ -8,14 +8,6 @@
         <color rgba="0.1 0.115 0.13 1" />
       </material>
     </visual>
-    <visual name="base__rubber">
-      <geometry>
-        <mesh filename="meshes/base__rubber.obj" />
-      </geometry>
-      <material name="rubber">
-        <color rgba="0.035 0.04 0.045 1" />
-      </material>
-    </visual>
     <visual name="base__steel">
       <geometry>
         <mesh filename="meshes/base__steel.obj" />
@@ -40,6 +32,30 @@
         <color rgba="0.13 0.145 0.16 1" />
       </material>
     </visual>
+    <visual name="base__brown">
+      <geometry>
+        <mesh filename="meshes/base__brown.obj" />
+      </geometry>
+      <material name="brown">
+        <color rgba="0.21 0.12 0.08 1" />
+      </material>
+    </visual>
+    <visual name="base__red">
+      <geometry>
+        <mesh filename="meshes/base__red.obj" />
+      </geometry>
+      <material name="red">
+        <color rgba="0.65 0.055 0.035 1" />
+      </material>
+    </visual>
+    <visual name="base__orange">
+      <geometry>
+        <mesh filename="meshes/base__orange.obj" />
+      </geometry>
+      <material name="orange">
+        <color rgba="0.96 0.49 0.055 1" />
+      </material>
+    </visual>
   </link>
   <link name="turret">
     <visual name="turret__anodized">
@@ -58,12 +74,20 @@
         <color rgba="0.63 0.67 0.71 1" />
       </material>
     </visual>
-    <visual name="turret__rubber">
+    <visual name="turret__servo">
       <geometry>
-        <mesh filename="meshes/turret__rubber.obj" />
+        <mesh filename="meshes/turret__servo.obj" />
       </geometry>
-      <material name="rubber">
-        <color rgba="0.035 0.04 0.045 1" />
+      <material name="servo">
+        <color rgba="0.065 0.072 0.08 1" />
+      </material>
+    </visual>
+    <visual name="turret__cap">
+      <geometry>
+        <mesh filename="meshes/turret__cap.obj" />
+      </geometry>
+      <material name="cap">
+        <color rgba="0.13 0.145 0.16 1" />
       </material>
     </visual>
     <visual name="turret__brown">
@@ -90,20 +114,12 @@
         <color rgba="0.96 0.49 0.055 1" />
       </material>
     </visual>
-    <visual name="turret__servo">
+    <visual name="turret__rubber">
       <geometry>
-        <mesh filename="meshes/turret__servo.obj" />
+        <mesh filename="meshes/turret__rubber.obj" />
       </geometry>
-      <material name="servo">
-        <color rgba="0.065 0.072 0.08 1" />
-      </material>
-    </visual>
-    <visual name="turret__cap">
-      <geometry>
-        <mesh filename="meshes/turret__cap.obj" />
-      </geometry>
-      <material name="cap">
-        <color rgba="0.13 0.145 0.16 1" />
+      <material name="rubber">
+        <color rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -142,14 +158,6 @@
         <color rgba="0.63 0.67 0.71 1" />
       </material>
     </visual>
-    <visual name="upper_arm__rubber">
-      <geometry>
-        <mesh filename="meshes/upper_arm__rubber.obj" />
-      </geometry>
-      <material name="rubber">
-        <color rgba="0.035 0.04 0.045 1" />
-      </material>
-    </visual>
     <visual name="upper_arm__brown">
       <geometry>
         <mesh filename="meshes/upper_arm__brown.obj" />
@@ -172,6 +180,14 @@
       </geometry>
       <material name="orange">
         <color rgba="0.96 0.49 0.055 1" />
+      </material>
+    </visual>
+    <visual name="upper_arm__rubber">
+      <geometry>
+        <mesh filename="meshes/upper_arm__rubber.obj" />
+      </geometry>
+      <material name="rubber">
+        <color rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <visual name="upper_arm__servo">
@@ -226,12 +242,20 @@
         <color rgba="0.63 0.67 0.71 1" />
       </material>
     </visual>
-    <visual name="forearm__rubber">
+    <visual name="forearm__servo">
       <geometry>
-        <mesh filename="meshes/forearm__rubber.obj" />
+        <mesh filename="meshes/forearm__servo.obj" />
       </geometry>
-      <material name="rubber">
-        <color rgba="0.035 0.04 0.045 1" />
+      <material name="servo">
+        <color rgba="0.065 0.072 0.08 1" />
+      </material>
+    </visual>
+    <visual name="forearm__cap">
+      <geometry>
+        <mesh filename="meshes/forearm__cap.obj" />
+      </geometry>
+      <material name="cap">
+        <color rgba="0.13 0.145 0.16 1" />
       </material>
     </visual>
     <visual name="forearm__brown">
@@ -258,20 +282,12 @@
         <color rgba="0.96 0.49 0.055 1" />
       </material>
     </visual>
-    <visual name="forearm__servo">
+    <visual name="forearm__rubber">
       <geometry>
-        <mesh filename="meshes/forearm__servo.obj" />
+        <mesh filename="meshes/forearm__rubber.obj" />
       </geometry>
-      <material name="servo">
-        <color rgba="0.065 0.072 0.08 1" />
-      </material>
-    </visual>
-    <visual name="forearm__cap">
-      <geometry>
-        <mesh filename="meshes/forearm__cap.obj" />
-      </geometry>
-      <material name="cap">
-        <color rgba="0.13 0.145 0.16 1" />
+      <material name="rubber">
+        <color rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -310,14 +326,6 @@
         <color rgba="0.63 0.67 0.71 1" />
       </material>
     </visual>
-    <visual name="wrist__rubber">
-      <geometry>
-        <mesh filename="meshes/wrist__rubber.obj" />
-      </geometry>
-      <material name="rubber">
-        <color rgba="0.035 0.04 0.045 1" />
-      </material>
-    </visual>
     <visual name="wrist__brown">
       <geometry>
         <mesh filename="meshes/wrist__brown.obj" />
@@ -340,6 +348,14 @@
       </geometry>
       <material name="orange">
         <color rgba="0.96 0.49 0.055 1" />
+      </material>
+    </visual>
+    <visual name="wrist__rubber">
+      <geometry>
+        <mesh filename="meshes/wrist__rubber.obj" />
+      </geometry>
+      <material name="rubber">
+        <color rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <visual name="wrist__servo">
@@ -386,6 +402,14 @@
         <color rgba="0.1 0.115 0.13 1" />
       </material>
     </visual>
+    <visual name="tool__steel">
+      <geometry>
+        <mesh filename="meshes/tool__steel.obj" />
+      </geometry>
+      <material name="steel">
+        <color rgba="0.63 0.67 0.71 1" />
+      </material>
+    </visual>
     <visual name="tool__servo">
       <geometry>
         <mesh filename="meshes/tool__servo.obj" />
@@ -400,14 +424,6 @@
       </geometry>
       <material name="cap">
         <color rgba="0.13 0.145 0.16 1" />
-      </material>
-    </visual>
-    <visual name="tool__steel">
-      <geometry>
-        <mesh filename="meshes/tool__steel.obj" />
-      </geometry>
-      <material name="steel">
-        <color rgba="0.63 0.67 0.71 1" />
       </material>
     </visual>
     <collision>

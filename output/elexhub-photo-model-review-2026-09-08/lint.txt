@@ -1,0 +1,4 @@
+Ruff check --ignore EXE002: All checks passed!
+Ruff format --check: 5 files already formatted
+Files: src/robollm/elexhub/appearance.py, src/robollm/elexhub/model.py, examples/elexhub/render_model.py, examples/elexhub/bundle_model.py, tests/unit/test_elexhub.py
+EXE002 is the existing worktree-specific mount file-mode exception.

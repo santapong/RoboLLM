@@ -14,6 +14,7 @@ from fastapi import APIRouter
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 
+from .camera_ownership import CameraOwnership
 from .printables import board
 from .vision import CalibrationError, calibrate_images, save_calibration
 
@@ -28,9 +29,10 @@ class CameraRequest(BaseModel):
 class CameraSetup:
     """One camera owner; no camera is opened by construction or status reads."""
 
-    def __init__(self, root, *, enabled=True, capture_factory=None):
+    def __init__(self, root, *, enabled=True, capture_factory=None, ownership=None):
         self.root = Path(root)
         self.enabled = enabled
+        self.ownership = ownership or CameraOwnership()
         self.capture_factory = capture_factory or cv2.VideoCapture
         self.lock = threading.RLock()
         self.stopped = threading.Event()
@@ -99,21 +101,26 @@ class CameraSetup:
         with self.lock:
             if self.calibrating or (self.thread and self.thread.is_alive()):
                 raise CalibrationError("Stop the current camera session first.")
-            self.session = (
-                self.root / "captures/camera-setup" / f"session-{uuid.uuid4().hex}"
-            )
-            self.session.mkdir(parents=True, mode=0o700)
-            self.settings = {"device": device, "requested_size": [width, height]}
-            self.views = []
-            self.size = self.result = self.result_path = self.error = None
-            self._clear_frame()
-            self.stopped = threading.Event()
-            self.state = "starting"
-            self._save_session()
-            self.thread = threading.Thread(
-                target=self._run, args=(device, width, height), daemon=True
-            )
-            self.thread.start()
+            self.ownership.claim(self)
+            try:
+                self.session = (
+                    self.root / "captures/camera-setup" / f"session-{uuid.uuid4().hex}"
+                )
+                self.session.mkdir(parents=True, mode=0o700)
+                self.settings = {"device": device, "requested_size": [width, height]}
+                self.views = []
+                self.size = self.result = self.result_path = self.error = None
+                self._clear_frame()
+                self.stopped = threading.Event()
+                self.state = "starting"
+                self._save_session()
+                self.thread = threading.Thread(
+                    target=self._run, args=(device, width, height), daemon=True
+                )
+                self.thread.start()
+            except Exception:
+                self.ownership.release(self)
+                raise
         return self.status()
 
     def _run(self, device, width, height):
@@ -166,12 +173,15 @@ class CameraSetup:
                 self.state, self.error = "unavailable", str(exc)
         finally:
             # Only the owning worker releases the device, including failed opens.
-            if capture is not None:
-                capture.release()
-            with self.lock:
-                self._clear_frame()
-                if self.stopped.is_set():
-                    self.state = "stopped"
+            try:
+                if capture is not None:
+                    capture.release()
+            finally:
+                with self.lock:
+                    self._clear_frame()
+                    if self.stopped.is_set():
+                        self.state = "stopped"
+                self.ownership.release(self)
 
     def stop(self):
         with self.lock:

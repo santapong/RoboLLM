@@ -1,0 +1,85 @@
+{
+  "zero_length_edges": [
+    {
+      "body": "finger_left",
+      "solid": "claw_link_0",
+      "indices": [
+        7,
+        21
+      ]
+    },
+    {
+      "body": "finger_left",
+      "solid": "claw_link_1",
+      "indices": [
+        7,
+        21
+      ]
+    },
+    {
+      "body": "finger_right",
+      "solid": "claw_link_0",
+      "indices": [
+        7,
+        21
+      ]
+    },
+    {
+      "body": "finger_right",
+      "solid": "claw_link_1",
+      "indices": [
+        7,
+        21
+      ]
+    }
+  ],
+  "failed_group_meshes": [
+    {
+      "body": "forearm",
+      "material": "anodized",
+      "vertices": 1688,
+      "faces": 3552,
+      "nonmanifold_edges": 40,
+      "shared_vertex_pairs": [
+        {
+          "solids": [
+            "forearm_cradle_0_face",
+            "forearm_cradle_0_tongue"
+          ],
+          "count": 20
+        },
+        {
+          "solids": [
+            "forearm_cradle_1_face",
+            "forearm_cradle_1_tongue"
+          ],
+          "count": 20
+        }
+      ]
+    },
+    {
+      "body": "tool",
+      "material": "anodized",
+      "vertices": 596,
+      "faces": 1212,
+      "nonmanifold_edges": 2,
+      "shared_vertex_pairs": [
+        {
+          "solids": [
+            "claw_drive_disc_-0.01_0",
+            "claw_drive_disc_-0.01_1"
+          ],
+          "count": 2
+        },
+        {
+          "solids": [
+            "claw_drive_disc_0.01_0",
+            "claw_drive_disc_0.01_1"
+          ],
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "failed_individual_roundtrip": []
+}

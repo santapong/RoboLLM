@@ -1,0 +1,204 @@
+{
+  "checked_at": "2026-09-09T00:06:36.962590+07:00",
+  "request_and_reference_date": "2026-09-08",
+  "baseline_commit": "9c5f797",
+  "source_state": "local working-tree implementation; no commit or push performed",
+  "appearance_revision": "elexhub-owner-photo-v2",
+  "geometry_status": "provisional",
+  "physical_evidence": false,
+  "cad": {
+    "status": "provisional",
+    "build_id": "1788886639914619532",
+    "descriptor_sha256": "bdd645f568bec13b7d2ec70fdb6e1c638dc75b588ceb338483786d2249c21917",
+    "freecad_version": [
+      "1",
+      "1",
+      "3",
+      "20260725 (Git shallow)",
+      "Unknown",
+      "2026/07/25 04:52:02",
+      "grafted,grafted",
+      "145529fe741292ff0b3977a01195bf0247425794"
+    ],
+    "valid_solids": 210,
+    "appearance_revision": "elexhub-owner-photo-v2",
+    "editable_features": "boxes, cylinders, bores, sketch outlines and plate extrusions",
+    "profile_hash": "15f8e3f40ebaa9bca8bd4f1f",
+    "step_exported": true,
+    "fcstd_saved": true,
+    "fcstd_reopened": true,
+    "step_reopened": true,
+    "step_volume_mm3": 338143.5791152673,
+    "global_placements_verified": true,
+    "cad_mesh_bounds_tolerance_mm": 0.15,
+    "colors_saved_and_reopened": true
+  },
+  "source_sha256": {
+    "src/robollm/elexhub/appearance.py": "a8f989813e7593072a001e699bac215cf0613b6154d08fe17b18798f6c2fc735",
+    "src/robollm/elexhub/model.py": "8baa2c450d3eb10e8f2e157b1fb0431dc752c3bf0de460f4dd6826632a164f28",
+    "src/robollm/elexhub/model_viewer.html": "80f8102e4e4b51f1540b2f1e2bbfb9181b5d3fcb50f5fd6aedd65768c819a6c2",
+    "examples/elexhub/render_model.py": "871fdfe5423f34d07971c1c723b8a73262255b5938faddfe21b38bddbbfdabb3",
+    "examples/elexhub/bundle_model.py": "88210c229c27f6df6dbf19ae4bcc1324a48a8a6e4dce2a579601e8c6f8bd41f8",
+    "cad/build_elexhub_freecad.py": "97cd34d906738955c77213af43f0746fb8183671415377fe176a70eea6eee880",
+    "tests/unit/test_elexhub.py": "c86b39768937424e41e513f08189bf830809ce1c1dcd92e2e67e2590ce46832b"
+  },
+  "tests": {
+    "passed": 7,
+    "deselected": 43,
+    "seconds": 12.27,
+    "command": "MUJOCO_GL=egl .venv/bin/python -m pytest tests/unit/test_elexhub.py -k 'photo_model_export or mujoco_kinematics or render_and_reach or robot_only or review_pose or model_bundle or review_visual_bounds' -q"
+  },
+  "lint": {
+    "ruff_check": "passed",
+    "ruff_format": "passed"
+  },
+  "robot_only_mujoco": {
+    "nq": 7,
+    "nv": 7,
+    "nu": 6,
+    "scene_geometry": false,
+    "workspace_camera": false,
+    "free_object": false,
+    "fixed_base": true,
+    "random_pose_frame_agreement": "passed"
+  },
+  "renders": {
+    "home": {
+      "manifest_sha256": "baa219ff732f223727ca0c9130f395fe552083102b51762b261d6f71e0eb9e19",
+      "artifact_hashes_verified": 54,
+      "image_hashes_verified": 6,
+      "pose": {
+        "source": "profile home",
+        "joint_names": [
+          "base_yaw",
+          "shoulder",
+          "elbow",
+          "wrist_pitch",
+          "wrist_roll"
+        ],
+        "joint_positions_rad": [
+          0.0,
+          0.17453292519943295,
+          0.8726646259971648,
+          1.3089969389957472,
+          0.0
+        ],
+        "gripper": "open; existing sliding-jaw approximation",
+        "canonical_home_changed": false,
+        "static_exports_pose": "profile home"
+      }
+    },
+    "inspection": {
+      "manifest_sha256": "618ed6dc588c7cbdf2be77b35ee19defc5e3f25df79ae214adc73d7b60cdb049",
+      "artifact_hashes_verified": 54,
+      "image_hashes_verified": 6,
+      "pose": {
+        "source": "review-only angles",
+        "joint_names": [
+          "base_yaw",
+          "shoulder",
+          "elbow",
+          "wrist_pitch",
+          "wrist_roll"
+        ],
+        "joint_positions_rad": [
+          0.0,
+          0.9,
+          -1.35,
+          -1.18,
+          0.0
+        ],
+        "gripper": "open; existing sliding-jaw approximation",
+        "canonical_home_changed": false,
+        "static_exports_pose": "profile home"
+      }
+    }
+  },
+  "visual_review": {
+    "home_six_views": "photo_geometry_review agent passed",
+    "inspection_six_views": "model_integration_review agent passed",
+    "lead_representative_views": "passed",
+    "limitations": [
+      "estimated dimensions and hidden details",
+      "open assembly differs from photographed claw pose",
+      "decorative wire segments do not model continuous flexible wiring"
+    ]
+  },
+  "browser": {
+    "url": "http://127.0.0.1:8768/model.html",
+    "visible_in_app_preview": true,
+    "side_front_top_reset_views": "passed",
+    "keyboard_zoom_and_rotation": "passed",
+    "pointer_drag_rotation": "passed",
+    "console_errors": [],
+    "layout": {
+      "viewport_css_px": 1280,
+      "page_width_css_px": 1265
+    },
+    "download_responses": {
+      "elexhub.FCStd": {
+        "status": 200,
+        "bytes": 776472,
+        "matches_local": true
+      },
+      "elexhub.step": {
+        "status": 200,
+        "bytes": 2341537,
+        "matches_local": true
+      },
+      "elexhub.glb": {
+        "status": 200,
+        "bytes": 638000,
+        "matches_local": true
+      }
+    },
+    "direct_file_url": "blocked by browser URL policy; not verified; no bypass attempted"
+  },
+  "baseline_preservation": {
+    "verified_files": 36,
+    "changed_files": [],
+    "sha256": {
+      "ros2/robo_arm_driver/config/elexhub.yaml": "7ac292916d812586f0c981afa28f840d524bfb5f7bd4e61d8cd5f39ae457b9d8",
+      "ros2/robo_arm_driver/config/elexhub.sim.yaml": "0e87979a404049e05fd51cdc2b19b40b1995ec4b370bfb6f60f7417df1e18547",
+      "hardware/firmware/elexhub_pca9685/arm_config.h": "a804d033673278efa78a232822df949f71a05a83b36762cea60683b6334e621c",
+      "output/elexhub-evaluation-2026-09-06/REPORT.md": "f3c1e7156ca60ec96ea10f7d2e0cbbf300423b6b771ba165811e0c14c487f9e2",
+      "output/elexhub-evaluation-2026-09-06/environment-lock.txt": "ae715e06a0c292811f42a8742bb41ac89d583983941822e543c7f6607f6db5c4",
+      "output/elexhub-evaluation-2026-09-06/manifest.json": "c92cf90050247b71dde9cb0b6399353d453845ef66a029e7a86cd38eb08f520a",
+      "output/elexhub-evaluation-2026-09-06/model/MODEL_STATUS.json": "f7bd3ee6a2aa661e95038eb88770ade7b1a958ef3150cbd4b77862758d55f7e5",
+      "output/elexhub-evaluation-2026-09-06/model/cad-description.json": "c1b65660bd1feb9a92cdb01ca39da702e1974e7744de0ca14cfcb3f6afc2e9a6",
+      "output/elexhub-evaluation-2026-09-06/model/elexhub.urdf": "915bed519d1bd6c9cce8fe11ddc6963906a486bbb75c4c1752eb3627326a6352",
+      "output/elexhub-evaluation-2026-09-06/model/elexhub.xml": "f838e202939b37db6c630cdda3f3a28d1600647a2cde5d36ff5d00ccf3ba703f",
+      "output/elexhub-evaluation-2026-09-06/model/meshes/forearm.obj": "6bbdd070cad0453b992f3fb4ac9e56b9449c880a8da9f4d49f3b57eec7324104",
+      "output/elexhub-evaluation-2026-09-06/model/meshes/tool.obj": "2a33ccc391d50390d288e4716331c228d89d4531768a20064aa7340ae1c8c6c5",
+      "output/elexhub-evaluation-2026-09-06/model/meshes/turret.obj": "d5da1de46c5cf739d01beacba58c2a561037d82b92df2aca0b829417cb3ba080",
+      "output/elexhub-evaluation-2026-09-06/model/meshes/upper_arm.obj": "d1d0783835af5a7dd72c91ae890a8e0926ca34cb4b895b1c18dbfc464bb23a0a",
+      "output/elexhub-evaluation-2026-09-06/model/meshes/wrist.obj": "a4d57d52d9029bde2a306a512e7554f516490f0683a9c57faf863e1cb81a72af",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/__init__.py": "0d873dfd6698073cbbe46155c8d3e3b8de1081f1fb7a0d197caef23f09c56969",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/arm_serial.py": "152a527f467e1e270e309872966e90d5b1904f5bc385d217931bf85771afd4ad",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/config.py": "866fd0292b7c1e2482645ee08a0ab21393ebcb57492ee9fbb4818ec7c156a4c2",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/elexhub_profile.py": "8b6d13f0ba219f0c55573f6e5e6775b21364ec0cbf4760b7543d0f2479cf3ad3",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/node.py": "2af06ef3c498366d1e83c778c2804d536e171c76965614f600031bf723263251",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/pca_sim.py": "621b75fd812a7a80606aa5cf6b1d35afef697b827ef8285d29d9b3799dfcb9f0",
+      "output/elexhub-evaluation-2026-09-06/source/ros2/robo_arm_driver/robo_arm_driver/safety.py": "c4cd909ce13de534445b3d38c8bb019e2904e02b345460ebf3f9447d8cbf5487",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/__init__.py": "d14cc2ccf78f4f9c3116fdd86210d6b82aed44f8ca1e92fe71c5a32a906f9aa6",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/capture.py": "a7fe885fca2f65befc521fa5cdff903ad91262ceca08e6e7edf03f4141392ff5",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/cli.py": "2230a6d26d09f1f7b6f6dac6be3b8f0669ad4b6d6bb81b4cdee9a7e6cf27542e",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/evaluation.py": "bc2ad6cb5fc76c615d76729b4f8a443d254ce6c80418aa4253658bfda64330bb",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/hardware.py": "852c9f2446dd178de2a9740045eaae35fbb9871b63bf4781c0b118bdcda96f45",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/interaction.py": "de02ae4d4f96d343554c22dbf7f8c59fd3a1985a7b0f8b082a14ed7a5327bebb",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/model.py": "9ff2ec7b116c77162cc160f14e3dde2ab0c5ec75de51170ddec7826746a5c74f",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/printables.py": "2cb3a09d44cf8c37a3c4a9a47b273015f5a8876427fd402a3411cfa719b9fdbc",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/simulation.py": "5e37be81a533aaa9aba2a60397e88af0db42a33409451f329966141cd70c6e2f",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/speech.py": "5b721cd303af66ec556b16bca5345e6f56eaff9523d2f7792298ea45be97fe68",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/vision.py": "3c249bf33786805fe0f10dfa9862f574ad22820c7a56008a80ca2ba0020cf35b",
+      "output/elexhub-evaluation-2026-09-06/source/src/robollm/elexhub/web.py": "7a550696749783ca9b488afce63ca00d628d2328a59a83781e19265425a44e5d",
+      "output/elexhub-evaluation-2026-09-06/summary.json": "7bdde10c39d14e45a5804bcff9851d9c3fb1cfa4e7ae7431f0dde33ef7743a8c",
+      "output/elexhub-evaluation-2026-09-06/trials.jsonl": "0fd5e2cc1b30904c8c0efd166d230821b01eb72f4e003b2f31cdc6c4ce4daed2"
+    }
+  },
+  "packaging": {
+    "required_material_obj_meshes_only": true,
+    "legacy_combined_body_objs": "excluded from robot bundle; inherited coincident-seam import issue reproduced at baseline",
+    "room_photos_in_package": false
+  }
+}

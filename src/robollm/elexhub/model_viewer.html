@@ -6,30 +6,31 @@
 *{box-sizing:border-box}body{margin:0;background:#101620;color:#edf2f7;font:15px/1.5 system-ui}main{max-width:1400px;margin:auto;padding:28px}header{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:22px}.eyebrow{color:#68d5c0;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}h1{font-size:28px;letter-spacing:-.8px;margin:4px 0}p{color:#b1bfd0;margin:8px 0}a{color:#8fe3d0}button,a.button{font:inherit;padding:9px 15px;border:1px solid #3c495c;border-radius:8px;background:#1e2939;color:#edf2f7;cursor:pointer;text-decoration:none}button:hover,a.button:hover{border-color:#7edbc7}button:focus-visible,canvas:focus-visible,a:focus-visible{outline:3px solid #39b49b;outline-offset:3px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:20px}.viewer{background:#ecf0f1;border:1px solid #3c495c;border-radius:16px;overflow:hidden;position:relative}canvas{display:block;width:100%;height:610px;touch-action:none;cursor:grab}canvas:active{cursor:grabbing}.toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:14px;background:#172130}.hint{color:#9fbdc8;font-size:12px;margin-left:auto;align-self:center}.notes{background:#182231;border:1px solid #303d50;padding:22px;border-radius:16px}h2{font-size:16px;margin:0 0 12px}.notes ul{padding-left:20px;color:#c7d1dc}.notes li{margin:8px 0}.notice{padding:14px;background:#302a1d;color:#f1d59b;border:1px solid #685334;border-radius:9px;font-size:13px;margin:20px 0}.links{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}.small{font-size:12px;color:#a1b2c8}.error{position:absolute;inset:25px;color:#733b1b;background:#fff1dd;padding:20px;border-radius:12px;height:max-content}footer{margin-top:20px;display:flex;gap:22px;flex-wrap:wrap;font-size:13px}details{margin-top:20px}summary{cursor:pointer;color:#bbcbdc}dl{font-size:13px}dt{color:#a3b4c8;margin-top:10px}dd{margin:0;color:#edf2f7}@media(max-width:900px){main{padding:16px}.layout{grid-template-columns:1fr}header{align-items:flex-start}canvas{height:480px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
 </style>
 <main>
-<header><div><div class="eyebrow">RoboLLM / Elexhub</div><h1>Inspect the black metal arm</h1><p>Original 3D reconstruction using Elexhub’s product photographs.</p></div><a class="button" href="/">Experiment console</a></header>
+<header><div><div class="eyebrow">RoboLLM / Elexhub</div><h1>Your robot arm in 3D</h1><p>Editable robot assembly refined from your five photographs.</p></div><a id="console-link" class="button" href="/">Experiment console</a></header>
 <div class="layout">
 <section class="viewer" aria-label="Interactive CAD model">
 <canvas id="model" tabindex="0" aria-label="3D Elexhub robot arm. Drag or use arrow keys to rotate; scroll or use plus and minus to zoom."></canvas>
 <div class="toolbar" aria-label="Model views"><button data-view="angle">Angle</button><button data-view="front">Front</button><button data-view="side">Side</button><button data-view="top">Top</button><button data-view="reset">Reset view</button><span class="hint">Drag to rotate · Scroll to zoom</span></div>
 <div class="error" id="error" hidden>This browser could not display the 3D view. The FreeCAD, STEP and GLB downloads remain available.</div>
 </section>
-<aside class="notes"><h2>Matched construction</h2><ul><li>Two perforated base plates</li><li>Black U-shaped metal brackets</li><li>Six exposed servo assemblies</li><li>Bearing discs and mounting screws</li><li>Linkage claw and pivot screws</li><li>Cable looms and servo leads</li></ul>
+<aside class="notes"><h2>Robot assembly</h2><ul><li>Two perforated base plates</li><li>Black upper-arm plates and mounting brackets</li><li>Silver forearm connector and end flanges</li><li>Six servo assemblies and joint hardware</li><li>Linkage claw and pivot screws</li><li>Attached servo leads and cable ties</li></ul>
 <div class="notice"><strong>Photo reference · dimensions unverified</strong><br>This is a closer visual model of the confirmed kit. Joint centres, masses, claw linkage motion and actuator limits still need measurements from your arm.</div>
-<p class="small">Five positioning joints + one gripper. This viewer displays the open assembly and cannot move hardware.</p>
+<p class="small">Five positioning joints + one gripper. The model is shown in its home position with the claw open. Gripper motion remains simplified.</p>
 <details><summary>Provisional dimensions</summary><dl id="dimensions"></dl></details>
-<details><summary>Published component references</summary>
-<p class="small">These specifications describe catalog parts and a related kit. They are not verified measurements of your Elexhub arm.</p>
-<dl><dt>MG996R envelope · TowerPro</dt><dd>40.7 × 19.7 × 42.9 mm</dd><dt>Long U-bracket · Olimex</dt><dd>56 × 25 × 65 mm</dd><dt>Multifunction bracket · Sinoning</dt><dd>58 × 37 × 25 mm; 2 mm plate</dd><dt>Related ROT3U kit · diymore</dt><dd>460 mm listed height; 55 mm claw opening. Different assembly; not adopted as Elexhub dimensions.</dd></dl>
-<p class="small"><a href="https://towerpro.com.tw/product/mg996R/" target="_blank" rel="noreferrer">Servo specification ↗</a> · <a href="https://www.olimex.com/Products/Robot-CNC-Parts/ServoMotors/MS-BRACKET-U/" target="_blank" rel="noreferrer">U-bracket specification ↗</a> · <a href="https://www.sinoning.com/product/black-robot-arm-robotic-part-accessory-platfrom-u-beam-servo-bracket-for-standard-servo-steering-bearing-bracket-steam-diy-parts/" target="_blank" rel="noreferrer">Bracket catalog ↗</a> · <a href="https://www.diymore.cc/products/diymore-rot3u-6dof-aluminium-robot-arm-mechanical-robotic-clamp-claw-kit-for-arduino-mega2560" target="_blank" rel="noreferrer">Related kit ↗</a></p>
+<details><summary>What the photographs show</summary>
+<p class="small">Side views establish the overall assembly and silver connector; the top and end views resolve bracket faces, joint hardware, and the claw. The background is excluded.</p>
+<p class="small">The servo housing uses an estimated standard-size envelope. The installed servo model and all physical dimensions await your measurements.</p>
 </details>
 <div class="links"><a class="button" data-file="elexhub.FCStd" data-artifact="cad" href="elexhub.FCStd">FreeCAD</a><a class="button" data-file="elexhub.step" data-artifact="step" href="elexhub.step">STEP</a><a class="button" data-file="elexhub.glb" data-artifact="glb" href="elexhub.glb">GLB</a></div>
 </aside></div>
-<footer><a href="https://elexhub.com/shop/XvAAPZ" target="_blank" rel="noreferrer">Elexhub product reference ↗</a><a href="https://elexhub.com/images/items/XvAAPZ2.jpg" target="_blank" rel="noreferrer">Assembly photograph ↗</a><span class="small">Checked 7 September 2026 · Training workspace unchanged</span></footer>
+<footer><span class="small">Photo references: owner’s five views · 8 September 2026</span><span class="small">Robot only · Adjustable dimensions · FCStd / STEP / GLB / URDF / MuJoCo</span></footer>
 </main>
 <script id="model-data" type="application/json">__MODEL_DATA__</script>
 <script>
 const model=JSON.parse(document.getElementById('model-data').textContent),canvas=document.getElementById('model');
-for(const a of document.querySelectorAll('[data-artifact]'))if(location.protocol!=='file:')a.href='/artifact/'+a.dataset.artifact;
+const inConsole=location.protocol!=='file:' && /^\/model\/?$/.test(location.pathname);
+document.getElementById('console-link').hidden=!inConsole;
+for(const a of document.querySelectorAll('[data-artifact]'))if(inConsole)a.href='/artifact/'+a.dataset.artifact;
 for(const [label,value] of Object.entries(model.dimensions)){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=value;document.getElementById('dimensions').append(dt,dd)}
 try{
   const gl=canvas.getContext('webgl2',{antialias:true,alpha:false});if(!gl)throw Error('WebGL unavailable');

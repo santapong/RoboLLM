@@ -1,0 +1,43 @@
+{
+  "checked_at": "2026-09-09T09:09:58.725722+07:00",
+  "total_unique_tests_passed": 117,
+  "groups": [
+    {
+      "file": "test_elexhub.py",
+      "passed": 50,
+      "duration_s": 60.65
+    },
+    {
+      "file": "test_elexhub_camera_setup.py",
+      "passed": 8,
+      "duration_s": 8.81
+    },
+    {
+      "file": "test_elexhub_hand_web.py",
+      "passed": 10,
+      "duration_s": 7.98
+    },
+    {
+      "file": "test_elexhub_hand_camera.py",
+      "passed": 30,
+      "source": "camera agent run; included actual cached model inference on blank synthetic input"
+    },
+    {
+      "file": "test_elexhub_hand_control.py",
+      "passed": 19,
+      "source": "18 tests in6.99s plus newly added synthetic sweep in5.05s"
+    }
+  ],
+  "lint": "Ruff check and format check passed on all11 changed/new Python implementation and focused test files",
+  "javascript": "Node syntax check passed",
+  "browser_errors": [],
+  "known_dependency_warnings": [
+    "existing Starlette/httpx and anyio deprecation warnings"
+  ],
+  "model_integrity": "MODEL-INTEGRITY.json",
+  "camera_evidence": "LIVE-CAMERA.json",
+  "simulation_evidence": "SYNTHETIC-CONTROL.json",
+  "physical_dimensions_verified": false,
+  "physical_robot_tested": false,
+  "anatomical_hand_test_complete": false
+}

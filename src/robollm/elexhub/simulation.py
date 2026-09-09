@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from collections import deque
 from functools import wraps
 from pathlib import Path
@@ -12,6 +13,7 @@ import mujoco
 import numpy as np
 from robo_arm_driver.config import ConfigError
 
+from . import appearance
 from .model import build_assets, geometry, mat_to_base, rotation
 
 
@@ -29,11 +31,34 @@ def synchronized(method):
 
 
 class SimArm:
-    def __init__(self, config, directory: Path):
+    def __init__(self, config, directory: Path, *, rebuild=True):
         self.config = config
         self.lock = RLock()
         self.geometry = geometry(config)
-        build_assets(config, directory)
+        directory = Path(directory)
+        if rebuild:
+            build_assets(config, directory)
+        else:
+            try:
+                descriptor = json.loads(
+                    (directory / "cad-description.json").read_text()
+                )
+            except (OSError, ValueError) as exc:
+                raise ConfigError(
+                    "model assets are missing or invalid; build them explicitly first"
+                ) from exc
+            if (
+                descriptor.get("profile_hash") != config.profile_hash
+                or descriptor.get("appearance", {}).get("revision")
+                != appearance.REVISION
+            ):
+                raise ConfigError(
+                    "model assets are stale; rebuild them explicitly before starting simulation"
+                )
+            if not (directory / "elexhub.xml").is_file():
+                raise ConfigError(
+                    "simulation scene is missing; build model assets explicitly first"
+                )
         self.model = mujoco.MjModel.from_xml_path(str(directory / "elexhub.xml"))
         self.data = mujoco.MjData(self.model)
         self.n = config.njoints
@@ -104,12 +129,22 @@ class SimArm:
             bad.append(sorted(names))
         return bad
 
-    def solve(self, target, *, start=None, downward=False, allow_grasp=False):
+    def solve(
+        self,
+        target,
+        *,
+        start=None,
+        downward=False,
+        allow_grasp=False,
+        max_iterations=400,
+    ):
         target = np.asarray(target, float)
         if target.shape != (3,) or not np.isfinite(target).all():
             raise MotionRejected("non-finite or malformed target")
         if not 0.008 <= target[2] <= 0.42 or np.linalg.norm(target[:2]) > 0.34:
             raise MotionRejected("target outside bounded arm workspace")
+        if type(max_iterations) is not int or not 1 <= max_iterations <= 400:
+            raise MotionRejected("invalid IK iteration bound")
         with self.lock:
             q = self.data.qpos.copy()
         q[: self.n] = self.last_command if start is None else start
@@ -140,7 +175,7 @@ class SimArm:
                 self.model, {j.name: j.max_velocity_rad_s for j in self.config.joints}
             ),
         ]
-        for _ in range(400):
+        for _ in range(max_iterations):
             velocity = mink.solve_ik(kin, [task, posture], 0.05, "daqp", limits=limits)
             kin.integrate_inplace(velocity, 0.05)
             err = np.linalg.norm(kin.data.site("tcp").xpos - target)
@@ -154,6 +189,97 @@ class SimArm:
                     raise MotionRejected("IK pose intersects robot/table/object")
                 return result
         raise MotionRejected(f"IK cannot reach target (residual {err * 1000:.1f} mm)")
+
+    @synchronized
+    def hold(self):
+        """Freeze this simulator's current arm state and discard delayed commands."""
+        self.last_command = self.data.qpos[: self.n].copy()
+        self.gripper = float(
+            np.clip(
+                self.data.qpos[self.n : self.n + 2].mean()
+                / (self.geometry["gripper"]["opening_m"] / 2),
+                0,
+                1,
+            )
+        )
+        self.data.ctrl[: self.n] = self.last_command
+        self.data.ctrl[self.n] = (
+            self.gripper * self.geometry["gripper"]["opening_m"] / 2
+        )
+        self.data.qvel[: self.n + 2] = 0
+        self.queue = deque([self.last_command.copy() for _ in self.queue])
+        self.carrying = False
+
+    def teleop_step(self, target, closure, dt, *, guard=None):
+        """One bounded simulation control interval; no queued hand trajectories.
+
+        IK and tentative physics run on private data. Only a collision-free,
+        still-current interval is committed, under a short renderer-safe lock.
+        Existing batch trajectory and actuator-delay behavior is unchanged.
+        """
+        if not self.config.simulation:
+            raise MotionRejected("hand mirroring is simulation-only")
+        if not np.isfinite(dt) or not 0 < dt <= 0.1:
+            raise MotionRejected("invalid hand control interval")
+        if not np.isfinite(closure) or not 0 <= closure <= 1:
+            raise MotionRejected("invalid hand gripper target")
+        if guard:
+            guard()
+        with self.lock:
+            if self.aborted:
+                raise MotionRejected("task aborted")
+            start = self.last_command.copy()
+            grip_start = self.gripper
+            trial = mujoco.MjData(self.model)
+            mujoco.mj_copyData(trial, self.model, self.data)
+        goal = self.solve(target, start=start, max_iterations=12)
+        rates = np.array([j.max_velocity_rad_s for j in self.config.joints])
+        goal = start + np.clip(goal - start, -rates * dt, rates * dt)
+        self.check_path(goal, start=start)
+        grip_delta = self.config.gripper.max_velocity_percent_s / 100 * dt
+        grip_goal = grip_start + float(
+            np.clip(closure - grip_start, -grip_delta, grip_delta)
+        )
+        lower = np.array([j.min_rad for j in self.config.joints])
+        upper = np.array([j.max_rad for j in self.config.joints])
+        steps = max(1, round(dt / self.model.opt.timestep))
+        for index in range(steps):
+            if guard:
+                guard()
+            alpha = (index + 1) / steps
+            command = start + alpha * (goal - start)
+            # Provisional gravity compensation keeps short steps responsive.
+            # Both the requested positions and compensated controls stay bounded.
+            trial.ctrl[: self.n] = np.clip(
+                command
+                + trial.qfrc_bias[: self.n] / self.geometry["actuator_reference"]["kp"],
+                lower,
+                upper,
+            )
+            trial.ctrl[self.n] = (
+                (grip_start + alpha * (grip_goal - grip_start))
+                * self.geometry["gripper"]["opening_m"]
+                / 2
+            )
+            mujoco.mj_step(self.model, trial)
+            if not np.isfinite(trial.qpos).all() or not np.isfinite(trial.qvel).all():
+                raise MotionRejected("simulation became non-finite")
+            if self.collisions(trial):
+                raise MotionRejected("hand target would contact robot/table/object")
+        mujoco.mj_forward(self.model, trial)
+        if np.any(trial.qpos[: self.n] < lower) or np.any(trial.qpos[: self.n] > upper):
+            raise MotionRejected("simulated joints would exceed their limits")
+        if self.collisions(trial):
+            raise MotionRejected("hand target would contact robot/table/object")
+        with self.lock:
+            if guard:
+                guard()
+            if self.aborted:
+                raise MotionRejected("task aborted")
+            mujoco.mj_copyData(self.data, self.model, trial)
+            self.last_command = goal
+            self.gripper = grip_goal
+        return self.tcp()
 
     def check_path(self, goal, *, start=None, allow_grasp=False):
         temp = mujoco.MjData(self.model)

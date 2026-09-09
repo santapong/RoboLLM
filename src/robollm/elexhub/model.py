@@ -198,6 +198,9 @@ def build_assets(config: ArmConfig, out: Path) -> dict:
     gltf.export(out / "elexhub.glb")
     (out / "cad-description.json").write_text(json.dumps(descriptor, indent=2) + "\n")
     (out / "elexhub.xml").write_text(mjcf(config, visual_meshes))
+    (out / "elexhub-robot.xml").write_text(
+        mjcf(config, visual_meshes, include_scene=False)
+    )
     (out / "elexhub.urdf").write_text(urdf(config, visual_meshes))
     (out / "APPEARANCE_PROVENANCE.json").write_text(
         json.dumps(appearance.REFERENCE, indent=2) + "\n"
@@ -214,7 +217,7 @@ def build_assets(config: ArmConfig, out: Path) -> dict:
                 "inertias": "box approximations; not system-identified",
                 "joint_names": config.joint_names,
                 "appearance_revision": appearance.REVISION,
-                "appearance_source": "Elexhub product photographs; user confirmed kit variant",
+                "appearance_source": "Owner's five robot photographs; catalog references for component context only",
                 "dimensions_verified": False,
                 "collision_geometry": "provisional proxies; decorative parts are not collision geometry",
             },
@@ -258,7 +261,8 @@ def _visuals(parent, records, *, urdf=False):
             )
 
 
-def mjcf(config, visual_meshes):
+def mjcf(config, visual_meshes, *, include_scene=True):
+    """Export the shared robot, optionally with the existing tabletop scene."""
     g = geometry(config)
     root = ET.Element("mujoco", model="elexhub_" + g["status"])
     ET.SubElement(root, "compiler", angle="radian", autolimits="true")
@@ -297,20 +301,21 @@ def mjcf(config, visual_meshes):
             specular="0.6" if name == "steel" else "0.25",
             shininess="0.4",
         )
-    ET.SubElement(
-        asset,
-        "texture",
-        name="floor_tex",
-        type="2d",
-        builtin="checker",
-        width="256",
-        height="256",
-        rgb1=".86 .87 .87",
-        rgb2=".79 .81 .82",
-    )
-    ET.SubElement(
-        asset, "material", name="floor_mat", texture="floor_tex", texrepeat="8 8"
-    )
+    if include_scene:
+        ET.SubElement(
+            asset,
+            "texture",
+            name="floor_tex",
+            type="2d",
+            builtin="checker",
+            width="256",
+            height="256",
+            rgb1=".86 .87 .87",
+            rgb2=".79 .81 .82",
+        )
+        ET.SubElement(
+            asset, "material", name="floor_mat", texture="floor_tex", texrepeat="8 8"
+        )
     world = ET.SubElement(root, "worldbody")
     ET.SubElement(
         world, "light", pos="0 -.3 1", diffuse=".8 .8 .8", ambient=".28 .28 .28"
@@ -318,27 +323,28 @@ def mjcf(config, visual_meshes):
     ET.SubElement(
         world, "light", pos="-.3 .4 .7", diffuse=".55 .55 .55", castshadow="false"
     )
-    ET.SubElement(
-        world,
-        "geom",
-        name="table",
-        type="plane",
-        size=".6 .6 .02",
-        material="floor_mat",
-    )
-    # Mat has no extra collision surface: its printed surface is table z=0.
-    center = mat_to_base(config, np.array(g["table"]["workspace_m"]) / 2)
-    ET.SubElement(
-        world,
-        "geom",
-        name="mat",
-        type="box",
-        pos=vec(center + [0, 0, 0.0001]),
-        size=vec([0.06, 0.09, 0.0001]),
-        rgba=".95 .95 .92 1",
-        contype="0",
-        conaffinity="0",
-    )
+    if include_scene:
+        ET.SubElement(
+            world,
+            "geom",
+            name="table",
+            type="plane",
+            size=".6 .6 .02",
+            material="floor_mat",
+        )
+        # Mat has no extra collision surface: its printed surface is table z=0.
+        center = mat_to_base(config, np.array(g["table"]["workspace_m"]) / 2)
+        ET.SubElement(
+            world,
+            "geom",
+            name="mat",
+            type="box",
+            pos=vec(center + [0, 0, 0.0001]),
+            size=vec([0.06, 0.09, 0.0001]),
+            rgba=".95 .95 .92 1",
+            contype="0",
+            conaffinity="0",
+        )
     base = ET.SubElement(world, "body", name="base")
     _visuals(base, visual_meshes["base"])
     ET.SubElement(
@@ -479,33 +485,34 @@ def mjcf(config, visual_meshes):
         ctrlrange=vec([0, grip["opening_m"] / 2]),
         forcerange="-3 3",
     )
-    cube = g["object"]
-    object_pos = mat_to_base(config, [0.07, 0.05], cube["edge_m"] / 2 + 0.0002)
-    obj = ET.SubElement(world, "body", name="red_box", pos=vec(object_pos))
-    ET.SubElement(obj, "freejoint", name="object_free")
-    ET.SubElement(
-        obj,
-        "geom",
-        name="red_box_geom",
-        type="box",
-        size=vec([cube["edge_m"] / 2] * 3),
-        mass=str(cube["mass_kg"]),
-        rgba=".85 .08 .06 1",
-    )
-    camera = g["camera"]
-    backward = np.array(camera["position_m"]) - np.array(camera["look_at_m"])
-    backward /= np.linalg.norm(backward)
-    right = np.cross([0, 0, 1], backward)
-    right /= np.linalg.norm(right)
-    up = np.cross(backward, right)
-    ET.SubElement(
-        world,
-        "camera",
-        name="webcam",
-        pos=vec(camera["position_m"]),
-        xyaxes=vec(np.r_[right, up]),
-        fovy=str(camera["fovy_deg"]),
-    )
+    if include_scene:
+        cube = g["object"]
+        object_pos = mat_to_base(config, [0.07, 0.05], cube["edge_m"] / 2 + 0.0002)
+        obj = ET.SubElement(world, "body", name="red_box", pos=vec(object_pos))
+        ET.SubElement(obj, "freejoint", name="object_free")
+        ET.SubElement(
+            obj,
+            "geom",
+            name="red_box_geom",
+            type="box",
+            size=vec([cube["edge_m"] / 2] * 3),
+            mass=str(cube["mass_kg"]),
+            rgba=".85 .08 .06 1",
+        )
+        camera = g["camera"]
+        backward = np.array(camera["position_m"]) - np.array(camera["look_at_m"])
+        backward /= np.linalg.norm(backward)
+        right = np.cross([0, 0, 1], backward)
+        right /= np.linalg.norm(right)
+        up = np.cross(backward, right)
+        ET.SubElement(
+            world,
+            "camera",
+            name="webcam",
+            pos=vec(camera["position_m"]),
+            xyaxes=vec(np.r_[right, up]),
+            fovy=str(camera["fovy_deg"]),
+        )
     return _xml(root)
 
 
