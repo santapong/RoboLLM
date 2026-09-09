@@ -9,7 +9,23 @@ fi
 export OPENBLAS_NUM_THREADS=1
 export OMP_NUM_THREADS=1
 export MUJOCO_GL="${MUJOCO_GL:-egl}"
-if [[ ! -f "$demo_dir/assets/unitree_g1/provenance.json" ]]; then
-  "$sim_python" "$demo_dir/fetch_model.py"
-fi
+selected_model="g1"
+expect_model=0
+for argument in "$@"; do
+  if [[ "$expect_model" == 1 ]]; then
+    selected_model="$argument"
+    expect_model=0
+  elif [[ "$argument" == --model ]]; then
+    expect_model=1
+  elif [[ "$argument" == --model=* ]]; then
+    selected_model="${argument#--model=}"
+  fi
+done
+case "$selected_model" in
+  g1|h1)
+    if [[ ! -f "$demo_dir/assets/unitree_$selected_model/provenance.json" ]]; then
+      "$sim_python" "$demo_dir/fetch_model.py" --model "$selected_model"
+    fi
+    ;;
+esac
 exec "$sim_python" "$demo_dir/app.py" "$@"

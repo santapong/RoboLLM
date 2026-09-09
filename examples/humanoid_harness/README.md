@@ -1,21 +1,44 @@
 # RoboLLM Humanoid Lab
 
-A local, interactive **Unitree G1 in MuJoCo** with scripted reaching, waving,
-draggable targets, and optional webcam palm targeting. Open the viewer to see
-real joint dynamics under gravity. The pelvis is fixed to a visible stand;
-this experiment focuses on arm control, not walking or balance.
+A local **humanoid gallery in MuJoCo** with model selection, front/side/rear
+views, scripted reaching, waving, draggable targets, and optional webcam palm
+targeting. Every model has a visibly supported pelvis and runs joint dynamics
+under gravity. This experiment focuses on arm control, not walking or balance.
+
+| Model | Origin | Actuated joints |
+| --- | --- | --- |
+| Unitree G1 | Pinned public Menagerie description | 29 |
+| Unitree H1 | Pinned public Menagerie description; motors adapted to position servos | 19 |
+| Original · Concept 01 | Original generated four-view reference → authored mesh parts and joint model | 29 |
+
+The [original design package](models/concept01/README.md) includes the generated
+turnaround, exact prompt, editable generator, individual mesh parts, a portable
+GLB, MJCF, four renders from the finished 3D model, and measured verification.
+It is an authored approximation guided by images, not photogrammetry or a
+learned image-to-3D reconstruction. All custom physical parameters are estimates.
 
 ## Run on Santapong's machine
 
 ```bash
 cd /home/santapong/RoboLLM-harness-wam
-examples/humanoid_harness/run.sh
+examples/humanoid_harness/run.sh --model concept01
 ```
 
 Open **http://127.0.0.1:8846**. The demo starts with scripted reaching and the
-camera off. `run.sh` downloads the pinned model only if the local provenance
-manifest is absent. Every launch verifies the asset hashes. No ROS install is
-needed for this MuJoCo example.
+camera off. `--model` accepts `g1`, `h1`, or `concept01`; omitting it defaults to
+G1. `run.sh` downloads a requested public model if its provenance manifest is
+absent. The original concept ships with its own local mesh assets. Public model
+asset hashes are checked on load. No ROS install is needed.
+
+Use **Choose a humanoid → Model** to switch among locally available models.
+Switching releases this demo's camera, holds control and replaces the scene.
+**Front / Side / Rear / 3/4** change the view; **Design reference** expands the
+original concept sheet. To add H1 to a fresh checkout before opening the app:
+
+```bash
+/home/santapong/RoboLLM/.venv-vla-bed/bin/python \
+  examples/humanoid_harness/fetch_model.py --model h1
+```
 
 1. **Run reaching example** moves the orange target; the selected hand follows.
 2. **Wave** shows a joint-space pose example. **Hold robot** captures the current
@@ -47,7 +70,7 @@ USB camera → local MediaPipe hand landmarks → normalized palm target
                                             ↓
                          classical IK → joint position servos
                                             ↓
-                      MuJoCo G1 → live 3D viewer + status
+                   selected MuJoCo humanoid → live 3D viewer + status
 ```
 
 - **Harness:** the code around a controller: observations, timing, constraints,
@@ -91,8 +114,9 @@ differ. The local hand model is reused from
 If hand tracking cannot initialize, `auto` mode labels a **red-marker heuristic**
 fallback in the preview/status; it must not be interpreted as hand tracking.
 
-The public G1 assets are pinned to Google DeepMind Menagerie revision
-`8161bba264d7fa7c99ca301e91e7fb44737676ad`; 38 files, about 19.7 MB.
+The public assets are pinned to Google DeepMind Menagerie revision
+`8161bba264d7fa7c99ca301e91e7fb44737676ad`: G1 has 38 files/about 19.7 MB;
+H1 has 24 files/about 14.3 MB.
 See [model provenance and license](MODEL_NOTICE.md). Downloads, renders and
 runtime metadata live in ignored `assets/`, `artifacts/`, and `.runtime/`.
 Viewer library: [Viser](https://viser.studio/main/).
@@ -117,7 +141,9 @@ OPENBLAS_NUM_THREADS=1 /home/santapong/RoboLLM/.venv-lerobot/bin/python -m pytes
 
 # Viewer event regressions with real MuJoCo and fake GUI/camera handles.
 /home/santapong/RoboLLM/.venv-vla-bed/bin/python -m pytest -q \
-  tests/unit/test_humanoid_harness_app.py
+  tests/unit/test_humanoid_harness_app.py \
+  tests/unit/test_humanoid_harness_models.py \
+  tests/unit/test_humanoid_harness_concept.py
 
 # Bounded viewer smoke check; camera stays off.
 examples/humanoid_harness/run.sh --duration 8
@@ -125,3 +151,5 @@ examples/humanoid_harness/run.sh --duration 8
 
 See [verification record](verification-2026-09-09.md) for the measured results
 and the distinction between verified capture and human-controlled motion.
+The [gallery extension record](gallery-verification-2026-09-09.md) covers H1,
+the generated concept and model/view controls.

@@ -1,0 +1,33 @@
+{
+  "method": "authored superellipsoid/cylinder geometry guided by generated multi-view reference; not learned image reconstruction",
+  "image_generator": "built-in image_gen",
+  "reference_sha256": "2f1b98e2058bc1282162de451b08a73fab0d7e4ff5d6ec11ce51a7a3d982c357",
+  "model_sha256": "4d8f31622c9b998e962dae580a67f8a81d092aefb04fee0b34981b63ccb15e53",
+  "glb_sha256": "1912b7d1910ecc57f3f82dfe02f41863da4d4d788e08229ca52c09343f7ddfd3",
+  "mujoCo_version": "3.10.0",
+  "trimesh_version": "4.12.2",
+  "joints": 29,
+  "actuators": 29,
+  "estimated_mass_kg": 25.269999999999996,
+  "mesh_assets": 41,
+  "visual_parts": 74,
+  "triangles": 66240,
+  "gltf_y_up_bounds_m": [
+    [
+      -0.12300000000000001,
+      0.004499999999999903,
+      -0.4029743865844075
+    ],
+    [
+      0.14900000000000002,
+      1.6125,
+      0.4029743865844076
+    ]
+  ],
+  "assumptions": [
+    "Scale and all physical parameters are estimates",
+    "Fingers are fixed geometric pieces, not actuated",
+    "No walking, balance or self-collision validation",
+    "GLB preserves named body hierarchy in reference pose; MJCF contains actuation"
+  ]
+}

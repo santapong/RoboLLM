@@ -1,0 +1,58 @@
+{
+  "id": "concept01",
+  "label": "Original \u00b7 Concept 01",
+  "source_kind": "original-procedural",
+  "source_revision": "design-v1",
+  "description": "Original image-guided 3D concept; estimated dimensions and physics; supported pelvis; self-collision disabled.",
+  "reference_image": "turnaround.png",
+  "view_center": [
+    0,
+    0,
+    0.86
+  ],
+  "view_distance": 2.4,
+  "workspace": {
+    "right": {
+      "min": [
+        0.16,
+        -0.54,
+        0.88
+      ],
+      "max": [
+        0.47,
+        -0.14,
+        1.36
+      ],
+      "default": [
+        0.32,
+        -0.31,
+        1.13
+      ]
+    },
+    "left": {
+      "min": [
+        0.16,
+        0.14,
+        0.88
+      ],
+      "max": [
+        0.47,
+        0.54,
+        1.36
+      ],
+      "default": [
+        0.32,
+        0.31,
+        1.13
+      ]
+    }
+  },
+  "home": {
+    "left_shoulder_roll_joint": 0.25,
+    "left_shoulder_pitch_joint": -0.02,
+    "left_elbow_joint": 0.1,
+    "right_shoulder_roll_joint": -0.25,
+    "right_shoulder_pitch_joint": -0.02,
+    "right_elbow_joint": 0.1
+  }
+}

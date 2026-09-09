@@ -1,0 +1,301 @@
+<mujoco model="RoboLLM original concept 01">
+  <compiler angle="radian" meshdir="meshes" autolimits="true" />
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast" />
+  <default>
+    <joint damping="1.0" armature="0.025" />
+    <geom contype="0" conaffinity="0" group="1" />
+  </default>
+  <asset>
+    <mesh name="pelvis_shell" file="pelvis_shell.obj" />
+    <mesh name="pelvis_inset" file="pelvis_inset.obj" />
+    <mesh name="waist_ring_0" file="waist_ring_0.obj" />
+    <mesh name="waist_ring_1" file="waist_ring_1.obj" />
+    <mesh name="waist_ring_2" file="waist_ring_2.obj" />
+    <mesh name="torso_shell" file="torso_shell.obj" />
+    <mesh name="chest_bezel" file="chest_bezel.obj" />
+    <mesh name="chest_light" file="chest_light.obj" />
+    <mesh name="back_service_panel" file="back_service_panel.obj" />
+    <mesh name="back_vent_0" file="back_vent_0.obj" />
+    <mesh name="back_vent_1" file="back_vent_1.obj" />
+    <mesh name="back_vent_2" file="back_vent_2.obj" />
+    <mesh name="neck" file="neck.obj" />
+    <mesh name="neck_ring" file="neck_ring.obj" />
+    <mesh name="head_shell" file="head_shell.obj" />
+    <mesh name="visor" file="visor.obj" />
+    <mesh name="eye_light" file="eye_light.obj" />
+    <mesh name="ear_outer" file="ear_outer.obj" />
+    <mesh name="ear_dark" file="ear_dark.obj" />
+    <mesh name="ear_cyan" file="ear_cyan.obj" />
+    <mesh name="ear_center" file="ear_center.obj" />
+    <mesh name="shoulder_mechanism" file="shoulder_mechanism.obj" />
+    <mesh name="shoulder_cap" file="shoulder_cap.obj" />
+    <mesh name="upper_arm_shell" file="upper_arm_shell.obj" />
+    <mesh name="elbow" file="elbow.obj" />
+    <mesh name="forearm_shell" file="forearm_shell.obj" />
+    <mesh name="wrist" file="wrist.obj" />
+    <mesh name="palm" file="palm.obj" />
+    <mesh name="finger_0" file="finger_0.obj" />
+    <mesh name="finger_knuckle" file="finger_knuckle.obj" />
+    <mesh name="finger_1" file="finger_1.obj" />
+    <mesh name="finger_2" file="finger_2.obj" />
+    <mesh name="finger_3" file="finger_3.obj" />
+    <mesh name="thumb" file="thumb.obj" />
+    <mesh name="hip" file="hip.obj" />
+    <mesh name="thigh_shell" file="thigh_shell.obj" />
+    <mesh name="knee" file="knee.obj" />
+    <mesh name="shin_shell" file="shin_shell.obj" />
+    <mesh name="ankle" file="ankle.obj" />
+    <mesh name="sole" file="sole.obj" />
+    <mesh name="foot_top" file="foot_top.obj" />
+  </asset>
+  <worldbody>
+    <body name="pelvis" pos="0 0 0.82">
+      <inertial pos="0 0 0" mass="2.4" diaginertia="0.025 0.025 0.025" />
+      <geom name="pelvis_pelvis_shell_0" type="mesh" mesh="pelvis_shell" rgba="0.86 0.88 0.87 1" pos="0.005 0 -0.015" quat="1 0 0 0" />
+      <geom name="pelvis_pelvis_inset_1" type="mesh" mesh="pelvis_inset" rgba="0.1 0.13 0.15 1" pos="0.105 0 -0.013" quat="1 0 0 0" />
+      <body name="waist_yaw_link" pos="0 0 0.04">
+        <inertial pos="0 0 0" mass="0.25" diaginertia="0.001 0.001 0.001" />
+        <joint name="waist_yaw_joint" type="hinge" axis="0 0 1" range="-0.65 0.65" />
+        <body name="waist_roll_link" pos="0 0 0">
+          <inertial pos="0 0 0" mass="0.25" diaginertia="0.001 0.001 0.001" />
+          <joint name="waist_roll_joint" type="hinge" axis="1 0 0" range="-0.4 0.4" />
+          <body name="waist_pitch_link" pos="0 0 0">
+            <inertial pos="0 0 0" mass="0.25" diaginertia="0.001 0.001 0.001" />
+            <joint name="waist_pitch_joint" type="hinge" axis="0 1 0" range="-0.45 0.45" />
+            <geom name="waist_pitch_link_waist_ring_0_2" type="mesh" mesh="waist_ring_0" rgba="0.1 0.13 0.15 1" pos="0 0 0.045" quat="1 0 0 0" />
+            <geom name="waist_pitch_link_waist_ring_1_3" type="mesh" mesh="waist_ring_1" rgba="0.1 0.13 0.15 1" pos="0 0 0.095" quat="1 0 0 0" />
+            <geom name="waist_pitch_link_waist_ring_2_4" type="mesh" mesh="waist_ring_2" rgba="0.1 0.13 0.15 1" pos="0 0 0.145" quat="1 0 0 0" />
+            <body name="torso" pos="0 0 0">
+              <inertial pos="0 0 0.315" mass="4.4" diaginertia="0.07 0.07 0.07" />
+              <geom name="torso_torso_shell_5" type="mesh" mesh="torso_shell" rgba="0.86 0.88 0.87 1" pos="0 0 0.315" quat="1 0 0 0" />
+              <geom name="torso_chest_bezel_6" type="mesh" mesh="chest_bezel" rgba="0.1 0.13 0.15 1" pos="0.115 0 0.338" quat="1 0 0 0" />
+              <geom name="torso_chest_light_7" type="mesh" mesh="chest_light" rgba="0.12 0.78 0.88 1" pos="0.122 0 0.338" quat="1 0 0 0" />
+              <geom name="torso_back_service_panel_8" type="mesh" mesh="back_service_panel" rgba="0.1 0.13 0.15 1" pos="-0.116 0 0.355" quat="1 0 0 0" />
+              <geom name="torso_back_vent_0_9" type="mesh" mesh="back_vent_0" rgba="0.025 0.048 0.06 1" pos="-0.117 0 0.225" quat="1 0 0 0" />
+              <geom name="torso_back_vent_1_10" type="mesh" mesh="back_vent_1" rgba="0.025 0.048 0.06 1" pos="-0.117 0 0.213" quat="1 0 0 0" />
+              <geom name="torso_back_vent_2_11" type="mesh" mesh="back_vent_2" rgba="0.025 0.048 0.06 1" pos="-0.117 0 0.201" quat="1 0 0 0" />
+              <geom name="torso_neck_12" type="mesh" mesh="neck" rgba="0.23 0.28 0.3 1" pos="0 0 0.525" quat="1 0 0 0" />
+              <geom name="torso_neck_ring_13" type="mesh" mesh="neck_ring" rgba="0.1 0.13 0.15 1" pos="0 0 0.499" quat="1 0 0 0" />
+              <geom name="torso_neck_ring_14" type="mesh" mesh="neck_ring" rgba="0.1 0.13 0.15 1" pos="0 0 0.525" quat="1 0 0 0" />
+              <geom name="torso_neck_ring_15" type="mesh" mesh="neck_ring" rgba="0.1 0.13 0.15 1" pos="0 0 0.551" quat="1 0 0 0" />
+              <body name="head" pos="0 0 0.65">
+                <inertial pos="0 0 0" mass="1.1" diaginertia="0.004 0.004 0.004" />
+                <geom name="head_head_shell_16" type="mesh" mesh="head_shell" rgba="0.86 0.88 0.87 1" pos="0 0 0" quat="1 0 0 0" />
+                <geom name="head_visor_17" type="mesh" mesh="visor" rgba="0.025 0.048 0.06 1" pos="0.096 0 0.015" quat="1 0 0 0" />
+                <geom name="head_eye_light_18" type="mesh" mesh="eye_light" rgba="0.12 0.78 0.88 1" pos="0.106 -0.043 0.015" quat="0.70710678 0 0.70710678 0" />
+                <geom name="head_ear_outer_19" type="mesh" mesh="ear_outer" rgba="0.86 0.88 0.87 1" pos="0 -0.109 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_ear_dark_20" type="mesh" mesh="ear_dark" rgba="0.1 0.13 0.15 1" pos="0 -0.116 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_ear_cyan_21" type="mesh" mesh="ear_cyan" rgba="0.12 0.78 0.88 1" pos="0 -0.121 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_ear_center_22" type="mesh" mesh="ear_center" rgba="0.23 0.28 0.3 1" pos="0 -0.125 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_eye_light_23" type="mesh" mesh="eye_light" rgba="0.12 0.78 0.88 1" pos="0.106 0.043 0.015" quat="0.70710678 0 0.70710678 0" />
+                <geom name="head_ear_outer_24" type="mesh" mesh="ear_outer" rgba="0.86 0.88 0.87 1" pos="0 0.109 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_ear_dark_25" type="mesh" mesh="ear_dark" rgba="0.1 0.13 0.15 1" pos="0 0.116 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_ear_cyan_26" type="mesh" mesh="ear_cyan" rgba="0.12 0.78 0.88 1" pos="0 0.121 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="head_ear_center_27" type="mesh" mesh="ear_center" rgba="0.23 0.28 0.3 1" pos="0 0.125 0" quat="0.70710678 0.70710678 0 0" />
+              </body>
+              <body name="left_shoulder_pitch_link" pos="0 0.226 0.432">
+                <inertial pos="0 0 0" mass="0.25" diaginertia="0.001 0.001 0.001" />
+                <joint name="left_shoulder_pitch_joint" type="hinge" axis="0 1 0" range="-2.6 1.2" />
+                <geom name="left_shoulder_pitch_link_shoulder_mechanism_28" type="mesh" mesh="shoulder_mechanism" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                <body name="left_shoulder_roll_link" pos="0 0 0">
+                  <inertial pos="0 0 0" mass="0.18" diaginertia="0.001 0.001 0.001" />
+                  <joint name="left_shoulder_roll_joint" type="hinge" axis="1 0 0" range="-1.6 1.6" />
+                  <body name="left_shoulder_yaw_link" pos="0 0 0">
+                    <inertial pos="0 0 -0.12" mass="0.8" diaginertia="0.006 0.006 0.006" />
+                    <joint name="left_shoulder_yaw_joint" type="hinge" axis="0 0 1" range="-1.8 1.8" />
+                    <geom name="left_shoulder_yaw_link_shoulder_cap_29" type="mesh" mesh="shoulder_cap" rgba="0.86 0.88 0.87 1" pos="0 0.027 -0.015" quat="1 0 0 0" />
+                    <geom name="left_shoulder_yaw_link_upper_arm_shell_30" type="mesh" mesh="upper_arm_shell" rgba="0.86 0.88 0.87 1" pos="0 0 -0.145" quat="1 0 0 0" />
+                    <geom type="capsule" size="0.03" fromto="0 0 0 0 0 -0.21" contype="2" conaffinity="1" group="3" />
+                    <body name="left_elbow_link" pos="0 0 -0.252">
+                      <inertial pos="0 0 -0.11" mass="0.75" diaginertia="0.005 0.005 0.005" />
+                      <joint name="left_elbow_joint" type="hinge" axis="0 -1 0" range="-0.15 2.4" />
+                      <geom name="left_elbow_link_elbow_31" type="mesh" mesh="elbow" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                      <geom name="left_elbow_link_forearm_shell_32" type="mesh" mesh="forearm_shell" rgba="0.86 0.88 0.87 1" pos="0 0 -0.128" quat="1 0 0 0" />
+                      <geom type="capsule" size="0.027" fromto="0 0 0 0 0 -0.2" contype="2" conaffinity="1" group="3" />
+                      <body name="left_wrist_roll_link" pos="0 0 -0.23">
+                        <inertial pos="0 0 0" mass="0.06" diaginertia="0.00015 0.00015 0.00015" />
+                        <joint name="left_wrist_roll_joint" type="hinge" axis="1 0 0" range="-1.4 1.4" />
+                        <body name="left_wrist_pitch_link" pos="0 0 0">
+                          <inertial pos="0 0 0" mass="0.06" diaginertia="0.00015 0.00015 0.00015" />
+                          <joint name="left_wrist_pitch_joint" type="hinge" axis="0 1 0" range="-1.4 1.4" />
+                          <body name="left_wrist_yaw_link" pos="0 0 0">
+                            <inertial pos="0 0 0" mass="0.06" diaginertia="0.00015 0.00015 0.00015" />
+                            <joint name="left_wrist_yaw_joint" type="hinge" axis="0 0 1" range="-1.4 1.4" />
+                            <geom name="left_wrist_yaw_link_wrist_33" type="mesh" mesh="wrist" rgba="0.23 0.28 0.3 1" pos="0 0 -0.003" quat="1 0 0 0" />
+                            <geom name="left_wrist_yaw_link_palm_34" type="mesh" mesh="palm" rgba="0.86 0.88 0.87 1" pos="0.003 0 -0.05" quat="1 0 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_0_35" type="mesh" mesh="finger_0" rgba="0.23 0.28 0.3 1" pos="0.01 -0.024 -0.1085" quat="1 0 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_knuckle_36" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 -0.024 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_1_37" type="mesh" mesh="finger_1" rgba="0.23 0.28 0.3 1" pos="0.01 -0.008 -0.113" quat="1 0 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_knuckle_38" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 -0.008 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_2_39" type="mesh" mesh="finger_2" rgba="0.23 0.28 0.3 1" pos="0.01 0.008 -0.113" quat="1 0 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_knuckle_40" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 0.008 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_3_41" type="mesh" mesh="finger_3" rgba="0.23 0.28 0.3 1" pos="0.01 0.024 -0.1085" quat="1 0 0 0" />
+                            <geom name="left_wrist_yaw_link_finger_knuckle_42" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 0.024 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="left_wrist_yaw_link_thumb_43" type="mesh" mesh="thumb" rgba="0.23 0.28 0.3 1" pos="0.021 -0.044 -0.07" quat="1 0 0 0" />
+                            <site name="left_hand_tip" pos="0.008 0 -0.12" size="0.009" rgba="0.12 0.8 0.7 1" />
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+              <body name="right_shoulder_pitch_link" pos="0 -0.226 0.432">
+                <inertial pos="0 0 0" mass="0.25" diaginertia="0.001 0.001 0.001" />
+                <joint name="right_shoulder_pitch_joint" type="hinge" axis="0 1 0" range="-2.6 1.2" />
+                <geom name="right_shoulder_pitch_link_shoulder_mechanism_51" type="mesh" mesh="shoulder_mechanism" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                <body name="right_shoulder_roll_link" pos="0 0 0">
+                  <inertial pos="0 0 0" mass="0.18" diaginertia="0.001 0.001 0.001" />
+                  <joint name="right_shoulder_roll_joint" type="hinge" axis="1 0 0" range="-1.6 1.6" />
+                  <body name="right_shoulder_yaw_link" pos="0 0 0">
+                    <inertial pos="0 0 -0.12" mass="0.8" diaginertia="0.006 0.006 0.006" />
+                    <joint name="right_shoulder_yaw_joint" type="hinge" axis="0 0 1" range="-1.8 1.8" />
+                    <geom name="right_shoulder_yaw_link_shoulder_cap_52" type="mesh" mesh="shoulder_cap" rgba="0.86 0.88 0.87 1" pos="0 -0.027 -0.015" quat="1 0 0 0" />
+                    <geom name="right_shoulder_yaw_link_upper_arm_shell_53" type="mesh" mesh="upper_arm_shell" rgba="0.86 0.88 0.87 1" pos="0 0 -0.145" quat="1 0 0 0" />
+                    <geom type="capsule" size="0.03" fromto="0 0 0 0 0 -0.21" contype="2" conaffinity="1" group="3" />
+                    <body name="right_elbow_link" pos="0 0 -0.252">
+                      <inertial pos="0 0 -0.11" mass="0.75" diaginertia="0.005 0.005 0.005" />
+                      <joint name="right_elbow_joint" type="hinge" axis="0 -1 0" range="-0.15 2.4" />
+                      <geom name="right_elbow_link_elbow_54" type="mesh" mesh="elbow" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                      <geom name="right_elbow_link_forearm_shell_55" type="mesh" mesh="forearm_shell" rgba="0.86 0.88 0.87 1" pos="0 0 -0.128" quat="1 0 0 0" />
+                      <geom type="capsule" size="0.027" fromto="0 0 0 0 0 -0.2" contype="2" conaffinity="1" group="3" />
+                      <body name="right_wrist_roll_link" pos="0 0 -0.23">
+                        <inertial pos="0 0 0" mass="0.06" diaginertia="0.00015 0.00015 0.00015" />
+                        <joint name="right_wrist_roll_joint" type="hinge" axis="1 0 0" range="-1.4 1.4" />
+                        <body name="right_wrist_pitch_link" pos="0 0 0">
+                          <inertial pos="0 0 0" mass="0.06" diaginertia="0.00015 0.00015 0.00015" />
+                          <joint name="right_wrist_pitch_joint" type="hinge" axis="0 1 0" range="-1.4 1.4" />
+                          <body name="right_wrist_yaw_link" pos="0 0 0">
+                            <inertial pos="0 0 0" mass="0.06" diaginertia="0.00015 0.00015 0.00015" />
+                            <joint name="right_wrist_yaw_joint" type="hinge" axis="0 0 1" range="-1.4 1.4" />
+                            <geom name="right_wrist_yaw_link_wrist_56" type="mesh" mesh="wrist" rgba="0.23 0.28 0.3 1" pos="0 0 -0.003" quat="1 0 0 0" />
+                            <geom name="right_wrist_yaw_link_palm_57" type="mesh" mesh="palm" rgba="0.86 0.88 0.87 1" pos="0.003 0 -0.05" quat="1 0 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_0_58" type="mesh" mesh="finger_0" rgba="0.23 0.28 0.3 1" pos="0.01 -0.024 -0.1085" quat="1 0 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_knuckle_59" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 -0.024 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_1_60" type="mesh" mesh="finger_1" rgba="0.23 0.28 0.3 1" pos="0.01 -0.008 -0.113" quat="1 0 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_knuckle_61" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 -0.008 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_2_62" type="mesh" mesh="finger_2" rgba="0.23 0.28 0.3 1" pos="0.01 0.008 -0.113" quat="1 0 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_knuckle_63" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 0.008 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_3_64" type="mesh" mesh="finger_3" rgba="0.23 0.28 0.3 1" pos="0.01 0.024 -0.1085" quat="1 0 0 0" />
+                            <geom name="right_wrist_yaw_link_finger_knuckle_65" type="mesh" mesh="finger_knuckle" rgba="0.1 0.13 0.15 1" pos="0.01 0.024 -0.091" quat="0.70710678 0.70710678 0 0" />
+                            <geom name="right_wrist_yaw_link_thumb_66" type="mesh" mesh="thumb" rgba="0.23 0.28 0.3 1" pos="0.021 0.044 -0.07" quat="1 0 0 0" />
+                            <site name="right_hand_tip" pos="0.008 0 -0.12" size="0.009" rgba="0.12 0.8 0.7 1" />
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="left_hip_pitch_link" pos="0 0.102 -0.035">
+        <inertial pos="0 0 0" mass="0.3" diaginertia="0.001 0.001 0.001" />
+        <joint name="left_hip_pitch_joint" type="hinge" axis="0 1 0" range="-1.8 1.5" />
+        <body name="left_hip_roll_link" pos="0 0 0">
+          <inertial pos="0 0 0" mass="0.3" diaginertia="0.001 0.001 0.001" />
+          <joint name="left_hip_roll_joint" type="hinge" axis="1 0 0" range="-0.65 0.65" />
+          <body name="left_hip_yaw_link" pos="0 0 0">
+            <inertial pos="0 0 0" mass="0.3" diaginertia="0.001 0.001 0.001" />
+            <joint name="left_hip_yaw_joint" type="hinge" axis="0 0 1" range="-0.9 0.9" />
+            <geom name="left_hip_yaw_link_hip_44" type="mesh" mesh="hip" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+            <body name="left_thigh" pos="0 0 0">
+              <inertial pos="0 0 -0.15" mass="2.5" diaginertia="0.025 0.025 0.025" />
+              <geom name="left_thigh_thigh_shell_45" type="mesh" mesh="thigh_shell" rgba="0.86 0.88 0.87 1" pos="0 0 -0.17" quat="1 0 0 0" />
+              <geom type="capsule" size="0.04" fromto="0 0 0 0 0 -0.3" contype="2" conaffinity="1" group="3" />
+              <body name="left_knee_link" pos="0 0 -0.33">
+                <inertial pos="0 0 -0.15" mass="1.9" diaginertia="0.025 0.025 0.025" />
+                <joint name="left_knee_joint" type="hinge" axis="0 1 0" range="-0.12 2.3" />
+                <geom name="left_knee_link_knee_46" type="mesh" mesh="knee" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="left_knee_link_shin_shell_47" type="mesh" mesh="shin_shell" rgba="0.86 0.88 0.87 1" pos="0.007 0 -0.171" quat="1 0 0 0" />
+                <geom type="capsule" size="0.038" fromto="0 0 0 0 0 -0.3" contype="2" conaffinity="1" group="3" />
+                <body name="left_ankle_pitch_link" pos="0 0 -0.345">
+                  <inertial pos="0 0 0" mass="0.2" diaginertia="0.001 0.001 0.001" />
+                  <joint name="left_ankle_pitch_joint" type="hinge" axis="0 1 0" range="-0.75 0.75" />
+                  <body name="left_ankle_roll_link" pos="0 0 0">
+                    <inertial pos="0.025 0 -0.055" mass="0.65" diaginertia="0.003 0.003 0.003" />
+                    <joint name="left_ankle_roll_joint" type="hinge" axis="1 0 0" range="-0.45 0.45" />
+                    <geom name="left_ankle_roll_link_ankle_48" type="mesh" mesh="ankle" rgba="0.23 0.28 0.3 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                    <geom name="left_ankle_roll_link_sole_49" type="mesh" mesh="sole" rgba="0.1 0.13 0.15 1" pos="0.035 0 -0.085" quat="1 0 0 0" />
+                    <geom name="left_ankle_roll_link_foot_top_50" type="mesh" mesh="foot_top" rgba="0.86 0.88 0.87 1" pos="0.045 0 -0.06" quat="1 0 0 0" />
+                    <geom type="box" size="0.11 0.055 0.019" pos=".035 0 -.087" contype="2" conaffinity="1" group="3" />
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body name="right_hip_pitch_link" pos="0 -0.102 -0.035">
+        <inertial pos="0 0 0" mass="0.3" diaginertia="0.001 0.001 0.001" />
+        <joint name="right_hip_pitch_joint" type="hinge" axis="0 1 0" range="-1.8 1.5" />
+        <body name="right_hip_roll_link" pos="0 0 0">
+          <inertial pos="0 0 0" mass="0.3" diaginertia="0.001 0.001 0.001" />
+          <joint name="right_hip_roll_joint" type="hinge" axis="1 0 0" range="-0.65 0.65" />
+          <body name="right_hip_yaw_link" pos="0 0 0">
+            <inertial pos="0 0 0" mass="0.3" diaginertia="0.001 0.001 0.001" />
+            <joint name="right_hip_yaw_joint" type="hinge" axis="0 0 1" range="-0.9 0.9" />
+            <geom name="right_hip_yaw_link_hip_67" type="mesh" mesh="hip" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+            <body name="right_thigh" pos="0 0 0">
+              <inertial pos="0 0 -0.15" mass="2.5" diaginertia="0.025 0.025 0.025" />
+              <geom name="right_thigh_thigh_shell_68" type="mesh" mesh="thigh_shell" rgba="0.86 0.88 0.87 1" pos="0 0 -0.17" quat="1 0 0 0" />
+              <geom type="capsule" size="0.04" fromto="0 0 0 0 0 -0.3" contype="2" conaffinity="1" group="3" />
+              <body name="right_knee_link" pos="0 0 -0.33">
+                <inertial pos="0 0 -0.15" mass="1.9" diaginertia="0.025 0.025 0.025" />
+                <joint name="right_knee_joint" type="hinge" axis="0 1 0" range="-0.12 2.3" />
+                <geom name="right_knee_link_knee_69" type="mesh" mesh="knee" rgba="0.1 0.13 0.15 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                <geom name="right_knee_link_shin_shell_70" type="mesh" mesh="shin_shell" rgba="0.86 0.88 0.87 1" pos="0.007 0 -0.171" quat="1 0 0 0" />
+                <geom type="capsule" size="0.038" fromto="0 0 0 0 0 -0.3" contype="2" conaffinity="1" group="3" />
+                <body name="right_ankle_pitch_link" pos="0 0 -0.345">
+                  <inertial pos="0 0 0" mass="0.2" diaginertia="0.001 0.001 0.001" />
+                  <joint name="right_ankle_pitch_joint" type="hinge" axis="0 1 0" range="-0.75 0.75" />
+                  <body name="right_ankle_roll_link" pos="0 0 0">
+                    <inertial pos="0.025 0 -0.055" mass="0.65" diaginertia="0.003 0.003 0.003" />
+                    <joint name="right_ankle_roll_joint" type="hinge" axis="1 0 0" range="-0.45 0.45" />
+                    <geom name="right_ankle_roll_link_ankle_71" type="mesh" mesh="ankle" rgba="0.23 0.28 0.3 1" pos="0 0 0" quat="0.70710678 0.70710678 0 0" />
+                    <geom name="right_ankle_roll_link_sole_72" type="mesh" mesh="sole" rgba="0.1 0.13 0.15 1" pos="0.035 0 -0.085" quat="1 0 0 0" />
+                    <geom name="right_ankle_roll_link_foot_top_73" type="mesh" mesh="foot_top" rgba="0.86 0.88 0.87 1" pos="0.045 0 -0.06" quat="1 0 0 0" />
+                    <geom type="box" size="0.11 0.055 0.019" pos=".035 0 -.087" contype="2" conaffinity="1" group="3" />
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="waist_yaw_servo" joint="waist_yaw_joint" kp="250" kv="20" ctrlrange="-0.65 0.65" forcerange="-90 90" />
+    <position name="waist_roll_servo" joint="waist_roll_joint" kp="250" kv="20" ctrlrange="-0.4 0.4" forcerange="-90 90" />
+    <position name="waist_pitch_servo" joint="waist_pitch_joint" kp="250" kv="20" ctrlrange="-0.45 0.45" forcerange="-90 90" />
+    <position name="left_shoulder_pitch_servo" joint="left_shoulder_pitch_joint" kp="130" kv="10" ctrlrange="-2.6 1.2" forcerange="-90 90" />
+    <position name="left_shoulder_roll_servo" joint="left_shoulder_roll_joint" kp="130" kv="10" ctrlrange="-1.6 1.6" forcerange="-90 90" />
+    <position name="left_shoulder_yaw_servo" joint="left_shoulder_yaw_joint" kp="130" kv="10" ctrlrange="-1.8 1.8" forcerange="-90 90" />
+    <position name="left_elbow_servo" joint="left_elbow_joint" kp="130" kv="10" ctrlrange="-0.15 2.4" forcerange="-90 90" />
+    <position name="left_wrist_roll_servo" joint="left_wrist_roll_joint" kp="45" kv="3" ctrlrange="-1.4 1.4" forcerange="-90 90" />
+    <position name="left_wrist_pitch_servo" joint="left_wrist_pitch_joint" kp="45" kv="3" ctrlrange="-1.4 1.4" forcerange="-90 90" />
+    <position name="left_wrist_yaw_servo" joint="left_wrist_yaw_joint" kp="45" kv="3" ctrlrange="-1.4 1.4" forcerange="-90 90" />
+    <position name="left_hip_pitch_servo" joint="left_hip_pitch_joint" kp="240" kv="18" ctrlrange="-1.8 1.5" forcerange="-90 90" />
+    <position name="left_hip_roll_servo" joint="left_hip_roll_joint" kp="240" kv="18" ctrlrange="-0.65 0.65" forcerange="-90 90" />
+    <position name="left_hip_yaw_servo" joint="left_hip_yaw_joint" kp="240" kv="18" ctrlrange="-0.9 0.9" forcerange="-90 90" />
+    <position name="left_knee_servo" joint="left_knee_joint" kp="240" kv="18" ctrlrange="-0.12 2.3" forcerange="-90 90" />
+    <position name="left_ankle_pitch_servo" joint="left_ankle_pitch_joint" kp="200" kv="16" ctrlrange="-0.75 0.75" forcerange="-90 90" />
+    <position name="left_ankle_roll_servo" joint="left_ankle_roll_joint" kp="200" kv="16" ctrlrange="-0.45 0.45" forcerange="-90 90" />
+    <position name="right_shoulder_pitch_servo" joint="right_shoulder_pitch_joint" kp="130" kv="10" ctrlrange="-2.6 1.2" forcerange="-90 90" />
+    <position name="right_shoulder_roll_servo" joint="right_shoulder_roll_joint" kp="130" kv="10" ctrlrange="-1.6 1.6" forcerange="-90 90" />
+    <position name="right_shoulder_yaw_servo" joint="right_shoulder_yaw_joint" kp="130" kv="10" ctrlrange="-1.8 1.8" forcerange="-90 90" />
+    <position name="right_elbow_servo" joint="right_elbow_joint" kp="130" kv="10" ctrlrange="-0.15 2.4" forcerange="-90 90" />
+    <position name="right_wrist_roll_servo" joint="right_wrist_roll_joint" kp="45" kv="3" ctrlrange="-1.4 1.4" forcerange="-90 90" />
+    <position name="right_wrist_pitch_servo" joint="right_wrist_pitch_joint" kp="45" kv="3" ctrlrange="-1.4 1.4" forcerange="-90 90" />
+    <position name="right_wrist_yaw_servo" joint="right_wrist_yaw_joint" kp="45" kv="3" ctrlrange="-1.4 1.4" forcerange="-90 90" />
+    <position name="right_hip_pitch_servo" joint="right_hip_pitch_joint" kp="240" kv="18" ctrlrange="-1.8 1.5" forcerange="-90 90" />
+    <position name="right_hip_roll_servo" joint="right_hip_roll_joint" kp="240" kv="18" ctrlrange="-0.65 0.65" forcerange="-90 90" />
+    <position name="right_hip_yaw_servo" joint="right_hip_yaw_joint" kp="240" kv="18" ctrlrange="-0.9 0.9" forcerange="-90 90" />
+    <position name="right_knee_servo" joint="right_knee_joint" kp="240" kv="18" ctrlrange="-0.12 2.3" forcerange="-90 90" />
+    <position name="right_ankle_pitch_servo" joint="right_ankle_pitch_joint" kp="200" kv="16" ctrlrange="-0.75 0.75" forcerange="-90 90" />
+    <position name="right_ankle_roll_servo" joint="right_ankle_roll_joint" kp="200" kv="16" ctrlrange="-0.45 0.45" forcerange="-90 90" />
+  </actuator>
+</mujoco>

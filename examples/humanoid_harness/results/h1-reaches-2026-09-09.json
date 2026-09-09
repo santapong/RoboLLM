@@ -1,0 +1,68 @@
+{
+  "experiment": "supported Unitree H1 scripted reaching; no learned policy",
+  "model_id": "h1",
+  "source_kind": "upstream-robot",
+  "model_revision": "8161bba264d7fa7c99ca301e91e7fb44737676ad",
+  "model_sha256": "56b3982ba57c60931213b497ea6004d03388bfe5aff47499a5f221be23b12787",
+  "mujoco_version": "3.10.0",
+  "numpy_version": "2.5.2",
+  "timestep": 0.002,
+  "controller": "position-only damped-least-squares IK, rate-limited position servos",
+  "wall_seconds": 1.2819719969993457,
+  "episodes": [
+    {
+      "arm": "right",
+      "target": [
+        0.4,
+        -0.32,
+        1.45
+      ],
+      "initial_error_m": 0.4264155616217715,
+      "final_error_m": 0.003962772710973963,
+      "reached": true,
+      "safety": {
+        "fixed_base": true,
+        "target_clamped": false,
+        "joint_limit_violation_rad": 0.0,
+        "finite": true,
+        "fault": null
+      }
+    },
+    {
+      "arm": "right",
+      "target": [
+        0.44,
+        -0.38,
+        1.5699999999999998
+      ],
+      "initial_error_m": 0.558913547917978,
+      "final_error_m": 0.005691072150003912,
+      "reached": true,
+      "safety": {
+        "fixed_base": true,
+        "target_clamped": false,
+        "joint_limit_violation_rad": 0.0,
+        "finite": true,
+        "fault": null
+      }
+    },
+    {
+      "arm": "left",
+      "target": [
+        0.4,
+        0.32,
+        1.45
+      ],
+      "initial_error_m": 0.4264155616217715,
+      "final_error_m": 0.003962772710973963,
+      "reached": true,
+      "safety": {
+        "fixed_base": true,
+        "target_clamped": false,
+        "joint_limit_violation_rad": 0.0,
+        "finite": true,
+        "fault": null
+      }
+    }
+  ]
+}
