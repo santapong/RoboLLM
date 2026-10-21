@@ -1,5 +1,9 @@
 # python / venv
 .venv/
+.venv-nebius/
+# Local API keys must never be committed.
+.env
+.env.*
 .venv-lerobot/
 __pycache__/
 *.pyc

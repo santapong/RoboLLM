@@ -1,5 +1,10 @@
 # RoboLLM · Hybrid robotics workbench
 
+> **Physical AI hackathon candidate:** [ReachGuard — bounded humanoid recovery](examples/nebius_recovery/README.md)
+> adds a simulator-telemetry supervisor, NVIDIA/Nebius adapter, measured scenarios,
+> and submission materials. Local fixture validation is separate from live
+> cloud inference, which remains unverified. [Verification](docs/hackathon/verification.md).
+
 ![RoboLLM — Build, Observe, Measure, Learn](docs/brand/robollm-banner.svg)
 
 [![CI](https://github.com/santapong/RoboLLM/actions/workflows/ci-fast.yml/badge.svg?branch=develop)](https://github.com/santapong/RoboLLM/actions/workflows/ci-fast.yml)
