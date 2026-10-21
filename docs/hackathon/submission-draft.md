@@ -38,9 +38,9 @@ viewer can see what changed and why the controller continued or held.
    to application code.
 5. Produce a trace and a rendered simulation with measurable acceptance results.
 
-These describe the intended entry behavior. The implementation and current
-verification record in the root README determine which claims are ready for
-publication.
+The local simulation, strict adapter and fixture path are implemented and
+verified in the [current record](verification.md). Step 3 still requires a
+successful live account-backed run; fixture results cannot support that claim.
 
 ## NVIDIA and Nebius integration
 
@@ -74,15 +74,15 @@ run in submission evidence.
 
 | Evidence | Current draft value |
 | --- | --- |
-| Exact submission commit | Pending final commit |
-| Local test command and result | Pending root verification record |
-| Nominal reach error and completion | Pending measured run |
-| Target-displacement recovery outcome | Pending measured run |
-| Invalid/stale observation outcome | Pending measured run |
-| Invalid model decision outcome | Pending measured run |
-| Recovery-budget exhaustion outcome | Pending measured run |
+| Tested implementation commit | `bd278cfc934de5a820a991bedd18f99dc7b1663c`; final submission revision still open |
+| Local test command and result | 25 tests and 46 subtests passed; [verification](verification.md) |
+| Nominal reach error and completion | Offline reference: 3/3 passed, 9.87–10.60 mm |
+| Target-displacement recovery outcome | Offline reference: 3/3 passed, 16.19–16.95 mm; baseline 124.67–125.28 mm |
+| Invalid/stale observation outcome | Six offline runs held with zero reach commands |
+| Invalid model decision outcome | Contract/guard tests passed; actual model errors still unverified |
+| Recovery-budget exhaustion outcome | Guard rejects a second recovery in unit tests |
 | Live provider/model, call count and latency | Unverified account/runtime access |
-| Public repository revision URL | Pending publication of the submission revision |
+| Public review URL | [Draft PR #9](https://github.com/santapong/RoboLLM/pull/9); final submission revision still open |
 | Public YouTube video URL and duration | Pending recording/upload |
 
 ## Limitations and what comes next

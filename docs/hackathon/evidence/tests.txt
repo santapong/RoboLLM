@@ -1,0 +1,8 @@
+Executed 2026-10-21, Python 3.12.14, MuJoCo 3.10.0, NumPy 2.3.5
+
+python -m pytest -q tests/unit/test_nebius_provider.py tests/unit/test_nebius_recovery.py tests/unit/test_humanoid_harness_concept.py tests/unit/test_humanoid_harness_adapter.py
+25 passed, 46 subtests passed in 2.81s
+
+No-key CLI: exit 2; NEBIUS_API_KEY not configured; no simulation or fallback run.
+
+Video: ffprobe measured 10.000 seconds; 125 actual rendered frames at 12.5fps.

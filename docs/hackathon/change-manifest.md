@@ -50,9 +50,12 @@ Record the final paths and commit hashes after implementation. The scope is:
 | Measured scenario/evidence runner | Makes success and refusal behavior inspectable | Exact command, dependency versions, JSON trace, summary and rendered output |
 | Submission documentation | Explains use case, scope, existing work and review path | These files, root README and final exact-revision links |
 
-Implementation and tests may still be in progress while this manifest is
-prepared. A file's presence does not establish a successful run. The final root
-README and generated run evidence must carry the measured results.
+Implementation and offline tests completed at
+`bd278cfc934de5a820a991bedd18f99dc7b1663c`: all 15 declared scenario checks passed,
+plus 25 tests and 46 subtests. The [verification record](verification.md) and
+artifact hashes preserve measured outcomes. Live NVIDIA/Nebius execution and
+final submission remain open. The following evidence commit adds records and
+documentation without changing the tested implementation.
 
 ## Final change inventory
 

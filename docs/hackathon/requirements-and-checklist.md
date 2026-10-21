@@ -33,11 +33,11 @@ Unchecked items remain unverified, not necessarily absent.
 | Registration/eligibility | Entrant checks eligibility, joins event and can edit a draft | Unverified |
 | Nebius access | Account can use the selected NVIDIA model; credits/billing understood | Unverified |
 | Repository license | Root Apache-2.0 license retained; asset notices preserved | Existing source present |
-| Local implementation | Runner and strict decision validation present | Check final diff |
-| Offline function | Fresh scenario suite, measured error, refusal and budget behavior | Check current run record |
+| Local implementation | Runner and strict decision validation present | Implemented in draft PR #9 |
+| Offline function | Fresh scenario suite, measured error, refusal and budget behavior | Verified: 15 runs; 25 tests and 46 subtests |
 | Live integration | Actual NVIDIA response via Nebius influences a validated simulated reach | Unverified until live run |
-| Demonstration evidence | Reviewed render/trace and public YouTube video | Pending |
-| Public final code | Exact public commit with complete setup/run instructions | Pending publication |
+| Demonstration evidence | Reviewed render/trace and public YouTube video | Offline preview/trace verified; final public video pending |
+| Public final code | Exact public commit with complete setup/run instructions | Public experiment branch and draft PR; final submission revision open |
 | Submitted entry | Completed form and visible submission status before deadline | Unverified |
 
 ## Engineering acceptance gates
