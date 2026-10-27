@@ -1,0 +1,78 @@
+{
+  "experiment": "supported humanoid execution monitoring and bounded recovery",
+  "created_at_utc": "2026-10-21T02:19:13.637802+00:00",
+  "scenario": "displaced",
+  "seed": 0,
+  "provider": "fixture",
+  "live_nebius_inference_verified": false,
+  "source_commit": "bd278cfc934de5a820a991bedd18f99dc7b1663c",
+  "source_sha256": "a59c971202bbfdd667e4afd3ac7dfdfc90d43bebb0578813c99f99eff370afe3",
+  "source_tree_dirty": false,
+  "python_version": "3.12.14",
+  "model_id": "concept01",
+  "mujoco_version": "3.10.0",
+  "numpy_version": "2.3.5",
+  "model_sha256": "ea14ccc38678a7f5ee9e5abce76c98a5b0b7fbce55ce249beda9f1f2e95b74ee",
+  "simulation_scope": "MuJoCo simulation; supported pelvis; classical IK and position control; no learned VLM/WAM or walking",
+  "limitations": [
+    "supported pelvis; no balance or walking",
+    "simulator telemetry; no image perception",
+    "classical IK; no VLA/WAM policy",
+    "no grasping",
+    "estimated physical parameters; self-collision disabled",
+    "simulation paused during model request; no real-time physical freshness claim"
+  ],
+  "success_conditions": {
+    "reach_tolerance_m": 0.035,
+    "max_joint_violation_rad": 0.001,
+    "max_model_calls": 2,
+    "max_recoveries": 1,
+    "max_scene_age_s": 0.5
+  },
+  "task_success": true,
+  "safe_hold": false,
+  "acceptance_pass": true,
+  "final_observed_error_m": 0.016753235845492178,
+  "final_mode": "reach",
+  "terminal_max_observed_error_m": 0.016753235845492178,
+  "terminal_window_samples": 10,
+  "max_joint_limit_violation_rad": 0.0,
+  "all_finite": true,
+  "no_dynamics_fault": true,
+  "model_calls": 2,
+  "recoveries": 1,
+  "reach_commands": 2,
+  "errors": [],
+  "model_evidence": [
+    {
+      "provider": "fixture",
+      "served_model": null,
+      "decision": {
+        "action": "reach",
+        "target_id": "workpiece",
+        "reason": "Offline fixture for event initial"
+      },
+      "latency_ms": 0,
+      "note": "Offline test double; no NVIDIA or Nebius inference occurred"
+    },
+    {
+      "provider": "fixture",
+      "served_model": null,
+      "decision": {
+        "action": "reobserve",
+        "target_id": "workpiece",
+        "reason": "Offline fixture for event target_moved"
+      },
+      "latency_ms": 0,
+      "note": "Offline test double; no NVIDIA or Nebius inference occurred"
+    }
+  ],
+  "simulated_seconds": 10.160000000000062,
+  "wall_seconds": 9.011709325000993,
+  "rendered_frames": 125,
+  "frame_rate": 12.5,
+  "frame_note": "Physics motion at stated simulation frame rate; provider request wall time is excluded",
+  "paused_world_during_inference": true,
+  "safety_sampling": "Controller step endpoints (40 ms), not continuous-time collision certification",
+  "safety_samples": 254
+}
